@@ -283,7 +283,9 @@ export function deadline(p: { target: string; by_when: string; period?: string; 
   // Already in the promise's own words: just name the year, 'Launch in coming year (FY27)', not '... by FY27'
   const said = new Set(dateWords(p.target))
   const stated = (x: string) => dateWords(x).every(y => said.has(y))
-  const w = absolute(raw, p.period, p.status)
+  // 'full year FY26' is just FY26; 'fiscal 29' and 'fiscal 2030' are FY29 and FY30
+  const plain = raw.replace(/^full (?:financial )?year (FY\d\d)$/i, '$1').replace(/\bfiscal (?:20)?(\d\d)\b/i, 'FY$1')
+  const w = absolute(plain, p.period, p.status)
   if (stated(w)) return ''
   return stated(raw) ? `(${w})` : `by ${w}`
 }
