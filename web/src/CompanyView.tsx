@@ -4,7 +4,7 @@ import { Bars, fyLabel, Mark, Src, STATUS_WORD } from './ui'
 
 const SHOW: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
 
-export function CompanyView({ c, focus, sector, title, back }: { c: Company; focus?: number; sector?: string; title?: string; back: () => void }) {
+export function CompanyView({ c, focus, sector, title, close, back }: { c: Company; focus?: number; sector?: string; title?: string; close?: { d: string; close: number }; back: () => void }) {
   const [openId, setOpenId] = useState<number | null>(focus ?? null)
   // Opened from a promise elsewhere: bring that promise to the middle of the screen
   useEffect(() => {
@@ -16,6 +16,9 @@ export function CompanyView({ c, focus, sector, title, back }: { c: Company; foc
   const [showSoft, setShowSoft] = useState(() => focus != null && c.ledger.some(p => p.id === focus && !p.hard))
   const [showOpen, setShowOpen] = useState(false)
   const s = c.snapshot
+  // The file's price is from when the ledger was built; the snapshot's last close is newer. Same shares, so value and P/E move with it
+  const price = close?.close ?? s.price
+  const k = close && s.price ? close.close / s.price : 1
   const readable = c.calls.filter(x => !x.error).length
   const hard = c.ledger.filter(p => p.hard).sort((a, b) => SHOW.indexOf(a.status) - SHOW.indexOf(b.status))
   const soft = c.ledger.filter(p => !p.hard)
@@ -54,8 +57,8 @@ export function CompanyView({ c, focus, sector, title, back }: { c: Company; foc
       <h1 className="co-name" ref={nameRef}>{title || shortName(c.name)}</h1>
       <p className="co-meta">
         {sector && <>{sector}. </>}
-        {s.price != null && <>Share price ₹{s.price.toLocaleString('en-IN')}. </>}
-        {s.mcap != null && <>Worth ₹{crBig(s.mcap)}{s.pe ? `, ${s.pe}× earnings` : ''}.</>}
+        {price != null && <>Share price ₹{price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)}{close && ` at the ${new Date(close.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} close`}. </>}
+        {s.mcap != null && <>Worth ₹{crBig(s.mcap * k)}{s.pe ? `, ${(s.pe * k).toFixed(1)}× earnings` : ''}.</>}
       </p>
 
       <section className="word">

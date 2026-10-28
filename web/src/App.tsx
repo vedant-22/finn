@@ -73,7 +73,7 @@ export function App() {
   return (
     <>
       {route.sym
-        ? <CompanyRoute sym={route.sym} pid={route.pid} sector={holding(route.sym)?.sector} title={holding(route.sym)?.short} back={() => { location.hash = !prev || prev === location.hash ? '#/' : prev }} />
+        ? <CompanyRoute sym={route.sym} pid={route.pid} sector={holding(route.sym)?.sector} title={holding(route.sym)?.short} close={push.eod[route.sym]?.[push.eod[route.sym].length - 1]} back={() => { location.hash = !prev || prev === location.hash ? '#/' : prev }} />
         : route.tab === 'book' ? <Book push={push} openCompany={openCompany} />
           : route.tab === 'look' ? <Look push={push} openCompany={openCompany} />
             : <Today push={push} lines={lines} setLines={setLines} openCompany={openCompany} openLines={() => setLinesOpen(true)} />}
@@ -124,7 +124,7 @@ function Stepper({ label, value, step, min, max, fmt, set }: { label: string; va
   )
 }
 
-function CompanyRoute({ sym, pid, sector, title, back }: { sym: string; pid?: number; sector?: string; title?: string; back: () => void }) {
+function CompanyRoute({ sym, pid, sector, title, close, back }: { sym: string; pid?: number; sector?: string; title?: string; close?: { d: string; close: number }; back: () => void }) {
   const [c, setC] = useState<Company | null | undefined>(undefined)
   const [steps, setSteps] = useState<Step[]>([])
   const [failed, setFailed] = useState('')
@@ -142,7 +142,7 @@ function CompanyRoute({ sym, pid, sector, title, back }: { sym: string; pid?: nu
     }).catch(e => live && setFailed(e.message))
     return () => { live = false }
   }, [sym, attempt])
-  if (c) return <CompanyView c={c} focus={pid} sector={sector} title={title} back={back} />
+  if (c) return <CompanyView c={c} focus={pid} sector={sector} title={title} close={close} back={back} />
   const notFound = /NotFound|404/.test(failed)
   return (
     <main className="screen building">
