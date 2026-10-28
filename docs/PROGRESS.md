@@ -102,3 +102,4 @@ Next: before the 29 Oct 11:45 wrap-up, rebuild Today (`python3 pipeline/build_pu
 - Company header: market cap and borrowings of a lakh crore and up read the way they're said, 'Worth ₹5.04 lakh cr' (was ₹5,04,279 cr), HDFC Bank ₹10.49 lakh cr, L&T '₹1.4 lakh cr borrowed'. crBig in lib, tests 9/9. Tested at 390x844
 - Rupees grouped the Indian way when the model wrote them Western style: '₹285,874 crore' -> '₹2,85,874 crore' (2 L&T lines). Tests 9/9
 - Look up: typing 'l&t' suggested HDFC Bank, Maruti, Sun Pharma and UltraTech too, because every full name ends in 'Ltd'. Name matching now ignores Ltd/Limited/The/Of/And/Co/Pvt; 'l&t' -> Larsen & Toubro only. Checked dix, cement, transport, larsen, li. Tested at 390x844
+- Opening a promise from a results card also moves focus to it (no scroll, no ring after a tap), so a screen reader starts there. Tested at 390x844

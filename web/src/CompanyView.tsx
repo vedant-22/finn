@@ -10,7 +10,8 @@ export function CompanyView({ c, focus, sector, title, back }: { c: Company; foc
   useEffect(() => {
     if (focus == null) return
     const el = document.querySelector(`[data-pid="${focus}"]`)
-    if (el) requestAnimationFrame(() => el.scrollIntoView({ block: 'center' }))
+    // Focus follows, so a screen reader starts at that promise too
+    if (el) requestAnimationFrame(() => { el.scrollIntoView({ block: 'center' }); el.querySelector('button')?.focus({ preventScroll: true }) })
   }, [focus])
   const [showSoft, setShowSoft] = useState(() => focus != null && c.ledger.some(p => p.id === focus && !p.hard))
   const [showOpen, setShowOpen] = useState(false)
