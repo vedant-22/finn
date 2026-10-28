@@ -93,7 +93,7 @@ function StoryCard({ s, name, asof, openCompany }: { s: Story; name: string; aso
       </header>
       {f.results ? <ResultsBlock f={f} symbol={s.symbol} openCompany={openCompany} />
         : f.people?.length ? <PeopleBlock f={f} />
-          : <p className="line">{f.line || tidySubject(f.subject)}{f.pct_rev != null && <span className="size"> {sizeWords(f)}</span>}</p>}
+          : <p className="line">{f.pct_rev != null ? stop(f.line || tidySubject(f.subject)) : f.line || tidySubject(f.subject)}{f.pct_rev != null && <span className="size"> {sizeWords(f)}</span>}</p>}
       <footer className="card-foot">
         <Src href={f.url}>Filing</Src>
         {others.length > 0 && <button className="src rel-toggle" aria-expanded={rel} onClick={() => setRel(!rel)}>
@@ -108,10 +108,21 @@ function StoryCard({ s, name, asof, openCompany }: { s: Story; name: string; aso
 function sizeWords(f: { amount_cr?: number; pct_rev?: number }) {
   if (f.amount_cr == null || f.pct_rev == null) return ''
   const p = f.pct_rev < 0.1 ? 'under 0.1%' : `${f.pct_rev.toFixed(f.pct_rev < 1 ? 1 : 0)}%`
-  return `₹${cr(f.amount_cr)} cr, ${p} of a year's revenue.`
+  return f.amount_cr < 1 ? 'Under ₹1 cr.' : `₹${cr(f.amount_cr)} cr, ${p} of a year's revenue.`
 }
 
+// NSE's own labels for the routine call papers, in sentence case
+const PAPERS: Record<string, string> = {
+  'transcript': 'Earnings call transcript', 'investor presentation': 'Investor presentation', 'link of recording': 'Earnings call recording',
+  'audio recording': 'Earnings call recording',
+}
+// A model line or a size note follows it, so it ends with a full stop
+const stop = (t: string) => (/[.!?)]$/.test(t.trim()) ? t : `${t.trim()}.`)
 export function tidySubject(s: string) {
+  const t = tidyRaw(s)
+  return PAPERS[t.toLowerCase()] || t
+}
+function tidyRaw(s: string) {
   return s.replace(/^.*? has (informed|submitted to) the Exchange( about| regarding)?[,\s]*(the\s+)?/i, '')
     .replace(/^'(.*)'\.?$/, '$1').replace(/^a press release dated .*?, titled\s*"?(.*?)"?\.?$/i, 'Press release: $1').replace(/\.-\s*/g, ' - ').replace(/\s{2,}/g, ' ').replace(/^./, c => c.toUpperCase())
 }
@@ -227,7 +238,7 @@ function NoteRow({ s, name, asof }: { s: Story; name: string; asof: string }) {
     <li>
       <a href={f.url} target="_blank" rel="noopener noreferrer">
         <span className="note-co">{name}</span>
-        <span className="note-text">{text}{f.pct_rev != null && <span className="sub"> {sizeWords(f)}</span>}</span>
+        <span className="note-text">{f.pct_rev != null ? stop(text) : text}{f.pct_rev != null && <span className="sub"> {sizeWords(f)}</span>}</span>
         <span className="note-when">{when(s.at, asof)}</span>
       </a>
     </li>

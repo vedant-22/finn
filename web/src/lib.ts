@@ -55,8 +55,11 @@ export function when(iso: string, asof: string) {
   const d = new Date(iso), now = new Date(asof)
   const hrs = (now.getTime() - d.getTime()) / 36e5
   const time = d.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()
-  if (hrs < 24 && d.getDate() === now.getDate()) return time
-  if (hrs < 48) return `Yesterday ${time}`
+  // Calendar days, not hours: 8:30 pm two days back is not 'Yesterday'
+  const day = (x: Date) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime()
+  const days = Math.round((day(now) - day(d)) / 864e5)
+  if (days === 0 && hrs >= 0) return time
+  if (days === 1) return `Yesterday ${time}`
   return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
 }
 
