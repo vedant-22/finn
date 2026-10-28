@@ -244,8 +244,26 @@ export async function buildLive(sym: string, onStep: (steps: Step[]) => void): P
 const DATE_STOP = new Set(['of', 'the', 'this', 'next', 'by', 'a', 'in', 'end', 'to', 'and', 'or'])
 const dateWords = (s: string) => s.toLowerCase().replace(/fy\s*20(\d\d)/g, 'fy$1').split(/[^a-z0-9]+/)
   .map(x => x.replace(/^20(\d\d)$/, '$1')).filter(x => x && !DATE_STOP.has(x))
-export function deadline(p: { target: string; by_when: string }) {
-  const w = (p.by_when || '').replace(/^by\s+/i, '').trim()
+// 'This year' in a November 2025 call means FY26 by the time anyone reads it, so name the year from the call's month.
+// Not for April to June calls: on a full-year call 'this year' can mean the year just closed or the one starting.
+// Not when the named year is over but the promise is graded not due: the words stay until the grading catches up.
+const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+function absolute(w: string, period?: string, status?: string) {
+  const m = (period || '').toLowerCase().match(/^([a-z]{3})\w*\s+(\d{4})$/)
+  const r = w.match(/^(?:the\s+)?(end of\s+)?(?:the\s+)?(this|current|next)\s+(calendar\s+year|(?:fiscal|financial)(?:\s+year)?|year)$/i)
+  if (!m || !MONTHS.includes(m[1]) || !r) return w
+  const month = MONTHS.indexOf(m[1]), year = +m[2], next = /next/i.test(r[2]) ? 1 : 0
+  let label: string, ends: Date
+  if (/calendar/i.test(r[3])) { label = `end of ${year + next}`; ends = new Date(year + next, 11, 31) }
+  else {
+    if (month >= 3 && month <= 5) return w
+    const fy = (month >= 3 ? year + 1 : year) + next
+    label = `${r[1] ? 'end of ' : ''}FY${String(fy % 100).padStart(2, '0')}`; ends = new Date(fy, 2, 31)
+  }
+  return status === 'pending' && ends.getTime() < Date.now() ? w : label
+}
+export function deadline(p: { target: string; by_when: string; period?: string; status?: string }) {
+  const w = absolute((p.by_when || '').replace(/^by\s+/i, '').trim(), p.period, p.status)
   if (!w || /^(unspecified|not specified|none|n\/a|ongoing)$/i.test(w)) return ''
   const said = new Set(dateWords(p.target))
   return dateWords(w).every(x => said.has(x)) ? '' : `by ${w}`

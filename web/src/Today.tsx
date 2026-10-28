@@ -149,7 +149,7 @@ function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; open
           {word.map((p, i) => (
             <button key={p.id} className="word-row" onClick={() => openCompany(symbol)}>
               <Mark status={p.status} delay={i * 80} />
-              <span><b>{rupees(p.target.charAt(0).toUpperCase() + p.target.slice(1))}</b> <span className="sub">{[deadline(p), STATUS_WORD[p.status]].filter(Boolean).join('. ')}.</span></span>
+              <span><b>{rupees(p.target.charAt(0).toUpperCase() + p.target.slice(1))}</b><span className="sub">{deadline(p) ? ` ${deadline(p)}. ` : '. '}{STATUS_WORD[p.status]}.</span></span>
             </button>
           ))}
         </div>
