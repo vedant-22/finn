@@ -18,7 +18,12 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
   const [showFold, setShowFold] = useKept('today.fold', false)
   // Results and people first, then the unusual days, as triage orders them; past five they become rows in the fold
   const items = [...t.needs.map(s => ({ s })), ...t.moves.map(m => ({ m }))] as ({ s: Story; m?: undefined } | { m: Move; s?: undefined })[]
-  const cards = items.slice(0, MAX_CARDS), spill = items.slice(MAX_CARDS)
+  // No one kind takes more than three of the five, so a week of results can't hide a CFO leaving
+  const kind = (x: typeof items[number]) => x.s ? x.s.category : 'move'
+  const chosen = new Set<typeof items[number]>(), per = new Map<string, number>()
+  for (const x of items) if (chosen.size < MAX_CARDS && (per.get(kind(x)) ?? 0) < 3) { chosen.add(x); per.set(kind(x), (per.get(kind(x)) ?? 0) + 1) }
+  for (const x of items) if (chosen.size < MAX_CARDS) chosen.add(x)
+  const cards = items.filter(x => chosen.has(x)), spill = items.filter(x => !chosen.has(x))
   const count = cards.length
   // The sieve plays once a session, not on every return to Today
   const sieve = useRef(!sessionStorage.getItem('finn-sieved'))
@@ -259,7 +264,7 @@ const verb = (a: string) => ({ appointed: 'Joins as', resigned: 'Resigns as', re
 function PeopleLead({ f }: { f: any }) {
   const p = sortPeople(f.people)[0]
   const more = f.people.length - 1
-  return <p className="card-desc"><span className="card-who">{p.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')}</span> {reclass(p) ? `stays ${p.role}, off the senior management list` : `${verb(p.action).toLowerCase()} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${effDate(p.effective, f.at)}` : ''}.{more > 0 ? ` And ${more} more.` : ''}</p>
+  return <p className="card-desc"><span className="card-who">{p.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')}</span> {reclass(p) ? `stays ${p.role}, off the senior management list` : `${verb(p.action).toLowerCase()} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${effDate(p.effective, f.at)}` : ''}.{more > 0 ? ` ${more} more ${more === 1 ? 'change' : 'changes'} in the filing.` : ''}</p>
 }
 
 function MoveCard({ m, name, lines, openCompany }: { m: Move; name: string; lines: Lines; openCompany: (s: string) => void }) {
