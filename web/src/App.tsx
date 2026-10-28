@@ -156,7 +156,7 @@ function CompanyRoute({ sym, sector, title, back }: { sym: string; sector?: stri
         {steps.map((s, i) => (
           <li key={i} className={`step ${s.state}`}>
             <span className="step-mark">{s.state === 'done' ? <Mark status="kept" size={18} /> : s.state === 'fail' ? <Mark status="missed" size={18} /> : <span className="dot-run" />}</span>
-            <span>{s.label}</span><span className="sub">{s.detail}</span>
+            <span>{s.label}</span><span className="sub">{s.detail}</span>{s.note && <span className="step-note">{s.note}</span>}
           </li>
         ))}
       </ul>

@@ -210,6 +210,9 @@ blockquote { margin: 0; }
 .step { display: grid; grid-template-columns: 26px 1fr; gap: 0 8px; padding: 9px 0; border-top: 1px solid var(--rule); }
 .step .sub { grid-column: 2; font-size: 13px; }
 .step.wait { color: var(--ink-2); }
+.step-note { grid-column: 2; margin-top: 4px; font: 15px/21px var(--serif); letter-spacing: 0; animation: note-in 600ms var(--ease) both; }
+@keyframes note-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .step-note { animation: none; } }
 .step-mark { display: grid; place-items: center; height: 22px; }
 .dot-run { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); animation: pulse 1s ease-in-out infinite alternate; }
 .step.wait .dot-run { background: var(--rule); animation: none; }

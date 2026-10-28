@@ -184,7 +184,7 @@ export function remember(c: Company) {
 }
 
 // Live research for a ticker we haven't built: three kinds of request, each well inside a serverless time limit.
-export type Step = { label: string; state: 'wait' | 'run' | 'done' | 'fail'; detail?: string }
+export type Step = { label: string; state: 'wait' | 'run' | 'done' | 'fail'; detail?: string; note?: string }
 // Turn API and model errors into a sentence an investor can act on.
 export function plainError(m: string): string {
   if (/429|RESOURCE_EXHAUSTED|quota/i.test(m)) return 'The free model quota is used up for now. It resets daily; companies already read still open.'
@@ -217,7 +217,10 @@ export async function buildLive(sym: string, onStep: (steps: Step[]) => void): P
     try {
       const c = await post('/api/call', { symbol: sym, period: t.period })
       steps[i + 1].state = c.error ? 'fail' : 'done'
-      steps[i + 1].detail = c.error ? 'not readable' : `${c.pages} pages, ${c.promises.length} promises`
+      const n = c.promises?.length ?? 0, first = c.promises?.find((p: any) => p.hard) || c.promises?.[0]
+      steps[i + 1].detail = c.error ? 'not readable' : `${c.pages} pages, ${n} ${n === 1 ? 'promise' : 'promises'}`
+      // Something real to read while the rest comes in: one promise this call made
+      if (!c.error && first?.target) steps[i + 1].note = rupees(first.target.charAt(0).toUpperCase() + first.target.slice(1)) + ((d => d ? `, ${d}` : '')(deadline({ ...first, period: t.period })))
       emit(); return c
     } catch (e: any) {
       steps[i + 1].state = 'fail'; steps[i + 1].detail = plainError(e.message); emit()
