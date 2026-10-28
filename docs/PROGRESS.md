@@ -13,4 +13,9 @@ Next: regrade job started 10:06 IST via `nohup zsh pipeline/regrade.sh > data/re
 - [x] README, covering note, walkthrough script; slop_scan passes (walkthrough's long-sentence gate fails on purpose: it's spoken)
 - [ ] Regrade ledgers with gemini-3.5-flash after the free quota resets (pipeline/regrade.sh, runs 12:40 IST, log in data/regrade.log)
 - [ ] After regrade: refresh README screenshots, redeploy, critic round 2, final checklist x2
-- [ ] Publish GitHub repo (blocked on permission; see NEEDS_FROM_USER.md)
+- [x] Publish GitHub repo: https://github.com/vedant-22/finn
+
+## Polish log (28 Oct)
+- Plain-English errors with Try again on live lookup (quota, network, timeout) and on boot; tested at 390x844 with a mocked 429
+- Today says so when nothing crossed the lines
+- Standard web-app-capable meta (console warning gone)
