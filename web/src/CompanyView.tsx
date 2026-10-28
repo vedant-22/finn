@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { cr, deadline, minus, pct, rupees, shortName, tidyEvidence, tone, type Company, type Promise_, type Status } from './lib'
+import { cr, crBig, deadline, minus, pct, rupees, shortName, tidyEvidence, tone, type Company, type Promise_, type Status } from './lib'
 import { Bars, fyLabel, Mark, Src, STATUS_WORD } from './ui'
 
 const SHOW: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
@@ -54,7 +54,7 @@ export function CompanyView({ c, focus, sector, title, back }: { c: Company; foc
       <p className="co-meta">
         {sector && <>{sector}. </>}
         {s.price != null && <>Share price ₹{s.price.toLocaleString('en-IN')}. </>}
-        {s.mcap != null && <>Worth ₹{cr(s.mcap)} cr{s.pe ? `, ${s.pe}× earnings` : ''}.</>}
+        {s.mcap != null && <>Worth ₹{crBig(s.mcap)}{s.pe ? `, ${s.pe}× earnings` : ''}.</>}
       </p>
 
       <section className="word">
@@ -139,7 +139,7 @@ export function CompanyView({ c, focus, sector, title, back }: { c: Company; foc
           <div className="fig-grid">
             <Fig label="Cash from operations per ₹100 of profit, 5 years" value={s.cash_conversion5 != null ? `₹${s.cash_conversion5}` : '–'}
               sub={s.cash_conversion5 != null ? (s.cash_conversion5 >= 90 ? 'Profits are turning into cash.' : s.cash_conversion5 >= 60 ? 'Some profit is stuck in working capital.' : 'Profits are not turning into cash.') : null} />
-            <Fig label="Debt to equity" value={s.de != null ? minus(s.de) : '–'} sub={s.debt != null ? `₹${cr(s.debt)} cr borrowed` : null} />
+            <Fig label="Debt to equity" value={s.de != null ? minus(s.de) : '–'} sub={s.debt != null ? `₹${crBig(s.debt)} borrowed` : null} />
             <Fig label="Cash conversion cycle" value={s.ccc?.length ? `${minus(s.ccc[s.ccc.length - 1])} days` : '–'}
               sub={s.ccc?.length > 1 ? `${minus(s.ccc[0])} days in ${fyLabel(s.years[0])}` : null} />
             <Fig label="Return on capital" value={s.roce?.length ? `${minus(s.roce[s.roce.length - 1])}%` : '–'} sub={s.roce?.length > 1 ? `${minus(s.roce[0])}% in ${fyLabel(s.years[0])}` : null} />

@@ -1,7 +1,7 @@
 // What the screen says, checked. Run: npm test (Node 22.6+ reads lib.ts directly)
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { cr, deadline, pct, rupees, tidyEvidence, when } from '../src/lib.ts'
+import { cr, crBig, deadline, pct, rupees, tidyEvidence, when } from '../src/lib.ts'
 
 test('percentages: sign, a true minus, never −0.0%', () => {
   assert.equal(pct(12.4), '+12%')
@@ -68,4 +68,11 @@ test("the 'Reported' line reads like numbers, not a table dump", () => {
   assert.equal(tidyEvidence('Revenue YoY % was 30.3% in Jun 2026'), 'Revenue YoY was 30.3% in Jun 2026')
   assert.equal(tidyEvidence('Revenue FY25 Rs 38860.0 crore'), 'Revenue FY25 ₹38,860 crore')
   assert.equal(tidyEvidence('FY26 PBT 15119.0, PAT 11509.0, implied tax rate 23.9%'), 'FY26 PBT 15,119, PAT 11,509, implied tax rate 23.9%')
+})
+
+test('big sums in lakh crore', () => {
+  assert.equal(crBig(504279), '5.04 lakh cr')
+  assert.equal(crBig(140300), '1.4 lakh cr')
+  assert.equal(crBig(200000), '2 lakh cr')
+  assert.equal(crBig(78750), '78,750 cr')
 })

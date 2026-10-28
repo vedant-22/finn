@@ -41,6 +41,8 @@ export interface Company {
 // ---------- formatting ----------
 const inr = new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 })
 export const cr = (v: number | null | undefined) => (v == null ? '–' : minus(inr.format(Math.round(v))))
+// Big sums the way they're said: ₹5,04,279 cr is '5.04 lakh cr'
+export const crBig = (v: number) => v >= 1e5 ? `${(v / 1e5).toFixed(2).replace(/\.?0+$/, '')} lakh cr` : `${cr(v)} cr`
 export const minus = (s: string | number) => String(s).replace(/^-/, '−')
 export const pct = (v: number | null | undefined, sign = true) => {
   if (v == null) return '–'
