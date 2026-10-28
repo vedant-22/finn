@@ -12,7 +12,10 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
     push.portfolio.forEach(p => getCompany(p.symbol).catch(() => null).then(c => setCos(prev => ({ ...prev, [p.symbol]: c }))))
     const t = setTimeout(() => setSlow(true), 400); return () => clearTimeout(t)
   }, [push])
-  const head = <header className="top"><h1>Your book</h1><span className="sub">{push.portfolio.length} holdings, weakest word first</span></header>
+  // Prices are the last exchange close in the snapshot, often the day before it; say which
+  const closeDay = Object.values(push.eod).reduce((m, bars: any) => { const d = bars?.[bars.length - 1]?.d; return d && d > m ? d : m }, '')
+  const closeLabel = closeDay ? new Date(closeDay + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : ''
+  const head = <header className="top"><h1>Your book</h1><span className="sub">{push.portfolio.length} holdings, weakest word first{closeLabel && `. Prices at the ${closeLabel} close`}</span></header>
   // Order and tally only once every holding is in, so counts don't climb and rows don't reshuffle
   if (push.portfolio.some(p => cos[p.symbol] === undefined)) {
     return <main className="screen book">{head}{slow && <p className="sub opening"><span className="dot-run" />Opening the ledgers</p>}</main>
