@@ -43,6 +43,7 @@ No uppercase labels.
 - Press: tappable rows dim to half while held; pills fill with `sheet`. No browser tap flash.
 - Waiting: under 400ms shows nothing; after that one muted line with a pulsing dot ('Opening the ledger'). Lists and tallies appear whole, never counting up as files arrive.
 - From the home screen on iOS, a swipe in from the left edge goes back; the page follows the finger.
+- On a company page the header sticks (white, hairline once scrolled) and carries the name when the title has gone; nothing else is fixed except the tab bar.
 - `prefers-reduced-motion`: everything appears in place.
 
 ## Icons
