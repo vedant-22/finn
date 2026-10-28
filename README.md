@@ -103,6 +103,7 @@ python3 pipeline/build_push.py           # filings, results, people, EOD -> web/
 python3 pipeline/build_ledgers.py        # ledgers for the portfolio and demo names
 python3 pipeline/dev_api.py &            # live lookups on :3001
 cd web && npm install && npm run dev     # app on :5173
+npm test                                 # what the screen says: percentages, dates, deadlines (Node 22.6+)
 ```
 
 The portfolio is in `data/portfolio.json`.
