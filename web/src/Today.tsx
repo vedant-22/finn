@@ -266,7 +266,9 @@ function NoteRow({ s, name, asof }: { s: Story; name: string; asof: string }) {
 function FoldSummary({ stories, names }: { stories: Story[]; names: Record<string, string> }) {
   const byDesc = new Map<string, { n: number; cos: Set<string> }>()
   for (const s of stories) for (const f of s.filings) {
+    // NSE's labels in sentence case, acronyms kept: 'Copy of Newspaper Publication' -> 'Copy of newspaper publication'
     const k = f.desc.replace(/ under SEBI.*$/, '').replace(/\/Con\. Call Updates/, '')
+      .replace(/\b([A-Z])([a-z]+)/g, (_, a, b) => a.toLowerCase() + b).replace(/^./, c => c.toUpperCase())
     const e = byDesc.get(k) || { n: 0, cos: new Set() }
     e.n++; e.cos.add(names[f.symbol]); byDesc.set(k, e)
   }
