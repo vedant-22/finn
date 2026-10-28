@@ -97,6 +97,9 @@ function StoryCard({ s, name, asof, openCompany }: { s: Story; name: string; aso
         : f.people?.length ? <PeopleBlock f={f} />
           : <p className="line">{f.pct_rev != null ? stop(f.line || tidySubject(f.subject)) : f.line || tidySubject(f.subject)}{f.pct_rev != null && <span className="size"> {sizeWords(f)}</span>}</p>}
       <footer className="card-foot">
+        {/* Results cite the exchange's data file first, on the same line as the filing */}
+        {f.results?.source?.xbrl && <Src href={f.results.source.xbrl}>Exchange XBRL</Src>}
+        {/\.pdf$/i.test(f.results?.source?.pdf || '') && <Src href={f.results!.source.pdf}>Results PDF</Src>}
         <Src href={f.url}>Filing</Src>
         {others.length > 0 && <button className="src rel-toggle" aria-expanded={rel} onClick={() => setRel(!rel)}>
           {rel ? 'Hide' : 'and'} {others.length} related</button>}
@@ -173,8 +176,6 @@ function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; open
           ))}
         </div>
       )}
-      <p className="src-line"><Src href={r.source.xbrl}>Exchange XBRL</Src>{/\.pdf$/i.test(r.source.pdf || '') && <> <Src href={r.source.pdf}>Results PDF</Src></>}
-</p>
     </div>
   )
 }

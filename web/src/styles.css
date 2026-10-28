@@ -61,7 +61,7 @@ blockquote { margin: 0; }
 .meta { font-size: 13px; line-height: 18px; color: var(--ink-2); }
 .line { margin: 8px 0 0; font: 16px/22px var(--serif); letter-spacing: 0; }
 .size { color: var(--ink-2); }
-.card-foot { display: flex; gap: 12px; align-items: baseline; margin-top: 10px; font-size: 13px; line-height: 18px; }
+.card-foot { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; margin-top: 10px; font-size: 13px; line-height: 18px; }
 .src { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; font-size: 13px; }
 .src:hover { color: var(--ink); }
 .rel-toggle { min-height: 32px; margin: -7px 0; }
@@ -84,8 +84,6 @@ blockquote { margin: 0; }
 .against h4, .ledger-detail h4 { font-size: 13px; font-weight: 500; color: var(--ink-2); margin-bottom: 4px; }
 .word-row { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; padding: 4px 0; min-height: 36px; width: 100%; }
 .word-row .mark { margin-top: 1px; }
-.src-line { margin: 10px 0 0; font-size: 12px; line-height: 17px; display: flex; flex-wrap: wrap; gap: 4px 12px; }
-.src-line .sub { width: 100%; }
 
 /* people */
 .people { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 10px; }
