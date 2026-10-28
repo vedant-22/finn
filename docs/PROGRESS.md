@@ -110,3 +110,4 @@ Next: before the 29 Oct 11:45 wrap-up, rebuild Today (`python3 pipeline/build_pu
 - Percentage ranges take an en dash like the rupee ones, '3-5%' -> '3–5%', '22-23%' -> '22–23%' (39 model-written lines); only when a % closes the range, so 'FY 2022-23' and dates stay. Tests 9/9. Evening check: the 24h first screen at 390x844 on the live link reads cleanly
 - Deadlines: 'by full year FY26' -> 'by FY26' (4 Syngene promises), 'by fiscal 29' -> 'by FY29', 'by end of fiscal 2030' -> 'by end of FY30' (UltraTech). Ambiguous ones ('FY26-27') stay as said. Diffed all deadlines: exactly these 6 change. Tests 9/9
 - Deadline 'January March 28' (the model's 'Jan–Mar '28') reads 'Q4 FY28' (UltraTech's ₹1,000 EBITDA per ton). Tests 9/9
+- En dash for any range a unit closes, not just %: '240–245 million tons', '0.8–0.9x', '120–130 bps', '18–24 months', '4–5 GW' (24 more lines). Year pairs and dates untouched. Tests 9/9

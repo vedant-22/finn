@@ -26,6 +26,7 @@ test('rupees: model text in house style, numbers grouped', () => {
   assert.equal(rupees('allot 2 crore shares'), 'allot 2 crore shares')
   assert.equal(rupees('Revenue decline 3-5%, EBITDA margin 22-23%'), 'Revenue decline 3–5%, EBITDA margin 22–23%')
   assert.equal(rupees('for FY 2022-23 and 2026-10-28'), 'for FY 2022-23 and 2026-10-28')
+  assert.equal(rupees('240-245 million tons, 3-4x, 18-24 months'), '240–245 million tons, 3–4x, 18–24 months')
   assert.equal(rupees('revenue of ₹285,874 crore'), 'revenue of ₹2,85,874 crore')
   assert.equal(rupees('₹2,85,874 and ₹1,450 crore'), '₹2,85,874 and ₹1,450 crore')
   assert.equal(rupees('Rs 1,234,567 crore'), '₹12,34,567 crore')
