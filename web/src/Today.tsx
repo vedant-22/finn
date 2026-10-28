@@ -8,7 +8,7 @@ import { Mark, Spark, Src, STATUS_WORD, useKept } from './ui'
 const WINDOWS = [{ h: 24, label: '24h' }, { h: 72, label: '3 days' }, { h: 168, label: 'Week' }, { h: 720, label: 'Month' }]
 
 export function Today({ push, lines, setLines, openCompany, openLines }: {
-  push: Push; lines: Lines; setLines: (l: Lines) => void; openCompany: (s: string) => void; openLines: () => void
+  push: Push; lines: Lines; setLines: (l: Lines) => void; openCompany: (s: string, pid?: number) => void; openLines: () => void
 }) {
   const t = useMemo(() => triage(push, lines), [push, lines])
   const names = useMemo(() => Object.fromEntries(push.portfolio.map(p => [p.symbol, p.short || shortName(p.name)])), [push])
@@ -81,7 +81,7 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
   )
 }
 
-function StoryCard({ s, name, asof, openCompany }: { s: Story; name: string; asof: string; openCompany: (s: string) => void }) {
+function StoryCard({ s, name, asof, openCompany }: { s: Story; name: string; asof: string; openCompany: (s: string, pid?: number) => void }) {
   const f = s.lead
   const [rel, setRel] = useState(false)
   const others = s.filings.filter(x => x !== f)
@@ -127,7 +127,7 @@ function tidyRaw(s: string) {
     .replace(/^'(.*)'\.?$/, '$1').replace(/^a press release dated .*?, titled\s*"?(.*?)"?\.?$/i, 'Press release: $1').replace(/\.-\s*/g, ' - ').replace(/\s{2,}/g, ' ').replace(/^./, c => c.toUpperCase())
 }
 
-function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; openCompany: (s: string) => void }) {
+function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; openCompany: (s: string, pid?: number) => void }) {
   const r = f.results
   const [co, setCo] = useState<Company | null>(null)
   useEffect(() => { getCompany(symbol).then(setCo) }, [symbol])
@@ -164,7 +164,7 @@ function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; open
         <div className="against">
           <h4>Against what they said</h4>
           {word.map((p, i) => (
-            <button key={p.id} className="word-row" onClick={() => openCompany(symbol)}>
+            <button key={p.id} className="word-row" onClick={() => openCompany(symbol, p.id)}>
               <Mark status={p.status} delay={i * 80} />
               <span><b>{rupees(p.target.charAt(0).toUpperCase() + p.target.slice(1))}</b><span className="sub">{deadline(p) ? ` ${deadline(p)}. ` : '. '}{STATUS_WORD[p.status]}.</span></span>
             </button>

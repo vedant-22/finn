@@ -4,9 +4,15 @@ import { Bars, fyLabel, Mark, Src, STATUS_WORD } from './ui'
 
 const SHOW: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
 
-export function CompanyView({ c, sector, title, back }: { c: Company; sector?: string; title?: string; back: () => void }) {
-  const [openId, setOpenId] = useState<number | null>(null)
-  const [showSoft, setShowSoft] = useState(false)
+export function CompanyView({ c, focus, sector, title, back }: { c: Company; focus?: number; sector?: string; title?: string; back: () => void }) {
+  const [openId, setOpenId] = useState<number | null>(focus ?? null)
+  // Opened from a promise elsewhere: bring that promise to the middle of the screen
+  useEffect(() => {
+    if (focus == null) return
+    const el = document.querySelector(`[data-pid="${focus}"]`)
+    if (el) requestAnimationFrame(() => el.scrollIntoView({ block: 'center' }))
+  }, [focus])
+  const [showSoft, setShowSoft] = useState(() => focus != null && c.ledger.some(p => p.id === focus && !p.hard))
   const [showOpen, setShowOpen] = useState(false)
   const s = c.snapshot
   const readable = c.calls.filter(x => !x.error).length
@@ -178,7 +184,7 @@ function Fig({ label, value, sub }: { label: string; value: string; sub: any }) 
 
 function LedgerRow({ p, i, open, toggle }: { p: Promise_; i: number; open: boolean; toggle: () => void }) {
   return (
-    <li className={`ledger-row st-${p.status} ${open ? 'open' : ''}`}>
+    <li className={`ledger-row st-${p.status} ${open ? 'open' : ''}`} data-pid={p.id}>
       <button className="ledger-btn" aria-expanded={open} onClick={toggle}>
         <Mark status={p.status} delay={120 + i * 70} />
         <div className="ledger-main">
