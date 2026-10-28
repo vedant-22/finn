@@ -24,7 +24,7 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
           {asof.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
           <span className="sub"> Filings to {asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()}</span>
         </div>
-        <button className="text-btn" onClick={openLines}>Your lines</button>
+        <button className="pill" onClick={openLines}>Your lines</button>
       </header>
 
       <div className="window" role="radiogroup" aria-label="Time window">

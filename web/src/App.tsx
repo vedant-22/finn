@@ -47,7 +47,7 @@ export function App() {
   if (!push) return <div className="boot"><Mark status="kept" size={36} /></div>
   const holding = (s?: string) => push.portfolio.find(p => p.symbol === s)
   // On a company page, light the tab it was opened from
-  const tab = !route.sym ? route.tab : prev.startsWith('#/book') ? 'book' : prev.startsWith('#/look') ? 'look' : prev || holding(route.sym) ? 'today' : 'look'
+  const tab = !route.sym ? route.tab : prev.startsWith('#/book') ? 'book' : prev.startsWith('#/look') ? 'look' : prev ? 'today' : holding(route.sym) ? 'book' : 'look'
 
   return (
     <>
