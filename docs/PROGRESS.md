@@ -33,3 +33,4 @@ Next: keep polishing from the 'Never sit idle' list. Background: `pgrep -f regra
 - Company: 'Opening the ledger' with the pulsing dot if the file takes over 400 ms; heading uses the holding's name while loading. Tested at 390x844 with a delayed request
 - Batch LLM calls wait out per-minute free-tier 429s (FINN_PATIENT=1, set by regrade.sh) instead of dropping to flash-lite; daily limits still drop a tier. Live API unchanged
 - Promise lines drop a 'by ...' the promise already states (every date word already in it), plus 'by by' and 'by unspecified'. Checked against all 194 graded promises
+- docs/DONE created 28 Oct 13:25 IST after final checklist pass 2
