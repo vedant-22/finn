@@ -32,7 +32,7 @@ Scroll to the HDFC Bank card.
 *(silence, 2 seconds)*
 
 **4. The ledger (1:05–1:40)**
-Tap "Cyient" on its results card (or go Book → Cyient).
+Tap "Cyient" on its results card (or go Book → Cyient). Tapping a promise under "Against what they said" instead opens the ledger already at that promise.
 > "This is the ledger. Every promise from their last calls that had a number and a date."
 Tap the first red cross to open it.
 > "Here's what they said, with the page. Here's what happened."
