@@ -192,7 +192,9 @@ blockquote { margin: 0; }
 .fig-label { font-size: 13px; line-height: 17px; color: var(--ink-2); }
 .fig-value { font-size: 26px; line-height: 30px; font-weight: 450; letter-spacing: -0.04em; margin-top: 4px; }
 .fig-sub { font-size: 13px; line-height: 18px; color: var(--ink-2); }
-.traj { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+.traj { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+/* On a 320 px phone the two charts shrink to fit instead of pushing the page sideways */
+.traj .bars { max-width: 100%; height: auto; }
 .traj h3 { font-size: 13px; font-weight: 400; color: var(--ink-2); margin-bottom: 6px; }
 .traj .sub { font-size: 13px; margin: 2px 0 0; }
 .bars .bar { fill: var(--ink-2); opacity: .45; }
@@ -280,7 +282,7 @@ blockquote { margin: 0; }
 .book-tally .tally { margin-top: 4px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; }
 /* Missed leads on its own line; the rest sit in two even columns */
 .book-tally .tally li:first-child { grid-column: 1 / -1; }
-.book-tally .tally-btn { width: max-content; }
+.book-tally .tally-btn { width: max-content; max-width: 100%; }
 
 .empty-line { margin: 4px 0 24px; font: 16px/22px var(--serif); letter-spacing: 0; }
 .opening { display: flex; align-items: center; gap: 10px; margin-top: 20px; }

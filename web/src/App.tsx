@@ -46,6 +46,8 @@ export function App() {
       const from = new URL(e.oldURL).hash || '#/'
       scrolls.current.set(from, window.scrollY)
       const r = parse()
+      // However a company was reached (tap, forward, a pasted link), Back and the lit tab follow where it came from
+      if (r.sym && !from.startsWith('#/c/')) setPrev(from)
       toY.current = from.startsWith('#/c/') && !r.sym ? scrolls.current.get(location.hash || '#/') ?? 0 : 0
       setRoute(r)
     }
