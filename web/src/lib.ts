@@ -309,5 +309,7 @@ export const rupees = (t: string) => t
   .replace(/(?<![₹\d.,–-]|₹\s)(?!(?:19|20)\d\d\s+to\s)(\d[\d,]*(?:\.\d+)?)(?:\s?(?:to|-|–)\s?(\d[\d,]*(?:\.\d+)?))?\s?[Cc]rores?(?:\s+rupees)?\b(?!\s+(?:equity\s+)?(?:shares|units|customers|users|clients|tonnes|tons|people|subscribers|accounts|investors|folios|policies|households|farmers|doses|litres|liters))/g,
     (_, a, b) => `₹${a}${b ? `–${b}` : ''} crore`)
   .replace(/₹(\d{4,})(?:–(\d{4,}))?/g, (_, a, b) => `₹${inr.format(+a)}${b ? `–${inr.format(+b)}` : ''}`)
+  // Ranges take an en dash like the rupee ones: '3-5%' -> '3–5%' (only when a % closes it, so 'FY 2022-23' stays)
+  .replace(/(\d)\s?-\s?(\d+(?:\.\d+)?\s?%)/g, '$1–$2')
   // Western grouping from the model, '₹285,874', regrouped the Indian way: '₹2,85,874'
   .replace(/₹(\d{1,3}(?:,\d{3})+)(?![\d,])/g, (_, n) => `₹${inr.format(+n.replace(/,/g, ''))}`)
