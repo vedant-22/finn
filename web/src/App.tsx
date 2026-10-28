@@ -122,12 +122,18 @@ function CompanyRoute({ sym, sector, title, back }: { sym: string; sector?: stri
     return () => { live = false }
   }, [sym, attempt])
   if (c) return <CompanyView c={c} sector={sector} title={title} back={back} />
+  const notFound = /NotFound|404/.test(failed)
   return (
     <main className="screen building">
       <header className="top"><button className="text-btn back" onClick={back}>Back</button><span className="sub">{sym}</span></header>
       <h1 className="co-name">{title || sym}</h1>
       {!failed && steps.length === 0 && slow && <p className="sub opening"><span className="dot-run" />Opening the ledger</p>}
       {!failed && steps.length > 0 && <p className="sub">Reading its last five earnings calls and filed results. About a minute.</p>}
+      {notFound ? <div className="not-found">
+        <p className="read">There's no NSE company with the symbol {sym}.</p>
+        <p className="sub">Check the spelling, or type part of the name.</p>
+        <a className="pill" href="#/look">Look up another</a>
+      </div> : <>
       <ul className="steps">
         {steps.map((s, i) => (
           <li key={i} className={`step ${s.state}`}>
@@ -137,12 +143,12 @@ function CompanyRoute({ sym, sector, title, back }: { sym: string; sector?: stri
         ))}
       </ul>
       {failed && <div className="fail-box">
-        <p className="fail">{/NotFound|404/.test(failed) ? `No listed company found for ${sym}. Check the NSE symbol.` : plainError(failed)}</p>
+        <p className="fail">{plainError(failed)}</p>
         <div className="fail-acts">
-          {!/NotFound|404/.test(failed) && <button className="text-btn" onClick={() => setAttempt(a => a + 1)}>Try again</button>}
+          <button className="text-btn" onClick={() => setAttempt(a => a + 1)}>Try again</button>
           <a className="text-btn" href="#/look">Pick another company</a>
         </div>
-      </div>}
+      </div>}</>}
     </main>
   )
 }
