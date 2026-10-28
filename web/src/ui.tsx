@@ -61,7 +61,7 @@ const PATHS: Record<Status, string[]> = {
   unclear: ['M6.4 7.6c.2-2.2 1.9-3.6 3.9-3.5 2 .1 3.5 1.5 3.4 3.3-.1 2.4-3.3 2.6-3.5 5.3', 'M10.1 15.4l.1.6'],
 }
 export const STATUS_WORD: Record<Status, string> = {
-  kept: 'Kept', partly: 'Partly', missed: 'Missed', quiet: 'Gone quiet', pending: 'Not due yet', unclear: "Can't tell",
+  kept: 'Kept', partly: 'Partly', missed: 'Missed', quiet: 'Gone\u00a0quiet', pending: 'Not due\u00a0yet', unclear: "Can't\u00a0tell",
 }
 
 // Marks wait until they scroll into view, so the pencil stroke happens where the reader is looking

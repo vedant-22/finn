@@ -317,3 +317,5 @@ export const rupees = (t: string) => t
   .replace(/(\d)\s?-\s?(\d+(?:\.\d+)?)(?=\s?(?:%|x\b|×|(?:million|billion|lakh|crore|bps|basis points|days|months|years|quarters|weeks|GW|MW|tons|tonnes|mtpa|MTPA|stores|plants)\b))/g, '$1–$2')
   // Western grouping from the model, '₹285,874', regrouped the Indian way: '₹2,85,874'
   .replace(/₹(\d{1,3}(?:,\d{3})+)(?![\d,])/g, (_, n) => `₹${inr.format(+n.replace(/,/g, ''))}`)
+  // A range never splits at its dash ('22–' at a line end, '23%' on the next): word joiner after it
+  .replace(/(\d)–(?=[₹\d])/g, '$1–\u2060')
