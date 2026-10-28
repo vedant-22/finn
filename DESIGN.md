@@ -1,53 +1,55 @@
 # FINN design
 
-The product checks management's word against evidence. That is what an auditor does with a working paper: trace each figure to its source and put a mark next to it. FINN borrows that world, not a trading terminal's.
+FINN follows the reference design system (studied at 390×844 and in its source; see `design/inspiration.md` and `design/PLAN.md`) in ENAM's colours. None of its branding, photos or copy is used.
 
 ## Idea
-- **Tick marks are the signature.** Auditors vouch figures with small pencil marks: a tick for agreed, a cross for not agreed. Every promise in FINN gets one, drawn as a pencil stroke when it's graded. It is the only place with motion that isn't a reply to a tap.
-- **Paper and ink, not screens and glow.** A white working paper, near-black ink, pencil colours only on marks.
-- **Quiet by default.** Most of a screen is ink on paper. Red and green appear only on marks and on the numbers they judge.
-
-## Language
-Calm and spacious, after the reference studied in `design/inspiration.md`: one idea per screen, type and whitespace instead of boxes, hairline rules, pill controls, one quiet reveal.
+- **A title and one sentence.** Every card says one thing; the rest waits behind "Read more" or a fold.
+- **Figures lead.** Tallies and promises are set as outcome figures, a big number with its unit set smaller on the baseline.
+- **Status is a word.** KEPT, MISSED, GONE QUIET, PARTLY KEPT, NOT DUE, CAN'T TELL, in small caps. No marks or icons.
+- **The card's picture is the stock.** Where the reference puts a photo, FINN draws the last 30 sessions of the holding's price.
 
 ## Colour
-Drawn from ENAM Holdings' site (white ground, black text, grey #6A6970, ENAM blue #005DA3, #D2D2D2 rules). Each colour has one role.
 | Token | Hex | Role | Contrast on white |
 |---|---|---|---|
-| paper | #FFFFFF | ground | |
-| sheet | #F5F6F8 | the one tinted panel, the bottom sheet, inputs | |
-| ink | #1F1F24 | text, figures | 16.6 |
-| ink-2 | #6A6970 | secondary text (ENAM grey) | 5.5 |
-| rule | #DCDCDE | hairlines | |
-| accent | #005DA3 | ENAM blue: the primary button, the active tab, the newest volume bar. Rare | 6.6 |
-| kept | #2E7A4E | kept, up moves | 5.3 |
-| missed | #B23A2C | missed, down moves | 6.0 |
-| partly | #94600F | partly, late | 5.3 |
-| quiet | #8E8D93 | marks for pending and folded (not text) | |
+| paper | #FFFFFF | page | |
+| panel | #FBF8F2 | cards, tally grids | |
+| ink | #333333 | text, figures | 12.6 |
+| ink-2 | #6A6970 | secondary text (ENAM grey) | 5.4 |
+| rule | #D9D9D9 | hairlines, idle switch track, volume ticks | |
+| brand | #005DA3 | ENAM blue: wordmark, the one filled button, outlined pills, Read more and links, the chart line, the active tab, switches when on | 6.8 |
+| brand-pressed | #004A82 | the filled button and links while pressed | |
+| missed | #9E2B25 | the word MISSED, nothing else | 7.4 |
+
+Moves and changes are ink with a sign and a true minus; there is no green or red for up and down.
 
 ## Type
-Inter (variable) and PT Serif, both bundled.
-- Big figure: Inter 72/72, weight 500, −5% tracking, tabular.
-- Headings: Inter 26–30, weight 450, −4%. Company names in lists: 21, weight 500.
-- Body: Inter 15/21, −1%. Small: 13–14.
-- Explaining sentences (the agent speaking: story lines, the read, verdicts, notes): PT Serif 16/22.
-No uppercase labels.
+Inter (variable) and PT Serif, both bundled. The reference's mobile mixins:
+- Outcome large: 72/100%, 500, −3.6px; unit 36px. Outcome: 48/100%, 500, −2.4px; unit 24px. Smaller steps 30 and 24 for long figures.
+- Page title 30/112% 450 −1.04px. Section head 26/116% 450 −1.1px with a hairline under it. Card title 21/124% 500 −0.36px.
+- Body 16/140% −0.42px. Small text 14/140%.
+- Label: 12px uppercase, 450, +0.24px.
+- PT Serif 400 16/140% for the one sentence under a title (card sentences, the read, page descriptions), muted.
 
 ## Space and shape
-4px base; 8, 12, 16, 24, 32, 48. Gutter 16. Square corners except pills (999px) and the sheet's top (16px). No shadows. Rules are 1px `rule`.
+Spacing scale 4, 6, 8, 12, 16, 20, 24, 32, 40, 48, 60, 80. Gutter 16. Cards: panel, square corners, 16px inside, the picture inset at the top. Pills are full radius (1000px). The bottom sheet's top corners are 12px. No shadows, gradients or glass.
+
+## Components
+- **Masthead**: FINN wordmark (brand, 600, wide tracking) left; one outlined pill right ("Your lines" on Today). Hides on the way down and returns on the way up.
+- **Section head**: 26px title over a hairline, one serif line under it.
+- **Card**: picture, label row (kind left, when right), title, outcome figure with a muted caption, one serif sentence, "Read more" opening an accordion with the detail and sources.
+- **Outcomes grid**: two columns (three for a company's tally), number, one dark line, one muted line, a link.
+- **Fold**: hairline above and below, 21px title with a count, a plus that turns into a minus; opens on a grid-rows transition.
+- **Buttons**: one filled brand pill per screen at most; the rest outlined brand pills or plain text.
+- **Switch**: grey track off, brand track on, white knob.
 
 ## Motion
-- One reveal: blocks fade in and rise 12px as they enter the view, 900ms, cubic-bezier(.19,1,.22,1); the first three stagger 90ms.
-- Tick marks draw in (280ms) when they come into view; the headline count rolls.
-- Sheets slide up 220ms.
-- Press: tappable rows dim to half while held; pills fill with `sheet`. No browser tap flash.
-- Waiting: under 400ms shows nothing; after that one muted line with a pulsing dot ('Opening the ledger'). Lists and tallies appear whole, never counting up as files arrive.
-- From the home screen on iOS, a swipe in from the left edge goes back; the page follows the finger.
-- On a company page the header sticks (white, hairline once scrolled) and carries the name when the title has gone; nothing else is fixed except the tab bar.
+- Reveal: blocks fade in (opacity only) over 1200 ms on expo-decelerate as they enter the view; the first cards step 120 ms apart.
+- Today's count: on the first open of a session it falls from the filing count to what needs you (the sieve); switching windows rolls it in 320 ms.
+- Accordions open in 200 ms (decelerate) and close in 100 ms; the plus turns with them.
+- The masthead slides away on scroll down (400 ms, expo).
+- Sheets slide up 220 ms. Rows dim while pressed; pills fill brand.
+- Waiting: nothing under 400 ms, then one muted line with a pulsing brand dot.
 - `prefers-reduced-motion`: everything appears in place.
 
-## Icons
-None from icon sets. The marks (tick, cross, half-tick, open circle, dot) are drawn here as SVG paths with a slight hand wobble. Navigation is words.
-
 ## Words on screen
-Speak to the investor. Sentence case. Numbers before adjectives. A screen gets one sentence at most.
+Speak to the investor. Sentence case except labels. Numbers before adjectives. A card gets one sentence.

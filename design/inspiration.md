@@ -1,15 +1,15 @@
 # What FINN takes from the reference
 
-Studied at 390×844 and in its source (tokens, type mixins, grid, motion helpers). Its name, copy and images are not used.
+Studied at 390×844 on its home and outcomes pages, and in its source, where the tokens and font mixins give the exact sizes, tracking and timings that the screenshots only suggest, so FINN copies numbers rather than impressions. None of its branding, photos or copy is used.
 
-1. **One idea per screen.** A heading, one line under it, then the content. Nothing competes with the first number.
-2. **Type does the work, no boxes.** Sections are separated by space and a 1px hairline, not by cards or borders. One tinted panel per screen at most, square corners.
-3. **One sans, one serif.** Inter for headings, figures and controls; PT Serif for sentences that explain (the reference sets its descriptions this way). FINN's serif lines are the agent speaking.
-4. **Medium weights, tight tracking.** Headings at 450–500 with negative letter-spacing (about −4% at 26–30px, −5% on big figures). Nothing heavier than 600.
-5. **Mobile scale:** 72 / 30 / 26 / 21 / 16 / 14 / 12, line height 100% for big figures, 112–124% for headings, 140% for text.
-6. **Spacing rhythm:** 4, 8, 12, 16, 24, 32, 48, 80. Gutter 16 on phones. Sections 48 apart.
-7. **Hairlines, no shadows, no gradients.** #DCDCDE rules; the bottom sheet is the only raised thing.
-8. **Pill controls.** Buttons and choices are full pills; the one primary action is filled, everything else is outlined or plain text.
-9. **Small labels are rare and quiet.** 12px, muted, sentence case (FINN skips the reference's uppercase labels).
-10. **Motion only on reveal.** Blocks fade in and rise 12px as they enter the viewport, 900 ms on expo-decelerate (cubic-bezier(.19,1,.22,1)), first three staggered 90 ms. Off under reduced motion. No scroll skew: an app reader needs the text still.
-11. **Calm colour.** White ground, near-black text, one brand colour used rarely.
+1. **Warm panels on white.** Cards are #FBF8F2 blocks with square corners and 16px inside; the picture sits inset at the top. FINN's picture is the holding's price over 30 sessions.
+2. **Type does the design.** Inter at 450 with tight negative tracking for titles, PT Serif in grey for the one sentence under a title.
+3. **Outcome figures.** Big numbers at 500 with the unit set smaller on the baseline (72/36 and 48/24 on phones), then one dark line and one muted line. FINN uses this for every tally and every promise.
+4. **Small caps labels** (12px, 450, +0.24px) name the kind of thing above a title. FINN uses them for card kinds and for status words.
+5. **Section heads** are 26px with a hairline under them.
+6. **One brand colour** for the wordmark, pills and links. FINN's is ENAM blue #005DA3.
+7. **Pill buttons**: one filled per screen, the rest outlined.
+8. **Accordions** carry the detail, with a plus that turns as they open.
+9. **A masthead** with the wordmark left and one outlined pill right, hiding on the way down.
+10. **Motion is opacity only**: a long expo-decelerate fade as blocks enter the view, stepped 120 ms.
+11. **Few words**: a title and one sentence, with a link to the rest, because a card that tries to say everything ends up saying nothing a reader keeps.
