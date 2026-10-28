@@ -223,7 +223,7 @@ export async function buildLive(sym: string, onStep: (steps: Step[]) => void): P
       const n = c.promises?.length ?? 0, first = c.promises?.find((p: any) => p.hard) || c.promises?.[0]
       steps[i + 1].detail = c.error ? 'not readable' : `${c.pages} pages, ${n} ${n === 1 ? 'promise' : 'promises'}`
       // Something real to read while the rest comes in: one promise this call made
-      if (!c.error && first?.target) steps[i + 1].note = rupees(first.target.charAt(0).toUpperCase() + first.target.slice(1)) + ((d => d ? `, ${d}` : '')(deadline({ ...first, period: t.period })))
+      if (!c.error && first?.target) steps[i + 1].note = rupees(first.target.charAt(0).toUpperCase() + first.target.slice(1)) + ((d => d ? `${d[0] === '(' ? ' ' : ', '}${d}` : '')(deadline({ ...first, period: t.period })))
       emit(); return c
     } catch (e: any) {
       steps[i + 1].state = 'fail'; steps[i + 1].detail = plainError(e.message); emit()
@@ -260,9 +260,9 @@ const dateWords = (s: string) => s.toLowerCase().replace(/fy\s*20(\d\d)/g, 'fy$1
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
 function absolute(w: string, period?: string, status?: string) {
   const m = (period || '').toLowerCase().match(/^([a-z]{3})\w*\s+(\d{4})$/)
-  const r = w.match(/^(?:the\s+)?(end of\s+)?(?:the\s+)?(this|current|next)\s+(calendar\s+year|(?:fiscal|financial)(?:\s+year)?|year)$/i)
+  const r = w.match(/^(?:the\s+)?(end of\s+)?(?:the\s+)?(this|current|next|upcoming|coming)\s+(calendar\s+year|(?:fiscal|financial)(?:\s+year)?|year)$/i)
   if (!m || !MONTHS.includes(m[1]) || !r) return w
-  const month = MONTHS.indexOf(m[1]), year = +m[2], next = /next/i.test(r[2]) ? 1 : 0
+  const month = MONTHS.indexOf(m[1]), year = +m[2], next = /next|coming/i.test(r[2]) ? 1 : 0
   let label: string, ends: Date
   if (/calendar/i.test(r[3])) { label = `end of ${year + next}`; ends = new Date(year + next, 11, 31) }
   else {
@@ -273,10 +273,14 @@ function absolute(w: string, period?: string, status?: string) {
   return status === 'pending' && ends.getTime() < Date.now() ? w : label
 }
 export function deadline(p: { target: string; by_when: string; period?: string; status?: string }) {
-  const w = absolute((p.by_when || '').replace(/^by\s+/i, '').trim(), p.period, p.status)
-  if (!w || /^(unspecified|not specified|none|n\/a|ongoing)$/i.test(w)) return ''
+  const raw = (p.by_when || '').replace(/^by\s+/i, '').trim()
+  if (!raw || /^(unspecified|not specified|none|n\/a|ongoing)$/i.test(raw)) return ''
+  // Already in the promise's own words: just name the year, 'Launch in coming year (FY27)', not '... by FY27'
   const said = new Set(dateWords(p.target))
-  return dateWords(w).every(x => said.has(x)) ? '' : `by ${w}`
+  const stated = (x: string) => dateWords(x).every(y => said.has(y))
+  const w = absolute(raw, p.period, p.status)
+  if (stated(w)) return ''
+  return stated(raw) ? `(${w})` : `by ${w}`
 }
 
 // Model-written text says 'INR1,450 crores'; the app writes '₹1,450 crore'. Never applied to quotes.

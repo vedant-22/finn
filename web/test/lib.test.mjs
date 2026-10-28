@@ -32,6 +32,9 @@ const p = (by_when, period, status = 'pending', target = 'Grow volumes 15%') => 
 test('deadlines name the fiscal year from the call month', () => {
   assert.equal(deadline(p('this year', 'Nov 2025', 'kept')), 'by FY26')
   assert.equal(deadline(p('next year', 'Jan 2026')), 'by FY27')
+  assert.equal(deadline(p('coming year', 'Jan 2026')), 'by FY27')
+  assert.equal(deadline(p('upcoming year', 'May 2026')), 'by upcoming year')
+  assert.equal(deadline({ target: 'Launch in coming year', by_when: 'coming year', period: 'Jan 2026' }), '(FY27)')
   assert.equal(deadline(p('end of this financial year', 'Oct 2025', 'kept')), 'by end of FY26')
   assert.equal(deadline(p('end of this calendar year', 'May 2026')), 'by end of 2026')
 })
