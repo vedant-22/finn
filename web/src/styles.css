@@ -55,6 +55,10 @@ blockquote { margin: 0; }
 .card-foot { display: flex; gap: 12px; align-items: baseline; margin-top: 10px; font-size: 13px; line-height: 18px; }
 .src { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; font-size: 13px; }
 .src:hover { color: var(--ink); }
+.rel-toggle { min-height: 32px; margin: -7px 0; }
+.related { list-style: none; margin: 4px 0 0; padding: 0; font-size: 13px; line-height: 18px; }
+.related li { padding: 6px 0; border-top: 1px solid var(--rule); }
+.related .src { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* results first cut */
 .figs { width: 100%; border-collapse: collapse; margin-top: 8px; font-variation-settings: 'wdth' 92; }

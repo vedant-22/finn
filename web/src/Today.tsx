@@ -81,6 +81,8 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
 
 function StoryCard({ s, name, asof, openCompany }: { s: Story; name: string; asof: string; openCompany: (s: string) => void }) {
   const f = s.lead
+  const [rel, setRel] = useState(false)
+  const others = s.filings.filter(x => x !== f)
   return (
     <article className={`card story cat-${s.category}`}>
       <header className="card-head">
@@ -92,8 +94,11 @@ function StoryCard({ s, name, asof, openCompany }: { s: Story; name: string; aso
           : <p className="line">{f.line || tidySubject(f.subject)}{f.pct_rev != null && <span className="size"> {sizeWords(f)}</span>}</p>}
       <footer className="card-foot">
         <Src href={f.url}>Filing</Src>
-        {s.filings.length > 1 && <span className="sub">and {s.filings.length - 1} related</span>}
+        {others.length > 0 && <button className="src rel-toggle" aria-expanded={rel} onClick={() => setRel(!rel)}>
+          {rel ? 'Hide' : 'and'} {others.length} related</button>}
       </footer>
+      {rel && <ul className="related">{others.map((o, i) =>
+        <li key={i}><Src href={o.url}>{tidySubject(o.subject)}</Src> <span className="sub">{when(o.at, asof)}</span></li>)}</ul>}
     </article>
   )
 }
@@ -105,7 +110,8 @@ function sizeWords(f: { amount_cr?: number; pct_rev?: number }) {
 }
 
 export function tidySubject(s: string) {
-  return s.replace(/^.*? has (informed|submitted to) the Exchange( about| regarding)?\s*/i, '').replace(/^./, c => c.toUpperCase())
+  return s.replace(/^.*? has (informed|submitted to) the Exchange( about| regarding)?[,\s]*(the\s+)?/i, '')
+    .replace(/^'(.*)'\.?$/, '$1').replace(/^a press release dated .*?, titled\s*"?(.*?)"?\.?$/i, 'Press release: $1').replace(/\.-\s*/g, ' - ').replace(/\s{2,}/g, ' ').replace(/^./, c => c.toUpperCase())
 }
 
 function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; openCompany: (s: string) => void }) {
