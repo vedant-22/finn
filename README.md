@@ -13,7 +13,7 @@ FINN is a phone app for a long-only investor that keeps management to its word. 
 ## What it does
 
 **Today (push).** Every NSE filing across an 18-stock portfolio, for a window you pick (24 hours by default). Most of it is folded. What's left:
-- *Results*: revenue, EBITDA, PBT and PAT against last quarter and a year ago, parsed from the exchange's XBRL, and the promises that quarter settles.
+- *Results*: revenue, EBITDA, PBT and PAT against last quarter and a year ago, parsed from the exchange's XBRL, and the promises that quarter settles. If a compared quarter's profit carries a tax credit or large exceptional items, one line says so, so a −85% PAT isn't read as a collapse.
 - *Management changes*: who is joining and from where, taken from the profile the company itself files. A new CFO interrupts you. A new company secretary doesn't.
 - *Unusual days*: volume or price beyond lines you set, and whether any filing explains the move.
 - Deals, penalties and fund raises sized against the company's annual revenue. Under 0.5%, they drop to a one-line note.
