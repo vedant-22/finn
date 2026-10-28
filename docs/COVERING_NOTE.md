@@ -39,4 +39,5 @@ Real lock-screen notifications, a live feed (push data is a snapshot built after
 
 Thank you for reading.
 
-[Your name]
+Vedant Tiwari
+IIT Kanpur · vedant22@iitk.ac.in

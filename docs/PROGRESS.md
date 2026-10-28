@@ -1,5 +1,7 @@
 # Progress
 
+Next: regrade job started 10:06 IST via `nohup zsh pipeline/regrade.sh > data/regrade.log` (sleeps to 12:40 IST). If data/regrade.log is empty and no process (`pgrep -f regrade.sh`), restart it. After regrade: run evals/sample_grades.py, write evals/grades_review.md.
+
 - [x] Brief analysis, company notes, ideation (docs/)
 - [x] Engine: finn/ (sources, classify, triage, results, people, ledger, research)
 - [x] Push snapshot: web/public/data/push.json (built 28 Oct 06:12 IST)
