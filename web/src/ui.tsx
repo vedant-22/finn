@@ -128,13 +128,18 @@ export function Bars({ values, labels, w = 150, h = 44, fmt }: { values: (number
 
 export function Sheet({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null)
+  const close = useRef(onClose); close.current = onClose
   useEffect(() => {
+    // Closed, nothing inside can take focus; open, focus goes in and comes back to the opener on close
+    const wrap = ref.current?.parentElement as (HTMLElement & { inert: boolean }) | null | undefined
+    if (wrap) wrap.inert = !open
     if (!open) return
-    const k = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    const opener = document.activeElement as HTMLElement | null
+    const k = (e: KeyboardEvent) => e.key === 'Escape' && close.current()
     window.addEventListener('keydown', k)
     ref.current?.focus()
-    return () => window.removeEventListener('keydown', k)
-  }, [open, onClose])
+    return () => { window.removeEventListener('keydown', k); opener?.focus?.() }
+  }, [open])
   // Drag the head down to close, like a native sheet.
   const drag = useRef<number | null>(null)
   const down = (e: React.PointerEvent) => { if ((e.target as HTMLElement).closest('button')) return; drag.current = e.clientY; (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); if (ref.current) ref.current.style.transition = 'none' }
