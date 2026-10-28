@@ -23,7 +23,7 @@ Tap the "Week" window and stay on it; the five cards below are in the week.
 **2. A results card (0:25–0:50)**
 Scroll to the Larsen & Toubro results card and tap "Read more".
 > "When results land, I get the four numbers against last quarter and last year. Straight from the exchange's own data file."
-Point at "Against what they said" under the table.
+Point at the row under the sentence: "Group revenue growth 15% by FY26", MISSED.
 > "And then the part I care about. What did they promise, and did this quarter deliver it."
 
 **3. A management change (0:50–1:05)**
@@ -32,7 +32,7 @@ Scroll to the Syngene management change card (its CFO resigns).
 *(silence, 2 seconds)*
 
 **4. The ledger (1:05–1:40)**
-Go Book → Larsen & Toubro (or tap the name on its card). Tapping a promise under "Against what they said" instead opens the ledger already at that promise.
+Go Book → Larsen & Toubro (or tap the name on its card). Tapping that MISSED row on the card instead opens the ledger already at that promise.
 > "This is the ledger. Every promise from their last calls that had a number and a date."
 Tap the first promise marked MISSED to open it.
 > "Here's what they said, with the page. Here's what happened."
