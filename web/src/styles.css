@@ -204,6 +204,8 @@ blockquote { margin: 0; }
 .company .og-panel { margin-top: var(--s-s); }
 .tally-note { font-size: 13px; line-height: 140%; margin-top: var(--s-s); }
 .pgrid { margin-top: var(--s-xl); }
+.o-gap { display: block; height: 30px; }
+.p-item .outcome { max-width: 100%; flex-wrap: wrap; }
 .p-item .lbl { margin: var(--s-5xs) 0 0 var(--s-nano); }
 .p-item .og-d1 { overflow-wrap: anywhere; }
 .p-item.open { grid-column: 1 / -1; }

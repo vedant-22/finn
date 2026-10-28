@@ -212,6 +212,9 @@ function promised(t: string): [string, string] | null {
     const u = m[4] || '', unit = /^x$/i.test(u) ? '×' : /^crore$/i.test(u) ? 'cr' : /^lakh crore$/i.test(u) ? 'lakh cr' : /^(mva|gw|mw|ktpa|mtpa|bps)$/i.test(u) ? (u.toLowerCase() === 'bps' ? 'bps' : u.toUpperCase()) : u.toLowerCase()
     return [`${m[1] ? m[1].trim() : ''}${m[2]}${m[3] ? `–${m[3]}` : ''}`, unit === '%' || unit === '×' ? unit : unit ? ` ${unit}` : '']
   }
+  // A count of things: 'Add 6 new branches', '50 new branches', '100–200 trucks'
+  const n = txt.match(/(?<![\w.])(\d[\d,]*(?:–\d[\d,]*)?)\s+(?:new\s+|more\s+|additional\s+)?(branches|clients|stores|trucks|rooftops|ships|rakes|products|plants|tires|outlets|customers)\b/i)
+  if (n) return [n[1], ` ${n[2].toLowerCase()}`]
   return null
 }
 // No figure in the promise: the year it's due, as they named it ('FY26'), else when it was said
@@ -220,11 +223,12 @@ const dueFig = (p: Promise_) => `${p.target} ${deadline(p)}`.match(/\b(Q\d )?FY\
 // One promise as an outcome: the figure, what they said, the verdict word. Tap for the quote and the evidence.
 function PromiseItem({ p, open, toggle }: { p: Promise_; open: boolean; toggle: () => void }) {
   const fig = promised(p.target), due = fig ? undefined : dueFig(p)
-  const size = !fig ? 'xs' : fig[0].length <= 4 ? 's' : fig[0].length <= 8 ? 'xs' : 'xxs'
+  const len = (fig?.[0] || '').replace(/\u2060/g, '').length + (fig?.[1] || '').trim().length
+  const size = !fig ? 'xs' : len <= 5 ? 's' : len <= 9 ? 'xs' : 'xxs'
   return (
     <li className={`og-item p-item st-${p.status}${open ? ' open' : ''}`} data-pid={p.id}>
       <button className="og-btn" aria-expanded={open} onClick={toggle}>
-        {fig ? <Outcome size={size} value={fig[0]} unit={fig[1]} /> : due ? <Outcome size="xs" value={due} /> : null}
+        {fig ? <Outcome size={size} value={fig[0]} unit={fig[1]} /> : due ? <Outcome size="xs" value={due} /> : <span className="o-gap" aria-hidden />}
         <span className="og-d1" style={{ display: 'block' }}>{cap(rupees(p.target))}{deadline(p) ? ` ${deadline(p)}` : ''}.</span>
         <span className="og-d2" style={{ display: 'block' }}>Said {p.period.replace(/ 20/, ' ’')}</span>
       </button>
