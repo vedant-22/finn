@@ -20,3 +20,4 @@ Next: regrade job started 10:06 IST via `nohup zsh pipeline/regrade.sh > data/re
 - Today says so when nothing crossed the lines
 - Standard web-app-capable meta (console warning gone)
 - "Your lines" sheet: grab handle, drag down to close (short drags snap back)
+- Deployed and checked live 28 Oct ~12:20 IST
