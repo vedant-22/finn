@@ -157,11 +157,12 @@ export function wordScore(c: Company | undefined) {
 
 // ---------- loading ----------
 const cache = new Map<string, Company>()
-export async function getPush(): Promise<Push> {
-  const r = await fetch('/data/push.json')
+export async function getPush(fresh = false): Promise<Push> {
+  const r = await fetch('/data/push.json', fresh ? { cache: 'no-cache' } : undefined)
   if (!r.ok) throw new Error('Could not load filings')
   return r.json()
 }
+export const forgetCompanies = () => cache.clear()
 export const cachedCompany = (sym: string) => cache.get(sym.toUpperCase()) ?? null
 export async function getCompany(sym: string): Promise<Company | null> {
   sym = sym.toUpperCase()

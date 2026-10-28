@@ -3,7 +3,7 @@ import { CompanyView } from './CompanyView'
 import { Book } from './Book'
 import { Today } from './Today'
 import {
-  buildLive, CATEGORY_LABEL, plainError, DEFAULT_LINES, getCompany, getPush, loadLines, saveLines, shortName,
+  buildLive, CATEGORY_LABEL, plainError, DEFAULT_LINES, forgetCompanies, getCompany, getPush, loadLines, saveLines, shortName,
   type Company, type Lines, type Push, type Step,
 } from './lib'
 import { Mark, Sheet, useEdgeBack } from './ui'
@@ -27,6 +27,19 @@ export function App() {
   const toY = useRef(0)
 
   useEffect(() => { getPush().then(setPush).catch(e => setErr(e.message)) }, [])
+  // From the home screen there is no reload. Coming back after a while, pick up a newer snapshot if there is one.
+  useEffect(() => {
+    let last = Date.now()
+    const on = () => {
+      if (document.visibilityState !== 'visible' || Date.now() - last < 15 * 60e3) return
+      last = Date.now()
+      getPush(true).then(p => setPush(cur => {
+        if (cur && cur.asof === p.asof) return cur
+        forgetCompanies(); return p
+      })).catch(() => { /* keep what's on screen */ })
+    }
+    document.addEventListener('visibilitychange', on); return () => document.removeEventListener('visibilitychange', on)
+  }, [])
   useEffect(() => {
     // Back from a company returns to where the list was; anything else starts at the top
     const on = (e: HashChangeEvent) => {
