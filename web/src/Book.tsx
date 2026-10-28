@@ -20,6 +20,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
   return (
     <main className="screen book">
       <header className="top"><h1>Your book</h1><span className="sub">{push.portfolio.length} holdings, weakest word first</span></header>
+      <BookTally cos={Object.values(cos)} />
       <ul className="book-list">
         {rows.map(({ p, c, score, last }) => {
           const marks = (c?.ledger || []).filter(x => x.hard && x.status !== 'unclear')
@@ -36,11 +37,10 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
                 </div>
                 <div className="book-word">
                   <span className="marks">
-                    {marks.slice(0, 10).map((m, i) => <Mark key={m.id} status={m.status} size={16} delay={i * 50} />)}
+                    {marks.slice(0, 12).map((m, i) => <Mark key={m.id} status={m.status} size={16} delay={i * 50} />)}
+                    {marks.length > 12 && <span className="sub more">+{marks.length - 12}</span>}
                   </span>
-                  <span className="sub">{c === undefined ? '' : !score || !score.graded
-                    ? (marks.length ? `${marks.length} not due yet` : 'No checkable promises')
-                    : summary(marks.map(m => m.status))}</span>
+                  <span className="sub">{c === undefined ? '' : marks.length ? summary(marks.map(m => m.status)) : 'No checkable promises'}</span>
                 </div>
               </button>
             </li>
@@ -51,6 +51,23 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
   )
 }
 const ORDER: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
-const WORDS: Partial<Record<Status, string>> = { kept: 'kept', partly: 'partly kept', missed: 'missed', quiet: 'gone quiet' }
-const summary = (ss: Status[]) => (['missed', 'quiet', 'partly', 'kept'] as Status[])
+const WORDS: Partial<Record<Status, string>> = { kept: 'kept', partly: 'partly kept', missed: 'missed', quiet: 'gone quiet', pending: 'not due' }
+const summary = (ss: Status[]) => (['missed', 'quiet', 'partly', 'kept', 'pending'] as Status[])
   .map(st => [st, ss.filter(x => x === st).length] as const).filter(([, n]) => n).map(([st, n]) => `${n} ${WORDS[st]}`).join(', ')
+
+// Across the whole book: how many promises management teams have kept, missed or let go quiet.
+function BookTally({ cos }: { cos: (Company | null)[] }) {
+  const all = cos.flatMap(c => (c?.ledger || []).filter(p => p.hard))
+  if (!all.length) return null
+  const n = (st: Status) => all.filter(p => p.status === st).length
+  const teams = (st: Status) => cos.filter(c => c?.ledger.some(p => p.hard && p.status === st)).length
+  const items: [Status, string][] = [['missed', `missed, at ${teams('missed')} companies`], ['quiet', 'gone quiet'], ['partly', 'partly kept'], ['kept', 'kept'], ['pending', 'not due yet']]
+  return (
+    <section className="book-tally" aria-label="Promises across your book">
+      <p className="sub">Promises across your book</p>
+      <ul className="tally">
+        {items.map(([st, label]) => n(st) ? <li key={st}><Mark status={st} size={18} /><b className="num">{n(st)}</b> <span>{label}</span></li> : null)}
+      </ul>
+    </section>
+  )
+}

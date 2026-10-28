@@ -212,8 +212,14 @@ export async function buildLive(sym: string, onStep: (steps: Step[]) => void): P
   const last = steps.length - 1
   steps[last].state = 'run'; emit()
   try {
-    const c = await post('/api/grade', { src, calls: results })
+    const c = await post('/api/grade', { src, calls: results.map(({ usage, ...r }: any) => r) })
     steps[last].state = 'done'; emit()
+    // The grade step only meters itself; add the per-call extraction it was built from.
+    for (const r of results as any[]) if (r.usage && c.usage) {
+      c.usage.calls += r.usage.calls; c.usage.tokens_in += r.usage.tokens_in; c.usage.tokens_out += r.usage.tokens_out
+      c.usage.usd_if_billed += r.usage.usd_if_billed
+      for (const [m, n] of Object.entries(r.usage.by_model || {})) c.usage.by_model[m] = (c.usage.by_model[m] || 0) + (n as number)
+    }
     c.live = true
     remember(c)
     return c

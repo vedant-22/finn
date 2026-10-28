@@ -3,12 +3,16 @@ import type { Bar, Status } from './lib'
 
 // Auditor's tick marks, drawn as pencil strokes. Paths carry a little wobble on purpose.
 const PATHS: Record<Status, string[]> = {
-  kept: ['M3.5 11.2c1.6 1.2 3.1 2.9 4.4 5.1 2.4-5 5.6-9.1 9.6-12.3'],
-  missed: ['M4.5 4.8c3.6 3.2 7.2 6.9 11 10.6', 'M15.4 4.3c-3.9 3.6-7.4 7.4-10.6 11.4'],
-  partly: ['M3.5 11.6c1.5 1.1 2.9 2.6 4.1 4.6 1.7-3.1 3.7-5.6 6-7.6', 'M12.2 15.6h5'],
-  quiet: ['M10 3.6c3.8 0 6.4 2.8 6.4 6.4s-2.7 6.4-6.4 6.4-6.4-2.9-6.4-6.4c0-2.6 1.5-4.9 3.6-5.8'],
-  pending: ['M5 10.4c3.4-.3 6.7-.3 10 .1'],
-  unclear: ['M6.4 7.4c.4-2 1.9-3.2 3.8-3.2 2.1 0 3.6 1.4 3.6 3.2 0 2.6-3.6 2.8-3.6 5.4', 'M10.2 15.6v.4'],
+  // A pencil tick: short heavy down-stroke, then a long flick that overshoots and lifts.
+  kept: ['M2.6 10.6c.9.4 1.9 1.3 2.8 2.5.7 1 1.3 2 1.9 3.3.4-1.1 1.2-2.7 2.4-4.6 2-3.2 4.6-6.3 8-9.2'],
+  // A cross pressed hard: two strokes that miss each other's centre a little and run past.
+  missed: ['M4.1 3.6c2.4 2.3 5 5.1 7.4 8.1 1.4 1.8 2.8 3.6 4.2 5.4', 'M16.6 3.1c-1.9 1.6-3.8 3.6-5.6 5.8-2.1 2.6-4.3 5.5-6.3 8.6'],
+  // A tick that stops short, with a pencil dash after it.
+  partly: ['M2.8 11.2c.8.4 1.7 1.3 2.5 2.4.6.9 1.1 1.8 1.6 3 .9-2 2.2-4 3.8-5.9', 'M12.4 15.9c1.5-.2 3.2-.2 5 0'],
+  // A ring drawn in one go that overruns its own start.
+  quiet: ['M11.7 3.9c-3.6-.9-7.6 1.4-7.9 5.4-.3 3.7 2.5 6.6 6 6.6 3.4 0 6.1-2.4 6.1-5.9 0-3.1-2.2-5.4-5.6-6-1.4-.3-2.6 0-3.7.6'],
+  pending: ['M4.6 10.8c1.7-.4 3.6-.5 5.6-.4 1.7.1 3.2.2 4.8.1'],
+  unclear: ['M6.4 7.6c.2-2.2 1.9-3.6 3.9-3.5 2 .1 3.5 1.5 3.4 3.3-.1 2.4-3.3 2.6-3.5 5.3', 'M10.1 15.4l.1.6'],
 }
 export const STATUS_WORD: Record<Status, string> = {
   kept: 'Kept', partly: 'Partly', missed: 'Missed', quiet: 'Gone quiet', pending: 'Not due yet', unclear: "Can't tell",

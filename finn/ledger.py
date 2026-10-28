@@ -126,6 +126,8 @@ Then:
 - "questions": the 2 or 3 questions an investor should put to management on the next call, each under 20 words, pointed at missed, partly or quiet promises.
 - "bull" and "bear": 2 or 3 points each, under 18 words, each resting on a number above or a graded promise.
 
+Write like an analyst's margin note: short, concrete, with the numbers. Name the pattern if there is one (for example "hits revenue targets, misses margin targets", "dates slip by a quarter"). Never use: demonstrates, strong, robust, healthy, execution capability, generally, aligned, overall, notably, solid.
+
 Use only the material above. If something is not in it, do not say it. Do not use outside knowledge of the company or the industry.
 """
 

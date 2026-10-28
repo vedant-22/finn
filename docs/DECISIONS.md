@@ -9,7 +9,7 @@ Passed on: a feed with summaries (what MarketPing, Stox AI and Alpha Tribe alrea
 
 **Push is mostly folding.** Of 282 filings across 18 holdings in 30 days, 45 can interrupt, 110 get one line and 127 are folded into a count. The tier policy is written at the top of `finn/classify.py` and `finn/triage.py` so it can be argued with.
 
-**Size things against the company.** A tax demand, deal or debt raise is read for its rupee amount and divided by the company's trailing revenue. Under 0.5% it becomes a one-line note. A ₹27 cr GST notice at Blue Dart is noise; ₹10,000 cr of NCDs at Sun Pharma is not.
+**Size things against the company.** Any filing with a rupee amount in it (a tax demand, a deal, a debt raise) is read for that amount and divided by the company's trailing revenue. Under 0.5% it becomes a one-line note. A ₹27 cr GST notice at Blue Dart is noise; ₹10,000 cr of NCDs at Sun Pharma is not.
 
 **Management changes are ranked by who moves.** CEO, MD, CFO and executive directors interrupt. Business heads and independent directors get a line. Company secretaries are folded.
 
@@ -25,7 +25,7 @@ Passed on: a feed with summaries (what MarketPing, Stox AI and Alpha Tribe alrea
 
 **Every quote is checked by code against its page in the PDF.** The model returns a quote and a page; `finn/sources/pdf.py:verify_quote` looks for it. Small copying slips pass. A changed number, an added "not", or two sentences stitched from different pages fail, and the promise is dropped. Evidence quotes used in grading get the same check, and a grade whose evidence fails is downgraded to "can't tell". Results in `evals/quotes_result.txt`.
 
-**Results numbers come from the exchange's XBRL, not from a model.** NSE publishes every results filing as XBRL. FINN parses Revenue, PBT and PAT from it and works out EBITDA as PBT before exceptional items + finance cost + depreciation − other income. A model reading a PDF table is slower, costs money and can misread a column. Banks get interest earned and pre-provision profit; NBFCs get net interest income, because EBITDA means nothing for a lender.
+**Results numbers come from the exchange's XBRL, not from a model.** NSE publishes every results filing as XBRL. FINN parses Revenue, PBT and PAT from it and works out EBITDA as PBT before exceptional items + finance cost + depreciation − other income. A model reading a PDF table can misread a column, and it costs money for no gain. Banks get interest earned and pre-provision profit; NBFCs get net interest income, because EBITDA means nothing for a lender.
 
 **Pull uses primary sources only, enforced by what goes into the prompt.** The model sees transcript text (from NSE or the company's own copy linked by screener.in) and financial tables screener compiles from filed results. Screener's own prose and "AI summary" are never fetched into a prompt. Every prompt says to use only the material given.
 
@@ -47,9 +47,9 @@ Passed on: a feed with summaries (what MarketPing, Stox AI and Alpha Tribe alrea
 
 ## Design
 
-Working-paper look: pale green paper, blue-black ink, green and red pencil, auditor's tick marks drawn as strokes. One typeface (Archivo) using its width axis instead of a second family. Details in `DESIGN.md`. I passed on dark mode, charts everywhere, and a chat input because each one pulls toward a trading terminal, which is the wrong world for a long-only fund.
+Working-paper look: pale green paper and blue-black ink, with auditor's tick marks drawn in coloured pencil. One typeface (Archivo) using its width axis instead of a second family. Details in `DESIGN.md`. I passed on dark mode and a chat input. Both pull toward a trading terminal, which is the wrong world for a long-only fund.
 
 ## Deviations from my working guidelines
 
-- **Ideation without the `novel-idea-hunter` skill.** I ran the slop list, 25 candidates, kill and prosecution by hand and used one fresh sub-agent critic on the winner. The skill is a long multi-phase research workflow; the brief already pins the domain and the users, so I spent the budget on the build.
+- **Ideation without the `novel-idea-hunter` skill.** I did the slop list and the 25 candidates by hand, then used one fresh sub-agent critic on the winner. The skill is a long multi-phase research workflow; the brief already pins the domain and the users, so I spent the budget on the build.
 - **Eval labels revised twice, openly.** Two classification labels were changed after reading the full letters (see `evals/README.md`). Both changes made the classifier look better, so I wrote down why.

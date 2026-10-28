@@ -11,6 +11,8 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
   const s = c.snapshot
   const hard = c.ledger.filter(p => p.hard).sort((a, b) => SHOW.indexOf(a.status) - SHOW.indexOf(b.status))
   const soft = c.ledger.filter(p => !p.hard)
+  // The model's one-paragraph read only shows once enough promises have actually been settled.
+  const settled = hard.filter(p => ['kept', 'missed', 'partly'].includes(p.status)).length
   const softTalk = c.calls.reduce((n, x) => n + (x.soft || 0), 0) + soft.length
   const pages = c.calls.reduce((n, x) => n + (x.pages || 0), 0)
   const dropped = c.calls.reduce((n, x) => n + (x.dropped || 0), 0)
@@ -21,13 +23,13 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
     <main className="screen company">
       <header className="top">
         <button className="text-btn back" onClick={back}>Back</button>
-        <span className="sub">{c.symbol}{c.live ? ', built just now' : ''}</span>
+        <span className="sub">{c.symbol}{c.live ? ', read just now' : ''}</span>
       </header>
       <h1 className="co-name">{title || shortName(c.name)}</h1>
       <p className="co-meta">
         {sector && <>{sector}. </>}
-        {s.price != null && <>₹{s.price.toLocaleString('en-IN')}, </>}
-        {s.mcap != null && <>₹{cr(s.mcap)} cr market cap{s.pe ? `, ${s.pe}× earnings` : ''}.</>}
+        {s.price != null && <>Share price ₹{s.price.toLocaleString('en-IN')}. </>}
+        {s.mcap != null && <>Worth ₹{cr(s.mcap)} cr{s.pe ? `, ${s.pe}× earnings` : ''}.</>}
       </p>
 
       <section className="word">
@@ -43,7 +45,7 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
             : <p className="word-score sub">No promise in these calls had both a number and a date.</p>}
           <p className="sub tally-note">Promises with a number and a date, from the {c.calls.filter(x => !x.error).length - 1} calls before the latest one.</p>
         </div>
-        {c.read && <p className="read">{c.read}</p>}
+        {c.read && settled >= 3 && <p className="read">{c.read}</p>}
 
         <ul className="ledger">
           {hard.map((p, i) => <LedgerRow key={p.id} p={p} i={i} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}
@@ -135,12 +137,15 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
           <li><Src href={c.source}>Financial tables</Src><span className="sub"> screener.in, {c.basis}, compiled from filed results</span></li>
         </ul>
         <p className="sub">Read {pages} pages. Every quote above was matched to its page in the PDF{dropped ? `; ${dropped} that didn't match were thrown out` : ''}. Nothing here comes from news, brokers or the model's own memory.</p>
-        {c.usage && <p className="sub">{c.usage.calls} model calls, {Math.round((c.usage.tokens_in + c.usage.tokens_out) / 1000)}k tokens, about ${c.usage.usd_if_billed.toFixed(2)} if billed.</p>}
+        {c.usage && <p className="sub">{c.usage.calls} model calls, {Math.round((c.usage.tokens_in + c.usage.tokens_out) / 1000)}k tokens, about ${c.usage.usd_if_billed.toFixed(2)} if billed. {grader(c.usage.by_model)}</p>}
       </footer>
     </main>
   )
 }
 
+const grader = (by: Record<string, number> = {}) =>
+  !Object.keys(by).length ? '' : by['gemini-3.5-flash'] ? 'Graded by gemini-3.5-flash.'
+    : 'Graded by gemini-3.5-flash-lite: the stronger model’s free daily quota was used up.'
 const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
 
 function Fig({ label, value, sub }: { label: string; value: string; sub: any }) {

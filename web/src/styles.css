@@ -107,11 +107,12 @@ blockquote { margin: 0; }
 
 /* ---------- marks ---------- */
 .mark { flex-shrink: 0; overflow: visible; }
-.mark path { fill: none; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 280ms ease-out forwards; }
+.mark path { fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 280ms ease-out forwards; }
 .mark-kept path { stroke: var(--kept); }
 .mark-missed path { stroke: var(--missed); }
 .mark-partly path { stroke: var(--partly); }
-.mark-quiet path, .mark-pending path, .mark-unclear path { stroke: var(--quiet); }
+.mark-quiet path { stroke: var(--missed); opacity: .8; stroke-width: 1.7; }
+.mark-pending path, .mark-unclear path { stroke: var(--quiet); }
 .mark-pending path { stroke-width: 2.4; }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 @media (prefers-reduced-motion: reduce) { .mark path { animation: none; stroke-dashoffset: 0; } * { transition: none !important; } }
@@ -124,8 +125,9 @@ blockquote { margin: 0; }
 .book-name b { font-weight: 650; font-variation-settings: 'wdth' 112; font-size: 16px; display: block; line-height: 21px; }
 .book-name .sub { font-size: 13px; }
 .book-px { text-align: right; font-size: 14px; }
-.book-word { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; margin-top: 4px; }
-.marks { display: inline-flex; gap: 1px; }
+.book-word { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; margin-top: 6px; }
+.marks { display: flex; flex-wrap: wrap; gap: 2px; align-items: center; min-height: 16px; }
+.marks .more { font-size: 12px; margin-left: 4px; }
 .book-word .sub { font-size: 13px; }
 
 /* ---------- company ---------- */
@@ -237,3 +239,7 @@ blockquote { margin: 0; }
   .screen { padding-top: 32px; }
   .case { grid-template-columns: 1fr 1fr; }
 }
+
+.book-tally { margin-top: 14px; padding: 12px var(--g); background: var(--sheet); border-radius: var(--r); }
+.book-tally > .sub { margin: 0; font-size: 13px; }
+.book-tally .tally { margin-top: 4px; gap: 4px 16px; }
