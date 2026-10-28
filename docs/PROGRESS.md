@@ -1,6 +1,6 @@
 # Progress
 
-Next: critic round 2 on docs/img screenshots and fixes, then final checklist pass 2 (docs/FINAL_CHECKLIST.md). Background: `pgrep -f regrade.sh` sleeps to 12:40 IST 29 Oct, then regrades the 8 flash-lite companies (log data/regrade2.log). When it finishes: compare verdicts, rerun evals/sample_grades.py and update evals/grades_review.md, redeploy, recheck screenshots. If the job died, restart: `nohup zsh pipeline/regrade.sh > data/regrade2.log 2>&1 &`.
+Next: final checklist pass 2 (docs/FINAL_CHECKLIST.md). Background: `pgrep -f regrade.sh` sleeps to 12:40 IST 29 Oct, then regrades the 8 flash-lite companies (log data/regrade2.log). When it finishes: compare verdicts, rerun evals/sample_grades.py and update evals/grades_review.md, redeploy, recheck screenshots. If the job died, restart: `nohup zsh pipeline/regrade.sh > data/regrade2.log 2>&1 &`.
 
 - [x] Brief analysis, company notes, ideation (docs/)
 - [x] Engine: finn/ (sources, classify, triage, results, people, ledger, research)
@@ -14,7 +14,8 @@ Next: critic round 2 on docs/img screenshots and fixes, then final checklist pas
 - [x] Regrade ledgers with gemini-3.5-flash (28 Oct): 11 of 19 on flash, then the 20/day limit hit; 8 on flash-lite, queued for 29 Oct 12:40 IST
 - [x] Hand review of 20 sampled grades: 18 hold (evals/grades_review.md)
 - [x] Redeployed and README screenshots refreshed (28 Oct ~13:05 IST)
-- [ ] Critic round 2, final checklist x2
+- [x] Critic round 2 (done inline on the fresh screenshots, not with sub-agents): repeated deadlines fixed; README company shot retaken
+- [ ] Final checklist x2
 - [x] Publish GitHub repo: https://github.com/vedant-22/finn
 
 ## Polish log (28 Oct)
@@ -31,3 +32,4 @@ Next: critic round 2 on docs/img screenshots and fixes, then final checklist pas
 - Today: the headline count rolls when switching 24h/3 days/Week/Month; tabular digits; off under reduced motion
 - Company: 'Opening the ledger' with the pulsing dot if the file takes over 400 ms; heading uses the holding's name while loading. Tested at 390x844 with a delayed request
 - Batch LLM calls wait out per-minute free-tier 429s (FINN_PATIENT=1, set by regrade.sh) instead of dropping to flash-lite; daily limits still drop a tier. Live API unchanged
+- Promise lines drop a 'by ...' the promise already states (every date word already in it), plus 'by by' and 'by unspecified'. Checked against all 194 graded promises
