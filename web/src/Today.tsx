@@ -132,8 +132,8 @@ function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; open
             <tr key={l.key}>
               <th scope="row">{l.label}</th>
               <td className="num">{cr(l.value)}</td>
-              <td className={`num ${tone(l.qoq)}`}>{pct(l.qoq)}</td>
-              <td className={`num ${tone(l.yoy)}`}>{pct(l.yoy)}</td>
+              <Chg v={l.qoq} base={l.prev} now={l.value} />
+              <Chg v={l.yoy} base={l.yago} now={l.value} />
             </tr>
           ))}
         </tbody>
@@ -160,6 +160,12 @@ function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; open
 </p>
     </div>
   )
+}
+
+// A percentage off a loss means nothing; a swing back to profit still deserves saying
+function Chg({ v, base, now }: { v: number | null; base: number | null; now: number | null }) {
+  if (v == null && base != null && base < 0 && now != null && now >= 0) return <td className={`num ${tone(1)} turn`}>from loss</td>
+  return <td className={`num ${tone(v)}`}>{pct(v)}</td>
 }
 
 function PeopleBlock({ f }: { f: any }) {
