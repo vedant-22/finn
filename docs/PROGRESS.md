@@ -1,6 +1,6 @@
 # Progress
 
-Next: (12:50 IST: 6/19 regraded) regrade job (pid from `pgrep -f regrade.sh`) sleeps to 12:40 IST then rebuilds ledgers; log in data/regrade.log. When done: `git diff --stat web/public/data`, sanity-check a few ledgers, run evals/sample_grades.py, write evals/grades_review.md, redeploy (`npx vercel deploy --prod --yes`), refresh README screenshots, critic round 2, final checklist pass 2. If the log is empty and no process is running, restart: `nohup zsh pipeline/regrade.sh > data/regrade.log &`.
+Next: critic round 2 on docs/img screenshots and fixes, then final checklist pass 2 (docs/FINAL_CHECKLIST.md). Background: `pgrep -f regrade.sh` sleeps to 12:40 IST 29 Oct, then regrades the 8 flash-lite companies (log data/regrade2.log). When it finishes: compare verdicts, rerun evals/sample_grades.py and update evals/grades_review.md, redeploy, recheck screenshots. If the job died, restart: `nohup zsh pipeline/regrade.sh > data/regrade2.log 2>&1 &`.
 
 - [x] Brief analysis, company notes, ideation (docs/)
 - [x] Engine: finn/ (sources, classify, triage, results, people, ledger, research)
@@ -11,8 +11,10 @@ Next: (12:50 IST: 6/19 regraded) regrade job (pid from `pgrep -f regrade.sh`) sl
 - [x] Evals: triage, results numbers, quote check (evals/)
 - [x] Critic round 1 (evaluator+engineer, designer+user) and fixes
 - [x] README, covering note, walkthrough script; slop_scan passes (walkthrough's long-sentence gate fails on purpose: it's spoken)
-- [ ] Regrade ledgers with gemini-3.5-flash after the free quota resets (pipeline/regrade.sh, runs 12:40 IST, log in data/regrade.log)
-- [ ] After regrade: refresh README screenshots, redeploy, critic round 2, final checklist x2
+- [x] Regrade ledgers with gemini-3.5-flash (28 Oct): 11 of 19 on flash, then the 20/day limit hit; 8 on flash-lite, queued for 29 Oct 12:40 IST
+- [x] Hand review of 20 sampled grades: 18 hold (evals/grades_review.md)
+- [x] Redeployed and README screenshots refreshed (28 Oct ~13:05 IST)
+- [ ] Critic round 2, final checklist x2
 - [x] Publish GitHub repo: https://github.com/vedant-22/finn
 
 ## Polish log (28 Oct)
@@ -27,3 +29,5 @@ Next: (12:50 IST: 6/19 regraded) regrade job (pid from `pgrep -f regrade.sh`) sl
 - Today data preloads in index.html, so it downloads alongside the JS (companies.json preload dropped: not used on the first screen)
 - Look up: Ready to open and Recent chips show names (companies.json is now {symbol: name}; the app still reads the old list). After the regrade, rerun the index line: build_ledgers writes it, but the running job uses the old code
 - Today: the headline count rolls when switching 24h/3 days/Week/Month; tabular digits; off under reduced motion
+- Company: 'Opening the ledger' with the pulsing dot if the file takes over 400 ms; heading uses the holding's name while loading. Tested at 390x844 with a delayed request
+- Batch LLM calls wait out per-minute free-tier 429s (FINN_PATIENT=1, set by regrade.sh) instead of dropping to flash-lite; daily limits still drop a tier. Live API unchanged
