@@ -4,38 +4,43 @@ The product checks management's word against evidence. That is what an auditor d
 
 ## Idea
 - **Tick marks are the signature.** Auditors vouch figures with small pencil marks: a tick for agreed, a cross for not agreed. Every promise in FINN gets one, drawn as a pencil stroke when it's graded. It is the only place with motion that isn't a reply to a tap.
-- **Paper and ink, not screens and glow.** A cool working-paper ground, blue-black ink, two pencil colours.
+- **Paper and ink, not screens and glow.** A white working paper, near-black ink, pencil colours only on marks.
 - **Quiet by default.** Most of a screen is ink on paper. Red and green appear only on marks and on the numbers they judge.
 
+## Language
+Calm and spacious, after the reference studied in `design/inspiration.md`: one idea per screen, type and whitespace instead of boxes, hairline rules, pill controls, one quiet reveal.
+
 ## Colour
-| Token | Hex | Role |
-|---|---|---|
-| paper | #EDF0E8 | ground (cool working-paper green, not cream) |
-| sheet | #F7F8F4 | raised surfaces: sheets, the open card |
-| ink | #1C2838 | text, figures (blue-black ink, not grey-black) |
-| ink-2 | #5B6573 | secondary text |
-| rule | #CCD5C8 | ledger rules, dividers |
-| kept | #2E7A4E | green pencil: kept, up moves |
-| missed | #B23A2C | red pencil: missed, down moves |
-| partly | #A86A12 | ochre pencil: partly, late |
-| quiet | #8B9088 | graphite: quiet, pending, folded |
-| mark | #F2DF6B | highlighter, once per screen at most, on the number that matters |
+Drawn from ENAM Holdings' site (white ground, black text, grey #6A6970, ENAM blue #005DA3, #D2D2D2 rules). Each colour has one role.
+| Token | Hex | Role | Contrast on white |
+|---|---|---|---|
+| paper | #FFFFFF | ground | |
+| sheet | #F5F6F8 | the one tinted panel, the bottom sheet, inputs | |
+| ink | #1F1F24 | text, figures | 16.6 |
+| ink-2 | #6A6970 | secondary text (ENAM grey) | 5.5 |
+| rule | #DCDCDE | hairlines | |
+| accent | #005DA3 | ENAM blue: the primary button, the active tab, the newest volume bar. Rare | 6.6 |
+| kept | #2E7A4E | kept, up moves | 5.3 |
+| missed | #B23A2C | missed, down moves | 6.0 |
+| partly | #94600F | partly, late | 5.3 |
+| quiet | #8E8D93 | marks for pending and folded (not text) | |
 
 ## Type
-One family, Archivo (variable weight and width). Width does the work a second face usually does:
-- Display figures: width 112–125, weight 600, tabular figures.
-- Company names: width 112, weight 650, sentence case.
-- Body: width 100, weight 400, 15/22.
-- Dense tables and quotes: width 85, weight 400–500, 13/18.
-Scale (px): 12, 13, 15, 17, 22, 30, 44. No all-caps labels, no letter-spaced eyebrows.
+Inter (variable) and PT Serif, both bundled.
+- Big figure: Inter 72/72, weight 500, −5% tracking, tabular.
+- Headings: Inter 26–30, weight 450, −4%. Company names in lists: 21, weight 500.
+- Body: Inter 15/21, −1%. Small: 13–14.
+- Explaining sentences (the agent speaking: story lines, the read, verdicts, notes): PT Serif 16/22.
+No uppercase labels.
 
 ## Space and shape
-4px base; 8, 12, 16, 24, 32. Screen gutter 16. Radius 6 on sheets only, 0 on ledger rows. No drop shadows except the bottom sheet (one soft edge). Row rules are 1px `rule`.
+4px base; 8, 12, 16, 24, 32, 48. Gutter 16. Square corners except pills (999px) and the sheet's top (16px). No shadows. Rules are 1px `rule`.
 
 ## Motion
-- Tick marks draw in (stroke-dashoffset, 280ms, ease-out), staggered 60ms, when a ledger opens or a grade arrives.
-- Sheets slide up 220ms. Expanding rows animate height via transform/opacity only.
-- `prefers-reduced-motion`: marks appear drawn.
+- One reveal: blocks fade in and rise 12px as they enter the view, 900ms, cubic-bezier(.19,1,.22,1); the first three stagger 90ms.
+- Tick marks draw in (280ms) when they come into view; the headline count rolls.
+- Sheets slide up 220ms.
+- `prefers-reduced-motion`: everything appears in place.
 
 ## Icons
 None from icon sets. The marks (tick, cross, half-tick, open circle, dot) are drawn here as SVG paths with a slight hand wobble. Navigation is words.
