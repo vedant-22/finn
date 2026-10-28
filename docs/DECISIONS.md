@@ -49,7 +49,7 @@ Passed on: a feed with summaries (what MarketPing, Stox AI and Alpha Tribe alrea
 
 Working-paper look, kept simple: white ground, near-black ink, ENAM blue used rarely, and auditor's tick marks drawn in coloured pencil. Inter for headings and figures, PT Serif for the sentences where FINN explains. Sections are split by hairlines, not boxes, and blocks fade in as they scroll into view. The rules are in `design/inspiration.md` and `DESIGN.md`. (The first version used pale green paper and Archivo; the 28 Oct redesign made it calmer.) I passed on dark mode and a chat input. Both pull toward a trading terminal, which is the wrong world for a long-only fund.
 
-Numbers are written the way an Indian investor says them, whatever the model wrote: ₹ and crore ('INR 300 crores' and '300 crore rupees' become '₹300 crore'), Indian grouping (₹2,85,874), lakh crore instead of trillion (₹7.79 lakh crore), and fiscal years named outright ('this year' in a November call becomes FY26). This is display only, in one tested function (`rupees` in `web/src/lib.ts`). Quotes from transcripts are never touched.
+Numbers are written the way an Indian investor says them, whatever the model wrote: ₹ and crore ('INR 300 crores' and '300 crore rupees' become '₹300 crore'), Indian grouping (₹2,85,874), lakh crore instead of trillion (₹7.79 lakh crore), and fiscal years named outright ('this year' in a November call becomes FY26). This is display only, in two tested functions (`rupees` and `deadline` in `web/src/lib.ts`). Quotes from transcripts are never touched.
 
 ## Deviations from my working guidelines
 
