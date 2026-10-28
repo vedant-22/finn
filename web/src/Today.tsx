@@ -179,6 +179,17 @@ function Chg({ v, base, now }: { v: number | null; base: number | null; now: num
   return <td className={`num ${tone(v)}`}>{pct(v)}</td>
 }
 
+// Filings write 'October 30, 2026', '30th September 2026' or 'close of business hours of 30 September 2026'. Say '30 Oct'.
+const MON3 = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+function effDate(raw: string, filed: string) {
+  const t = raw.replace(/(\d+)(st|nd|rd|th)\b/g, '$1')
+  const a = t.match(/(\d{1,2})[\s-]+([A-Za-z]{3,})[\s,-]+(\d{4})/), b = t.match(/([A-Za-z]{3,})\s+(\d{1,2}),?\s+(\d{4})/)
+  const [d, mon, y] = a ? [a[1], a[2], a[3]] : b ? [b[2], b[1], b[3]] : []
+  const m = mon ? MON3.indexOf(mon.slice(0, 3).toLowerCase()) : -1
+  if (m < 0) return t
+  return `${+d!} ${mon!.slice(0, 1).toUpperCase()}${MON3[m].slice(1)}${y === filed.slice(0, 4) ? '' : ` ${y}`}`
+}
+
 function PeopleBlock({ f }: { f: any }) {
   const order = { top: 0, board: 1, senior: 2, other: 3 } as Record<string, number>
   const ppl = [...f.people].sort((a: any, b: any) => (+reclass(a) - +reclass(b)) || (order[a.seniority] - order[b.seniority]) || (a.action === 'appointed' ? -1 : 1))
@@ -190,7 +201,7 @@ function PeopleBlock({ f }: { f: any }) {
         return (
           <li key={i} className={joining || moved ? 'in' : 'out'}>
             <div className="who"><b>{p.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')}</b>
-              <span className="role">{moved ? `Stays ${p.role}, off the senior management list` : `${verb(p.action)} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${p.effective.replace(/(\d+)(st|nd|rd|th)/, '$1')}` : ''}</span></div>
+              <span className="role">{moved ? `Stays ${p.role}, off the senior management list` : `${verb(p.action)} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${effDate(p.effective, f.at)}` : ''}</span></div>
             {joining && p.background && !/not stated|not provided|^$|^designated as|^.{0,60}\bhas (assumed|been appointed)/i.test(p.background) && <p className="bio">{p.background}</p>}
             {joining && p.previous?.length > 0 && <p className="prev">{p.previous.join('; ')}</p>}
             {!joining && !moved && p.reason && !/not stated|^leaving the company\.?$|no other material reason/i.test(p.reason) && <p className="bio">Reason given: {p.reason}</p>}
