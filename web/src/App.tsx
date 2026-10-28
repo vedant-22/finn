@@ -54,7 +54,12 @@ export function App() {
   useLayoutEffect(() => { window.scrollTo(0, toY.current) }, [route])
   const setLines = (l: Lines) => { setLinesState(l); saveLines(l) }
   const openCompany = useCallback((s: string) => { setPrev(location.hash || '#/'); location.hash = `#/c/${s}` }, [])
-  const go = (t: Route['tab']) => { location.hash = t === 'today' ? '#/' : `#/${t}` }
+  const go = (t: Route['tab']) => {
+    const h = t === 'today' ? '#/' : `#/${t}`
+    // Tapping the tab you're on goes back to the top, as on any phone app
+    if ((location.hash || '#/') === h) window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
+    else location.hash = h
+  }
 
   if (err) return <div className="boot"><p>Couldn't load your filings. {plainError(err)}</p><button className="text-btn" onClick={() => location.reload()}>Try again</button></div>
   if (!push) return <div className="boot"><Mark status="kept" size={36} /></div>
