@@ -140,7 +140,7 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
         <ul>
           {c.calls.map(x => (
             <li key={x.period}><Src href={x.url}>{x.period} call</Src>
-              <span className="sub"> {x.error ? 'could not be read' : `${x.pages} pages, ${x.found} ${x.found === 1 ? 'promise' : 'promises'} found, quotes checked`}</span></li>
+              <span className="sub"> {x.error ? 'could not be read' : !x.found ? `${x.pages} pages, no promise with a number and a date` : `${x.pages} pages, ${x.found} ${x.found === 1 ? 'promise' : 'promises'} found, quotes checked`}</span></li>
           ))}
           <li><Src href={c.source}>Financial tables</Src><span className="sub"> screener.in, {c.basis}, compiled from filed results</span></li>
         </ul>
