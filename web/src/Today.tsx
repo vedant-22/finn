@@ -218,10 +218,11 @@ function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; open
       {r.one_offs?.length > 0 && (
         <p className="one-off sub">{r.one_offs.map((o: any) => `${o.q === r.quarter ? "This quarter's" : o.q} profit includes ${[o.tax_credit && `a ₹${cr(o.tax_credit)} cr tax credit`, o.exceptional && `₹${cr(Math.abs(o.exceptional))} cr of exceptional items`].filter(Boolean).join(' and ')}.`).join(' ')}</p>
       )}
-      {word.length > 0 && (
+      {/* The card already shows the first promise; the detail adds the one after it */}
+      {word.length > 1 && (
         <div className="against">
-          <h4 className="lbl lbl-quiet">Against what they said</h4>
-          {word.map(p => (
+          <h4 className="lbl lbl-quiet">{word.slice(1).every(p => p.status === 'pending') ? 'Still running' : 'Also against what they said'}</h4>
+          {word.slice(1).map(p => (
             <button key={p.id} className="word-row" onClick={() => openCompany(symbol, p.id)}>
               <span className="word-t">{rupees(p.target.charAt(0).toUpperCase() + p.target.slice(1))}{deadline(p) ? ` ${deadline(p)}` : ''}</span>
               <StatusLabel status={p.status} />
