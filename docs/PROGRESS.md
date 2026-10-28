@@ -1,6 +1,6 @@
 # Progress
 
-Next: keep polishing from the 'Never sit idle' list. Background: `pgrep -f regrade.sh` sleeps to 12:40 IST 29 Oct, then regrades the 8 flash-lite companies (log data/regrade2.log). When it finishes: compare verdicts, rerun evals/sample_grades.py and update evals/grades_review.md, redeploy, recheck screenshots. If the job died, restart: `nohup zsh pipeline/regrade.sh > data/regrade2.log 2>&1 &`.
+Next: design upgrade critic round (designer, ENAM evaluator, muted investor) on the new screenshots in docs/img vs shots/ref-bdc-390*.png, then fix. Background: `pgrep -f regrade.sh` sleeps to 12:40 IST 29 Oct, then regrades the 8 flash-lite companies (log data/regrade2.log). When it finishes: compare verdicts, rerun evals/sample_grades.py and update evals/grades_review.md, redeploy, recheck screenshots. If the job died, restart: `nohup zsh pipeline/regrade.sh > data/regrade2.log 2>&1 &`.
 
 - [x] Brief analysis, company notes, ideation (docs/)
 - [x] Engine: finn/ (sources, classify, triage, results, people, ledger, research)
@@ -45,3 +45,9 @@ Next: keep polishing from the 'Never sit idle' list. Background: `pgrep -f regra
 - Promise marks (tick, cross, ring) draw when they scroll into view, not all at once on load, so cards lower on Today and Book get their pencil stroke when the reader reaches them (one shared IntersectionObserver; reduced motion unchanged). Tested at 390x844 (Today far card, Book scroll, company → Back); deployed and checked live 28 Oct ~14:15 IST
 - Company numbers: negative figures (cash conversion cycle, return on capital, debt to equity, ₹ crore) use a true minus (−151 days, was -151), matching the % figures elsewhere. Tested at 390x844 on L&T; deployed and checked live 28 Oct ~14:30 IST
 - Company numbers: Profit after tax and Net interest income show the change on a year ago (from the same quarter a year back in the file), like Revenue already did; Home First was ₹170 cr with nothing under it, now +29%, matching its Today card. Tested at 390x844 on Home First and L&T; deployed and checked live 28 Oct ~14:02 IST
+
+## Design upgrade (28 Oct)
+- Studied the reference at 390x844 (shots/ref-bdc-390*.png, not committed) and its source: Inter + PT Serif, 30/26/21/16/14 mobile scale with tight tracking, hairlines, pill controls, stagger fade on expo-decelerate. Rules in design/inspiration.md
+- ENAM palette sampled from enam.com: white, black, grey #6A6970, ENAM blue #005DA3, #D2D2D2 rules. DESIGN.md now has the palette with roles and contrast, and the new type
+- Restyle (CSS + fonts, no feature changes): white ground, ENAM blue only on the primary button, active tab and newest volume bar; Today cards are hairline sections, not tinted boxes; 72px headline count; window choice is pills; Look up input is a single underline with a blue pill button; PT Serif for the sentences FINN says (story lines, the read, verdicts, notes); one reveal (fade and rise 12px, 900 ms, first three staggered) via one observer in main.tsx; reduced motion shows everything in place. Icon is a white tick on ENAM blue
+- Tested at 390x844 (Today, Book, Company, Look up, Your lines); deployed and checked live 28 Oct ~16:22 IST; README screenshots retaken from the live link; DECISIONS design paragraph updated

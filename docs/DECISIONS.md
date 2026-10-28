@@ -47,7 +47,7 @@ Passed on: a feed with summaries (what MarketPing, Stox AI and Alpha Tribe alrea
 
 ## Design
 
-Working-paper look: pale green paper and blue-black ink, with auditor's tick marks drawn in coloured pencil. One typeface (Archivo) using its width axis instead of a second family. Details in `DESIGN.md`. I passed on dark mode and a chat input. Both pull toward a trading terminal, which is the wrong world for a long-only fund.
+Working-paper look, kept simple: white ground, near-black ink, ENAM blue used rarely, and auditor's tick marks drawn in coloured pencil. Inter for headings and figures, PT Serif for the sentences where FINN explains. Sections are split by hairlines, not boxes, and blocks fade in as they scroll into view. The rules are in `design/inspiration.md` and `DESIGN.md`. (The first version used pale green paper and Archivo; the 28 Oct redesign made it calmer.) I passed on dark mode and a chat input. Both pull toward a trading terminal, which is the wrong world for a long-only fund.
 
 ## Deviations from my working guidelines
 
