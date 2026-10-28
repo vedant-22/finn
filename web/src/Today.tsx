@@ -140,6 +140,9 @@ function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; open
         <p className="margin-line">EBITDA margin <b className="num">{r.ebitda_margin}%</b>
           <span className="sub">, from {r.prev_margin}% last quarter and {r.yago_margin}% a year ago</span></p>
       )}
+      {r.one_offs?.length > 0 && (
+        <p className="one-off sub">{r.one_offs.map((o: any) => `${o.q === r.quarter ? "This quarter's" : o.q} profit includes ${[o.tax_credit && `a ₹${cr(o.tax_credit)} cr tax credit`, o.exceptional && `₹${cr(Math.abs(o.exceptional))} cr of exceptional items`].filter(Boolean).join(' and ')}.`).join(' ')}</p>
+      )}
       {word.length > 0 && (
         <div className="against">
           <h4>Against what they said</h4>
@@ -151,7 +154,7 @@ function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; open
           ))}
         </div>
       )}
-      <p className="src-line"><Src href={r.source.xbrl}>Exchange XBRL</Src> <Src href={r.source.pdf}>Results PDF</Src>
+      <p className="src-line"><Src href={r.source.xbrl}>Exchange XBRL</Src>{/\.pdf$/i.test(r.source.pdf || '') && <> <Src href={r.source.pdf}>Results PDF</Src></>}
 </p>
     </div>
   )

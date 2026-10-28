@@ -38,7 +38,10 @@ def parse(xml):
         pbt = _val(xml, "ProfitBeforeTax")
         pat = _val(xml, "ProfitLossForPeriod")
     f = lambda v: round(v / cr, 1) if v is not None else None
-    return {"bank": bank or lender, "bank_kind": "bank" if bank else "lender" if lender else "", "revenue": f(rev), "ebitda": f(ebitda), "pbt": f(pbt), "pat": f(pat)}
+    # One-offs that move PAT without the business moving: exceptional items and a tax credit.
+    exc, tax = (None, None) if bank else (_val(xml, "ExceptionalItemsBeforeTax"), _val(xml, "TaxExpense"))
+    return {"bank": bank or lender, "bank_kind": "bank" if bank else "lender" if lender else "", "revenue": f(rev), "ebitda": f(ebitda), "pbt": f(pbt), "pat": f(pat),
+            "exceptional": f(exc), "tax": f(tax)}
 
 def _qe(s):
     return dt.datetime.strptime(s.title(), "%d-%b-%Y").date()
@@ -75,7 +78,7 @@ def first_cut(symbol, quarter_end=None):
         if not r or not r.get("xbrl"):
             return None
         xml = nse.session().get(r["xbrl"], timeout=30).text
-        return {**parse(xml), "q": _fy_label(d), "xbrl": r["xbrl"], "pdf": r.get("pdf_attach"), "filed": r.get("broadcast_Date")}
+        return {**parse(xml), "q": _fy_label(d), "xbrl": r["xbrl"], "pdf": r.get("pdf_attach") if (r.get("pdf_attach") or "").lower().endswith(".pdf") else None, "filed": r.get("broadcast_Date")}
 
     cur, prev, yago = get(qe), get(_shift(qe, -3)), get(_shift(qe, -12))
     if not cur:
@@ -91,7 +94,17 @@ def first_cut(symbol, quarter_end=None):
             "prev_margin": round(prev["ebitda"] / prev["revenue"] * 100, 1) if prev and prev["ebitda"] and prev["revenue"] and not cur["bank"] else None,
             "yago_margin": round(yago["ebitda"] / yago["revenue"] * 100, 1) if yago and yago["ebitda"] and yago["revenue"] and not cur["bank"] else None,
             "source": {"xbrl": cur["xbrl"], "pdf": cur["pdf"], "filed": cur["filed"]},
-            "compare": {"prev": prev and prev["q"], "yago": yago and yago["q"]}}
+            "compare": {"prev": prev and prev["q"], "yago": yago and yago["q"]},
+            "one_offs": [o for o in (_one_off(x) for x in (cur, prev, yago) if x) if o]}
+
+def _one_off(q):
+    """Exceptional items over 5% of PBT, or a tax credit (negative tax), so a PAT swing can be read for what it is."""
+    exc, tax, pbt = q.get("exceptional") or 0, q.get("tax"), q.get("pbt")
+    big_exc = exc and pbt and abs(exc) >= 0.05 * abs(pbt)
+    credit = tax is not None and tax < 0
+    if not big_exc and not credit:
+        return None
+    return {"q": q["q"], "exceptional": exc if big_exc else None, "tax_credit": -tax if credit else None}
 
 def _chg(a, b):
     if a is None or b in (None, 0):
