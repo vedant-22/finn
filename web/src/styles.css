@@ -124,6 +124,11 @@ blockquote { margin: 0; }
 /* ---------- book ---------- */
 .book .top { flex-direction: column; gap: 0; align-items: flex-start; }
 .book .top .sub { font-size: 13px; }
+.tally-btn { display: flex; align-items: center; gap: 5px; min-height: 36px; padding: 0 6px; margin: 0 -6px; border-radius: 6px; color: var(--ink); }
+.tally-btn span { text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+.tally-btn.on { background: var(--paper); }
+.tally-btn.on span { text-decoration-color: var(--ink); }
+.book-filter { display: flex; align-items: center; justify-content: space-between; margin: 12px 0 -8px; font-size: 14px; }
 .book-list { list-style: none; padding: 0; margin: 12px 0 0; }
 .book-row { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; width: 100%; padding: 12px 0; border-top: 1px solid var(--rule); min-height: 64px; }
 .book-name b { font-weight: 650; font-variation-settings: 'wdth' 112; font-size: 16px; display: block; line-height: 21px; }

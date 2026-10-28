@@ -5,6 +5,7 @@ import { Mark } from './ui'
 // The whole book, ordered by how far management's word has held. Weakest first: that's where to look.
 export function Book({ push, openCompany }: { push: Push; openCompany: (s: string) => void }) {
   const [cos, setCos] = useState<Record<string, Company | null>>({})
+  const [only, setOnly] = useState<Status | null>(null)
   useEffect(() => {
     push.portfolio.forEach(p => getCompany(p.symbol).then(c => setCos(prev => ({ ...prev, [p.symbol]: c }))))
   }, [push])
@@ -17,13 +18,15 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
   })
   const missed = (c?: Company | null) => c ? c.ledger.filter(x => x.hard && x.status === 'missed').length : 0
   rows.sort((a, b) => (a.score?.ratio ?? 2) - (b.score?.ratio ?? 2) || missed(b.c) - missed(a.c) || (b.score?.graded ?? 0) - (a.score?.graded ?? 0))
+  const shown = only ? rows.filter(r => r.c?.ledger.some(x => x.hard && x.status === only)) : rows
 
   return (
     <main className="screen book">
       <header className="top"><h1>Your book</h1><span className="sub">{push.portfolio.length} holdings, weakest word first</span></header>
-      <BookTally cos={Object.values(cos)} />
+      <BookTally cos={Object.values(cos)} only={only} setOnly={setOnly} />
+      {only && <p className="book-filter sub" aria-live="polite">{shown.length} with {WITH[only]} <button className="text-btn" onClick={() => setOnly(null)}>Show all</button></p>}
       <ul className="book-list">
-        {rows.map(({ p, c, score, last }) => {
+        {shown.map(({ p, c, score, last }) => {
           const marks = (c?.ledger || []).filter(x => x.hard && x.status !== 'unclear')
             .sort((a, b) => ORDER.indexOf(a.status) - ORDER.indexOf(b.status))
           return (
@@ -53,11 +56,13 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
 }
 const ORDER: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
 const WORDS: Partial<Record<Status, string>> = { kept: 'kept', partly: 'partly kept', missed: 'missed', quiet: 'gone quiet', pending: 'not due' }
+const WITH: Partial<Record<Status, string>> = { kept: 'a promise kept', partly: 'a promise partly kept', missed: 'a promise missed', quiet: 'a promise gone quiet', pending: 'a promise not yet due' }
 const summary = (ss: Status[]) => (['missed', 'quiet', 'partly', 'kept', 'pending'] as Status[])
   .map(st => [st, ss.filter(x => x === st).length] as const).filter(([, n]) => n).map(([st, n]) => `${n} ${WORDS[st]}`).join(', ')
 
 // Across the whole book: how many promises management teams have kept, missed or let go quiet.
-function BookTally({ cos }: { cos: (Company | null)[] }) {
+// Tap a count to see only the companies behind it; tap again for the whole book.
+function BookTally({ cos, only, setOnly }: { cos: (Company | null)[]; only: Status | null; setOnly: (s: Status | null) => void }) {
   const all = cos.flatMap(c => (c?.ledger || []).filter(p => p.hard))
   if (!all.length) return null
   const n = (st: Status) => all.filter(p => p.status === st).length
@@ -67,7 +72,13 @@ function BookTally({ cos }: { cos: (Company | null)[] }) {
     <section className="book-tally" aria-label="Promises across your book">
       <p className="sub">Promises across your book</p>
       <ul className="tally">
-        {items.map(([st, label]) => n(st) ? <li key={st}><Mark status={st} size={18} /><b className="num">{n(st)}</b> <span>{label}</span></li> : null)}
+        {items.map(([st, label]) => n(st) ? (
+          <li key={st}>
+            <button className={`tally-btn${only === st ? ' on' : ''}`} aria-pressed={only === st} onClick={() => setOnly(only === st ? null : st)}>
+              <Mark status={st} size={18} /><b className="num">{n(st)}</b> <span>{label}</span>
+            </button>
+          </li>
+        ) : null)}
       </ul>
     </section>
   )
