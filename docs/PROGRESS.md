@@ -1,6 +1,6 @@
 # Progress
 
-Next: regrade job started 10:06 IST via `nohup zsh pipeline/regrade.sh > data/regrade.log` (sleeps to 12:40 IST). If data/regrade.log is empty and no process (`pgrep -f regrade.sh`), restart it. After regrade: run evals/sample_grades.py, write evals/grades_review.md.
+Next: regrade job (pid from `pgrep -f regrade.sh`) sleeps to 12:40 IST then rebuilds ledgers; log in data/regrade.log. When done: `git diff --stat web/public/data`, sanity-check a few ledgers, run evals/sample_grades.py, write evals/grades_review.md, redeploy (`npx vercel deploy --prod --yes`), refresh README screenshots, critic round 2, final checklist pass 2. If the log is empty and no process is running, restart: `nohup zsh pipeline/regrade.sh > data/regrade.log &`.
 
 - [x] Brief analysis, company notes, ideation (docs/)
 - [x] Engine: finn/ (sources, classify, triage, results, people, ledger, research)
