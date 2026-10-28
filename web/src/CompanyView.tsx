@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { cr, deadline, minus, pct, rupees, shortName, tone, type Company, type Promise_, type Status } from './lib'
-import { Bars, Mark, Src, STATUS_WORD } from './ui'
+import { Bars, fyLabel, Mark, Src, STATUS_WORD } from './ui'
 
 const SHOW: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
 
@@ -122,8 +122,8 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
               sub={s.cash_conversion5 != null ? (s.cash_conversion5 >= 90 ? 'Profits are turning into cash.' : s.cash_conversion5 >= 60 ? 'Some profit is stuck in working capital.' : 'Profits are not turning into cash.') : null} />
             <Fig label="Debt to equity" value={s.de != null ? minus(s.de) : '–'} sub={s.debt != null ? `₹${cr(s.debt)} cr borrowed` : null} />
             <Fig label="Cash conversion cycle" value={s.ccc?.length ? `${minus(s.ccc[s.ccc.length - 1])} days` : '–'}
-              sub={s.ccc?.length > 1 ? `${minus(s.ccc[0])} days in ${s.years[0]?.split(' ')[1]}` : null} />
-            <Fig label="Return on capital" value={s.roce?.length ? `${minus(s.roce[s.roce.length - 1])}%` : '–'} sub={s.roce?.length > 1 ? `${minus(s.roce[0])}% in ${s.years[0]?.split(' ')[1]}` : null} />
+              sub={s.ccc?.length > 1 ? `${minus(s.ccc[0])} days in ${fyLabel(s.years[0])}` : null} />
+            <Fig label="Return on capital" value={s.roce?.length ? `${minus(s.roce[s.roce.length - 1])}%` : '–'} sub={s.roce?.length > 1 ? `${minus(s.roce[0])}% in ${fyLabel(s.years[0])}` : null} />
           </div>
         )}
       </section>

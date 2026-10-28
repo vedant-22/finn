@@ -106,6 +106,9 @@ export function Spark({ series, w = 120, h = 36 }: { series: Bar[]; w?: number; 
   )
 }
 
+// 'Mar 2021' is the year to March 2021: FY21
+export const fyLabel = (s?: string) => (s || '').replace(/^Mar \d\d(\d\d)$/, 'FY$1')
+
 export function Bars({ values, labels, w = 150, h = 44, fmt }: { values: (number | null)[]; labels: string[]; w?: number; h?: number; fmt?: (v: number) => string }) {
   const vs = values.map(v => v ?? 0)
   const max = Math.max(...vs.map(Math.abs), 1)
@@ -117,8 +120,8 @@ export function Bars({ values, labels, w = 150, h = 44, fmt }: { values: (number
         return <rect key={i} x={i * bw + bw * 0.18} width={bw * 0.64} y={v >= 0 ? h - bh : h} height={Math.max(bh, 1)}
           className={i === vs.length - 1 ? 'bar-last' : v < 0 ? 'bar-neg' : 'bar'} />
       })}
-      <text x={0} y={h + 12} className="bars-label">{labels[0]?.replace(/^\w+ /, '’').slice(0, 3)}</text>
-      <text x={w} y={h + 12} className="bars-label" textAnchor="end">{labels[labels.length - 1]?.replace(/^\w+ /, '’')}</text>
+      <text x={0} y={h + 12} className="bars-label">{fyLabel(labels[0])}</text>
+      <text x={w} y={h + 12} className="bars-label" textAnchor="end">{fyLabel(labels[labels.length - 1])}</text>
     </svg>
   )
 }
