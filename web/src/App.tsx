@@ -96,6 +96,8 @@ function CompanyRoute({ sym, sector, title, back }: { sym: string; sector?: stri
   const [steps, setSteps] = useState<Step[]>([])
   const [failed, setFailed] = useState('')
   const [attempt, setAttempt] = useState(0)
+  const [slow, setSlow] = useState(false)
+  useEffect(() => { setSlow(false); const t = setTimeout(() => setSlow(true), 400); return () => clearTimeout(t) }, [sym, attempt])
   useEffect(() => {
     let live = true
     setC(undefined); setSteps([]); setFailed('')
@@ -110,7 +112,8 @@ function CompanyRoute({ sym, sector, title, back }: { sym: string; sector?: stri
   return (
     <main className="screen building">
       <header className="top"><button className="text-btn back" onClick={back}>Back</button><span className="sub">{sym}</span></header>
-      <h1 className="co-name">{sym}</h1>
+      <h1 className="co-name">{title || sym}</h1>
+      {!failed && steps.length === 0 && slow && <p className="sub opening"><span className="dot-run" />Opening the ledger</p>}
       {!failed && steps.length > 0 && <p className="sub">Reading its last five earnings calls and filed results. About a minute.</p>}
       <ul className="steps">
         {steps.map((s, i) => (
