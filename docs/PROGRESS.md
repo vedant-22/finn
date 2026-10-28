@@ -19,3 +19,4 @@ Next: regrade job started 10:06 IST via `nohup zsh pipeline/regrade.sh > data/re
 - Plain-English errors with Try again on live lookup (quota, network, timeout) and on boot; tested at 390x844 with a mocked 429
 - Today says so when nothing crossed the lines
 - Standard web-app-capable meta (console warning gone)
+- "Your lines" sheet: grab handle, drag down to close (short drags snap back)

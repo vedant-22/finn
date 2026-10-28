@@ -74,11 +74,22 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
     ref.current?.focus()
     return () => window.removeEventListener('keydown', k)
   }, [open, onClose])
+  // Drag the head down to close, like a native sheet.
+  const drag = useRef<number | null>(null)
+  const down = (e: React.PointerEvent) => { if ((e.target as HTMLElement).closest('button')) return; drag.current = e.clientY; (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); if (ref.current) ref.current.style.transition = 'none' }
+  const move = (e: React.PointerEvent) => { if (drag.current === null || !ref.current) return; ref.current.style.transform = `translateY(${Math.max(0, e.clientY - drag.current)}px)` }
+  const up = (e: React.PointerEvent) => {
+    if (drag.current === null || !ref.current) return
+    const dy = e.clientY - drag.current; drag.current = null
+    ref.current.style.transition = ''; ref.current.style.transform = ''
+    if (dy > 80) onClose()
+  }
   return (
     <div className={`sheet-wrap ${open ? 'open' : ''}`} aria-hidden={!open}>
       <div className="scrim" onClick={onClose} />
       <div className="sheet" role="dialog" aria-modal="true" aria-label={title} tabIndex={-1} ref={ref}>
-        <div className="sheet-head">
+        <div className="sheet-head" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
+          <span className="grab" aria-hidden />
           <h2>{title}</h2>
           <button className="text-btn" onClick={onClose}>Done</button>
         </div>
