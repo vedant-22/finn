@@ -3,7 +3,7 @@ import { CompanyView } from './CompanyView'
 import { Book } from './Book'
 import { Today } from './Today'
 import {
-  buildLive, CATEGORY_LABEL, DEFAULT_LINES, getCompany, getPush, loadLines, saveLines, shortName,
+  buildLive, CATEGORY_LABEL, plainError, DEFAULT_LINES, getCompany, getPush, loadLines, saveLines, shortName,
   type Company, type Lines, type Push, type Step,
 } from './lib'
 import { Mark, Sheet } from './ui'
@@ -33,7 +33,7 @@ export function App() {
   const openCompany = useCallback((s: string) => { setPrev(location.hash || '#/'); location.hash = `#/c/${s}` }, [])
   const go = (t: Route['tab']) => { location.hash = t === 'today' ? '#/' : `#/${t}` }
 
-  if (err) return <div className="boot">Couldn't load your filings. {err}. Pull to refresh.</div>
+  if (err) return <div className="boot"><p>Couldn't load your filings. {plainError(err)}</p><button className="text-btn" onClick={() => location.reload()}>Try again</button></div>
   if (!push) return <div className="boot"><Mark status="kept" size={36} /></div>
   const holding = (s?: string) => push.portfolio.find(p => p.symbol === s)
 
@@ -95,6 +95,7 @@ function CompanyRoute({ sym, sector, title, back }: { sym: string; sector?: stri
   const [c, setC] = useState<Company | null | undefined>(undefined)
   const [steps, setSteps] = useState<Step[]>([])
   const [failed, setFailed] = useState('')
+  const [attempt, setAttempt] = useState(0)
   useEffect(() => {
     let live = true
     setC(undefined); setSteps([]); setFailed('')
@@ -104,13 +105,13 @@ function CompanyRoute({ sym, sector, title, back }: { sym: string; sector?: stri
       buildLive(sym, s => live && setSteps(s)).then(x => live && setC(x)).catch(e => live && setFailed(e.message))
     })
     return () => { live = false }
-  }, [sym])
+  }, [sym, attempt])
   if (c) return <CompanyView c={c} sector={sector} title={title} back={back} />
   return (
     <main className="screen building">
       <header className="top"><button className="text-btn back" onClick={back}>Back</button><span className="sub">{sym}</span></header>
       <h1 className="co-name">{sym}</h1>
-      <p className="sub">Reading its last five earnings calls and filed results. About a minute.</p>
+      {!failed && <p className="sub">Reading its last five earnings calls and filed results. About a minute.</p>}
       <ul className="steps">
         {steps.map((s, i) => (
           <li key={i} className={`step ${s.state}`}>
@@ -119,7 +120,13 @@ function CompanyRoute({ sym, sector, title, back }: { sym: string; sector?: stri
           </li>
         ))}
       </ul>
-      {failed && <p className="fail">{failed.includes('NotFound') || failed.includes('404') ? `No listed company found for ${sym}. Check the NSE symbol.` : `Stopped: ${failed}`}</p>}
+      {failed && <div className="fail-box">
+        <p className="fail">{/NotFound|404/.test(failed) ? `No listed company found for ${sym}. Check the NSE symbol.` : plainError(failed)}</p>
+        <div className="fail-acts">
+          {!/NotFound|404/.test(failed) && <button className="text-btn" onClick={() => setAttempt(a => a + 1)}>Try again</button>}
+          <a className="text-btn" href="#/look">Pick another company</a>
+        </div>
+      </div>}
     </main>
   )
 }

@@ -179,6 +179,15 @@ export function remember(c: Company) {
 
 // Live research for a ticker we haven't built: three kinds of request, each well inside a serverless time limit.
 export type Step = { label: string; state: 'wait' | 'run' | 'done' | 'fail'; detail?: string }
+// Turn API and model errors into a sentence an investor can act on.
+export function plainError(m: string): string {
+  if (/429|RESOURCE_EXHAUSTED|quota/i.test(m)) return 'The free model quota is used up for now. It resets daily; companies already read still open.'
+  if (/NotFound|404/.test(m)) return 'No listed company with that NSE symbol.'
+  if (/Failed to fetch|NetworkError|Load failed/i.test(m)) return 'No connection. Check your network and try again.'
+  if (/50[0-9]|timeout|timed out/i.test(m)) return 'The server took too long. Try again in a minute.'
+  return m.length > 90 ? m.slice(0, 90) + '…' : m
+}
+
 export async function buildLive(sym: string, onStep: (steps: Step[]) => void): Promise<Company> {
   const steps: Step[] = [{ label: 'Financials', state: 'run' }]
   const emit = () => onStep(steps.map(s => ({ ...s })))
@@ -191,7 +200,7 @@ export async function buildLive(sym: string, onStep: (steps: Step[]) => void): P
   }
   let src: any
   try { src = await post('/api/sources', { symbol: sym }) } catch (e: any) {
-    steps[0].state = 'fail'; steps[0].detail = e.message; emit(); throw e
+    steps[0].state = 'fail'; steps[0].detail = 'stopped'; emit(); throw e
   }
   steps[0].state = 'done'; steps[0].detail = `${src.basis}, ${src.quarters.length} quarters`
   const calls = src.transcripts as any[]
@@ -205,7 +214,7 @@ export async function buildLive(sym: string, onStep: (steps: Step[]) => void): P
       steps[i + 1].detail = c.error ? 'not readable' : `${c.pages} pages, ${c.promises.length} promises`
       emit(); return c
     } catch (e: any) {
-      steps[i + 1].state = 'fail'; steps[i + 1].detail = e.message.slice(0, 60); emit()
+      steps[i + 1].state = 'fail'; steps[i + 1].detail = plainError(e.message); emit()
       return { period: t.period, url: t.url, error: e.message, promises: [] }
     }
   }))
