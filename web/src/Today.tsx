@@ -42,6 +42,8 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
         </div>
       </section>
 
+      {count === 0 && <p className="sub empty-line">No filing or price move crossed your lines in this window. The rest is folded below.</p>}
+
       <ol className="needs">
         {t.needs.map(s => (
           <li key={s.key}><StoryCard s={s} name={names[s.symbol]} asof={push.asof} openCompany={openCompany} /></li>

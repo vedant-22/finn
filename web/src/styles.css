@@ -246,3 +246,5 @@ blockquote { margin: 0; }
 .book-tally { margin-top: 14px; padding: 12px var(--g); background: var(--sheet); border-radius: var(--r); }
 .book-tally > .sub { margin: 0; font-size: 13px; }
 .book-tally .tally { margin-top: 4px; gap: 4px 16px; }
+
+.empty-line { margin: 4px 0 16px; }
