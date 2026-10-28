@@ -290,3 +290,5 @@ blockquote { margin: 0; }
 .needs li:nth-child(2) .card, .book-list li:nth-child(2) .book-row { transition-delay: 90ms; }
 .needs li:nth-child(3) .card, .book-list li:nth-child(3) .book-row { transition-delay: 180ms; }
 @media (prefers-reduced-motion: reduce) { .rv-on .card, .rv-on .book-row, .rv-on .company section, .rv-on .fold-group, .rv-on .chips-sec { opacity: 1; transform: none; } }
+.ask-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.copy { font-size: 14px; color: var(--ink-2); }

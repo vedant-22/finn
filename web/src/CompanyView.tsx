@@ -82,7 +82,7 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
 
       {c.questions.length > 0 && (
         <section className="ask">
-          <h2>Ask on the next call</h2>
+          <div className="ask-head"><h2>Ask on the next call</h2><CopyQuestions name={title || shortName(c.name)} qs={c.questions.map(rupees)} /></div>
           <ol>{c.questions.map((x, i) => <li key={i}>{rupees(x)}</li>)}</ol>
         </section>
       )}
@@ -207,4 +207,13 @@ function LedgerRow({ p, i, open, toggle }: { p: Promise_; i: number; open: boole
       )}
     </li>
   )
+}
+
+// For the call prep notes: the questions as plain numbered text
+function CopyQuestions({ name, qs }: { name: string; qs: string[] }) {
+  const [done, setDone] = useState(false)
+  if (!navigator.clipboard) return null
+  const copy = () => navigator.clipboard.writeText(`${name}: ask on the next call\n${qs.map((q, i) => `${i + 1}. ${q}`).join('\n')}`)
+    .then(() => { setDone(true); setTimeout(() => setDone(false), 2000) }).catch(() => { /* clipboard refused: nothing to undo */ })
+  return <button className="text-btn copy" onClick={copy} aria-live="polite">{done ? 'Copied' : 'Copy'}</button>
 }
