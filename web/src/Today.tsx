@@ -40,11 +40,13 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
         <div className="big" aria-hidden="true">{count === 0 ? 'Nothing' : <Roll to={count} />}</div>
         <div className="big-label">
           <span aria-hidden="true">{count === 0 ? 'needs you' : count === 1 ? 'thing needs you' : 'things need you'}</span>
-          <span className="sub"> out of {t.filings} filings across {push.portfolio.length} holdings</span>
+          {t.filings > 0 && <span className="sub"> out of {t.filings} filings across {push.portfolio.length} holdings</span>}
         </div>
       </section>
 
-      {count === 0 && <p className="sub empty-line">No filing or price move crossed your lines in this window. The rest is folded below.</p>}
+      {count === 0 && <p className="sub empty-line">{t.filings === 0
+        ? 'None of your holdings filed anything in this window, and no price move crossed your lines.'
+        : 'No filing or price move crossed your lines in this window. The rest is folded below.'}</p>}
 
       <ol className="needs">
         {t.needs.map(s => (
