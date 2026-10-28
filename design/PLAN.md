@@ -35,7 +35,7 @@ Written 29 Oct, 04:15 IST, after reading `design-reference/reference-main/src` (
 - **Live build, errors, loading**: section-head style, steps as rows with a caps state label (READING, DONE, COULDN'T READ) and the pulsing dot only while running.
 
 ## Checklist (in order)
-- [ ] 1. Tokens, type, header, section head, buttons, labels, accordion, motion in `styles.css` + `ui.tsx`; glyph marks removed from `ui.tsx` and every caller; green/red removed
+- [x] 1. Tokens, type, header, section head, buttons, labels, accordion, motion in `styles.css` + `ui.tsx`; glyph marks removed from `ui.tsx` and every caller; green/red removed
 - [ ] 2. Today: hero outcome, five-card cap, panel cards with the chart image and Read more accordion, folds as accordions. Side-by-side check with bdc-home
 - [ ] 3. Book: section head, outcomes tally, case-study cards with the weakest-promise sentence. Side-by-side with bdc-out
 - [ ] 4. Company: page header, outcomes tally, promise grid, accordions. Side-by-side with bdc-out
