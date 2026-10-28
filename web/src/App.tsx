@@ -71,9 +71,9 @@ export function App() {
             : <Today push={push} lines={lines} setLines={setLines} openCompany={openCompany} openLines={() => setLinesOpen(true)} />}
 
       <nav className="tabs" aria-label="Sections">
-        <button className={tab === 'today' ? 'on' : ''} onClick={() => go('today')}>Today</button>
-        <button className={tab === 'book' ? 'on' : ''} onClick={() => go('book')}>Book</button>
-        <button className={tab === 'look' ? 'on' : ''} onClick={() => go('look')}>Look up</button>
+        <button className={tab === 'today' ? 'on' : ''} aria-current={tab === 'today' ? 'page' : undefined} onClick={() => go('today')}>Today</button>
+        <button className={tab === 'book' ? 'on' : ''} aria-current={tab === 'book' ? 'page' : undefined} onClick={() => go('book')}>Book</button>
+        <button className={tab === 'look' ? 'on' : ''} aria-current={tab === 'look' ? 'page' : undefined} onClick={() => go('look')}>Look up</button>
       </nav>
 
       <Sheet open={linesOpen} onClose={() => setLinesOpen(false)} title="Your lines">

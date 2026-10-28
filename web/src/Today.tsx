@@ -34,10 +34,12 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
         ))}
       </div>
 
-      <section className="verdict" aria-live="polite">
-        <div className="big">{count === 0 ? 'Nothing' : <Roll to={count} />}</div>
+      <section className="verdict">
+        {/* The roll is for the eye; a screen reader hears the settled count once */}
+        <h1 className="sr-only" aria-live="polite">{count === 0 ? 'Nothing needs you' : `${count} ${count === 1 ? 'thing needs' : 'things need'} you`}</h1>
+        <div className="big" aria-hidden="true">{count === 0 ? 'Nothing' : <Roll to={count} />}</div>
         <div className="big-label">
-          {count === 0 ? 'needs you' : count === 1 ? 'thing needs you' : 'things need you'}
+          <span aria-hidden="true">{count === 0 ? 'needs you' : count === 1 ? 'thing needs you' : 'things need you'}</span>
           <span className="sub"> out of {t.filings} filings across {push.portfolio.length} holdings</span>
         </div>
       </section>
