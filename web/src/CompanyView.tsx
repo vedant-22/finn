@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { cr, deadline, minus, pct, rupees, shortName, tone, type Company, type Promise_, type Status } from './lib'
 import { Bars, fyLabel, Mark, Src, STATUS_WORD } from './ui'
 
@@ -28,13 +28,23 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
     return <span className={tone(v)}>{pct(v)} on a year ago</span>
   }
 
+  // Back stays in reach on a long page; once the name scrolls off, the bar carries it
+  const nameRef = useRef<HTMLHeadingElement>(null)
+  const [past, setPast] = useState(false)
+  useEffect(() => {
+    const el = nameRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver(([e]) => setPast(!e.isIntersecting && e.boundingClientRect.top < 0))
+    io.observe(el); return () => io.disconnect()
+  }, [])
+
   return (
     <main className="screen company">
-      <header className="top">
+      <header className={`top bar${past ? ' past' : ''}`}>
         <button className="text-btn back" onClick={back}>Back</button>
-        <span className="sub">{c.symbol}{c.live ? ', read just now' : ''}</span>
+        {past ? <span className="bar-name">{title || shortName(c.name)}</span> : <span className="sub">{c.symbol}{c.live ? ', read just now' : ''}</span>}
       </header>
-      <h1 className="co-name">{title || shortName(c.name)}</h1>
+      <h1 className="co-name" ref={nameRef}>{title || shortName(c.name)}</h1>
       <p className="co-meta">
         {sector && <>{sector}. </>}
         {s.price != null && <>Share price ₹{s.price.toLocaleString('en-IN')}. </>}
