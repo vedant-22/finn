@@ -40,7 +40,8 @@ export interface Company {
 
 // ---------- formatting ----------
 const inr = new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 })
-export const cr = (v: number | null | undefined) => (v == null ? '–' : inr.format(Math.round(v)))
+export const cr = (v: number | null | undefined) => (v == null ? '–' : minus(inr.format(Math.round(v))))
+export const minus = (s: string | number) => String(s).replace(/^-/, '−')
 export const pct = (v: number | null | undefined, sign = true) =>
   v == null ? '–' : `${sign && v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toFixed(Math.abs(v) < 10 ? 1 : 0)}%`
 export const tone = (v: number | null | undefined) => (v == null || Math.abs(v) < 0.05 ? '' : v > 0 ? 'up' : 'down')
