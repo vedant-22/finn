@@ -13,6 +13,16 @@ test('ranges never break at the dash', () => {
   assert.equal(rupeesWj('FY 2022-23'), 'FY 2022-23')
 })
 
+test('percentages read as figures, ranges with an en dash', () => {
+  assert.equal(rupees('12 to 15 percent growth by this year'), '12–15% growth by this year')
+  assert.equal(rupees('Operating expenses to assets 2.6%-2.7% by FY26'), 'Operating expenses to assets 2.6–2.7% by FY26')
+  assert.equal(rupees('23% to 24% top line growth'), '23–24% top line growth')
+  assert.equal(rupees('30-ish percent seaways margin'), '30-ish percent seaways margin')
+  assert.equal(rupees('ROE of 16 per cent'), 'ROE of 16%')
+  assert.equal(rupees('fell from 18% to 12%'), 'fell from 18% to 12%')
+  assert.equal(rupees('rose from 12% to 18%'), 'rose from 12% to 18%')
+})
+
 test('percentages: sign, a true minus, never −0.0%', () => {
   assert.equal(pct(12.4), '+12%')
   assert.equal(pct(-5.25), '−5.3%')

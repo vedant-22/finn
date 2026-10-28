@@ -1,6 +1,6 @@
-# FINN in the reference's design, ENAM's colours: the plan
+# FINN in the reference design, ENAM's colours: the plan
 
-Written 29 Oct, 04:15 IST, after reading `design-reference/reference-main/src` (tokens, font mixins, header, article and case-study cards, outcomes grid, m-button, section header, CoreAccordion, MotionObserver) and shooting the reference site and /outcomes at 390x844 (`shots/bdc-*.png`, not committed). `brief/DESIGN_SPEC.md` is the reference. Where this plan departs from it, the reason is given.
+Written 29 Oct, 04:15 IST, after reading the reference's source in `design-reference/` (tokens, font mixins, header, article and case-study cards, outcomes grid, m-button, section header, CoreAccordion, MotionObserver) and shooting the reference site's home and outcomes pages at 390x844 (`shots/ref-*.png`, not committed). `brief/DESIGN_SPEC.md` is the reference. Where this plan departs from it, the reason is given.
 
 ## What makes the reference look the way it does (at 390 px)
 - **Warm panels on white.** The home page is white; every card is a `#FBF8F2` block with square corners, 16 px inner padding, the image inset at the top. The outcomes page is the warm colour edge to edge.
@@ -36,9 +36,9 @@ Written 29 Oct, 04:15 IST, after reading `design-reference/reference-main/src` (
 
 ## Checklist (in order)
 - [x] 1. Tokens, type, header, section head, buttons, labels, accordion, motion in `styles.css` + `ui.tsx`; glyph marks removed from `ui.tsx` and every caller; green/red removed
-- [ ] 2. Today: hero outcome, five-card cap, panel cards with the chart image and Read more accordion, folds as accordions. Side-by-side check with bdc-home
-- [ ] 3. Book: section head, outcomes tally, case-study cards with the weakest-promise sentence. Side-by-side with bdc-out
-- [ ] 4. Company: page header, outcomes tally, promise grid, accordions. Side-by-side with bdc-out
+- [ ] 2. Today: hero outcome, five-card cap, panel cards with the chart image and Read more accordion, folds as accordions. Side-by-side check with ref-home
+- [ ] 3. Book: section head, outcomes tally, case-study cards with the weakest-promise sentence. Side-by-side with ref-out
+- [ ] 4. Company: page header, outcomes tally, promise grid, accordions. Side-by-side with ref-out
 - [ ] 5. Look up banner and pills; Your lines sheet switches; live-build and error states
 - [ ] 6. Critic pass on all four pairs (8/10 bar), detect.mjs no P0/P1, flows on the live link (windows, Your lines, Book filter, company and Back scroll, Look up by name)
 - [ ] 7. Writing pass on every card; DESIGN.md and design/inspiration.md rewritten to this system; README shots retaken; PROGRESS and DECISIONS updated

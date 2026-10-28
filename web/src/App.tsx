@@ -215,7 +215,6 @@ function Look({ push, openCompany }: { push: Push; openCompany: (s: string) => v
       {matches.length > 0 && <Chips title={matches.length === 1 && !known.includes(want) ? 'Did you mean' : 'Matches'} syms={matches.slice(0, 6)} open={openCompany} names={names} />}
       {recent.length > 0 && <Chips title="Recent" syms={recent} open={openCompany} names={names} />}
       {others.length > 0 && <Chips title="Ready to open" syms={others} open={openCompany} names={names} />}
-      <Chips title="Your holdings" syms={push.portfolio.map(p => p.symbol)} open={openCompany} names={names} />
     </main>
   )
 }

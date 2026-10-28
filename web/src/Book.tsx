@@ -88,26 +88,27 @@ function BookTally({ cos, only, setOnly }: { cos: (Company | null | undefined)[]
   const n = (st: Status) => all.filter(p => p.status === st).length
   const teams = (st: Status) => cos.filter(c => c?.ledger.some(p => p.hard && p.status === st)).length
   const at = (st: Status) => `At ${teams(st)} ${teams(st) === 1 ? 'company' : 'companies'}`
+  // Four in the grid, as on an outcomes page; partly kept rides under kept, still tappable
   const items: [Status, string, string][] = [
     ['missed', 'Missed: the date passed without it.', at('missed')],
     ['quiet', 'Gone quiet: due now, not mentioned on the latest call.', at('quiet')],
     ['kept', 'Kept: delivered, or on track in the numbers.', at('kept')],
-    ['partly', 'Partly kept, or kept late.', at('partly')],
     ['pending', 'Not due yet.', 'Still running'],
   ]
   return (
     <section className="og-panel" aria-label="Promises across your book">
       <h2 className="lbl lbl-quiet">Promises across your book</h2>
       <ul className="og book-og">
-        {items.map(([st, d1, d2]) => n(st) ? (
-          <li key={st}>
+        {items.map(([st, d1, d2]) => (
+          <li key={st} className="og-item">
             <button className="og-item og-btn" aria-pressed={only === st} onClick={() => setOnly(only === st ? null : st)}>
               <Outcome value={n(st)} />
               <span className="og-d1">{d1}</span>
               <span className="og-d2">{d2}</span>
             </button>
+            {st === 'kept' && n('partly') > 0 && <button className={`og-link${only === 'partly' ? ' on' : ''}`} aria-pressed={only === 'partly'} onClick={() => setOnly(only === 'partly' ? null : 'partly')}>And {n('partly')} partly kept</button>}
           </li>
-        ) : null)}
+        ))}
       </ul>
     </section>
   )

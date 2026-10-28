@@ -101,7 +101,7 @@ function StoryCard({ s, name, asof, bars, openCompany }: { s: Story; name: strin
   const [v, u] = pctParts(rev?.yoy)
   return (
     <article className={`card story cat-${s.category}`}>
-      <div className="card-img"><Chart series={bars} mark={s.at.slice(0, 10)} /></div>
+      <div className="card-img"><Chart series={bars} mark={s.at.slice(0, 10)} volume={false} /></div>
       <div className="card-info">
         <CardLabel kind={r ? `Results, ${r.quarter}` : CATEGORY_LABEL[s.category] || s.category} at={when(s.at, asof)} />
         <button className="card-title" onClick={() => openCompany(s.symbol)}>{name}</button>

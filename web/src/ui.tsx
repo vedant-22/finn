@@ -74,7 +74,7 @@ export function Masthead({ right }: { right?: ReactNode }) {
   )
 }
 
-// the reference's accordion: the body opens on a grid-rows transition and is only in the page while open or closing
+// The reference's accordion: the body opens on a grid-rows transition and is only in the page while open or closing
 export function Accordion({ open, children, id }: { open: boolean; children: ReactNode; id?: string }) {
   const [mounted, setMounted] = useState(open)
   const [shown, setShown] = useState(open)
@@ -113,12 +113,13 @@ export function pctParts(v: number | null | undefined): [string, string] {
 }
 
 // The card's picture: the stock's last sessions, drawn full width. Line and wash in brand; volume as grey ticks, the last day in brand.
-export function Chart({ series, h = 120, mark }: { series: Bar[]; h?: number; mark?: string }) {
+export function Chart({ series, h = 120, mark, volume = true }: { series: Bar[]; h?: number; mark?: string; volume?: boolean }) {
   if (series.length < 2) return null
   const w = 320
   const closes = series.map(b => b.close), vols = series.map(b => b.vol)
   const lo = Math.min(...closes), hi = Math.max(...closes), vmax = Math.max(...vols) || 1
-  const top = 12, base = h * 0.72
+  // An unusual day is about volume, so its picture keeps the volume ticks; elsewhere the line has the frame to itself
+  const top = 14, base = volume ? h * 0.74 : h - 10
   const x = (i: number) => (i / (series.length - 1)) * (w - 12) + 6
   const y = (v: number) => base - ((v - lo) / (hi - lo || 1)) * (base - top)
   const pts = closes.map((c, i) => `${x(i).toFixed(1)} ${y(c).toFixed(1)}`)
@@ -127,7 +128,7 @@ export function Chart({ series, h = 120, mark }: { series: Bar[]; h?: number; ma
   return (
     <svg className="chart" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden>
       <path className="wash" d={`M${pts.join('L')}L${x(closes.length - 1).toFixed(1)} ${base}L${x(0).toFixed(1)} ${base}Z`} />
-      {vols.map((v, i) => {
+      {volume && vols.map((v, i) => {
         const vh = Math.max(1, (v / vmax) * (h - base - 4))
         return <rect key={i} x={x(i) - bw / 2} width={bw} y={h - vh} height={vh} className={i === vols.length - 1 ? 'vol-last' : 'vol'} />
       })}

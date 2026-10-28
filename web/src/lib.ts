@@ -315,6 +315,9 @@ export const rupees = (t: string) => t
   // Ranges take an en dash like the rupee ones: '3-5%' -> '3–5%', '240-245 million tons' -> '240–245 million tons'.
   // Only when a unit closes it, so 'FY 2022-23' and dates stay
   .replace(/(\d)\s?-\s?(\d+(?:\.\d+)?)(?=\s?(?:%|x\b|×|(?:million|billion|lakh|crore|bps|basis points|days|months|years|quarters|weeks|GW|MW|tons|tonnes|mtpa|MTPA|stores|plants)\b))/g, '$1–$2')
+  // Percentages read as figures: '12 to 15 percent' -> '12–15%', '2.6%-2.7%' and '23% to 24%' -> '2.6–2.7%', '23–24%'
+  .replace(/(\d)\s?(?:percent|per cent)\b/gi, '$1%')
+  .replace(/(?<!\bfrom\s|[\d.])(\d+(?:\.\d+)?)%?\s?(?:-|–|to)\s?(\d+(?:\.\d+)?)%/g, (m, a, b) => +a < +b ? `${a}–${b}%` : m)
   // Western grouping from the model, '₹285,874', regrouped the Indian way: '₹2,85,874'
   .replace(/₹(\d{1,3}(?:,\d{3})+)(?![\d,])/g, (_, n) => `₹${inr.format(+n.replace(/,/g, ''))}`)
   // A range never splits at its dash ('22–' at a line end, '23%' on the next): word joiner after it
