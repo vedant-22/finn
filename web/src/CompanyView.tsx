@@ -71,7 +71,7 @@ export function CompanyView({ c, focus, sector, title, back }: { c: Company; foc
             : readable === 0
               ? <p className="word-score sub">None of the {c.calls.length} call transcripts linked from its exchange filings could be opened, so there is nothing to grade yet. They are listed at the foot of the page.</p>
               : <p className="word-score sub">No promise in these calls had both a number and a date.</p>}
-          {readable > 1 && <p className="sub tally-note">Promises with a number and a date, from the {readable - 1 === 1 ? 'call' : `${readable - 1} calls`} before the latest one.</p>}
+          {readable > 1 && hard.length > 0 && <p className="sub tally-note">Promises with a number and a date, from the {readable - 1 === 1 ? 'call' : `${readable - 1} calls`} before the latest one.</p>}
         </div>
         {c.read && settled >= 3 && <p className="read">{rupees(c.read)}</p>}
 
@@ -158,10 +158,14 @@ export function CompanyView({ c, focus, sector, title, back }: { c: Company; foc
       <footer className="sources">
         <h2>Read for this page</h2>
         <ul>
-          {c.calls.map(x => (
-            <li key={x.period}><Src href={x.url}>{x.period} call</Src>
-              <span className="sub"> {x.error ? 'could not be read' : !x.found ? `${x.pages} pages, no promise with a number and a date` : `${x.pages} pages, ${x.found} ${x.found === 1 ? 'promise' : 'promises'} found, quotes checked`}</span></li>
-          ))}
+          {c.calls.map(x => {
+            // What this call adds to the page: promises with a number and a date first made on it (repeats sit with the first call)
+            const n = [...c.ledger, ...c.open].filter(p => p.hard && p.period === x.period).length
+            return (
+              <li key={x.period}><Src href={x.url}>{x.period} call</Src>
+                <span className="sub"> {x.error ? 'could not be read' : !n ? `${x.pages} pages, no new promise with a number and a date` : `${x.pages} pages, ${n} ${n === 1 ? 'promise' : 'promises'} with a number and a date, quotes checked`}</span></li>
+            )
+          })}
           <li><Src href={c.source}>Financial tables</Src><span className="sub"> screener.in, {c.basis}, compiled from filed results</span></li>
         </ul>
         {pages > 0 && <p className="sub">Read {pages} pages. Every quote above was matched to its page in the PDF{dropped ? `; ${dropped} that didn't match ${dropped === 1 ? 'was' : 'were'} thrown out` : ''}. Nothing here comes from news, brokers or the model's own memory.</p>}
