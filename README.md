@@ -55,7 +55,7 @@ Code map:
 - `finn/` the engine. `classify.py` and `triage.py` hold the push policy. `ledger.py` holds the two prompts. `sources/pdf.py` has the quote check. `results.py` parses XBRL. `numbers.py` is all the arithmetic.
 - `api/` three Vercel Python functions for live lookups. Each one stays well under the time limit; the phone runs them in sequence and shows progress.
 - `pipeline/` batch builds and a local API server.
-- `web/` the app.
+- `web/` the app. A small service worker keeps the last snapshot, so it opens from the home screen with no signal.
 - `evals/` the three eval scripts and their last output.
 
 ## Models and cost
@@ -110,7 +110,7 @@ The portfolio is in `data/portfolio.json`.
 
 ## What I left out
 
-- **Real push notifications.** The app shows what would interrupt you, but doesn't send it to your lock screen. Web push needs a service worker, stored subscriptions and a scheduler; I chose to spend the time on what gets pushed.
+- **Real push notifications.** The app shows what would interrupt you, but doesn't send it to your lock screen. Web push needs stored subscriptions and a scheduler (the app's service worker only keeps the last snapshot for opening with no signal); I chose to spend the time on what gets pushed.
 - **A live feed.** The push data is a snapshot built after market close, and the app says when it was built. The next step is a scheduled job, run from an Indian IP since NSE is picky.
 - **Annual reports.** The ledger reads transcripts and filed numbers. Annual reports are 300 pages each; the right way in is chunking to the MD&A, related-party and contingent-liability notes. Not done.
 - **BSE-only companies.** Everything keys off the NSE symbol.
