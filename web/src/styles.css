@@ -234,7 +234,7 @@ blockquote { margin: 0; }
 .look-form { margin-top: 12px; }
 .look-row { display: flex; gap: 8px; margin-top: 4px; }
 .look-row input { flex: 1; min-width: 0; font: 450 26px/32px var(--f); letter-spacing: -0.03em; color: var(--ink); background: none; border: 0; border-bottom: 1px solid var(--ink); border-radius: 0; padding: 8px 0; text-transform: uppercase; }
-.look-row input::placeholder { text-transform: none; font-weight: 400; color: var(--quiet); }
+.look-row input::placeholder { text-transform: none; font-weight: 400; color: var(--ink-2); }
 .look-row button { background: var(--accent); color: #fff; border-radius: 999px; padding: 0 22px; font-weight: 500; min-height: 48px; align-self: center; }
 .look-row button:disabled { opacity: .35; }
 .look-note { font: 15px/21px var(--serif); letter-spacing: 0; margin: 16px 0 0; }
