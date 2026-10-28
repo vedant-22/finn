@@ -15,6 +15,9 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
   const [showNotes, setShowNotes] = useKept('today.notes', false)
   const [showFold, setShowFold] = useKept('today.fold', false)
   const count = t.needs.length + t.moves.length
+  // The sieve plays once a session, not on every return to Today
+  const sieve = useRef(!sessionStorage.getItem('finn-sieved'))
+  useEffect(() => { sessionStorage.setItem('finn-sieved', '1') }, [])
   const asof = new Date(push.asof)
 
   return (
@@ -37,7 +40,7 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
       <section className="verdict">
         {/* The roll is for the eye; a screen reader hears the settled count once */}
         <h1 className="sr-only" aria-live="polite">{count === 0 ? 'Nothing needs you' : `${count} ${count === 1 ? 'thing needs' : 'things need'} you`}</h1>
-        <div className="big" aria-hidden="true">{count === 0 ? 'Nothing' : <Roll to={count} />}</div>
+        <div className="big" aria-hidden="true">{count === 0 ? 'Nothing' : <Roll to={count} start={sieve.current ? t.filings : undefined} />}</div>
         <div className="big-label">
           <span aria-hidden="true">{count === 0 ? 'needs you' : count === 1 ? 'thing needs you' : 'things need you'}</span>
           {t.filings > 0 && <span className="sub"> out of {t.filings} filings across {push.portfolio.length} holdings</span>}
@@ -286,16 +289,22 @@ function FoldSummary({ stories, names }: { stories: Story[]; names: Record<strin
 }
 
 // The headline number rolls from the last window's count to this one, so switching windows reads as a change.
-function Roll({ to }: { to: number }) {
-  const [n, setN] = useState(to)
-  const from = useRef(to)
+// On the first open of a session it starts at the filing count and falls to what needs you: the sieve, seen once.
+function Roll({ to, start }: { to: number; start?: number }) {
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const [n, setN] = useState(still || start == null ? to : start)
+  const from = useRef(start ?? to)
+  const first = useRef(start != null)
   useEffect(() => {
     const a = from.current; from.current = to
-    if (a === to || matchMedia('(prefers-reduced-motion: reduce)').matches) { setN(to); return }
-    const t0 = performance.now(); let raf = 0
+    const sieve = first.current; first.current = false
+    if (a === to || still) { setN(to); return }
+    const ms = sieve ? 1100 : 320
+    const t0 = performance.now() + (sieve ? 250 : 0); let raf = 0
     const step = (t: number) => {
-      const k = Math.min(1, (t - t0) / 320)
-      setN(Math.round(a + (to - a) * (1 - (1 - k) ** 3)))
+      const k = Math.max(0, Math.min(1, (t - t0) / ms))
+      // the sieve eases like the reveal (expo-decelerate); window switches stay quick
+      setN(k >= 1 ? to : Math.round(a + (to - a) * (sieve ? 1 - 2 ** (-10 * k) : 1 - (1 - k) ** 3)))
       if (k < 1) raf = requestAnimationFrame(step)
     }
     raf = requestAnimationFrame(step)
