@@ -6,7 +6,7 @@ import {
   buildLive, CATEGORY_LABEL, plainError, DEFAULT_LINES, getCompany, getPush, loadLines, saveLines, shortName,
   type Company, type Lines, type Push, type Step,
 } from './lib'
-import { Mark, Sheet } from './ui'
+import { Mark, Sheet, useEdgeBack } from './ui'
 
 type Route = { tab: 'today' | 'book' | 'look'; sym?: string }
 const parse = (): Route => {
@@ -109,6 +109,7 @@ function CompanyRoute({ sym, sector, title, back }: { sym: string; sector?: stri
   const [failed, setFailed] = useState('')
   const [attempt, setAttempt] = useState(0)
   const [slow, setSlow] = useState(false)
+  useEdgeBack(back)
   useEffect(() => { setSlow(false); const t = setTimeout(() => setSlow(true), 400); return () => clearTimeout(t) }, [sym, attempt])
   useEffect(() => {
     let live = true

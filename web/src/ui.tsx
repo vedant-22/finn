@@ -8,6 +8,45 @@ export function useKept<T>(key: string, init: T): [T, (v: T) => void] {
   return [v, (n: T) => { kept.set(key, n); setV(n) }]
 }
 
+// Swipe in from the left edge to go back. Only from the home screen on iOS, where there is no browser back gesture.
+export function useEdgeBack(back: () => void) {
+  const cb = useRef(back); cb.current = back
+  useEffect(() => {
+    let x0 = -1, y0 = 0, dx = 0, horiz = false, el: HTMLElement | null = null
+    const start = (e: TouchEvent) => {
+      const t = e.touches[0]
+      if ((navigator as any).standalone !== true || e.touches.length !== 1 || t.clientX > 24) return
+      x0 = t.clientX; y0 = t.clientY; dx = 0; horiz = false; el = document.querySelector('main.screen')
+    }
+    const move = (e: TouchEvent) => {
+      if (x0 < 0) return
+      const t = e.touches[0]; dx = t.clientX - x0
+      if (!horiz) {
+        if (Math.abs(t.clientY - y0) > Math.abs(dx)) { x0 = -1; return }
+        if (dx < 8) return
+        horiz = true
+      }
+      if (el) { el.style.transition = 'none'; el.style.transform = `translateX(${Math.max(0, dx)}px)` }
+    }
+    const end = () => {
+      if (x0 < 0) return
+      x0 = -1
+      const go = horiz && dx > 80, node = el
+      if (!node) { if (go) cb.current(); return }
+      node.style.transition = 'transform 200ms cubic-bezier(.19,1,.22,1)'
+      node.style.transform = go ? 'translateX(100vw)' : ''
+      // On go, the screen is replaced, so it never slides back into view
+      setTimeout(() => { if (go) cb.current(); else node.style.transition = '' }, 200)
+    }
+    addEventListener('touchstart', start, { passive: true }); addEventListener('touchmove', move, { passive: true })
+    addEventListener('touchend', end); addEventListener('touchcancel', end)
+    return () => {
+      removeEventListener('touchstart', start); removeEventListener('touchmove', move)
+      removeEventListener('touchend', end); removeEventListener('touchcancel', end)
+    }
+  }, [])
+}
+
 // Auditor's tick marks, drawn as pencil strokes. Paths carry a little wobble on purpose.
 const PATHS: Record<Status, string[]> = {
   // A pencil tick: short heavy down-stroke, then a long flick that overshoots and lifts.
