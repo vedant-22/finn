@@ -68,3 +68,4 @@ Next: keep polishing from the 'Never sit idle' list in the new design language (
 - Company numbers: the 6-year bars were labelled ’20 to ’2026; the first label cut 'Mar 2021' to ’20, a year off. Both ends now read FY21 and FY26, and 'in 2021' under cash conversion and return on capital reads 'in FY21'. Tested at 390x844 on L&T; deployed and checked live 28 Oct 16:52 IST
 - Company sources: a call with nothing gradable reads '14 pages, no promise with a number and a date' (was '0 promises found, quotes checked'). Deployed and checked live 28 Oct 16:53 IST
 - Percentages that round to zero read '0%' (an unusual day for Crompton showed '−0.0%'). Deployed and checked live 28 Oct 16:55 IST
+- Tapping the tab you're already on scrolls smoothly back to the top (instant under reduced motion), as phone apps do; it did nothing before. Tested at 390x844 on Today and Book; deployed and checked live 28 Oct 16:57 IST
