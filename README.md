@@ -18,7 +18,7 @@ FINN is a phone app for a long-only investor that keeps management to its word. 
 - *Unusual days*: volume or price beyond lines you set, and whether any filing explains the move.
 - Deals, penalties and fund raises sized against the company's annual revenue. Under 0.5%, they drop to a one-line note.
 
-**Look up (pull).** Type any NSE symbol. FINN reads the company's last five earnings calls and its filed results, lists every promise that had a number and a date, and marks each one kept, partly kept, missed, gone quiet or not due yet. Each promise shows the quote and the page. Below that: questions to ask on the next call, the numbers (trajectory, margins, cash conversion, debt, working capital), and a short case for and against. Nothing comes from news, broker notes or the model's memory.
+**Look up (pull).** Type any NSE symbol (or the name of a company FINN has already read). FINN reads the company's last five earnings calls and its filed results, lists every promise that had a number and a date, and marks each one kept, partly kept, missed, gone quiet or not due yet. Each promise shows the quote and the page. Below that: questions to ask on the next call, the numbers (trajectory, margins, cash conversion, debt, working capital), and a short case for and against. Nothing comes from news, broker notes or the model's memory.
 
 **Book.** Your holdings ordered by how well management has kept its word, weakest first, with a tally across the whole book.
 
