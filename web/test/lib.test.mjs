@@ -1,7 +1,7 @@
 // What the screen says, checked. Run: npm test (Node 22.6+ reads lib.ts directly)
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { cr, deadline, pct, rupees, when } from '../src/lib.ts'
+import { cr, deadline, pct, rupees, tidyEvidence, when } from '../src/lib.ts'
 
 test('percentages: sign, a true minus, never −0.0%', () => {
   assert.equal(pct(12.4), '+12%')
@@ -56,4 +56,13 @@ test('deadlines keep the words when the year is ambiguous or the grade has not c
 test("deadlines drop a 'by ...' the promise already states", () => {
   assert.equal(deadline(p('FY27', 'Nov 2025', 'pending', '15% margin by FY27')), '')
   assert.equal(deadline(p('unspecified', 'Nov 2025')), '')
+})
+
+test("the 'Reported' line reads like numbers, not a table dump", () => {
+  assert.equal(tidyEvidence('Mar 2026 Revenue 3739.0, Mar 2026 OPM % 25.0'), 'Mar 2026 Revenue 3,739, Mar 2026 OPM 25%')
+  assert.equal(tidyEvidence('Jun 2026 OPM 26 percent'), 'Jun 2026 OPM 26%')
+  assert.equal(tidyEvidence('OPM % for Mar 2026 was 41.0%'), 'OPM for Mar 2026 was 41%')
+  assert.equal(tidyEvidence('Revenue YoY % was 30.3% in Jun 2026'), 'Revenue YoY was 30.3% in Jun 2026')
+  assert.equal(tidyEvidence('Revenue FY25 Rs 38860.0 crore'), 'Revenue FY25 ₹38,860 crore')
+  assert.equal(tidyEvidence('FY26 PBT 15119.0, PAT 11509.0, implied tax rate 23.9%'), 'FY26 PBT 15,119, PAT 11,509, implied tax rate 23.9%')
 })

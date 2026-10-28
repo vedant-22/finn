@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { cr, deadline, minus, pct, rupees, shortName, tone, type Company, type Promise_, type Status } from './lib'
+import { cr, deadline, minus, pct, rupees, shortName, tidyEvidence, tone, type Company, type Promise_, type Status } from './lib'
 import { Bars, fyLabel, Mark, Src, STATUS_WORD } from './ui'
 
 const SHOW: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
@@ -206,7 +206,7 @@ function LedgerRow({ p, i, open, toggle }: { p: Promise_; i: number; open: boole
               <h4>{p.evidence_kind === 'quote' ? 'Latest call' : 'Reported'}</h4>
               {p.evidence_kind === 'quote'
                 ? <><blockquote>“{p.evidence}”</blockquote><p className="sub"><Src href={p.evidence_url ? `${p.evidence_url}#page=${p.evidence_page}` : undefined}>page {p.evidence_page}</Src></p></>
-                : <p className="num-ev">{rupees(p.evidence.replace(/(\d)\.0\b/g, '$1'))}</p>}
+                : <p className="num-ev">{tidyEvidence(p.evidence)}</p>}
             </div>
           )}
         </div>

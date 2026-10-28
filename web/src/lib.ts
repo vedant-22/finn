@@ -286,6 +286,16 @@ export function deadline(p: { target: string; by_when: string; period?: string; 
   return stated(raw) ? `(${w})` : `by ${w}`
 }
 
+// The 'Reported' line under a graded promise, written by the model from the numbers table:
+// 'Mar 2026 Revenue 3739.0, Mar 2026 OPM % 25.0' -> 'Mar 2026 Revenue 3,739, Mar 2026 OPM 25%'
+export const tidyEvidence = (t: string) => rupees(t
+  .replace(/(\d)\.0\b/g, '$1')
+  .replace(/\s?percent\b/g, '%')
+  .replace(/\b(OPM|YoY|margin) % (-?\d[\d.]*)(?!\s?%)/gi, '$1 $2%')
+  .replace(/\b(OPM|YoY|margin) % /gi, '$1 '))
+  // Long numbers grouped, years left as they are
+  .replace(/(?<![\d,.₹])(\d{4,})(?!\d|,\d)/g, (m, n) => +n >= 1990 && +n <= 2099 ? m : inr.format(+n))
+
 // Model-written text says 'INR1,450 crores'; the app writes '₹1,450 crore'. Never applied to quotes.
 export const rupees = (t: string) => t
   .replace(/\b(?:INR|Rs\.?)\s?(\d[\d,.]*)(\s?(?:to|-|–)\s?(?:(?:INR|Rs\.?)\s?)?(\d[\d,.]*))?\s?([Cc]r(?:ores?)?)\b/g, (_, a, r, b) => `₹${a}${r ? `–${b}` : ''} crore`)
