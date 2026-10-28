@@ -1,6 +1,6 @@
 # FINN in the reference design, ENAM's colours: the plan
 
-Written 29 Oct, 04:15 IST, after reading the reference's source in `design-reference/` (tokens, font mixins, header, article and case-study cards, outcomes grid, m-button, section header, CoreAccordion, MotionObserver) and shooting the reference site's home and outcomes pages at 390x844 (`shots/ref-*.png`, not committed). `brief/DESIGN_SPEC.md` is the reference. Where this plan departs from it, the reason is given.
+Written 29 Oct, 03:50 IST, after reading the reference's source in `design-reference/` (tokens, font mixins, header, article and case-study cards, outcomes grid, m-button, section header, CoreAccordion, MotionObserver) and shooting the reference site's home and outcomes pages at 390x844 (`shots/ref-*.png`, not committed). `brief/DESIGN_SPEC.md` is the reference. Where this plan departs from it, the reason is given.
 
 ## What makes the reference look the way it does (at 390 px)
 - **Warm panels on white.** The home page is white; every card is a `#FBF8F2` block with square corners, 16 px inner padding, the image inset at the top. The outcomes page is the warm colour edge to edge.
@@ -40,5 +40,5 @@ Written 29 Oct, 04:15 IST, after reading the reference's source in `design-refer
 - [x] 3. Book: section head, outcomes tally, case-study cards with the weakest-promise sentence. Side-by-side with ref-out
 - [x] 4. Company: page header, outcomes tally, promise grid, accordions. Side-by-side with ref-out
 - [x] 5. Look up banner and pills; Your lines sheet switches; live-build and error states
-- [ ] 6. Critic pass (round 1 done 29 Oct ~05:50: Today 7, card 7, Book 6, Book cards 7, Company 8, Look up 6; fixes shipped; round 2 pending) on all four pairs (8/10 bar), detect.mjs no P0/P1, flows on the live link (windows, Your lines, Book filter, company and Back scroll, Look up by name)
+- [ ] 6. Critic pass (round 1 done 29 Oct ~04:00: Today 7, card 7, Book 6, Book cards 7, Company 8, Look up 6; fixes shipped; round 2 pending) on all four pairs (8/10 bar), detect.mjs no P0/P1, flows on the live link (windows, Your lines, Book filter, company and Back scroll, Look up by name)
 - [ ] 7. Writing pass on every card; DESIGN.md and design/inspiration.md rewritten to this system; README shots retaken; PROGRESS and DECISIONS updated
