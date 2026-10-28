@@ -7,7 +7,7 @@ Writes web/public/data/push.json. The app filters it by the window and threshold
 import datetime as dt, json, pathlib, sys, time
 from concurrent.futures import ThreadPoolExecutor
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
-from finn import classify, eod, explain, llm, numbers, people, results, research
+from finn import classify, eod, llm, numbers, results, research, triage
 from finn.sources import nse, screener, pdf
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -34,7 +34,7 @@ def main():
     for p in portfolio:
         c = screener.company(p["symbol"])
         names[p["symbol"]] = c["name"]
-        p["name"] = c["name"]; p["mcap"] = c["ratios"].get("Market Cap")
+        p["name"] = c["name"]; p["mcap"] = c["ratios"].get("Market Cap")  # "short" comes from portfolio.json
         rev = [r["rev"] for r in numbers.quarter_table(c, 4) if r["rev"]]
         p["ttm_rev"] = sum(rev) if len(rev) == 4 else None
 
@@ -48,48 +48,8 @@ def main():
             except Exception as e:
                 print("results fail", x["symbol"], e)
 
-    def enrich_people(x):
-        try:
-            x["people"] = people.from_filing(names.get(x["symbol"], x["sm_name"]), x["attchmntFile"])
-        except (pdf.FetchError, llm.LLMError, Exception) as e:
-            x["people"] = []; print("people fail", x["symbol"], str(e)[:100])
-        # How loud: a CFO leaving interrupts you; a new company secretary doesn't.
-        ranks = [p["seniority"] for p in x["people"]]
-        if "top" in ranks:
-            x["tier"] = "act"
-        elif "board" in ranks or "senior" in ranks:
-            x["tier"] = "note"
-        elif ranks:
-            x["tier"] = "fold"
-        else:
-            x["tier"] = "note"  # couldn't read the filing; show it, but don't interrupt
-    mg = [x for x in rows if x["category"] == "management_change" and x["tier"] != "fold"]
-    with ThreadPoolExecutor(max_workers=4) as ex:
-        list(ex.map(enrich_people, mg))
-
-    # Filings whose subject line is empty boilerplate get read, and sized against the company.
     ttm = {p["symbol"]: p.get("ttm_rev") for p in portfolio}
-    def enrich_line(x):
-        try:
-            e = explain.explain(names.get(x["symbol"], x["sm_name"]), x["desc"], x["attchmntFile"])
-        except Exception as ex:
-            print("explain fail", x["symbol"], str(ex)[:80]); return
-        x["line"] = e.get("line", "")
-        amt = e.get("amount_cr")
-        if amt and ttm.get(x["symbol"]):
-            x["amount_cr"] = amt
-            x["pct_rev"] = round(amt / ttm[x["symbol"]] * 100, 2)
-        # Sizing rule: a deal, demand, penalty or raise worth under 0.5% of a year's revenue doesn't interrupt
-        # you, and neither does a legal matter the filing itself calls routine unless it's over 1%. One-line note instead.
-        pct = x.get("pct_rev")
-        small = pct is not None and pct < 0.5
-        routine_legal = x["category"] == "litigation" and e.get("routine") and (pct is None or pct < 1)
-        if x["tier"] == "act" and x["category"] in ("litigation", "M&A", "fund_raise", "capex") and (small or routine_legal):
-            x["tier"] = "note"; x["downgraded"] = "small"
-    vague = [x for x in rows if x["tier"] in ("act", "note") and not x.get("line") and x["category"] in
-             ("litigation", "M&A", "fund_raise", "capex", "press_release", "credit_rating", "insider_trading", "dividend")]
-    with ThreadPoolExecutor(max_workers=4) as ex:
-        list(ex.map(enrich_line, vague))
+    triage.enrich(rows, names, ttm)
 
     hist = eod.history(syms, now.date(), sessions=45)
 

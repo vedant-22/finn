@@ -3,7 +3,7 @@ import importlib.util, pathlib, sys
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
 API = pathlib.Path(__file__).resolve().parent.parent / "api"
-sys.path.insert(0, str(API))
+sys.path.insert(0, str(API.parent))
 handlers = {}
 for name in ("sources", "call", "grade"):
     spec = importlib.util.spec_from_file_location(name, API / f"{name}.py")
@@ -15,6 +15,7 @@ class Router(BaseHTTPRequestHandler):
         h = handlers.get(self.path.split("?")[0])
         if not h:
             self.send_response(404); self.end_headers(); return
+        self.run = h.run
         h.do_POST(self)
 
 Router._send = next(iter(handlers.values()))._send

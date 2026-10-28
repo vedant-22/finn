@@ -1,6 +1,9 @@
 """POST {symbol} -> financial tables, snapshot and the list of transcripts. No model calls."""
 import re
-from _common import make_handler
+from http.server import BaseHTTPRequestHandler
+import os, sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from finn.webapi import JSONHandler
 from finn import research
 
 def run(body):
@@ -9,4 +12,5 @@ def run(body):
         raise ValueError("symbol required")
     return research.sources(sym)
 
-handler = make_handler(run)
+class handler(JSONHandler, BaseHTTPRequestHandler):
+    run = staticmethod(run)

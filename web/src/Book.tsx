@@ -40,7 +40,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
                   </span>
                   <span className="sub">{c === undefined ? '' : !score || !score.graded
                     ? (marks.length ? `${marks.length} not due yet` : 'No checkable promises')
-                    : `${fmtKept(score.kept)} of ${score.graded} kept`}</span>
+                    : summary(marks.map(m => m.status))}</span>
                 </div>
               </button>
             </li>
@@ -51,4 +51,6 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
   )
 }
 const ORDER: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
-const fmtKept = (k: number) => (Number.isInteger(k) ? String(k) : k.toFixed(1))
+const WORDS: Partial<Record<Status, string>> = { kept: 'kept', partly: 'partly kept', missed: 'missed', quiet: 'gone quiet' }
+const summary = (ss: Status[]) => (['missed', 'quiet', 'partly', 'kept'] as Status[])
+  .map(st => [st, ss.filter(x => x === st).length] as const).filter(([, n]) => n).map(([st, n]) => `${n} ${WORDS[st]}`).join(', ')

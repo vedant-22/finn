@@ -171,7 +171,7 @@ function LedgerRow({ p, i, open, toggle }: { p: Promise_; i: number; open: boole
               <h4>{p.evidence_kind === 'quote' ? 'Latest call' : 'Reported'}</h4>
               {p.evidence_kind === 'quote'
                 ? <><blockquote>“{p.evidence}”</blockquote><p className="sub"><Src href={p.evidence_url ? `${p.evidence_url}#page=${p.evidence_page}` : undefined}>page {p.evidence_page}</Src></p></>
-                : <p className="num-ev">{p.evidence}</p>}
+                : <p className="num-ev">{p.evidence.replace(/(\d)\.0\b/g, '$1')}</p>}
             </div>
           )}
         </div>

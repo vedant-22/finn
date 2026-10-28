@@ -200,7 +200,7 @@ export async function buildLive(sym: string, onStep: (steps: Step[]) => void): P
   emit()
   const results = await Promise.all(calls.map(async (t: any, i: number) => {
     try {
-      const c = await post('/api/call', t)
+      const c = await post('/api/call', { symbol: sym, period: t.period })
       steps[i + 1].state = c.error ? 'fail' : 'done'
       steps[i + 1].detail = c.error ? 'not readable' : `${c.pages} pages, ${c.promises.length} promises`
       emit(); return c

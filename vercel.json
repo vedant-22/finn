@@ -1,13 +1,34 @@
 {
+  "framework": null,
   "buildCommand": "cd web && npm ci && npm run build",
   "outputDirectory": "web/dist",
   "installCommand": "echo skip",
   "functions": {
-    "api/sources.py": { "maxDuration": 60, "includeFiles": "finn/**" },
-    "api/call.py": { "maxDuration": 120, "includeFiles": "finn/**" },
-    "api/grade.py": { "maxDuration": 300, "includeFiles": "finn/**" }
+    "api/sources.py": {
+      "maxDuration": 60,
+      "includeFiles": "finn/**",
+      "excludeFiles": "{web/**,data/**,docs/**,brief/**,shots/**,.playwright-mcp/**}"
+    },
+    "api/call.py": {
+      "maxDuration": 120,
+      "includeFiles": "finn/**",
+      "excludeFiles": "{web/**,data/**,docs/**,brief/**,shots/**,.playwright-mcp/**}"
+    },
+    "api/grade.py": {
+      "maxDuration": 300,
+      "includeFiles": "finn/**",
+      "excludeFiles": "{web/**,data/**,docs/**,brief/**,shots/**,.playwright-mcp/**}"
+    }
   },
   "headers": [
-    { "source": "/data/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=300" }] }
+    {
+      "source": "/data/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300"
+        }
+      ]
+    }
   ]
 }

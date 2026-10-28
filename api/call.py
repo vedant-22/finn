@@ -1,13 +1,22 @@
-"""POST {period, url, urls} -> promises from one earnings call, each quote checked against its page."""
-from _common import make_handler
+"""POST {symbol, period} -> promises from one earnings call, each quote checked against its page.
+
+The client names the call; the server looks up the document URLs itself, so this endpoint
+can't be pointed at arbitrary URLs.
+"""
+import re
+from http.server import BaseHTTPRequestHandler
+import os, sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from finn.webapi import JSONHandler
 from finn import research
 
-ALLOWED = ("https://nsearchives.nseindia.com/", "https://www.bseindia.com/", "https://archives.nseindia.com/")
-
 def run(body):
-    urls = [u for u in (body.get("urls") or [body.get("url")]) if isinstance(u, str) and u.startswith(ALLOWED)]
-    if not urls:
-        raise ValueError("only exchange-hosted transcripts are read")
-    return research.promises_for({"period": body.get("period", ""), "url": urls[0], "urls": urls})
+    sym = re.sub(r"[^A-Z0-9&-]", "", str(body.get("symbol", "")).upper())[:20]
+    src = research.sources(sym)
+    match = [t for t in src["transcripts"] if t["period"] == body.get("period")]
+    if not match:
+        raise ValueError(f"no call for {body.get('period')}")
+    return research.promises_for(match[0])
 
-handler = make_handler(run)
+class handler(JSONHandler, BaseHTTPRequestHandler):
+    run = staticmethod(run)

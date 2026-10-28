@@ -1,0 +1,9 @@
+filings: 24
+category: 22/24 = 92%
+tier:     21/24 = 88%
+should have interrupted but didn't: 1
+interrupted when it shouldn't have: 2
+  KFINTECH   Press Release                got press_release/note  want results/act
+  TCI        Updates                      got fund_raise/act  want fund_raise/note
+  LT         Updates                      got investor_meetings/note  want earnings_call/note
+  TCI        Updates                      got fund_raise/act  want fund_raise/fold

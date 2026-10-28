@@ -1,0 +1,8 @@
+brief
+shots
+.playwright-mcp
+data/cache
+data/raw
+web/node_modules
+web/dist
+.env

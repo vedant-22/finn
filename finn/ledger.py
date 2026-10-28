@@ -122,7 +122,7 @@ Only settle a promise with numbers that measure the same thing. Company-wide OPM
 "evidence_kind": "numbers" if the reported numbers settle it (then "evidence" states the exact figures used, e.g. "OPM Q1 FY27 7%, Q2 FY27 9%"), "quote" if the latest call settles it (then "evidence" is copied character for character from the latest call, 12 to 45 words, and "evidence_page" is its page), else "none".
 
 Then:
-- "read": two sentences at most on how far this management's word can be relied on, based only on the grades above.
+- "read": two sentences at most on how far this management's word can be relied on, based only on the grades above. If fewer than three promises are kept, missed or partly, say plainly that there is too little settled yet to judge, and say what falls due next.
 - "questions": the 2 or 3 questions an investor should put to management on the next call, each under 20 words, pointed at missed, partly or quiet promises.
 - "bull" and "bear": 2 or 3 points each, under 18 words, each resting on a number above or a graded promise.
 

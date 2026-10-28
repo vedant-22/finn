@@ -52,6 +52,10 @@ def generate(prompt, *, model, schema=None, task="misc", temperature=0.1, max_to
             _log(task, m, usage, cached=False)
             return result
         last = f"{r.status_code} {r.text[:200]}"
+        if r.status_code == 429 and "free_tier" in r.text and m in config.FALLBACK:
+            # Daily free quota for this model is gone; waiting won't help. Drop a tier now.
+            m = config.FALLBACK[m]
+            continue
         if r.status_code in (429, 500, 503):
             # Overloaded or out of quota: wait a little, then drop to the fallback model.
             time.sleep(min(20, 3 * (attempt + 1)))

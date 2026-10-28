@@ -9,8 +9,9 @@ Three tiers, and the policy is the product:
 NSE's own subject ("desc") settles about 85% of filings for free. A cheap model only sees the vague ones
 ("General Updates", "Updates", "Press Release", "Outcome of Board Meeting" without results, "Others").
 """
-import json
+import re
 from . import llm, config
+from .sources import pdf
 
 RULES = {
     # desc: (category, tier)
@@ -74,6 +75,8 @@ def by_rule(x):
     if desc == "Analysts/Institutional Investor Meet/Con. Call Updates":
         if "transcript" in text or "transcript" in (x.get("attchmntFile") or "").lower():
             return "earnings_call", "note", "rule"
+        if "presentation" in text:
+            return "earnings_call", "note", "rule"
         return "investor_meetings", "fold", "rule"
     if desc == "Outcome of Board Meeting" and "financial result" in text:
         return "results", "act", "rule"
@@ -111,11 +114,14 @@ def classify(rows):
         if r:
             x["category"], x["tier"], x["how"] = r
             x["line"] = ""
-        elif x.get("desc") in VAGUE or True:
+        else:
             vague.append(x)
-    for k in range(0, len(vague), 25):
-        batch = vague[k:k + 25]
-        items = "\n".join(f"{i}. [{x['sm_name']}] {x['desc']}: {(x.get('attchmntText') or '')[:400]}" for i, x in enumerate(batch))
+    for x in vague:
+        x["_body"] = _body(x) if _says_nothing(x) else ""
+    for k in range(0, len(vague), 20):
+        batch = vague[k:k + 20]
+        items = "\n".join(f"{i}. [{x['sm_name']}] {x['desc']}: {(x.get('attchmntText') or '')[:400]}"
+                          + (f"\n   Letter: {x['_body']}" if x["_body"] else "") for i, x in enumerate(batch))
         try:
             out = llm.generate(PROMPT.format(items=items), model=config.FAST, schema=SCHEMA, task="classify", max_tokens=6000)
         except llm.LLMError:
@@ -128,3 +134,19 @@ def classify(rows):
             else:
                 x["category"], x["tier"], x["line"], x["how"] = "unclassified", "note", "", "fallback"
     return rows
+
+
+def _says_nothing(x):
+    """NSE subjects like '...has informed the Exchange about General Updates' carry no information."""
+    t = re.sub(r"^.*?has (informed|submitted to) the Exchange( about| regarding)?", "", x.get("attchmntText") or "", flags=re.I)
+    t = re.sub(r"(general updates|updates|press release dated [\w ,]+\d{4}\.?|outcome of (the )?board meeting( held on [\w ,]+)?)", "", t, flags=re.I)
+    return len(re.findall(r"[A-Za-z]{3,}", t)) < 6
+
+def _body(x, n=900):
+    """The letter's text after the letterhead and address block, where the subject line starts."""
+    try:
+        t = " ".join(" ".join(pdf.pages(x["attchmntFile"], max_pages=2)).split())
+    except Exception:
+        return ""
+    m = re.search(r"\b(Sub(ject)?\s*[:.\-–]|Intimation under|Outcome of|Dear Sir)", t, re.I)
+    return (t[m.start():] if m else t[300:])[:n]

@@ -144,7 +144,7 @@ function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; open
         </div>
       )}
       <p className="src-line"><Src href={r.source.xbrl}>Exchange XBRL</Src> <Src href={r.source.pdf}>Results PDF</Src>
-        <span className="sub"> EBITDA = PBT before exceptional items + finance cost + depreciation − other income.</span></p>
+</p>
     </div>
   )
 }
@@ -160,7 +160,7 @@ function PeopleBlock({ f }: { f: any }) {
           <li key={i} className={joining ? 'in' : 'out'}>
             <div className="who"><b>{p.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')}</b>
               <span className="role">{verb(p.action)} {p.role}{/\d/.test(p.effective || '') ? `, from ${p.effective.replace(/(\d+)(st|nd|rd|th)/, '$1')}` : ''}</span></div>
-            {joining && p.background && <p className="bio">{p.background}</p>}
+            {joining && p.background && !/not stated|not provided|^$/i.test(p.background) && <p className="bio">{p.background}</p>}
             {joining && p.previous?.length > 0 && <p className="prev">{p.previous.join('; ')}</p>}
             {!joining && p.reason && !/not stated/i.test(p.reason) && <p className="bio">Reason given: {p.reason}</p>}
           </li>
@@ -187,7 +187,9 @@ function MoveCard({ m, name, lines, openCompany }: { m: Move; name: string; line
         <Spark series={m.series} />
       </div>
       <p className="line">{m.explainedBy
-        ? <>Same day: {(m.explainedBy.line || tidySubject(m.explainedBy.subject)).replace(/\.$/, '')}.</>
+        ? m.explainedBy.category === 'results'
+          ? <>{m.explainedBy.at.slice(0, 10) === m.d ? 'Results came out that day.' : 'Results came out after the previous close.'}</>
+          : <>After: {(m.explainedBy.line || tidySubject(m.explainedBy.subject)).replace(/\.$/, '')}.</>
         : <>No filing explains it.</>}</p>
       <footer className="card-foot"><span className="sub">Your line: {m.why.includes('volume') ? `${lines.volX}× volume` : `±${lines.movePct}% move`}</span></footer>
     </article>

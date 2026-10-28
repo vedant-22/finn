@@ -1,5 +1,8 @@
 """POST {src, calls} -> the assembled ledger: grades, questions, for and against."""
-from _common import make_handler
+from http.server import BaseHTTPRequestHandler
+import os, sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from finn.webapi import JSONHandler
 from finn import llm, research
 
 def run(body):
@@ -10,4 +13,5 @@ def run(body):
     graded = research.grade(src, calls)
     return research.assemble(src, calls, graded)
 
-handler = make_handler(run)
+class handler(JSONHandler, BaseHTTPRequestHandler):
+    run = staticmethod(run)

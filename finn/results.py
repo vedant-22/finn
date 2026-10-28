@@ -20,21 +20,25 @@ def _val(xml, tag, ctx="OneD"):
 
 def parse(xml):
     cr = 1e7  # values are in rupees; show crore
-    bank = _val(xml, "InterestEarned") is not None
+    bank = _val(xml, "OperatingProfitBeforeProvisionAndContingencies") is not None
+    lender = _val(xml, "InterestEarned") is not None
     if bank:
-        rev = _val(xml, "Income")
+        rev = _val(xml, "InterestEarned")
         ebitda = _val(xml, "OperatingProfitBeforeProvisionAndContingencies")
         pbt = _val(xml, "ProfitLossFromOrdinaryActivitiesBeforeTax")
-        pat = _val(xml, "ProfitLossForThePeriod")
+        pat = _val(xml, "ProfitLossAfterTaxesMinorityInterestAndShareOfProfitLossOfAssociates") or _val(xml, "ProfitLossForThePeriod")
     else:
         rev = _val(xml, "RevenueFromOperations")
         pbt_pre = _val(xml, "ProfitBeforeExceptionalItemsAndTax")
         fc, da, oi = _val(xml, "FinanceCosts"), _val(xml, "DepreciationDepletionAndAmortisationExpense"), _val(xml, "OtherIncome")
-        ebitda = (pbt_pre + (fc or 0) + (da or 0) - (oi or 0)) if pbt_pre is not None else None
+        if lender:  # NBFCs: interest is the cost of goods, so EBITDA means nothing. Use net interest income.
+            ebitda = (_val(xml, "InterestEarned") - (fc or 0))
+        else:
+            ebitda = (pbt_pre + (fc or 0) + (da or 0) - (oi or 0)) if pbt_pre is not None else None
         pbt = _val(xml, "ProfitBeforeTax")
         pat = _val(xml, "ProfitLossForPeriod")
     f = lambda v: round(v / cr, 1) if v is not None else None
-    return {"bank": bank, "revenue": f(rev), "ebitda": f(ebitda), "pbt": f(pbt), "pat": f(pat)}
+    return {"bank": bank or lender, "bank_kind": "bank" if bank else "lender" if lender else "", "revenue": f(rev), "ebitda": f(ebitda), "pbt": f(pbt), "pat": f(pat)}
 
 def _qe(s):
     return dt.datetime.strptime(s.title(), "%d-%b-%Y").date()
@@ -79,7 +83,7 @@ def first_cut(symbol, quarter_end=None):
     lines = []
     for key, label in (("revenue", "Revenue"), ("ebitda", "EBITDA"), ("pbt", "PBT"), ("pat", "PAT")):
         v = cur[key]
-        lines.append({"key": key, "label": label if not cur["bank"] else {"revenue": "Total income", "ebitda": "Pre-provision profit"}.get(key, label),
+        lines.append({"key": key, "label": {"bank": {"revenue": "Interest earned", "ebitda": "Pre-provision profit"}, "lender": {"ebitda": "Net interest income"}}.get(cur["bank_kind"], {}).get(key, label),
                       "value": v, "prev": prev and prev[key], "yago": yago and yago[key],
                       "qoq": _chg(v, prev and prev[key]), "yoy": _chg(v, yago and yago[key])})
     margin = round(cur["ebitda"] / cur["revenue"] * 100, 1) if cur["ebitda"] and cur["revenue"] and not cur["bank"] else None

@@ -83,6 +83,17 @@ def _fuzzy_in(q, txt, threshold=0.9):
         anchor = " ".join(words[-3:]); j = txt.find(anchor)
         if j < 0:
             return False
-        i = max(0, j - len(q))
-    window = txt[i:i + int(len(q) * 1.3)]
-    return difflib.SequenceMatcher(None, q, window).ratio() >= threshold
+        i = max(0, j + len(anchor) - int(len(q) * 1.15))
+    window = txt[i:i + int(len(q) * 1.15)]
+    # Fuzzy matching may forgive a dropped filler word or a swapped synonym, never a changed figure
+    # or a flipped meaning: every number in the quote must be in this stretch of the page exactly,
+    # and the quote can't add or drop a negation.
+    for n in re.findall(r"\d[\d.,%]*", q):
+        if not re.search(rf"(?<![\d.]){re.escape(n)}(?![\d])", window):
+            return False
+    neg = lambda t: len(re.findall(r"\b(not|no|never|nt|cannot|without)\b", t))
+    if neg(q) != neg(window[:len(q) + 20]):
+        return False
+    # Share of the quote's characters found, in order, in the page text near the anchor.
+    blocks = difflib.SequenceMatcher(None, q, window, autojunk=False).get_matching_blocks()
+    return sum(b.size for b in blocks) / len(q) >= threshold
