@@ -112,27 +112,18 @@ export function pctParts(v: number | null | undefined): [string, string] {
   return [r === 0 ? '0' : `${v > 0 ? '+' : '−'}${r}`, '%']
 }
 
-// The card's picture: the stock's last sessions, drawn full width. Line and wash in brand; volume as grey ticks, the last day in brand.
-export function Chart({ series, h = 120, mark, volume = true }: { series: Bar[]; h?: number; mark?: string; volume?: boolean }) {
+// The card's picture: the stock's last sessions, drawn full width, a brand line over a pale wash
+export function Chart({ series, h = 120 }: { series: Bar[]; h?: number }) {
   if (series.length < 2) return null
-  const w = 320
-  const closes = series.map(b => b.close), vols = series.map(b => b.vol)
-  const lo = Math.min(...closes), hi = Math.max(...closes), vmax = Math.max(...vols) || 1
-  // An unusual day is about volume, so its picture keeps the volume ticks; elsewhere the line has the frame to itself
-  const top = 14, base = volume ? h * 0.74 : h - 10
+  const w = 320, top = 14, base = h - 10
+  const closes = series.map(b => b.close)
+  const lo = Math.min(...closes), hi = Math.max(...closes)
   const x = (i: number) => (i / (series.length - 1)) * (w - 12) + 6
   const y = (v: number) => base - ((v - lo) / (hi - lo || 1)) * (base - top)
   const pts = closes.map((c, i) => `${x(i).toFixed(1)} ${y(c).toFixed(1)}`)
-  const bw = Math.max(1.5, (w / series.length) * 0.42)
-  const mi = mark ? series.findIndex(b => b.d >= mark) : -1
   return (
     <svg className="chart" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden>
       <path className="wash" d={`M${pts.join('L')}L${x(closes.length - 1).toFixed(1)} ${base}L${x(0).toFixed(1)} ${base}Z`} />
-      {volume && vols.map((v, i) => {
-        const vh = Math.max(1, (v / vmax) * (h - base - 4))
-        return <rect key={i} x={x(i) - bw / 2} width={bw} y={h - vh} height={vh} className={i === vols.length - 1 ? 'vol-last' : 'vol'} />
-      })}
-      {mi > 0 && <line className="day" x1={x(mi)} x2={x(mi)} y1={top - 6} y2={h} vectorEffect="non-scaling-stroke" />}
       <path className="line" d={`M${pts.join('L')}`} vectorEffect="non-scaling-stroke" />
     </svg>
   )

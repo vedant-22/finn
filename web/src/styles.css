@@ -58,7 +58,7 @@ blockquote { margin: 0; }
 .btn-primary, .btn-outline { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 var(--s-s); border-radius: var(--r-pill); font: 400 16px/116% var(--f); letter-spacing: -0.42px; text-decoration: none; white-space: nowrap; transition: background-color 100ms ease-in-out, color 100ms ease-in-out; }
 .btn-primary { background: var(--brand); color: #fff; }
 .btn-primary:active { background: var(--brand-pressed); }
-.btn-primary:disabled { background: var(--ink-2); opacity: .5; }
+.btn-primary:disabled { opacity: .4; }
 .btn-outline { border: 1px solid var(--brand); color: var(--brand); }
 .btn-outline:active { background: var(--brand); color: #fff; }
 .btn-sm { height: 32px; padding: 0 var(--s-3xs); font-size: 15px; }
@@ -82,8 +82,8 @@ blockquote { margin: 0; }
 /* ---------- Today ---------- */
 .dateline { font-size: 16px; line-height: 140%; font-weight: 500; letter-spacing: -0.42px; margin-top: var(--s-5xs); }
 .dateline .sub { display: block; font-size: 14px; font-weight: 400; letter-spacing: -0.39px; }
-.window { display: flex; gap: 4px; margin-top: var(--s-2xs); }
-.window button { flex: 1; height: 36px; text-align: center; border-radius: var(--r-pill); border: 1px solid transparent; color: var(--ink-2); font-size: 15px; transition: border-color 200ms, color 200ms; }
+.window { display: flex; gap: var(--s-5xs); margin-top: var(--s-2xs); }
+.window button { flex: 1; height: 36px; text-align: center; border-radius: var(--r-pill); border: 1px solid var(--rule); color: var(--ink-2); font-size: 15px; transition: border-color 200ms, color 200ms; }
 .window button.on { border-color: var(--brand); color: var(--brand); }
 .hero { padding: var(--s-xl) 0 var(--s-l); }
 .hero-fig { display: flex; flex-wrap: wrap; align-items: flex-end; column-gap: 10px; }
@@ -104,8 +104,8 @@ blockquote { margin: 0; }
 .card-info { display: flex; flex-direction: column; padding: var(--s-xs) 0 0; }
 .card-lbl { display: flex; justify-content: space-between; gap: 12px; }
 .card-title { margin-top: var(--s-3xs); align-self: flex-start; min-height: 26px; }
-.card-fig { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 4px 10px; margin-top: var(--s-xs); }
-.card-cap { font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink-2); padding-bottom: 4px; }
+.card-fig { display: flex; flex-direction: column; align-items: flex-start; margin-top: var(--s-xs); }
+.card-cap { font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink-2); margin-top: var(--s-nano); padding-left: var(--s-nano); }
 .card-desc { margin-top: var(--s-3xs); font-size: 16px; line-height: 140%; color: var(--ink-2); }
 .card-who { font-family: var(--f); letter-spacing: -0.42px; color: var(--ink); font-weight: 500; }
 .read-more { margin-top: var(--s-5xs); }
@@ -130,7 +130,7 @@ blockquote { margin: 0; }
 .figs td.num { text-align: right; padding-left: 10px; }
 .figs td:nth-child(2) { font-weight: 500; }
 .margin-line, .one-off { font-size: 14px; margin-top: 8px; }
-.against { display: grid; }
+.against { display: grid; margin-top: var(--s-s); }
 .against h4 { margin-bottom: 4px; }
 .word-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 10px 0; border-top: 1px solid var(--rule); width: 100%; font-size: 15px; line-height: 140%; }
 .word-row .lbl { flex: none; }
@@ -189,6 +189,15 @@ blockquote { margin: 0; }
 .book-rec { text-align: right; flex: none; }
 .book-card .card-desc { margin-top: var(--s-3xs); }
 .book-px { margin-top: var(--s-3xs); font-size: 14px; color: var(--ink-2); }
+
+/* the weakest word leads the book in a brand card, as the reference sets one block in its colour */
+.book-card.lead { background: var(--brand); color: #fff; }
+.book-card.lead :is(.lbl, .card-title, .outcome, .card-desc, .book-px) { color: #fff; }
+.book-card.lead :is(.lbl-quiet, .card-desc, .book-px) { color: rgba(255, 255, 255, .78); }
+.book-card.lead .card-img { background: rgba(255, 255, 255, .08); margin: calc(-1 * var(--s-xs) + var(--s-2xs)) 0 var(--s-xs); width: 100%; }
+.book-card.lead .chart .line { stroke: #fff; }
+.book-card.lead .chart .wash { fill: rgba(255, 255, 255, .1); }
+.book-og .og-d1 { min-height: 2.8em; }
 
 /* ---------- Company ---------- */
 .bar { position: sticky; top: 0; z-index: 6; display: flex; justify-content: space-between; align-items: center; gap: 12px; height: calc(var(--h-mast) + env(safe-area-inset-top)); padding: env(safe-area-inset-top) var(--g) 0; margin: 0 calc(-1 * var(--g)); background: var(--paper); border-bottom: 1px solid transparent; transition: border-color 200ms; }
@@ -276,7 +285,7 @@ blockquote { margin: 0; }
 .tabs { position: fixed; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; background: var(--paper); border-top: 1px solid var(--rule); padding-bottom: env(safe-area-inset-bottom); z-index: 5; }
 .tabs button { flex: 1; max-width: 186px; text-align: center; min-height: 56px; color: var(--ink-2); font-weight: 450; position: relative; }
 .tabs button.on { color: var(--ink); }
-.tabs button.on::before { content: ''; position: absolute; top: -1px; left: 30%; right: 30%; height: 2px; background: var(--brand); }
+.tabs button.on::after { content: ''; position: absolute; bottom: 10px; left: 50%; width: 24px; margin-left: -12px; height: 2px; background: var(--brand); }
 
 /* ---------- sheet ---------- */
 .sheet-wrap { position: fixed; inset: 0; z-index: 10; pointer-events: none; visibility: hidden; transition: visibility 0s 220ms; }

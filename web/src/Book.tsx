@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { cachedCompany, deadline, getCompany, pct, rupees, shortName, wordScore, type Company, type Promise_, type Push, type Status } from './lib'
-import { Masthead, Outcome, StatusLabel, useKept } from './ui'
+import { Chart, Masthead, Outcome, StatusLabel, useKept } from './ui'
 
 // The whole book, ordered by how far management's word has held. Weakest first: that's where to look.
 export function Book({ push, openCompany }: { push: Push; openCompany: (s: string) => void }) {
@@ -44,13 +44,14 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
       <BookTally cos={Object.values(cos)} only={only} setOnly={setOnly} />
       {only && <p className="book-filter sub" aria-live="polite">{shown.length} with {WITH[only]} <button className="text-btn" onClick={() => setOnly(null)}>Show all</button></p>}
       <ul className="book-list">
-        {shown.map(({ p, c, score, last }) => {
+        {shown.map(({ p, c, score, last }, i) => {
           const weak = weakest(c, only)
           const kept = score ? Math.floor(score.kept) : 0
           const pending = c ? c.ledger.filter(x => x.hard && x.status === 'pending').length : 0
           return (
             <li key={p.symbol}>
-              <button className="book-card" onClick={() => openCompany(p.symbol)}>
+              <button className={`book-card${i === 0 && !only ? ' lead' : ''}`} onClick={() => openCompany(p.symbol)}>
+                {i === 0 && !only && <div className="card-img"><Chart series={(push.eod[p.symbol] || []).slice(-30)} /></div>}
                 <div className="card-lbl"><span className="lbl lbl-quiet">{p.sector}</span>{weak && <StatusLabel status={weak.status} />}</div>
                 <div className="book-head">
                   <span className="card-title">{p.short || shortName(p.name)}</span>
@@ -91,8 +92,8 @@ function BookTally({ cos, only, setOnly }: { cos: (Company | null | undefined)[]
   // Four in the grid, as on an outcomes page; partly kept rides under kept, still tappable
   const items: [Status, string, string][] = [
     ['missed', 'Missed: the date passed without it.', at('missed')],
-    ['quiet', 'Gone quiet: due now, not mentioned on the latest call.', at('quiet')],
-    ['kept', 'Kept: delivered, or on track in the numbers.', at('kept')],
+    ['quiet', 'Gone quiet: due, and not mentioned.', at('quiet')],
+    ['kept', 'Kept: delivered, or on track.', at('kept')],
     ['pending', 'Not due yet.', 'Still running'],
   ]
   return (
