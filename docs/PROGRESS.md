@@ -23,3 +23,4 @@ Next: regrade job (pid from `pgrep -f regrade.sh`) sleeps to 12:40 IST then rebu
 - Book: on equal kept share, more misses rank weaker
 - Deployed and checked live 28 Oct ~12:20 IST
 - Company sources footer: "N promises found, quotes checked" (was "kept after checking", which read like a verdict)
+- Company screen: a failed company-file fetch shows the plain error and Try again (was stuck loading); the 'About a minute' note shows only during live research. Tested at 390x844 with an aborted request
