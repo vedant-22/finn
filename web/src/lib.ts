@@ -300,6 +300,9 @@ export const tidyEvidence = (t: string) => rupees(t
 export const rupees = (t: string) => t
   .replace(/\b(?:INR|Rs\.?)\s?(\d[\d,.]*)(\s?(?:to|-|–)\s?(?:(?:INR|Rs\.?)\s?)?(\d[\d,.]*))?\s?([Cc]r(?:ores?)?)\b/g, (_, a, r, b) => `₹${a}${r ? `–${b}` : ''} crore`)
   .replace(/\b(?:INR|Rs\.?)\s?(?=\d)/g, '₹')
+  // Lakh crore and crore, not trillion and billion: ₹7.79 trillion is ₹7.79 lakh crore, ₹6.1 billion is ₹610 crore
+  .replace(/₹(\d+(?:\.\d+)?)\s?(?:trillion|tn)\b/gi, '₹$1 lakh crore')
+  .replace(/₹(\d+(?:\.\d+)?)\s?(?:billion|bn)\b/gi, (_, n) => `₹${+(+n * 100).toFixed(2)} crore`)
   // A bare '300 crores' or '150 crore rupees' is money too, unless it counts something ('2 crore shares')
   .replace(/(?<![₹\d.,–-]|₹\s)(?!(?:19|20)\d\d\s+to\s)(\d[\d,]*(?:\.\d+)?)(?:\s?(?:to|-|–)\s?(\d[\d,]*(?:\.\d+)?))?\s?[Cc]rores?(?:\s+rupees)?\b(?!\s+(?:equity\s+)?(?:shares|units|customers|users|clients|tonnes|tons|people|subscribers|accounts|investors|folios|policies|households|farmers|doses|litres|liters))/g,
     (_, a, b) => `₹${a}${b ? `–${b}` : ''} crore`)
