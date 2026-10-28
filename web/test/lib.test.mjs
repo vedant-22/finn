@@ -49,6 +49,7 @@ test('deadlines name the fiscal year from the call month', () => {
   assert.equal(deadline(p('next year', 'Jan 2026')), 'by FY27')
   assert.equal(deadline(p('full year FY26', 'Jan 2026')), 'by FY26')
   assert.equal(deadline(p('end of fiscal 2030', 'Jan 2026')), 'by end of FY30')
+  assert.equal(deadline(p('January March 28', 'Jan 2026')), 'by Q4 FY28')
   assert.equal(deadline(p('coming year', 'Jan 2026')), 'by FY27')
   assert.equal(deadline(p('upcoming year', 'May 2026')), 'by upcoming year')
   assert.equal(deadline({ target: 'Launch in coming year', by_when: 'coming year', period: 'Jan 2026' }), '(FY27)')
