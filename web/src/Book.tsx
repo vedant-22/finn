@@ -54,7 +54,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
                     {marks.slice(0, 12).map((m, i) => <Mark key={m.id} status={m.status} size={16} delay={i * 50} />)}
                     {marks.length > 12 && <span className="sub more">+{marks.length - 12}</span>}
                   </span>
-                  <span className="sub">{c === undefined ? '' : marks.length ? summary(marks.map(m => m.status)) : 'No checkable promises'}</span>
+                  <span className="sub">{c === undefined ? '' : marks.length ? summary(marks.map(m => m.status)) : c && c.calls.length && c.calls.every(x => x.error) ? "Call transcripts couldn't be opened" : 'No checkable promises'}</span>
                 </div>
               </button>
             </li>

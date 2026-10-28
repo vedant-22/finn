@@ -9,6 +9,7 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
   const [showSoft, setShowSoft] = useState(false)
   const [showOpen, setShowOpen] = useState(false)
   const s = c.snapshot
+  const readable = c.calls.filter(x => !x.error).length
   const hard = c.ledger.filter(p => p.hard).sort((a, b) => SHOW.indexOf(a.status) - SHOW.indexOf(b.status))
   const soft = c.ledger.filter(p => !p.hard)
   // The model's one-paragraph read only shows once enough promises have actually been settled.
@@ -50,8 +51,10 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
                 return n ? <li key={st}><Mark status={st} size={18} /><b className="num">{n}</b> <span>{STATUS_WORD[st].toLowerCase()}</span></li> : null
               })}
             </ul>
-            : <p className="word-score sub">No promise in these calls had both a number and a date.</p>}
-          <p className="sub tally-note">Promises with a number and a date, from the {c.calls.filter(x => !x.error).length - 1} calls before the latest one.</p>
+            : readable === 0
+              ? <p className="word-score sub">None of the {c.calls.length} call transcripts linked from its exchange filings could be opened, so there is nothing to grade yet. They are listed at the foot of the page.</p>
+              : <p className="word-score sub">No promise in these calls had both a number and a date.</p>}
+          {readable > 1 && <p className="sub tally-note">Promises with a number and a date, from the {readable - 1 === 1 ? 'call' : `${readable - 1} calls`} before the latest one.</p>}
         </div>
         {c.read && settled >= 3 && <p className="read">{rupees(c.read)}</p>}
 
@@ -144,8 +147,8 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
           ))}
           <li><Src href={c.source}>Financial tables</Src><span className="sub"> screener.in, {c.basis}, compiled from filed results</span></li>
         </ul>
-        <p className="sub">Read {pages} pages. Every quote above was matched to its page in the PDF{dropped ? `; ${dropped} that didn't match ${dropped === 1 ? 'was' : 'were'} thrown out` : ''}. Nothing here comes from news, brokers or the model's own memory.</p>
-        {c.usage && <p className="sub">{c.usage.calls} model calls, {Math.round((c.usage.tokens_in + c.usage.tokens_out) / 1000)}k tokens, about ${c.usage.usd_if_billed.toFixed(2)} if billed. {grader(c.usage.by_model)}</p>}
+        {pages > 0 && <p className="sub">Read {pages} pages. Every quote above was matched to its page in the PDF{dropped ? `; ${dropped} that didn't match ${dropped === 1 ? 'was' : 'were'} thrown out` : ''}. Nothing here comes from news, brokers or the model's own memory.</p>}
+        {c.usage?.calls > 0 && <p className="sub">{c.usage.calls} model calls, {Math.round((c.usage.tokens_in + c.usage.tokens_out) / 1000)}k tokens, about ${c.usage.usd_if_billed.toFixed(2)} if billed. {grader(c.usage.by_model)}</p>}
       </footer>
     </main>
   )
