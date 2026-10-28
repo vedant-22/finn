@@ -193,7 +193,7 @@ blockquote { margin: 0; }
 
 /* One block per page in the brand colour, as the reference does: Today's first card, Book's weakest word.
    The tokens flip inside it, so everything in the card (detail table, links, labels) follows. */
-:is(.card, .book-card).lead {
+:is(.card, .book-card, .ask).lead {
   --ink: #FFFFFF; --ink-2: rgba(255, 255, 255, .78); --rule: rgba(255, 255, 255, .24); --brand: #FFFFFF; --brand-pressed: rgba(255, 255, 255, .7);
   --missed: #FFFFFF; --paper: rgba(255, 255, 255, .08); --wash: rgba(255, 255, 255, .12);
   background: #005DA3; color: var(--ink);
@@ -231,6 +231,8 @@ blockquote { margin: 0; }
 .soft { margin-top: var(--s-l); color: var(--ink-2); font-size: 14px; min-height: 44px; text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 4px; }
 .soft-list { margin-top: var(--s-2xs); }
 .soft-row { padding: var(--s-3xs) 0; border-top: 1px solid var(--rule); font-size: 15px; }
+.ask.lead { padding: var(--s-s) var(--s-2xs) var(--s-2xs); }
+.ask.lead .sec-head { border-bottom-color: var(--rule); }
 .ask ol { counter-reset: q; padding-bottom: var(--s-2xs); }
 .ask li { counter-increment: q; display: grid; grid-template-columns: 28px 1fr; padding: var(--s-3xs) 0; border-top: 1px solid var(--rule); font: 16px/140% var(--serif); letter-spacing: 0; }
 .ask li::before { content: counter(q); font: 500 14px/160% var(--f); color: var(--ink-2); }

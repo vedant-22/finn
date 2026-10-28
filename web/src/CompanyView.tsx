@@ -101,7 +101,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
       </section>
 
       {c.questions.length > 0 && (
-        <section className="ask">
+        <section className="ask lead">
           <h2 className="sec-head ask-head">Ask on the next call</h2>
           <ol>{c.questions.map((x, i) => <li key={i}>{rupees(x)}</li>)}</ol>
           <CopyQuestions name={title || shortName(c.name)} qs={c.questions.map(rupees)} />

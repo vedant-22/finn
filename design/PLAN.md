@@ -40,5 +40,5 @@ Written 29 Oct, 03:50 IST, after reading the reference's source in `design-refer
 - [x] 3. Book: section head, outcomes tally, case-study cards with the weakest-promise sentence. Side-by-side with ref-out
 - [x] 4. Company: page header, outcomes tally, promise grid, accordions. Side-by-side with ref-out
 - [x] 5. Look up banner and pills; Your lines sheet switches; live-build and error states
-- [ ] 6. Critic pass (round 1 done 29 Oct ~04:00: Today 7, card 7, Book 6, Book cards 7, Company 8, Look up 6; fixes shipped; round 2 pending) on all four pairs (8/10 bar), detect.mjs no P0/P1, flows on the live link (windows, Your lines, Book filter, company and Back scroll, Look up by name)
+- [ ] 6. Critic pass (round 1 done 29 Oct ~04:00: Today 7, card 7, Book 6, Book cards 7, Company 8, Look up 6; fixes shipped. Round 2: 6.5 / 7.5 / 7 / 8 / 7. Round 3: 7 / 7 / 7.5 / 8 / 6.5, fixes shipped; round 4 pending) on all four pairs (8/10 bar), detect.mjs no P0/P1, flows on the live link (windows, Your lines, Book filter, company and Back scroll, Look up by name)
 - [ ] 7. Writing pass on every card; DESIGN.md and design/inspiration.md rewritten to this system; README shots retaken; PROGRESS and DECISIONS updated
