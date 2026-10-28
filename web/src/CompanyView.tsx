@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { cr, crBig, deadline, minus, pct, rupees, shortName, tidyEvidence, type Company, type Promise_, type Status } from './lib'
-import { Bars, Fold, fyLabel, Outcome, Src, STATUS_WORD, StatusLabel } from './ui'
+import { cr, crBig, deadline, minus, pct, rupees, shortName, tidyEvidence, type Bar, type Company, type Promise_, type Status } from './lib'
+import { Bars, Chart, Fold, fyLabel, Outcome, Src, STATUS_WORD, StatusLabel } from './ui'
 
 const SHOW: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
 
-export function CompanyView({ c, focus, sector, title, close, back }: { c: Company; focus?: number; sector?: string; title?: string; close?: { d: string; close: number }; back: () => void }) {
+export function CompanyView({ c, focus, sector, title, close, bars, back }: { c: Company; focus?: number; sector?: string; title?: string; close?: { d: string; close: number }; bars?: Bar[]; back: () => void }) {
   const [openId, setOpenId] = useState<number | null>(focus ?? null)
   // Opened from a promise elsewhere: bring that promise to the middle of the screen
   useEffect(() => {
@@ -66,6 +66,8 @@ export function CompanyView({ c, focus, sector, title, close, back }: { c: Compa
         {price != null && <>₹{price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)}{close && ` at the ${new Date(close.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} close`}. </>}
         {s.mcap != null && <>Worth ₹{crBig(s.mcap * k)}{s.pe ? `, ${(s.pe * k).toFixed(1)}× earnings` : ''}.</>}
       </p>
+      {/* A holding's page opens on its picture, as the cards do: the last 30 sessions */}
+      {bars && bars.length > 1 && <div className="co-pic"><div className="card-img"><Chart series={bars.slice(-30)} /></div><p className="lbl lbl-quiet">Last 30 sessions, {pct((bars[bars.length - 1].close / bars[Math.max(0, bars.length - 30)].close - 1) * 100)}</p></div>}
 
       <section className="word">
         <h2 className="sec-head">Their word</h2>

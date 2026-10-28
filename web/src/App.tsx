@@ -4,7 +4,7 @@ import { Book } from './Book'
 import { Today } from './Today'
 import {
   buildLive, CATEGORY_LABEL, plainError, DEFAULT_LINES, forgetCompanies, getCompany, getPush, loadLines, saveLines, shortName,
-  type Company, type Lines, type Push, type Step,
+  type Bar, type Company, type Lines, type Push, type Step,
 } from './lib'
 import { Masthead, Sheet, useEdgeBack } from './ui'
 
@@ -73,7 +73,7 @@ export function App() {
   return (
     <>
       {route.sym
-        ? <CompanyRoute sym={route.sym} pid={route.pid} sector={holding(route.sym)?.sector} title={holding(route.sym)?.short} close={push.eod[route.sym]?.[push.eod[route.sym].length - 1]} back={() => { location.hash = !prev || prev === location.hash ? '#/' : prev }} />
+        ? <CompanyRoute sym={route.sym} pid={route.pid} sector={holding(route.sym)?.sector} title={holding(route.sym)?.short} close={push.eod[route.sym]?.[push.eod[route.sym].length - 1]} bars={push.eod[route.sym]} back={() => { location.hash = !prev || prev === location.hash ? '#/' : prev }} />
         : route.tab === 'book' ? <Book push={push} openCompany={openCompany} />
           : route.tab === 'look' ? <Look push={push} openCompany={openCompany} />
             : <Today push={push} lines={lines} setLines={setLines} openCompany={openCompany} openLines={() => setLinesOpen(true)} />}
@@ -124,7 +124,7 @@ function Stepper({ label, value, step, min, max, fmt, set }: { label: string; va
   )
 }
 
-function CompanyRoute({ sym, pid, sector, title, close, back }: { sym: string; pid?: number; sector?: string; title?: string; close?: { d: string; close: number }; back: () => void }) {
+function CompanyRoute({ sym, pid, sector, title, close, bars, back }: { sym: string; pid?: number; sector?: string; title?: string; close?: { d: string; close: number }; bars?: Bar[]; back: () => void }) {
   const [c, setC] = useState<Company | null | undefined>(undefined)
   const [steps, setSteps] = useState<Step[]>([])
   const [failed, setFailed] = useState('')
@@ -142,7 +142,7 @@ function CompanyRoute({ sym, pid, sector, title, close, back }: { sym: string; p
     }).catch(e => live && setFailed(e.message))
     return () => { live = false }
   }, [sym, attempt])
-  if (c) return <CompanyView c={c} focus={pid} sector={sector} title={title} close={close} back={back} />
+  if (c) return <CompanyView c={c} focus={pid} sector={sector} title={title} close={close} bars={bars} back={back} />
   const notFound = /NotFound|404/.test(failed)
   return (
     <main className="screen building">
@@ -197,7 +197,7 @@ function Look({ push, openCompany }: { push: Push; openCompany: (s: string) => v
   const known = [...new Set([...push.portfolio.map(p => p.symbol), ...Object.keys(built)])]
   const full = (s: string) => push.portfolio.find(p => p.symbol === s)?.name || built[s] || names[s] || ''
   const matches = fold(want).length < 2 ? [] : known.filter(s => s !== want && [s, fold(full(s)), ...full(s).toUpperCase().split(/[^A-Z0-9]+/).filter(w => !FILLER_WORDS.has(w))].some(x => x.startsWith(fold(want))))
-  const submit = (e: React.FormEvent) => { e.preventDefault(); if (!want) return; openCompany(!known.includes(want) && matches.length === 1 && fold(want).length >= 4 ? matches[0] : want) }
+  const submit = (e: React.FormEvent) => { e.preventDefault(); if (!want) { document.getElementById('sym')?.focus(); return } openCompany(!known.includes(want) && matches.length === 1 && fold(want).length >= 4 ? matches[0] : want) }
   return (
     <main className="screen look">
       <Masthead />
@@ -209,13 +209,21 @@ function Look({ push, openCompany }: { push: Push; openCompany: (s: string) => v
         <label htmlFor="sym" className="lbl lbl-quiet">NSE symbol or name</label>
         <div className="look-row">
           <input id="sym" value={q} onChange={e => setQ(e.target.value)} placeholder="ASTRAL, or a name" autoCapitalize="characters" autoCorrect="off" spellCheck={false} />
-          <button type="submit" className="btn-primary" disabled={!q.trim()}>Check their word</button>
+          <button type="submit" className="btn-primary">Check their word</button>
         </div>
       </form>
       {matches.length > 0 && <Chips title={matches.length === 1 && !known.includes(want) ? 'Did you mean' : 'Matches'} syms={matches.slice(0, 6)} open={openCompany} names={names} />}
-      {recent.length > 0 && <Chips title="Recent" syms={recent} open={openCompany} names={names} />}
-      {others.length > 0 && <Chips title="Ready to open" syms={others} open={openCompany} names={names} />}
+      {recent.length > 0 && <Tiles title="Recent" syms={recent} open={openCompany} names={names} />}
+      {others.length > 0 && <Tiles title="Ready to open" syms={others} open={openCompany} names={names} />}
     </main>
+  )
+}
+// Companies already read, as small panel cards in two columns: the symbol as the label, the name as the title
+function Tiles({ title, syms, open, names }: { title: string; syms: string[]; open: (s: string) => void; names: Record<string, string> }) {
+  return (
+    <section className="chips-sec"><h2 className="lbl lbl-quiet">{title}</h2>
+      <ul className="tiles">{syms.map(s => <li key={s}><button className="tile" onClick={() => open(s)}><span className="lbl lbl-quiet">{s}</span><span className="tile-name">{names[s] || s}</span></button></li>)}</ul>
+    </section>
   )
 }
 function Chips({ title, syms, open, names }: { title: string; syms: string[]; open: (s: string) => void; names?: Record<string, string> }) {

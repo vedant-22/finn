@@ -63,9 +63,10 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
       </section>
 
       <ol className="cards">
-        {cards.map(x => x.s
-          ? <li key={x.s.key}><StoryCard s={x.s} name={names[x.s.symbol]} asof={push.asof} bars={bars(x.s.symbol, x.s.at)} openCompany={openCompany} /></li>
-          : <li key={x.m.symbol + x.m.d}><MoveCard m={x.m} name={names[x.m.symbol]} lines={lines} openCompany={openCompany} /></li>)}
+        {/* The first card is the one to read first: it takes the brand colour, as one block on a page does in the reference */}
+        {cards.map((x, i) => x.s
+          ? <li key={x.s.key}><StoryCard s={x.s} lead={i === 0} name={names[x.s.symbol]} asof={push.asof} bars={bars(x.s.symbol, x.s.at)} openCompany={openCompany} /></li>
+          : <li key={x.m.symbol + x.m.d}><MoveCard m={x.m} lead={i === 0} name={names[x.m.symbol]} lines={lines} openCompany={openCompany} /></li>)}
       </ol>
 
       {(spill.length + t.notes.length) > 0 && (
@@ -94,7 +95,7 @@ function CardLabel({ kind, at }: { kind: string; at: string }) {
 }
 const shortDay = (iso: string) => new Date(iso.length > 10 ? iso : iso + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
 
-function StoryCard({ s, name, asof, bars, openCompany }: { s: Story; name: string; asof: string; bars: Bar[]; openCompany: (s: string, pid?: number) => void }) {
+function StoryCard({ s, lead, name, asof, bars, openCompany }: { s: Story; lead?: boolean; name: string; asof: string; bars: Bar[]; openCompany: (s: string, pid?: number) => void }) {
   const f = s.lead
   const [more, setMore] = useState(false)
   const others = s.filings.filter(x => x !== f)
@@ -103,7 +104,7 @@ function StoryCard({ s, name, asof, bars, openCompany }: { s: Story; name: strin
   const rev = line('revenue') || line('nii') || r?.lines[0], pat = line('pat')
   const [v, u] = pctParts(rev?.yoy)
   return (
-    <article className={`card story cat-${s.category}`}>
+    <article className={`card story cat-${s.category}${lead ? ' lead' : ''}`}>
       <div className="card-img"><Chart series={bars} /></div>
       <div className="card-info">
         <CardLabel kind={r ? `Results, ${r.quarter}` : CATEGORY_LABEL[s.category] || s.category} at={when(s.at, asof)} />
@@ -265,11 +266,11 @@ function PeopleLead({ f }: { f: any }) {
   return <p className="card-desc"><span className="card-who">{p.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')}</span> {reclass(p) ? `stays ${p.role}, off the senior management list` : `${verb(p.action).toLowerCase()} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${effDate(p.effective, f.at)}` : ''}.{more > 0 ? ` ${more} more ${more === 1 ? 'change' : 'changes'} in the filing.` : ''}</p>
 }
 
-function MoveCard({ m, name, lines, openCompany }: { m: Move; name: string; lines: Lines; openCompany: (s: string) => void }) {
+function MoveCard({ m, lead, name, lines, openCompany }: { m: Move; lead?: boolean; name: string; lines: Lines; openCompany: (s: string) => void }) {
   const [more, setMore] = useState(false)
   const [v, u] = pctParts(m.chg)
   return (
-    <article className="card move">
+    <article className={`card move${lead ? ' lead' : ''}`}>
       <div className="card-img"><Chart series={m.series} /></div>
       <div className="card-info">
         <CardLabel kind="Unusual day" at={shortDay(m.d)} />
