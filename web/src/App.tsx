@@ -6,7 +6,7 @@ import {
   buildLive, CATEGORY_LABEL, plainError, DEFAULT_LINES, forgetCompanies, getCompany, getPush, loadLines, saveLines, shortName,
   type Company, type Lines, type Push, type Step,
 } from './lib'
-import { Mark, Sheet, useEdgeBack } from './ui'
+import { Masthead, Sheet, useEdgeBack } from './ui'
 
 type Route = { tab: 'today' | 'book' | 'look'; sym?: string; pid?: number }
 const parse = (): Route => {
@@ -64,8 +64,8 @@ export function App() {
     else location.hash = h
   }
 
-  if (err) return <div className="boot"><p>Couldn't load your filings. {plainError(err)}</p><button className="text-btn" onClick={() => location.reload()}>Try again</button></div>
-  if (!push) return <div className="boot"><Mark status="kept" size={36} /></div>
+  if (err) return <div className="boot"><span className="wordmark">FINN</span><p className="serif-line">Couldn't load your filings. {plainError(err)}</p><button className="btn-outline" onClick={() => location.reload()}>Try again</button></div>
+  if (!push) return <div className="boot"><span className="wordmark" aria-label="FINN, loading">FINN</span></div>
   const holding = (s?: string) => push.portfolio.find(p => p.symbol === s)
   // On a company page, light the tab it was opened from
   const tab = !route.sym ? route.tab : prev.startsWith('#/book') ? 'book' : prev.startsWith('#/look') ? 'look' : prev ? 'today' : holding(route.sym) ? 'book' : 'look'
@@ -95,14 +95,14 @@ function LinesForm({ lines, setLines }: { lines: Lines; setLines: (l: Lines) => 
   const toggle = (c: string) => setLines({ ...lines, interrupt: lines.interrupt.includes(c) ? lines.interrupt.filter(x => x !== c) : [...lines.interrupt, c] })
   return (
     <div className="lines">
-      <p className="sub">FINN interrupts you only when one of these is crossed. Everything else waits in a fold.</p>
+      <p className="serif-line">FINN interrupts only when one of these is crossed. Everything else waits in a fold.</p>
       <Stepper label="Volume above its 20-day average" value={lines.volX} step={0.5} min={1.5} max={6} fmt={v => `${v}×`} set={v => setLines({ ...lines, volX: v })} />
       <Stepper label="Price move in a day" value={lines.movePct} step={1} min={1} max={15} fmt={v => `±${v}%`} set={v => setLines({ ...lines, movePct: v })} />
-      <h3>Filings that can interrupt</h3>
+      <h3 className="lbl lbl-quiet">Filings that can interrupt</h3>
       <ul className="checks">
         {['results', 'management_change', 'M&A', 'litigation', 'fund_raise', 'credit_rating', 'capex', 'insider_trading'].map(c => (
           <li key={c}>
-            <label><input type="checkbox" checked={lines.interrupt.includes(c)} onChange={() => toggle(c)} /><span>{CATEGORY_LABEL[c]}</span></label>
+            <label><span>{CATEGORY_LABEL[c]}</span><input type="checkbox" role="switch" checked={lines.interrupt.includes(c)} onChange={() => toggle(c)} /></label>
           </li>
         ))}
       </ul>
@@ -146,28 +146,28 @@ function CompanyRoute({ sym, pid, sector, title, close, back }: { sym: string; p
   const notFound = /NotFound|404/.test(failed)
   return (
     <main className="screen building">
-      <header className="top"><button className="text-btn back" onClick={back}>Back</button><span className="sub">{sym}</span></header>
+      <header className="bar"><button className="text-btn back" onClick={back}>Back</button><span className="lbl lbl-quiet">{sym}</span></header>
       <h1 className="co-name">{title || sym}</h1>
       {!failed && steps.length === 0 && slow && <p className="sub opening"><span className="dot-run" />Opening the ledger</p>}
-      {!failed && steps.length > 0 && <p className="sub">Reading its last five earnings calls and filed results. About a minute.</p>}
+      {!failed && steps.length > 0 && <p className="co-meta">Reading its last five earnings calls and filed results. About a minute.</p>}
       {notFound ? <div className="not-found">
-        <p className="read">There's no NSE company with the symbol {sym}.</p>
-        <p className="sub">Check the spelling, or type part of the name.</p>
-        <a className="pill" href="#/look">Look up another</a>
+        <p className="co-meta">There's no NSE company with the symbol {sym}. Check the spelling, or type part of the name.</p>
+        <a className="btn-outline" href="#/look">Look up another</a>
       </div> : <>
       <ul className="steps">
         {steps.map((s, i) => (
           <li key={i} className={`step ${s.state}`}>
-            <span className="step-mark">{s.state === 'done' ? <Mark status="kept" size={18} /> : s.state === 'fail' ? <Mark status="missed" size={18} /> : <span className="dot-run" />}</span>
-            <span>{s.label}</span><span className="sub">{s.detail}</span>{s.note && <span className="step-note">{s.note}</span>}
+            <span>{s.label}</span>
+            <span className={`lbl ${s.state === 'fail' ? 'st-missed' : 'lbl-quiet'}`}>{s.state === 'run' ? <span className="dot-run" aria-label="Working" /> : s.state === 'done' ? 'Done' : s.state === 'fail' ? 'Stopped' : 'Next'}</span>
+            {s.detail && <span className="sub">{s.detail}</span>}{s.note && <span className="step-note">{s.note}</span>}
           </li>
         ))}
       </ul>
       {failed && <div className="fail-box">
         <p className="fail">{plainError(failed)}</p>
         <div className="fail-acts">
-          <button className="text-btn" onClick={() => setAttempt(a => a + 1)}>Try again</button>
-          <a className="text-btn" href="#/look">Pick another company</a>
+          <button className="btn-primary" onClick={() => setAttempt(a => a + 1)}>Try again</button>
+          <a className="btn-outline" href="#/look">Pick another</a>
         </div>
       </div>}</>}
     </main>
@@ -200,16 +200,19 @@ function Look({ push, openCompany }: { push: Push; openCompany: (s: string) => v
   const submit = (e: React.FormEvent) => { e.preventDefault(); if (!want) return; openCompany(!known.includes(want) && matches.length === 1 && fold(want).length >= 4 ? matches[0] : want) }
   return (
     <main className="screen look">
-      <header className="top"><h1>Look up a company</h1></header>
+      <Masthead />
+      <header className="banner">
+        <h1>Look up any NSE company</h1>
+        <p>FINN reads its last five earnings calls and filed results, and checks each promise against what happened.</p>
+      </header>
       <form onSubmit={submit} className="look-form">
-        <label htmlFor="sym" className="sub">NSE symbol or name</label>
+        <label htmlFor="sym" className="lbl lbl-quiet">NSE symbol or name</label>
         <div className="look-row">
-          <input id="sym" value={q} onChange={e => setQ(e.target.value)} placeholder="e.g. ASTRAL" autoCapitalize="characters" autoCorrect="off" spellCheck={false} />
-          <button type="submit" disabled={!q.trim()}>Check their word</button>
+          <input id="sym" value={q} onChange={e => setQ(e.target.value)} placeholder="ASTRAL, or a name" autoCapitalize="characters" autoCorrect="off" spellCheck={false} />
+          <button type="submit" className="btn-primary" disabled={!q.trim()}>Check their word</button>
         </div>
       </form>
       {matches.length > 0 && <Chips title={matches.length === 1 && !known.includes(want) ? 'Did you mean' : 'Matches'} syms={matches.slice(0, 6)} open={openCompany} names={names} />}
-      <p className="sub look-note">FINN reads the company's last five earnings calls and its filed results, lists what management promised, and checks each promise against what happened. Nothing else goes in.</p>
       {recent.length > 0 && <Chips title="Recent" syms={recent} open={openCompany} names={names} />}
       {others.length > 0 && <Chips title="Ready to open" syms={others} open={openCompany} names={names} />}
       <Chips title="Your holdings" syms={push.portfolio.map(p => p.symbol)} open={openCompany} names={names} />
@@ -218,8 +221,8 @@ function Look({ push, openCompany }: { push: Push; openCompany: (s: string) => v
 }
 function Chips({ title, syms, open, names }: { title: string; syms: string[]; open: (s: string) => void; names?: Record<string, string> }) {
   return (
-    <section className="chips-sec"><h2>{title}</h2>
-      <div className="chips">{syms.map(s => <button key={s} onClick={() => open(s)}>{names?.[s] || s}</button>)}</div>
+    <section className="chips-sec"><h2 className="lbl lbl-quiet">{title}</h2>
+      <div className="chips">{syms.map(s => <button key={s} className="btn-outline" onClick={() => open(s)}>{names?.[s] || s}</button>)}</div>
     </section>
   )
 }

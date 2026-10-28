@@ -47,61 +47,92 @@ export function useEdgeBack(back: () => void) {
   }, [])
 }
 
-// Auditor's tick marks, drawn as pencil strokes. Paths carry a little wobble on purpose.
-const PATHS: Record<Status, string[]> = {
-  // A pencil tick: short heavy down-stroke, then a long flick that overshoots and lifts.
-  kept: ['M2.6 10.6c.9.4 1.9 1.3 2.8 2.5.7 1 1.3 2 1.9 3.3.4-1.1 1.2-2.7 2.4-4.6 2-3.2 4.6-6.3 8-9.2'],
-  // A cross pressed hard: two strokes that miss each other's centre a little and run past.
-  missed: ['M4.1 3.6c2.4 2.3 5 5.1 7.4 8.1 1.4 1.8 2.8 3.6 4.2 5.4', 'M16.6 3.1c-1.9 1.6-3.8 3.6-5.6 5.8-2.1 2.6-4.3 5.5-6.3 8.6'],
-  // A tick that stops short, with a pencil dash after it.
-  partly: ['M2.8 11.2c.8.4 1.7 1.3 2.5 2.4.6.9 1.1 1.8 1.6 3 .9-2 2.2-4 3.8-5.9', 'M12.4 15.9c1.5-.2 3.2-.2 5 0'],
-  // A ring drawn in one go that overruns its own start.
-  quiet: ['M11.7 3.9c-3.6-.9-7.6 1.4-7.9 5.4-.3 3.7 2.5 6.6 6 6.6 3.4 0 6.1-2.4 6.1-5.9 0-3.1-2.2-5.4-5.6-6-1.4-.3-2.6 0-3.7.6'],
-  pending: ['M4.6 10.8c1.7-.4 3.6-.5 5.6-.4 1.7.1 3.2.2 4.8.1'],
-  unclear: ['M6.4 7.6c.2-2.2 1.9-3.6 3.9-3.5 2 .1 3.5 1.5 3.4 3.3-.1 2.4-3.3 2.6-3.5 5.3', 'M10.1 15.4l.1.6'],
-}
+// Status is a word, never a mark: KEPT, MISSED, GONE QUIET... in caps, ink except MISSED
 export const STATUS_WORD: Record<Status, string> = {
-  kept: 'Kept', partly: 'Partly', missed: 'Missed', quiet: 'Gone\u00a0quiet', pending: 'Not due\u00a0yet', unclear: "Can't\u00a0tell",
+  kept: 'Kept', partly: 'Partly kept', missed: 'Missed', quiet: 'Gone quiet', pending: 'Not due yet', unclear: "Can't tell",
+}
+const STATUS_LABEL: Record<Status, string> = {
+  kept: 'Kept', partly: 'Partly kept', missed: 'Missed', quiet: 'Gone quiet', pending: 'Not due', unclear: "Can't tell",
+}
+export function StatusLabel({ status }: { status: Status }) {
+  return <span className={`lbl st-${status}`}>{STATUS_LABEL[status]}</span>
 }
 
-// Marks wait until they scroll into view, so the pencil stroke happens where the reader is looking
-let seer: IntersectionObserver | null = null
-function watch(el: Element) {
-  if (typeof IntersectionObserver === 'undefined') return el.classList.add('seen')
-  seer ??= new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('seen'); seer!.unobserve(e.target) }
-  }), { rootMargin: '0px 0px -40px 0px' })
-  seer.observe(el)
-}
-
-export function Mark({ status, size = 20, delay = 0, title }: { status: Status; size?: number; delay?: number; title?: string }) {
-  const ref = useRef<SVGSVGElement>(null)
-  useEffect(() => { const el = ref.current; if (el) { watch(el); return () => seer?.unobserve(el) } }, [])
+// The masthead: wordmark left, one outlined pill right. Hides on the way down, comes back on the way up.
+export function Masthead({ right }: { right?: ReactNode }) {
+  const [hide, setHide] = useState(false)
+  useEffect(() => {
+    let y0 = scrollY
+    const on = () => { const y = scrollY; if (Math.abs(y - y0) < 6) return; setHide(y > y0 && y > 80); y0 = y }
+    addEventListener('scroll', on, { passive: true }); return () => removeEventListener('scroll', on)
+  }, [])
   return (
-    <svg ref={ref} className={`mark mark-${status}`} width={size} height={size} viewBox="0 0 20 20" role="img" aria-label={title || STATUS_WORD[status]}>
-      {PATHS[status].map((d, i) => (
-        <path key={i} d={d} pathLength={1} style={{ animationDelay: `${delay + i * 120}ms` }} />
-      ))}
-    </svg>
+    <header className={`mast${hide ? ' hide' : ''}`}>
+      <a className="wordmark" href="#/" aria-label="FINN, Today">FINN</a>
+      {right}
+    </header>
   )
 }
 
-export function Spark({ series, w = 120, h = 36 }: { series: Bar[]; w?: number; h?: number }) {
-  if (series.length < 2) return null
-  const closes = series.map(b => b.close), vols = series.map(b => b.vol)
-  const lo = Math.min(...closes), hi = Math.max(...closes), vmax = Math.max(...vols)
-  const x = (i: number) => (i / (series.length - 1)) * (w - 2) + 1
-  const y = (v: number) => h * 0.62 - ((v - lo) / (hi - lo || 1)) * (h * 0.58) + 1
-  const d = closes.map((c, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(c).toFixed(1)}`).join('')
-  const bw = Math.max(1, (w / series.length) * 0.6)
+// the reference's accordion: the body opens on a grid-rows transition and is only in the page while open or closing
+export function Accordion({ open, children, id }: { open: boolean; children: ReactNode; id?: string }) {
+  const [mounted, setMounted] = useState(open)
+  const [shown, setShown] = useState(open)
+  useEffect(() => {
+    if (open) { setMounted(true); const r = requestAnimationFrame(() => requestAnimationFrame(() => setShown(true))); return () => cancelAnimationFrame(r) }
+    setShown(false); const t = setTimeout(() => setMounted(false), 120); return () => clearTimeout(t)
+  }, [open])
   return (
-    <svg className="spark" width={w} height={h} viewBox={`0 0 ${w} ${h}`} aria-hidden>
-      {vols.map((v, i) => (
-        <rect key={i} x={x(i) - bw / 2} width={bw} y={h - (v / vmax) * h * 0.3} height={(v / vmax) * h * 0.3}
-          className={i === vols.length - 1 ? 'vol-last' : 'vol'} />
-      ))}
-      <path d={d} className="line" />
-      <circle cx={x(closes.length - 1)} cy={y(closes[closes.length - 1])} r={2.4} className="dot" />
+    <div id={id} className={`acc${shown ? ' open' : ''}`}>
+      <div className="acc-in">{mounted && children}</div>
+    </div>
+  )
+}
+
+// A section that folds: title and count on the left, a plus that turns into a minus on the right
+export function Fold({ title, count, open, toggle, quiet, children }: { title: string; count?: number; open: boolean; toggle: () => void; quiet?: boolean; children: ReactNode }) {
+  return (
+    <section className={`fold${open ? ' is-open' : ''}${quiet ? ' quiet' : ''}`}>
+      <button className="fold-head" aria-expanded={open} onClick={toggle}>
+        <span>{title}{count != null && <span className="fold-n"> ({count})</span>}</span><span className="plus" aria-hidden />
+      </button>
+      <Accordion open={open}>{children}</Accordion>
+    </section>
+  )
+}
+
+// A big figure with its unit set smaller on the baseline, as on an outcomes page: +12%, 1/7
+export function Outcome({ value, unit, size = 's' }: { value: ReactNode; unit?: ReactNode; size?: 'l' | 's' | 'xs' }) {
+  return <span className={`outcome outcome-${size}`}><span className="o-val">{value}</span>{unit != null && <span className="o-unit">{unit}</span>}</span>
+}
+// '+12.4%' -> ['+12', '%']; one decimal under 10 so small moves still read
+export function pctParts(v: number | null | undefined): [string, string] {
+  if (v == null || !isFinite(v)) return ['–', '']
+  const a = Math.abs(v), r = a < 10 ? Math.round(a * 10) / 10 : Math.round(a)
+  return [r === 0 ? '0' : `${v > 0 ? '+' : '−'}${r}`, '%']
+}
+
+// The card's picture: the stock's last sessions, drawn full width. Line and wash in brand; volume as grey ticks, the last day in brand.
+export function Chart({ series, h = 120, mark }: { series: Bar[]; h?: number; mark?: string }) {
+  if (series.length < 2) return null
+  const w = 320
+  const closes = series.map(b => b.close), vols = series.map(b => b.vol)
+  const lo = Math.min(...closes), hi = Math.max(...closes), vmax = Math.max(...vols) || 1
+  const top = 12, base = h * 0.72
+  const x = (i: number) => (i / (series.length - 1)) * (w - 12) + 6
+  const y = (v: number) => base - ((v - lo) / (hi - lo || 1)) * (base - top)
+  const pts = closes.map((c, i) => `${x(i).toFixed(1)} ${y(c).toFixed(1)}`)
+  const bw = Math.max(1.5, (w / series.length) * 0.42)
+  const mi = mark ? series.findIndex(b => b.d >= mark) : -1
+  return (
+    <svg className="chart" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden>
+      <path className="wash" d={`M${pts.join('L')}L${x(closes.length - 1).toFixed(1)} ${base}L${x(0).toFixed(1)} ${base}Z`} />
+      {vols.map((v, i) => {
+        const vh = Math.max(1, (v / vmax) * (h - base - 4))
+        return <rect key={i} x={x(i) - bw / 2} width={bw} y={h - vh} height={vh} className={i === vols.length - 1 ? 'vol-last' : 'vol'} />
+      })}
+      {mi > 0 && <line className="day" x1={x(mi)} x2={x(mi)} y1={top - 6} y2={h} vectorEffect="non-scaling-stroke" />}
+      <path className="line" d={`M${pts.join('L')}`} vectorEffect="non-scaling-stroke" />
     </svg>
   )
 }

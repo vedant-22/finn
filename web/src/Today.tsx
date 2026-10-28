@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
-  CATEGORY_LABEL, cr, deadline, getCompany, pct, rupees, shortName, tone, triage, when,
-  type Company, type Lines, type Move, type Push, type Story,
+  CATEGORY_LABEL, cr, deadline, getCompany, pct, rupees, shortName, triage, when,
+  type Bar, type Company, type Lines, type Move, type Push, type Story,
 } from './lib'
-import { Mark, Spark, Src, STATUS_WORD, useKept } from './ui'
+import { Accordion, Chart, Fold, Masthead, Outcome, pctParts, Src, StatusLabel, useKept } from './ui'
 
 const WINDOWS = [{ h: 24, label: '24h' }, { h: 72, label: '3 days' }, { h: 168, label: 'Week' }, { h: 720, label: 'Month' }]
+// However busy the window, at most five things interrupt; the rest wait in the first fold
+const MAX_CARDS = 5
 
 export function Today({ push, lines, setLines, openCompany, openLines }: {
   push: Push; lines: Lines; setLines: (l: Lines) => void; openCompany: (s: string, pid?: number) => void; openLines: () => void
@@ -14,21 +16,28 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
   const names = useMemo(() => Object.fromEntries(push.portfolio.map(p => [p.symbol, p.short || shortName(p.name)])), [push])
   const [showNotes, setShowNotes] = useKept('today.notes', false)
   const [showFold, setShowFold] = useKept('today.fold', false)
-  const count = t.needs.length + t.moves.length
+  // Results and people first, then the unusual days, as triage orders them; past five they become rows in the fold
+  const items = [...t.needs.map(s => ({ s })), ...t.moves.map(m => ({ m }))] as ({ s: Story; m?: undefined } | { m: Move; s?: undefined })[]
+  const cards = items.slice(0, MAX_CARDS), spill = items.slice(MAX_CARDS)
+  const count = cards.length
   // The sieve plays once a session, not on every return to Today
   const sieve = useRef(!sessionStorage.getItem('finn-sieved'))
   useEffect(() => { sessionStorage.setItem('finn-sieved', '1') }, [])
   const asof = new Date(push.asof)
+  const routine = t.folded.reduce((n, s) => n + s.filings.length, 0)
+  const bars = (sym: string, upto?: string) => {
+    const all = push.eod[sym] || []
+    const end = upto ? all.findIndex(b => b.d > upto.slice(0, 10)) : -1
+    return all.slice(0, end < 0 ? all.length : end).slice(-30)
+  }
 
   return (
     <main className="screen today">
-      <header className="top">
-        <div className="asof">
-          {asof.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
-          <span className="sub"> {asof.toDateString() === new Date().toDateString() ? 'Filings' : 'Snapshot, filings'} to {asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()}</span>
-        </div>
-        <button className="pill" onClick={openLines}>Your lines</button>
-      </header>
+      <Masthead right={<button className="btn-outline btn-sm" onClick={openLines}>Your lines</button>} />
+      <p className="dateline">
+        {asof.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
+        <span className="sub"> {asof.toDateString() === new Date().toDateString() ? 'Filings' : 'Snapshot, filings'} to {asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()}</span>
+      </p>
 
       <div className="window" role="radiogroup" aria-label="Time window">
         {WINDOWS.map(w => (
@@ -37,80 +46,97 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
         ))}
       </div>
 
-      <section className="verdict">
+      <section className="hero">
         {/* The roll is for the eye; a screen reader hears the settled count once */}
-        <h1 className="sr-only" aria-live="polite">{count === 0 ? 'Nothing needs you' : `${count} ${count === 1 ? 'thing needs' : 'things need'} you`}</h1>
-        <div className="big" aria-hidden="true">{count === 0 ? 'Nothing' : <Roll to={count} start={sieve.current ? t.filings : undefined} />}</div>
-        <div className="big-label">
-          <span aria-hidden="true">{count === 0 ? 'needs you' : count === 1 ? 'thing needs you' : 'things need you'}</span>
-          {t.filings > 0 && <span className="sub"> out of {t.filings} filings across {push.portfolio.length} holdings</span>}
+        <h1 className="sr-only" aria-live="polite">{count === 0 ? 'Nothing needs you' : `${count} ${count === 1 ? 'needs' : 'need'} you`}</h1>
+        <div className="hero-fig" aria-hidden="true">
+          {count === 0 ? <Outcome size="l" value="Nothing" /> : <Outcome size="l" value={<Roll to={count} start={sieve.current ? t.filings : undefined} />} />}
+          <span className="hero-unit">{count === 1 ? 'needs you' : count === 0 ? 'needs you' : 'need you'}</span>
         </div>
+        {t.filings > 0 && <p className="hero-1">Out of {t.filings} {t.filings === 1 ? 'filing' : 'filings'} across {push.portfolio.length} holdings.</p>}
+        {count === 0 && <p className="hero-2">{t.filings === 0
+          ? 'None of your holdings filed anything in this window, and no price crossed your lines.'
+          : 'Nothing crossed your lines. The rest is folded below.'}</p>}
       </section>
 
-      {count === 0 && <p className="sub empty-line">{t.filings === 0
-        ? 'None of your holdings filed anything in this window, and no price move crossed your lines.'
-        : 'No filing or price move crossed your lines in this window. The rest is folded below.'}</p>}
-
-      <ol className="needs">
-        {t.needs.map(s => (
-          <li key={s.key}><StoryCard s={s} name={names[s.symbol]} asof={push.asof} openCompany={openCompany} /></li>
-        ))}
-        {t.moves.map(m => (
-          <li key={m.symbol + m.d}><MoveCard m={m} name={names[m.symbol]} lines={lines} openCompany={openCompany} /></li>
-        ))}
+      <ol className="cards">
+        {cards.map(x => x.s
+          ? <li key={x.s.key}><StoryCard s={x.s} name={names[x.s.symbol]} asof={push.asof} bars={bars(x.s.symbol, x.s.at)} openCompany={openCompany} /></li>
+          : <li key={x.m.symbol + x.m.d}><MoveCard m={x.m} name={names[x.m.symbol]} lines={lines} openCompany={openCompany} /></li>)}
       </ol>
 
-      {t.notes.length > 0 && (
-        <section className="fold-group">
-          <button className="fold-head" aria-expanded={showNotes} onClick={() => setShowNotes(!showNotes)}>
-            <span>{t.notes.length} worth a line</span><span className="chev" aria-hidden>{showNotes ? '–' : '+'}</span>
-          </button>
-          {showNotes && (
-            <ul className="notes">
-              {t.notes.map(s => <NoteRow key={s.key} s={s} name={names[s.symbol]} asof={push.asof} />)}
-            </ul>
-          )}
-        </section>
+      {(spill.length + t.notes.length) > 0 && (
+        <Fold title="Worth a look" count={spill.length + t.notes.length} open={showNotes} toggle={() => setShowNotes(!showNotes)}>
+          <ul className="notes">
+            {spill.map(x => x.s
+              ? <NoteRow key={x.s.key} s={x.s} name={names[x.s.symbol]} asof={push.asof} />
+              : <MoveRow key={x.m.symbol + x.m.d} m={x.m} name={names[x.m.symbol]} openCompany={openCompany} />)}
+            {t.notes.map(s => <NoteRow key={s.key} s={s} name={names[s.symbol]} asof={push.asof} />)}
+          </ul>
+        </Fold>
       )}
 
-      {t.folded.length > 0 && (
-        <section className="fold-group">
-          <button className="fold-head quiet" aria-expanded={showFold} onClick={() => setShowFold(!showFold)}>
-            <span>{t.folded.reduce((n, s) => n + s.filings.length, 0)} routine filings, folded</span>
-            <span className="chev" aria-hidden>{showFold ? '–' : '+'}</span>
-          </button>
-          {showFold && <FoldSummary stories={t.folded} names={names} />}
-        </section>
+      {routine > 0 && (
+        <Fold title="Routine filings" count={routine} quiet open={showFold} toggle={() => setShowFold(!showFold)}>
+          <FoldSummary stories={t.folded} names={names} />
+        </Fold>
       )}
     </main>
   )
 }
 
-function StoryCard({ s, name, asof, openCompany }: { s: Story; name: string; asof: string; openCompany: (s: string, pid?: number) => void }) {
+// One label row on every card: what kind of thing, and when
+function CardLabel({ kind, at }: { kind: string; at: string }) {
+  return <div className="card-lbl"><span className="lbl">{kind}</span><span className="lbl lbl-quiet">{at}</span></div>
+}
+const shortDay = (iso: string) => new Date(iso.length > 10 ? iso : iso + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+
+function StoryCard({ s, name, asof, bars, openCompany }: { s: Story; name: string; asof: string; bars: Bar[]; openCompany: (s: string, pid?: number) => void }) {
   const f = s.lead
-  const [rel, setRel] = useState(false)
+  const [more, setMore] = useState(false)
   const others = s.filings.filter(x => x !== f)
+  const r = f.results
+  const line = (k: string) => r?.lines.find((l: any) => l.key === k)
+  const rev = line('revenue') || line('nii') || r?.lines[0], pat = line('pat')
+  const [v, u] = pctParts(rev?.yoy)
   return (
     <article className={`card story cat-${s.category}`}>
-      <header className="card-head">
-        <button className="co" onClick={() => openCompany(s.symbol)}>{name}</button>
-        <span className="meta">{CATEGORY_LABEL[s.category] || s.category}, {when(s.at, asof)}</span>
-      </header>
-      {f.results ? <ResultsBlock f={f} symbol={s.symbol} openCompany={openCompany} />
-        : f.people?.length ? <PeopleBlock f={f} />
-          : <p className="line">{f.pct_rev != null ? stop(f.line || tidySubject(f.subject)) : f.line || tidySubject(f.subject)}{f.pct_rev != null && <span className="size"> {sizeWords(f)}</span>}</p>}
-      <footer className="card-foot">
-        {/* Results cite the exchange's data file first, on the same line as the filing */}
-        {f.results?.source?.xbrl && <Src href={f.results.source.xbrl}>Exchange XBRL</Src>}
-        {/\.pdf$/i.test(f.results?.source?.pdf || '') && <Src href={f.results!.source.pdf}>Results PDF</Src>}
-        <Src href={f.url}>Filing</Src>
-        {others.length > 0 && <button className="src rel-toggle" aria-expanded={rel} onClick={() => setRel(!rel)}>
-          {rel ? 'Hide' : 'and'} {others.length} related</button>}
-      </footer>
-      {rel && <ul className="related">{others.map((o, i) =>
-        <li key={i}><Src href={o.url}>{tidySubject(o.subject)}</Src> <span className="sub">{when(o.at, asof)}</span></li>)}</ul>}
+      <div className="card-img"><Chart series={bars} mark={s.at.slice(0, 10)} /></div>
+      <div className="card-info">
+        <CardLabel kind={r ? `Results, ${r.quarter}` : CATEGORY_LABEL[s.category] || s.category} at={when(s.at, asof)} />
+        <button className="card-title" onClick={() => openCompany(s.symbol)}>{name}</button>
+        {r && rev?.yoy != null && <div className="card-fig"><Outcome value={v} unit={u} /><span className="card-cap">{rev.label.toLowerCase()}, against {r.compare.yago || 'a year ago'}</span></div>}
+        {!r && f.amount_cr != null && f.amount_cr >= 1 && <div className="card-fig"><Outcome value={`₹${cr(f.amount_cr)}`} unit="cr" />{f.pct_rev != null && <span className="card-cap">{f.pct_rev < 0.1 ? 'under 0.1%' : `${f.pct_rev.toFixed(f.pct_rev < 1 ? 1 : 0)}%`} of a year's revenue</span>}</div>}
+        {r ? <p className="card-desc">{resultLine(r, pat)}</p>
+          : f.people?.length ? <PeopleLead f={f} />
+            : <p className="card-desc">{f.line || tidySubject(f.subject)}</p>}
+        <button className="read-more" aria-expanded={more} onClick={() => setMore(!more)}>{more ? 'Read less' : 'Read more'}</button>
+      </div>
+      <Accordion open={more}>
+        <div className="card-more">
+          {r ? <ResultsBlock f={f} symbol={s.symbol} openCompany={openCompany} /> : f.people?.length ? <PeopleBlock f={f} /> : null}
+          <ul className="srcs">
+            {r?.source?.xbrl && <li><Src href={r.source.xbrl}>Exchange XBRL</Src></li>}
+            {/\.pdf$/i.test(r?.source?.pdf || '') && <li><Src href={r!.source.pdf}>Results PDF</Src></li>}
+            <li><Src href={f.url}>The filing</Src></li>
+            {others.map((o, i) => <li key={i}><Src href={o.url}>{tidySubject(o.subject)}</Src> <span className="sub">{when(o.at, asof)}</span></li>)}
+          </ul>
+        </div>
+      </Accordion>
     </article>
   )
+}
+
+// Results first, in one sentence: profit and margin after the revenue figure above it
+function resultLine(r: any, pat: any) {
+  const parts: string[] = []
+  if (pat?.value != null) {
+    const base = pat.yago
+    parts.push(pat.yoy != null ? `Profit after tax ₹${cr(pat.value)} crore, ${pat.yoy >= 0 ? 'up' : 'down'} ${Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0)}% on a year ago`
+      : base != null && base < 0 && pat.value >= 0 ? `Profit after tax ₹${cr(pat.value)} crore, from a loss a year ago` : `Profit after tax ₹${cr(pat.value)} crore`)
+  }
+  if (r.ebitda_margin != null) parts.push(`EBITDA margin ${r.ebitda_margin}%${r.yago_margin != null ? ` from ${r.yago_margin}% a year ago` : ''}`)
+  return parts.length ? `${parts.join('; ')}.` : `${r.quarter} results are out.`
 }
 
 function sizeWords(f: { amount_cr?: number; pct_rev?: number; line?: string }) {
@@ -165,20 +191,19 @@ function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; open
           ))}
         </tbody>
       </table>
-      {r.ebitda_margin != null && (
-        <p className="margin-line">EBITDA margin <b className="num">{r.ebitda_margin}%</b>
-          <span className="sub">, from {r.prev_margin}% last quarter and {r.yago_margin}% a year ago</span></p>
+      {r.ebitda_margin != null && r.prev_margin != null && (
+        <p className="margin-line sub">EBITDA margin {r.ebitda_margin}%, from {r.prev_margin}% last quarter.</p>
       )}
       {r.one_offs?.length > 0 && (
         <p className="one-off sub">{r.one_offs.map((o: any) => `${o.q === r.quarter ? "This quarter's" : o.q} profit includes ${[o.tax_credit && `a ₹${cr(o.tax_credit)} cr tax credit`, o.exceptional && `₹${cr(Math.abs(o.exceptional))} cr of exceptional items`].filter(Boolean).join(' and ')}.`).join(' ')}</p>
       )}
       {word.length > 0 && (
         <div className="against">
-          <h4>Against what they said</h4>
-          {word.map((p, i) => (
+          <h4 className="lbl lbl-quiet">Against what they said</h4>
+          {word.map(p => (
             <button key={p.id} className="word-row" onClick={() => openCompany(symbol, p.id)}>
-              <Mark status={p.status} delay={i * 80} />
-              <span><b>{rupees(p.target.charAt(0).toUpperCase() + p.target.slice(1))}</b><span className="sub">{deadline(p) ? ` ${deadline(p)}. ` : '. '}{STATUS_WORD[p.status]}.</span></span>
+              <span className="word-t">{rupees(p.target.charAt(0).toUpperCase() + p.target.slice(1))}{deadline(p) ? ` ${deadline(p)}` : ''}</span>
+              <StatusLabel status={p.status} />
             </button>
           ))}
         </div>
@@ -189,8 +214,8 @@ function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; open
 
 // A percentage off a loss means nothing; a swing back to profit still deserves saying
 function Chg({ v, base, now }: { v: number | null; base: number | null; now: number | null }) {
-  if (v == null && base != null && base < 0 && now != null && now >= 0) return <td className={`num ${tone(1)} turn`}>from loss</td>
-  return <td className={`num ${tone(v)}`}>{pct(v)}</td>
+  if (v == null && base != null && base < 0 && now != null && now >= 0) return <td className="num turn">from loss</td>
+  return <td className="num">{pct(v)}</td>
 }
 
 // Filings write 'October 30, 2026', '30th September 2026' or 'close of business hours of 30 September 2026'. Say '30 Oct'.
@@ -205,8 +230,7 @@ function effDate(raw: string, filed: string) {
 }
 
 function PeopleBlock({ f }: { f: any }) {
-  const order = { top: 0, board: 1, senior: 2, other: 3 } as Record<string, number>
-  const ppl = [...f.people].sort((a: any, b: any) => (+reclass(a) - +reclass(b)) || (order[a.seniority] - order[b.seniority]) || (a.action === 'appointed' ? -1 : 1))
+  const ppl = sortPeople(f.people)
   return (
     <ul className="people">
       {ppl.slice(0, 3).map((p: any, i: number) => {
@@ -225,43 +249,69 @@ function PeopleBlock({ f }: { f: any }) {
     </ul>
   )
 }
+const ORDER_P = { top: 0, board: 1, senior: 2, other: 3 } as Record<string, number>
+const sortPeople = (ps: any[]) => [...ps].sort((a: any, b: any) => (+reclass(a) - +reclass(b)) || (ORDER_P[a.seniority] - ORDER_P[b.seniority]) || (a.action === 'appointed' ? -1 : 1))
 // 'Changed from SMP to Non-SMP category': same job, just no longer reported as senior management
 const reclass = (p: any) => p.action === 'ceased' && /non[- ]?smp|non[- ]senior management/i.test(p.reason || '')
 const verb = (a: string) => ({ appointed: 'Joins as', resigned: 'Resigns as', retired: 'Retires as', ceased: 'Leaves as', redesignated: 'Now', 're-appointed': 'Re-appointed', died: 'Died,' } as any)[a] || a
 
+// The lead person on a people card: who, and what changed. Bios wait behind Read more.
+function PeopleLead({ f }: { f: any }) {
+  const p = sortPeople(f.people)[0]
+  const more = f.people.length - 1
+  return <p className="card-desc"><span className="card-who">{p.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')}</span> {reclass(p) ? `stays ${p.role}, off the senior management list` : `${verb(p.action).toLowerCase()} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${effDate(p.effective, f.at)}` : ''}.{more > 0 ? ` And ${more} more.` : ''}</p>
+}
+
 function MoveCard({ m, name, lines, openCompany }: { m: Move; name: string; lines: Lines; openCompany: (s: string) => void }) {
-  const d = new Date(m.d + 'T12:00:00').toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })
+  const [more, setMore] = useState(false)
+  const [v, u] = pctParts(m.chg)
   return (
     <article className="card move">
-      <header className="card-head">
-        <button className="co" onClick={() => openCompany(m.symbol)}>{name}</button>
-        <span className="meta">Unusual day, {d}</span>
-      </header>
-      <div className="move-body">
-        <div>
-          <div className={`move-chg num ${tone(m.chg)}`}>{pct(m.chg)}</div>
-          <div className="move-vol"><span className={m.why.includes('volume') ? 'hit num' : 'num'}>{m.volX.toFixed(1)}×</span> its 20-day volume</div>
-        </div>
-        <Spark series={m.series} />
+      <div className="card-img"><Chart series={m.series} /></div>
+      <div className="card-info">
+        <CardLabel kind="Unusual day" at={shortDay(m.d)} />
+        <button className="card-title" onClick={() => openCompany(m.symbol)}>{name}</button>
+        <div className="card-fig"><Outcome value={v} unit={u} /><span className="card-cap"><span className="num">{m.volX.toFixed(1)}×</span> its 20-day volume</span></div>
+        <p className="card-desc">{moveWhy(m)}</p>
+        <button className="read-more" aria-expanded={more} onClick={() => setMore(!more)}>{more ? 'Read less' : 'Read more'}</button>
       </div>
-      <p className="line">{m.explainedBy
-        ? m.explainedBy.category === 'results'
-          ? <>{m.explainedBy.at.slice(0, 10) === m.d ? 'Results came out that day.' : 'Results came out after the previous close.'}</>
-          : <>After: {(m.explainedBy.line || tidySubject(m.explainedBy.subject)).replace(/\.$/, '')}.</>
-        : <>No filing explains it.</>}</p>
-      <footer className="card-foot"><span className="sub">Your line: {m.why.includes('volume') ? `${lines.volX}× volume` : `±${lines.movePct}% move`}</span></footer>
+      <Accordion open={more}>
+        <div className="card-more">
+          <p className="sub">Crossed your line of {m.why.map(w => w === 'volume' ? `${lines.volX}× volume` : `±${lines.movePct}% in a day`).join(' and ')}. Closed at ₹{m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.</p>
+          {m.explainedBy && <ul className="srcs"><li><Src href={m.explainedBy.url}>{tidySubject(m.explainedBy.subject)}</Src></li></ul>}
+        </div>
+      </Accordion>
     </article>
+  )
+}
+const moveWhy = (m: Move) => m.explainedBy
+  ? m.explainedBy.category === 'results'
+    ? m.explainedBy.at.slice(0, 10) === m.d ? 'Results came out that day.' : 'Results came out after the previous close.'
+    : `After: ${(m.explainedBy.line || tidySubject(m.explainedBy.subject)).replace(/\.$/, '')}.`
+  : 'No filing explains it.'
+
+// Past the fifth card, an unusual day is one line in the fold
+function MoveRow({ m, name, openCompany }: { m: Move; name: string; openCompany: (s: string) => void }) {
+  return (
+    <li>
+      <button className="note" onClick={() => openCompany(m.symbol)}>
+        <span className="note-co">{name}</span>
+        <span className="note-text">{pct(m.chg)} on {m.volX.toFixed(1)}× its volume. {moveWhy(m)}</span>
+        <span className="note-when">{shortDay(m.d)}</span>
+      </button>
+    </li>
   )
 }
 
 function NoteRow({ s, name, asof }: { s: Story; name: string; asof: string }) {
   const f = s.lead
-  const text = f.people?.length
-    ? f.people.map((p: any) => `${p.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')} ${verb(p.action).toLowerCase()} ${p.role}`).join('; ')
-    : f.line || tidySubject(f.subject)
+  const text = f.results ? resultLine(f.results, f.results.lines.find((l: any) => l.key === 'pat'))
+    : f.people?.length
+      ? f.people.map((p: any) => `${p.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')} ${verb(p.action).toLowerCase()} ${p.role}`).join('; ')
+      : f.line || tidySubject(f.subject)
   return (
     <li>
-      <a href={f.url} target="_blank" rel="noopener noreferrer">
+      <a className="note" href={f.url} target="_blank" rel="noopener noreferrer">
         <span className="note-co">{name}</span>
         <span className="note-text">{f.pct_rev != null ? stop(text) : text}{f.pct_rev != null && <span className="sub"> {sizeWords(f)}</span>}</span>
         <span className="note-when">{when(s.at, asof)}</span>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { cr, crBig, deadline, minus, pct, rupees, shortName, tidyEvidence, tone, type Company, type Promise_, type Status } from './lib'
-import { Bars, fyLabel, Mark, Src, STATUS_WORD } from './ui'
+import { cr, crBig, deadline, minus, pct, rupees, shortName, tidyEvidence, type Company, type Promise_, type Status } from './lib'
+import { Bars, Fold, fyLabel, Outcome, Src, STATUS_WORD, StatusLabel } from './ui'
 
 const SHOW: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
 
@@ -15,6 +15,8 @@ export function CompanyView({ c, focus, sector, title, close, back }: { c: Compa
   }, [focus])
   const [showSoft, setShowSoft] = useState(() => focus != null && c.ledger.some(p => p.id === focus && !p.hard))
   const [showOpen, setShowOpen] = useState(false)
+  const [fold, setFold] = useState<string | null>(null)
+  const [readAll, setReadAll] = useState(false)
   const s = c.snapshot
   // The file's price is from when the ledger was built; the snapshot's last close is newer. Same shares, so value and P/E move with it
   const price = close?.close ?? s.price
@@ -35,7 +37,7 @@ export function CompanyView({ c, focus, sector, title, close, back }: { c: Compa
     const a = yearAgo?.[k], b = lastQ?.[k]
     if (a == null || b == null || a <= 0 || yearAgo.q.split(' ')[0] !== lastQ.q.split(' ')[0]) return null
     const v = (b / a - 1) * 100
-    return <span className={tone(v)}>{pct(v)} on a year ago</span>
+    return <>{pct(v)} on a year ago</>
   }
 
   // Back stays in reach on a long page; once the name scrolls off, the bar carries it
@@ -48,132 +50,137 @@ export function CompanyView({ c, focus, sector, title, close, back }: { c: Compa
     io.observe(el); return () => io.disconnect()
   }, [])
 
+  const readFirst = c.read ? rupees(c.read).match(/^.+?[.!?](?=\s+[A-Z]|$)/)?.[0] ?? rupees(c.read) : ''
+  const toggle = (k: string) => setFold(fold === k ? null : k)
+  const newHard = c.open.filter(p => p.hard)
+
   return (
     <main className="screen company">
-      <header className={`top bar${past ? ' past' : ''}`}>
+      <header className={`bar${past ? ' past' : ''}`}>
         <button className="text-btn back" onClick={back}>Back</button>
-        {past ? <span className="bar-name">{title || shortName(c.name)}</span> : <span className="sub">{c.symbol}{c.live ? ', read just now' : ''}</span>}
+        {past ? <span className="bar-name">{title || shortName(c.name)}</span> : <span className="lbl lbl-quiet">{c.symbol}{c.live ? ', read just now' : ''}</span>}
       </header>
       <h1 className="co-name" ref={nameRef}>{title || shortName(c.name)}</h1>
       <p className="co-meta">
         {sector && <>{sector}. </>}
-        {price != null && <>Share price ₹{price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)}{close && ` at the ${new Date(close.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} close`}. </>}
+        {price != null && <>₹{price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)}{close && ` at the ${new Date(close.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} close`}. </>}
         {s.mcap != null && <>Worth ₹{crBig(s.mcap * k)}{s.pe ? `, ${(s.pe * k).toFixed(1)}× earnings` : ''}.</>}
       </p>
 
       <section className="word">
-        <div className="word-head">
-          <h2>Their word</h2>
-          {hard.length > 0
-            ? <ul className="tally" aria-label="Promise record">
+        <h2 className="sec-head">Their word</h2>
+        {c.read && settled >= 3
+          ? <p className="read word-intro">{readAll ? rupees(c.read) : readFirst}{readFirst !== rupees(c.read) && <> <button className="see" onClick={() => setReadAll(!readAll)}>{readAll ? 'Read less' : 'Read more'}</button></>}</p>
+          : hard.length === 0 && <p className="read word-intro">{readable === 0
+            ? `None of the ${c.calls.length} call transcripts linked from its exchange filings could be opened, so there is nothing to grade yet.`
+            : 'No promise in these calls had both a number and a date.'}</p>}
+        {hard.length > 0 && (
+          <div className="og-panel">
+            <ul className="og" aria-label="Promise record">
               {SHOW.map(st => {
                 const n = hard.filter(p => p.status === st).length
-                return n ? <li key={st}><Mark status={st} size={18} /><b className="num">{n}</b> <span>{STATUS_WORD[st].toLowerCase()}</span></li> : null
+                return n ? <li key={st} className="og-item"><Outcome value={n} /><span className="og-d1">{STATUS_WORD[st]}</span></li> : null
               })}
             </ul>
-            : readable === 0
-              ? <p className="word-score sub">None of the {c.calls.length} call transcripts linked from its exchange filings could be opened, so there is nothing to grade yet. They are listed at the foot of the page.</p>
-              : <p className="word-score sub">No promise in these calls had both a number and a date.</p>}
-          {readable > 1 && hard.length > 0 && <p className="sub tally-note">Promises with a number and a date, from the {readable - 1 === 1 ? 'call' : `${readable - 1} calls`} before the latest one.</p>}
-        </div>
-        {c.read && settled >= 3 && <p className="read">{rupees(c.read)}</p>}
+            {readable > 1 && <p className="sub tally-note">Promises with a number and a date, from the {readable - 1 === 1 ? 'call' : `${readable - 1} calls`} before the latest one.</p>}
+          </div>
+        )}
 
-        <ul className="ledger">
-          {hard.map((p, i) => <LedgerRow key={p.id} p={p} i={i} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}
-        </ul>
+        {hard.length > 0 && <ul className="og pgrid">
+          {hard.map(p => <PromiseItem key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}
+        </ul>}
 
         {softTalk > 0 && (
           <button className="soft" aria-expanded={showSoft} onClick={() => setShowSoft(!showSoft)}>
             Plus {softTalk} {softTalk === 1 ? 'statement' : 'statements'} with no number or date. Not graded.
           </button>
         )}
-        {showSoft && <ul className="ledger soft-list">{soft.map((p, i) => <LedgerRow key={p.id} p={p} i={i} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>}
+        {showSoft && <ul className="og pgrid soft-list">{soft.map(p => <PromiseItem key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>}
       </section>
 
       {c.questions.length > 0 && (
         <section className="ask">
-          <div className="ask-head"><h2>Ask on the next call</h2><CopyQuestions name={title || shortName(c.name)} qs={c.questions.map(rupees)} /></div>
+          <h2 className="sec-head ask-head">Ask on the next call</h2>
           <ol>{c.questions.map((x, i) => <li key={i}>{rupees(x)}</li>)}</ol>
+          <CopyQuestions name={title || shortName(c.name)} qs={c.questions.map(rupees)} />
         </section>
       )}
 
-      {c.open.some(p => p.hard) && (
-        <section className="open-book">
-          <button className="fold-head" aria-expanded={showOpen} onClick={() => setShowOpen(!showOpen)}>
-            <span>{c.open.filter(p => p.hard).length} new {c.open.filter(p => p.hard).length === 1 ? 'promise' : 'promises'} on the latest call</span><span className="chev" aria-hidden>{showOpen ? '–' : '+'}</span>
-          </button>
-          {showOpen && (
-            <ul className="ledger">
-              {c.open.filter(p => p.hard).map((p, i) => (
-                <li key={i} className="ledger-row static">
-                  <Mark status="pending" />
-                  <div><b>{cap(rupees(p.target))}</b> <span className="sub">{deadline(p)}</span>
-                    <blockquote>“{p.quote}” <Src href={`${p.url}#page=${p.page}`}>{p.period}, p{p.page}</Src></blockquote></div>
-                </li>
-              ))}
-            </ul>
+      {newHard.length > 0 && (
+        <Fold title={`New on the latest call`} count={newHard.length} open={showOpen} toggle={() => setShowOpen(!showOpen)}>
+          <ul className="open-list fold-body">
+            {newHard.map((p, i) => (
+              <li key={i}>
+                <b className="og-d1" style={{ padding: 0 }}>{cap(rupees(p.target))}</b> <span className="sub">{deadline(p)}</span>
+                <blockquote>“{p.quote}” <Src href={`${p.url}#page=${p.page}`}>{p.period}, page {p.page}</Src></blockquote>
+              </li>
+            ))}
+          </ul>
+        </Fold>
+      )}
+
+      <Fold title="The numbers" open={fold === 'num'} toggle={() => toggle('num')}>
+        <div className="fold-body">
+          {lastQ && (
+            <div className="fig-grid">
+              <Fig label={`Revenue, ${lastQ.q}`} value={`₹${cr(lastQ.rev)}`} unit="cr" sub={lastQ.rev_yoy != null ? `${pct(lastQ.rev_yoy)} on a year ago` : null} />
+              {!s.financial
+                ? <Fig label="Operating margin" value={`${lastQ.opm ?? '–'}`} unit="%" sub={<>{q.slice(-4).map((x: any) => x.opm ?? '–').join(', ')} over 4 quarters</>} />
+                : <Fig label="Net interest income" value={`₹${cr(lastQ.op)}`} unit="cr" sub={yoy('op')} />}
+              <Fig label="Profit after tax" value={`₹${cr(lastQ.pat)}`} unit="cr" sub={yoy('pat')} />
+            </div>
           )}
-        </section>
-      )}
-
-      <section className="figures">
-        <h2>The numbers</h2>
-        {lastQ && (
-          <div className="fig-grid">
-            <Fig label={`Revenue, ${lastQ.q}`} value={`₹${cr(lastQ.rev)} cr`} sub={lastQ.rev_yoy != null ? <span className={tone(lastQ.rev_yoy)}>{pct(lastQ.rev_yoy)} on a year ago</span> : null} />
-            {!s.financial
-              ? <Fig label="Operating margin" value={`${lastQ.opm ?? '–'}%`} sub={<>{q.slice(-4).map((x: any) => x.opm ?? '–').join(', ')} over 4 quarters</>} />
-              : <Fig label="Net interest income" value={`₹${cr(lastQ.op)} cr`} sub={yoy('op')} />}
-            <Fig label="Profit after tax" value={`₹${cr(lastQ.pat)} cr`} sub={yoy('pat')} />
+          <div className="traj">
+            <div>
+              <h3>Revenue, {s.years.length} years</h3>
+              <Bars values={s.rev} labels={s.years} />
+              <p className="sub">{s.rev_cagr5 != null ? `${pct(s.rev_cagr5, false)} a year` : ''}</p>
+            </div>
+            <div>
+              <h3>Profit after tax</h3>
+              <Bars values={s.pat} labels={s.years} />
+              <p className="sub">{s.pat_cagr5 != null ? `${pct(s.pat_cagr5, false)} a year` : ''}</p>
+            </div>
           </div>
-        )}
-        <div className="traj">
-          <div>
-            <h3>Revenue, {s.years.length} years</h3>
-            <Bars values={s.rev} labels={s.years} />
-            <p className="sub">{s.rev_cagr5 != null ? `${pct(s.rev_cagr5, false)} a year` : ''}</p>
-          </div>
-          <div>
-            <h3>Profit after tax</h3>
-            <Bars values={s.pat} labels={s.years} />
-            <p className="sub">{s.pat_cagr5 != null ? `${pct(s.pat_cagr5, false)} a year` : ''}</p>
-          </div>
+          {!s.financial && (
+            <div className="fig-grid">
+              <Fig label="Cash from operations per ₹100 of profit, 5 years" value={s.cash_conversion5 != null ? `₹${s.cash_conversion5}` : '–'}
+                sub={s.cash_conversion5 != null ? (s.cash_conversion5 >= 90 ? 'Profits are turning into cash.' : s.cash_conversion5 >= 60 ? 'Some profit is stuck in working capital.' : 'Profits are not turning into cash.') : null} />
+              <Fig label="Debt to equity" value={s.de != null ? minus(s.de) : '–'} unit={s.de != null ? '×' : undefined} sub={s.debt != null ? `₹${crBig(s.debt)} borrowed` : null} />
+              <Fig label="Cash conversion cycle" value={s.ccc?.length ? minus(s.ccc[s.ccc.length - 1]) : '–'} unit={s.ccc?.length ? 'days' : undefined}
+                sub={s.ccc?.length > 1 ? `${minus(s.ccc[0])} days in ${fyLabel(s.years[0])}` : null} />
+              <Fig label="Return on capital" value={s.roce?.length ? minus(s.roce[s.roce.length - 1]) : '–'} unit={s.roce?.length ? '%' : undefined} sub={s.roce?.length > 1 ? `${minus(s.roce[0])}% in ${fyLabel(s.years[0])}` : null} />
+            </div>
+          )}
         </div>
-        {!s.financial && (
-          <div className="fig-grid">
-            <Fig label="Cash from operations per ₹100 of profit, 5 years" value={s.cash_conversion5 != null ? `₹${s.cash_conversion5}` : '–'}
-              sub={s.cash_conversion5 != null ? (s.cash_conversion5 >= 90 ? 'Profits are turning into cash.' : s.cash_conversion5 >= 60 ? 'Some profit is stuck in working capital.' : 'Profits are not turning into cash.') : null} />
-            <Fig label="Debt to equity" value={s.de != null ? minus(s.de) : '–'} sub={s.debt != null ? `₹${crBig(s.debt)} borrowed` : null} />
-            <Fig label="Cash conversion cycle" value={s.ccc?.length ? `${minus(s.ccc[s.ccc.length - 1])} days` : '–'}
-              sub={s.ccc?.length > 1 ? `${minus(s.ccc[0])} days in ${fyLabel(s.years[0])}` : null} />
-            <Fig label="Return on capital" value={s.roce?.length ? `${minus(s.roce[s.roce.length - 1])}%` : '–'} sub={s.roce?.length > 1 ? `${minus(s.roce[0])}% in ${fyLabel(s.years[0])}` : null} />
-          </div>
-        )}
-      </section>
+      </Fold>
 
       {(c.bull.length > 0 || c.bear.length > 0) && (
-        <section className="case">
-          <div><h2>For</h2><ul>{c.bull.map((x, i) => <li key={i}>{rupees(x)}</li>)}</ul></div>
-          <div><h2>Against</h2><ul>{c.bear.map((x, i) => <li key={i}>{rupees(x)}</li>)}</ul></div>
-        </section>
+        <Fold title="For and against" open={fold === 'case'} toggle={() => toggle('case')}>
+          <div className="case fold-body">
+            <div><h3 className="lbl lbl-quiet">For</h3><ul>{c.bull.map((x, i) => <li key={i}>{rupees(x)}</li>)}</ul></div>
+            <div><h3 className="lbl lbl-quiet">Against</h3><ul>{c.bear.map((x, i) => <li key={i}>{rupees(x)}</li>)}</ul></div>
+          </div>
+        </Fold>
       )}
 
-      <footer className="sources">
-        <h2>Read for this page</h2>
-        <ul>
-          {c.calls.map(x => {
-            // What this call adds to the page: promises with a number and a date first made on it (repeats sit with the first call)
-            const n = [...c.ledger, ...c.open].filter(p => p.hard && p.period === x.period).length
-            return (
-              <li key={x.period}><Src href={x.url}>{x.period} call</Src>
-                <span className="sub"> {x.error ? 'could not be read' : !n ? `${x.pages} pages, no new promise with a number and a date` : `${x.pages} pages, ${n} ${n === 1 ? 'promise' : 'promises'} with a number and a date, quotes checked`}</span></li>
-            )
-          })}
-          <li><Src href={c.source}>Financial tables</Src><span className="sub"> screener.in, {c.basis}, compiled from filed results</span></li>
-        </ul>
-        {pages > 0 && <p className="sub">Read {pages} pages. Every quote above was matched to its page in the PDF{dropped ? `; ${dropped} that didn't match ${dropped === 1 ? 'was' : 'were'} thrown out` : ''}. Nothing here comes from news, brokers or the model's own memory.</p>}
-        {c.usage?.calls > 0 && <p className="sub">{c.usage.calls} model calls, {Math.round((c.usage.tokens_in + c.usage.tokens_out) / 1000)}k tokens, about ${c.usage.usd_if_billed.toFixed(2)} if billed. {grader(c.usage.by_model)}</p>}
-      </footer>
+      <Fold title="Read for this page" open={fold === 'src'} toggle={() => toggle('src')}>
+        <div className="sources fold-body">
+          <ul>
+            {c.calls.map(x => {
+              // What this call adds to the page: promises with a number and a date first made on it (repeats sit with the first call)
+              const n = [...c.ledger, ...c.open].filter(p => p.hard && p.period === x.period).length
+              return (
+                <li key={x.period}><Src href={x.url}>{x.period} call</Src>
+                  <span className="sub"> {x.error ? 'could not be read' : !n ? `${x.pages} pages, no new promise with a number and a date` : `${x.pages} pages, ${n} ${n === 1 ? 'promise' : 'promises'} with a number and a date, quotes checked`}</span></li>
+              )
+            })}
+            <li><Src href={c.source}>Financial tables</Src><span className="sub"> screener.in, {c.basis}, compiled from filed results</span></li>
+          </ul>
+          {pages > 0 && <p className="sub">Read {pages} pages. Every quote above was matched to its page in the PDF{dropped ? `; ${dropped} that didn't match ${dropped === 1 ? 'was' : 'were'} thrown out` : ''}. Nothing here comes from news, brokers or the model's own memory.</p>}
+          {c.usage?.calls > 0 && <p className="sub">{c.usage.calls} model calls, {Math.round((c.usage.tokens_in + c.usage.tokens_out) / 1000)}k tokens, about ${c.usage.usd_if_billed.toFixed(2)} if billed. {grader(c.usage.by_model)}</p>}
+        </div>
+      </Fold>
     </main>
   )
 }
@@ -186,39 +193,51 @@ const FILLER = /\b(remains|is) (still )?(pending|ongoing)\b|\bnot yet due\b/i
 const verdictText = (p: Promise_) => p.status === 'pending' && FILLER.test(p.verdict || '') ? '' : p.verdict ? rupees(p.verdict) : STATUS_WORD[p.status]
 const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
 
-function Fig({ label, value, sub }: { label: string; value: string; sub: any }) {
-  return <div className="fig"><div className="fig-label">{label}</div><div className="fig-value num">{value}</div>{sub && <div className="fig-sub">{sub}</div>}</div>
+function Fig({ label, value, unit, sub }: { label: string; value: string; unit?: string; sub: any }) {
+  return <div className="fig og-item"><Outcome size={value.length > 6 ? 'xs' : 's'} value={value} unit={unit} /><span className="og-d1">{label}</span>{sub && <span className="og-d2">{sub}</span>}</div>
 }
 
-function LedgerRow({ p, i, open, toggle }: { p: Promise_; i: number; open: boolean; toggle: () => void }) {
+// The figure they promised, pulled from the promise itself: '15%', '₹5,600–5,800 cr', '0.8–0.9×'
+const FIG = /(₹\s?)?(\d[\d,]*(?:\.\d+)?)(?:\u2060?[–-]\u2060?(\d[\d,]*(?:\.\d+)?))?\s?(%|x\b|×|bps|lakh crore|crore|cr\b|GW|MW|days|million tons?|MTPA)?/i
+function promised(t: string): [string, string] | null {
+  const m = rupees(t).match(FIG)
+  if (!m || (!m[1] && !m[4] && /^(19|20)\d\d$/.test(m[2]))) return null
+  const unit = (m[4] || '').toLowerCase().replace(/^x$/, '×').replace(/^crore$/, 'cr').replace(/^lakh crore$/, 'lakh cr')
+  return [`${m[1] ? '₹' : ''}${m[2]}${m[3] ? `–${m[3]}` : ''}`, unit === '%' || unit === '×' ? unit : unit ? ` ${unit}` : '']
+}
+
+// One promise as an outcome: the figure, what they said, the verdict word. Tap for the quote and the evidence.
+function PromiseItem({ p, open, toggle }: { p: Promise_; open: boolean; toggle: () => void }) {
+  const fig = promised(p.target)
+  const size = !fig ? 'xs' : fig[0].length <= 4 ? 's' : 'xs'
   return (
-    <li className={`ledger-row st-${p.status} ${open ? 'open' : ''}`} data-pid={p.id}>
-      <button className="ledger-btn" aria-expanded={open} onClick={toggle}>
-        <Mark status={p.status} delay={120 + i * 70} />
-        <div className="ledger-main">
-          <div className="ledger-target"><b>{cap(rupees(p.target))}</b> <span className="sub">{deadline(p)}</span></div>
-          {verdictText(p) && <div className="ledger-verdict">{verdictText(p)}</div>}
-        </div>
-        <span className="ledger-when sub">{p.period.replace(/ 20/, ' ’')}</span>
+    <li className={`og-item p-item st-${p.status}${open ? ' open' : ''}`} data-pid={p.id}>
+      <button className="og-btn" aria-expanded={open} onClick={toggle}>
+        <Outcome size={size} value={fig ? fig[0] : p.period.replace(/ 20/, ' ’')} unit={fig ? fig[1] : undefined} />
+        <span className="og-d1" style={{ display: 'block' }}>{cap(rupees(p.target))}{deadline(p) ? ` ${deadline(p)}` : ''}.</span>
+        {fig && <span className="og-d2" style={{ display: 'block' }}>Said {p.period.replace(/ 20/, ' ’')}</span>}
       </button>
+      <StatusLabel status={p.status} />
       {open && (
-        <div className="ledger-detail">
-          <div className="said">
-            <h4>Said</h4>
+        <div className="p-detail">
+          {verdictText(p) && <p className="verdict-t">{verdictText(p)}</p>}
+          <div>
+            <h4 className="lbl lbl-quiet">Said</h4>
             <blockquote>“{p.quote}”</blockquote>
             <p className="sub">{p.speaker}, <Src href={`${p.url}#page=${p.page}`}>{p.period} call, page {p.page}</Src>
               {p.restated?.length ? <>. Said again: {p.restated.filter((r, k, all) => all.findIndex(x => x.period === r.period) === k).map((r, k) => <span key={k}>{k ? ', ' : ' '}<Src href={`${r.url}#page=${r.page}`}>{r.period}</Src></span>)}</> : null}</p>
           </div>
           {p.evidence && (
-            <div className="did">
-              <h4>{p.evidence_kind === 'quote' ? 'Latest call' : 'Reported'}</h4>
+            <div>
+              <h4 className="lbl lbl-quiet">{p.evidence_kind === 'quote' ? 'Latest call' : 'Reported'}</h4>
               {p.evidence_kind === 'quote'
                 ? <><blockquote>“{p.evidence}”</blockquote><p className="sub"><Src href={p.evidence_url ? `${p.evidence_url}#page=${p.evidence_page}` : undefined}>page {p.evidence_page}</Src></p></>
-                : <p className="num-ev">{tidyEvidence(p.evidence)}</p>}
+                : <p className="verdict-t">{tidyEvidence(p.evidence)}</p>}
             </div>
           )}
         </div>
       )}
+      {!open && <a className="og-link" href={`${p.url}#page=${p.page}`} target="_blank" rel="noopener noreferrer">See the call</a>}
     </li>
   )
 }
@@ -229,5 +248,5 @@ function CopyQuestions({ name, qs }: { name: string; qs: string[] }) {
   if (!navigator.clipboard) return null
   const copy = () => navigator.clipboard.writeText(`${name}: ask on the next call\n${qs.map((q, i) => `${i + 1}. ${q}`).join('\n')}`)
     .then(() => { setDone(true); setTimeout(() => setDone(false), 2000) }).catch(() => { /* clipboard refused: nothing to undo */ })
-  return <button className="text-btn copy" onClick={copy} aria-live="polite">{done ? 'Copied' : 'Copy'}</button>
+  return <button className="text-btn copy" onClick={copy} aria-live="polite">{done ? 'Copied' : 'Copy the questions'}</button>
 }

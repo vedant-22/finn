@@ -6,7 +6,7 @@ import './styles.css'
 import { App } from './App'
 
 // One reveal style: blocks fade in and rise as they enter the view (CSS under 'reveal')
-const REVEAL = '.card, .book-row, .company section, .fold-group, .chips-sec'
+const REVEAL = '.card, .book-card, .company > section, .fold, .chips-sec, .og-panel'
 if (typeof IntersectionObserver !== 'undefined' && typeof MutationObserver !== 'undefined') {
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('seen'); io.unobserve(e.target) }

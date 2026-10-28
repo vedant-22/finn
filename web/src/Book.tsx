@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { cachedCompany, getCompany, pct, shortName, tone, wordScore, type Company, type Push, type Status } from './lib'
-import { Mark, useKept } from './ui'
+import { cachedCompany, deadline, getCompany, pct, rupees, shortName, wordScore, type Company, type Promise_, type Push, type Status } from './lib'
+import { Masthead, Outcome, StatusLabel, useKept } from './ui'
 
 // The whole book, ordered by how far management's word has held. Weakest first: that's where to look.
 export function Book({ push, openCompany }: { push: Push; openCompany: (s: string) => void }) {
@@ -15,7 +15,13 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
   // Prices are the last exchange close in the snapshot, often the day before it; say which
   const closeDay = Object.values(push.eod).reduce((m, bars: any) => { const d = bars?.[bars.length - 1]?.d; return d && d > m ? d : m }, '')
   const closeLabel = closeDay ? new Date(closeDay + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : ''
-  const head = <header className="top"><h1>Your book</h1><span className="sub">{push.portfolio.length} holdings, weakest word first{closeLabel && `. Prices at the ${closeLabel} close`}</span></header>
+  const head = <>
+    <Masthead />
+    <header className="page-top">
+      <h1 className="sec-head">Your book</h1>
+      <p className="serif-line">{push.portfolio.length} holdings, the weakest word first. Prices at the {closeLabel} close.</p>
+    </header>
+  </>
   // Order and tally only once every holding is in, so counts don't climb and rows don't reshuffle
   if (push.portfolio.some(p => cos[p.symbol] === undefined)) {
     return <main className="screen book">{head}{slow && <p className="sub opening"><span className="dot-run" />Opening the ledgers</p>}</main>
@@ -24,8 +30,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
   const rows = push.portfolio.map(p => {
     const c = cos[p.symbol]
     const bars = push.eod[p.symbol] || []
-    const last = bars[bars.length - 1]
-    return { p, c, score: wordScore(c || undefined), last }
+    return { p, c, score: wordScore(c || undefined), last: bars[bars.length - 1] }
   })
   const missed = (c?: Company | null) => c ? c.ledger.filter(x => x.hard && x.status === 'missed').length : 0
   // Kept share with one kept and one not added, so 0 of 1 doesn't outrank 1 of 7
@@ -40,25 +45,23 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
       {only && <p className="book-filter sub" aria-live="polite">{shown.length} with {WITH[only]} <button className="text-btn" onClick={() => setOnly(null)}>Show all</button></p>}
       <ul className="book-list">
         {shown.map(({ p, c, score, last }) => {
-          const marks = (c?.ledger || []).filter(x => x.hard && x.status !== 'unclear')
-            .sort((a, b) => ORDER.indexOf(a.status) - ORDER.indexOf(b.status))
+          const weak = weakest(c, only)
+          const kept = score ? Math.floor(score.kept) : 0
+          const pending = c ? c.ledger.filter(x => x.hard && x.status === 'pending').length : 0
           return (
             <li key={p.symbol}>
-              <button className="book-row" onClick={() => openCompany(p.symbol)}>
-                <div className="book-name">
-                  <b>{p.short || shortName(p.name)}</b>
-                  <span className="sub">{p.sector}</span>
-                </div>
-                <div className="book-px">
-                  {last && <><span className="num">{last.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span> <span className={`num ${tone(last.chg)}`}>{pct(last.chg)}</span></>}
-                </div>
-                <div className="book-word">
-                  <span className="marks">
-                    {marks.slice(0, 12).map((m, i) => <Mark key={m.id} status={m.status} size={16} delay={i * 50} />)}
-                    {marks.length > 12 && <span className="sub more">+{marks.length - 12}</span>}
+              <button className="book-card" onClick={() => openCompany(p.symbol)}>
+                <div className="card-lbl"><span className="lbl lbl-quiet">{p.sector}</span>{weak && <StatusLabel status={weak.status} />}</div>
+                <div className="book-head">
+                  <span className="card-title">{p.short || shortName(p.name)}</span>
+                  <span className="book-rec">
+                    {score?.graded
+                      ? <Outcome size="xs" value={kept} unit={`/${score.graded} kept`} />
+                      : <Outcome size="xs" value={pending || '–'} unit={pending ? ' not due' : ''} />}
                   </span>
-                  <span className="sub">{c === undefined ? '' : marks.length ? summary(marks.map(m => m.status)) : c && c.calls.length && c.calls.every(x => x.error) ? "Call transcripts couldn't be opened" : 'No checkable promises'}</span>
                 </div>
+                <p className="card-desc">{weak ? weakLine(weak) : c && c.calls.length && c.calls.every(x => x.error) ? "The call transcripts couldn't be opened." : 'No promise with a number and a date yet.'}</p>
+                {last && <p className="book-px"><span className="num">₹{last.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>, <span className="num">{pct(last.chg)}</span> on the day</p>}
               </button>
             </li>
           )
@@ -68,10 +71,14 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
   )
 }
 const ORDER: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
-const WORDS: Partial<Record<Status, string>> = { kept: 'kept', partly: 'partly kept', missed: 'missed', quiet: 'gone quiet', pending: 'not due' }
 const WITH: Partial<Record<Status, string>> = { kept: 'a promise kept', partly: 'a promise partly kept', missed: 'a promise missed', quiet: 'a promise gone quiet', pending: 'a promise not yet due' }
-const summary = (ss: Status[]) => (['missed', 'quiet', 'partly', 'kept', 'pending'] as Status[])
-  .map(st => [st, ss.filter(x => x === st).length] as const).filter(([, n]) => n).map(([st, n]) => `${n} ${WORDS[st]}`).join(', ')
+// The one promise to name on the card: the worst-kept, newest call first; under a filter, one of that kind
+function weakest(c: Company | null | undefined, only: Status | null): Promise_ | undefined {
+  const hard = (c?.ledger || []).filter(x => x.hard && x.status !== 'unclear' && (!only || x.status === only))
+  return [...hard].sort((a, b) => ORDER.indexOf(a.status) - ORDER.indexOf(b.status))[0]
+}
+const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
+const weakLine = (p: Promise_) => `${cap(rupees(p.target))}${deadline(p) ? ` ${deadline(p)}` : ''}.`
 
 // Across the whole book: how many promises management teams have kept, missed or let go quiet.
 // Tap a count to see only the companies behind it; tap again for the whole book.
@@ -80,15 +87,24 @@ function BookTally({ cos, only, setOnly }: { cos: (Company | null | undefined)[]
   if (!all.length) return null
   const n = (st: Status) => all.filter(p => p.status === st).length
   const teams = (st: Status) => cos.filter(c => c?.ledger.some(p => p.hard && p.status === st)).length
-  const items: [Status, string][] = [['missed', `missed, at ${teams('missed')} ${teams('missed') === 1 ? 'company' : 'companies'}`], ['quiet', 'gone quiet'], ['partly', 'partly kept'], ['kept', 'kept'], ['pending', 'not due']]
+  const at = (st: Status) => `At ${teams(st)} ${teams(st) === 1 ? 'company' : 'companies'}`
+  const items: [Status, string, string][] = [
+    ['missed', 'Missed: the date passed without it.', at('missed')],
+    ['quiet', 'Gone quiet: due now, not mentioned on the latest call.', at('quiet')],
+    ['kept', 'Kept: delivered, or on track in the numbers.', at('kept')],
+    ['partly', 'Partly kept, or kept late.', at('partly')],
+    ['pending', 'Not due yet.', 'Still running'],
+  ]
   return (
-    <section className="book-tally" aria-label="Promises across your book">
-      <p className="sub">Promises across your book</p>
-      <ul className="tally">
-        {items.map(([st, label]) => n(st) ? (
+    <section className="og-panel" aria-label="Promises across your book">
+      <h2 className="lbl lbl-quiet">Promises across your book</h2>
+      <ul className="og book-og">
+        {items.map(([st, d1, d2]) => n(st) ? (
           <li key={st}>
-            <button className={`tally-btn${only === st ? ' on' : ''}`} aria-pressed={only === st} onClick={() => setOnly(only === st ? null : st)}>
-              <Mark status={st} size={18} /><b className="num">{n(st)}</b> <span>{label}</span>
+            <button className="og-item og-btn" aria-pressed={only === st} onClick={() => setOnly(only === st ? null : st)}>
+              <Outcome value={n(st)} />
+              <span className="og-d1">{d1}</span>
+              <span className="og-d2">{d2}</span>
             </button>
           </li>
         ) : null)}
