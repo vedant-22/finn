@@ -85,3 +85,4 @@ Next: before the 29 Oct 11:45 wrap-up, rebuild Today (`python3 pipeline/build_pu
 - Contrast audit of the palette: every text colour passes AA on white and on the tally panel (ink 16.4, muted 5.4, kept 5.2, missed 5.9, partly 5.3, blue 6.8). The one text use of the 3.3:1 grey, Look up's placeholder, now uses the muted grey. Deployed 17:25 IST
 - Fonts: a build hook adds preload links for Inter Latin and PT Serif Latin, so they download with the CSS (22 ms in) instead of after it; the first screen no longer swaps faces on a first visit. Deployed 17:26 IST, both font URLs 200
 - Caching: hashed /assets/* now 'max-age=31536000, immutable' (was revalidated on every visit); index.html stays must-revalidate, data stays 5 minutes. Deployed 17:27 IST; page, push.json and fonts 200
+- Ledger detail: 'Said again: Apr 2026, Apr 2026' (two pages of one call) now lists each call once, linking its first page; 4 promises had repeats. Deployed and checked live on Cyient 17:29 IST
