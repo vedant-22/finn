@@ -19,6 +19,13 @@ test('crore: Indian grouping, true minus', () => {
 test('rupees: model text in house style, numbers grouped', () => {
   assert.equal(rupees('INR1,450 crores of capex'), '₹1,450 crore of capex')
   assert.equal(rupees('Rs. 5600-5800 Cr disbursements'), '₹5,600–5,800 crore disbursements')
+  assert.equal(rupees('Issued debentures for 300 crores.'), 'Issued debentures for ₹300 crore.')
+  assert.equal(rupees('buyback of 150 crore rupees'), 'buyback of ₹150 crore')
+  assert.equal(rupees('orders worth 10000 to 15000 crore'), 'orders worth ₹10,000–15,000 crore')
+  assert.equal(rupees('capex of 422.76 Crores'), 'capex of ₹422.76 crore')
+  assert.equal(rupees('allot 2 crore shares'), 'allot 2 crore shares')
+  assert.equal(rupees('in Sep 2026 to 53,356 crore'), 'in Sep 2026 to ₹53,356 crore')
+  assert.equal(rupees('₹ 150 crore and ₹1,450 crore'), '₹ 150 crore and ₹1,450 crore')
 })
 
 test("'Yesterday' is the calendar day before, not any time in 48 hours", () => {

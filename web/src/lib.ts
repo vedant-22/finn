@@ -166,7 +166,10 @@ const cache = new Map<string, Company>()
 export async function getPush(fresh = false): Promise<Push> {
   const r = await fetch('/data/push.json', fresh ? { cache: 'no-cache' } : undefined)
   if (!r.ok) throw new Error('Could not load filings')
-  return r.json()
+  const p: Push = await r.json()
+  // The model's one-line summaries in house style: '300 crores' reads '₹300 crore'
+  for (const f of p.filings) if (f.line) f.line = rupees(f.line)
+  return p
 }
 export const forgetCompanies = () => cache.clear()
 export const cachedCompany = (sym: string) => cache.get(sym.toUpperCase()) ?? null
@@ -287,4 +290,7 @@ export function deadline(p: { target: string; by_when: string; period?: string; 
 export const rupees = (t: string) => t
   .replace(/\b(?:INR|Rs\.?)\s?(\d[\d,.]*)(\s?(?:to|-|–)\s?(?:(?:INR|Rs\.?)\s?)?(\d[\d,.]*))?\s?([Cc]r(?:ores?)?)\b/g, (_, a, r, b) => `₹${a}${r ? `–${b}` : ''} crore`)
   .replace(/\b(?:INR|Rs\.?)\s?(?=\d)/g, '₹')
+  // A bare '300 crores' or '150 crore rupees' is money too, unless it counts something ('2 crore shares')
+  .replace(/(?<![₹\d.,–-]|₹\s)(?!(?:19|20)\d\d\s+to\s)(\d[\d,]*(?:\.\d+)?)(?:\s?(?:to|-|–)\s?(\d[\d,]*(?:\.\d+)?))?\s?[Cc]rores?(?:\s+rupees)?\b(?!\s+(?:equity\s+)?(?:shares|units|customers|users|clients|tonnes|tons|people|subscribers|accounts|investors|folios|policies|households|farmers|doses|litres|liters))/g,
+    (_, a, b) => `₹${a}${b ? `–${b}` : ''} crore`)
   .replace(/₹(\d{4,})(?:–(\d{4,}))?/g, (_, a, b) => `₹${inr.format(+a)}${b ? `–${inr.format(+b)}` : ''}`)

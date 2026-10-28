@@ -110,10 +110,14 @@ function StoryCard({ s, name, asof, openCompany }: { s: Story; name: string; aso
   )
 }
 
-function sizeWords(f: { amount_cr?: number; pct_rev?: number }) {
+function sizeWords(f: { amount_cr?: number; pct_rev?: number; line?: string }) {
   if (f.amount_cr == null || f.pct_rev == null) return ''
   const p = f.pct_rev < 0.1 ? 'under 0.1%' : `${f.pct_rev.toFixed(f.pct_rev < 1 ? 1 : 0)}%`
-  return f.amount_cr < 1 ? 'Under ₹1 cr.' : `₹${cr(f.amount_cr)} cr, ${p} of a year's revenue.`
+  if (f.amount_cr < 1) return 'Under ₹1 cr.'
+  // The line already names the amount ('buyback of ₹150 crore'): just the share of revenue
+  const a = f.amount_cr
+  const said = [...(f.line || '').matchAll(/₹([\d,]+(?:\.\d+)?)(?:–[\d,.]+)? crore/g)].some(m => Math.abs(+m[1].replace(/,/g, '') - a) <= Math.max(0.5, a * 0.01))
+  return said ? `${p.charAt(0).toUpperCase()}${p.slice(1)} of a year's revenue.` : `₹${cr(a)} cr, ${p} of a year's revenue.`
 }
 
 // NSE's own labels for the routine call papers, in sentence case
