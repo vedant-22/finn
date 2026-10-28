@@ -138,7 +138,10 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
     const k = (e: KeyboardEvent) => e.key === 'Escape' && close.current()
     window.addEventListener('keydown', k)
     ref.current?.focus()
-    return () => { window.removeEventListener('keydown', k); opener?.focus?.() }
+    // The page behind stays put while the sheet is up
+    const root = document.documentElement, was = root.style.overflow
+    root.style.overflow = 'hidden'
+    return () => { window.removeEventListener('keydown', k); root.style.overflow = was; opener?.focus?.({ preventScroll: true }) }
   }, [open])
   // Drag the head down to close, like a native sheet.
   const drag = useRef<number | null>(null)
