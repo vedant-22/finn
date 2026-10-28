@@ -15,7 +15,8 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
     const last = bars[bars.length - 1]
     return { p, c, score: wordScore(c || undefined), last }
   })
-  rows.sort((a, b) => (a.score?.ratio ?? 2) - (b.score?.ratio ?? 2) || (b.score?.graded ?? 0) - (a.score?.graded ?? 0))
+  const missed = (c?: Company | null) => c ? c.ledger.filter(x => x.hard && x.status === 'missed').length : 0
+  rows.sort((a, b) => (a.score?.ratio ?? 2) - (b.score?.ratio ?? 2) || missed(b.c) - missed(a.c) || (b.score?.graded ?? 0) - (a.score?.graded ?? 0))
 
   return (
     <main className="screen book">
