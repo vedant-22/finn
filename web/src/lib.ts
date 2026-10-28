@@ -42,8 +42,11 @@ export interface Company {
 const inr = new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 })
 export const cr = (v: number | null | undefined) => (v == null ? '–' : minus(inr.format(Math.round(v))))
 export const minus = (s: string | number) => String(s).replace(/^-/, '−')
-export const pct = (v: number | null | undefined, sign = true) =>
-  v == null ? '–' : `${sign && v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toFixed(Math.abs(v) < 10 ? 1 : 0)}%`
+export const pct = (v: number | null | undefined, sign = true) => {
+  if (v == null) return '–'
+  const a = Math.abs(v).toFixed(Math.abs(v) < 10 ? 1 : 0)
+  return +a === 0 ? '0%' : `${sign && v > 0 ? '+' : v < 0 ? '−' : ''}${a}%`  // never '−0.0%'
+}
 export const tone = (v: number | null | undefined) => (v == null || Math.abs(v) < 0.05 ? '' : v > 0 ? 'up' : 'down')
 export const shortName = (n: string) =>
   n.replace(/\s*\(India\)/i, '').replace(/\s+(Ltd|Limited)\.?$/i, '').replace(/\s+(India|Industries|International|Company|Finance Company India|Corporation of India|Express)$/i, '').replace(/\s+(India|Industries)$/i, '')
