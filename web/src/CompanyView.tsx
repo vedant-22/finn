@@ -194,28 +194,39 @@ const verdictText = (p: Promise_) => p.status === 'pending' && FILLER.test(p.ver
 const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
 
 function Fig({ label, value, unit, sub }: { label: string; value: string; unit?: string; sub: any }) {
-  return <div className="fig og-item"><Outcome size={value.length > 6 ? 'xs' : 's'} value={value} unit={unit} /><span className="og-d1">{label}</span>{sub && <span className="og-d2">{sub}</span>}</div>
+  return <div className="fig og-item"><Outcome size={value.length > 9 ? 'xxs' : value.length > 5 ? 'xs' : 's'} value={value} unit={unit} /><span className="og-d1">{label}</span>{sub && <span className="og-d2">{sub}</span>}</div>
 }
 
-// The figure they promised, pulled from the promise itself: '15%', '₹5,600–5,800 cr', '0.8–0.9×'
-const FIG = /(₹\s?)?(\d[\d,]*(?:\.\d+)?)(?:\u2060?[–-]\u2060?(\d[\d,]*(?:\.\d+)?))?\s?(%|x\b|×|bps|lakh crore|crore|cr\b|GW|MW|days|million tons?|MTPA)?/i
+// The figure they promised, pulled from the promise itself: '15%', '₹5,600–5,800 cr', '0.8–0.9×'.
+// A number glued to letters ('FY26', 'Q3', 'Lakshya 31' is fine) is a date or a name, not the figure; so is a bare year.
+const FIG = /(₹\s?|\$)?(\d[\d,]*(?:\.\d+)?)(?:\u2060?[–-]\u2060?(\d[\d,]*(?:\.\d+)?))?\s?(%|x\b|×|bps|lakh crore|crore|cr\b|GW|MW|MVA|days|months|years|million tons?|million|billion|trillion|lakh|KTPA|MTPA)?s?(?![a-z])/gi
 function promised(t: string): [string, string] | null {
-  const m = rupees(t).match(FIG)
-  if (!m || (!m[1] && !m[4] && /^(19|20)\d\d$/.test(m[2]))) return null
-  const unit = (m[4] || '').toLowerCase().replace(/^x$/, '×').replace(/^crore$/, 'cr').replace(/^lakh crore$/, 'lakh cr')
-  return [`${m[1] ? '₹' : ''}${m[2]}${m[3] ? `–${m[3]}` : ''}`, unit === '%' || unit === '×' ? unit : unit ? ` ${unit}` : '']
+  // '12 to 15 percent', '23% to 24%' -> '12–15%', '23–24%'
+  const txt = rupees(t).replace(/\bpercent\b/gi, '%').replace(/\s+%/g, '%')
+    .replace(/(\d+(?:\.\d+)?) (billion|million|crore) to (\d+(?:\.\d+)?) \2/g, '$1–$3 $2')
+    .replace(/(\d+(?:\.\d+)?)%?[\s\u2060]*(?:to|[-–])[\s\u2060]*(\d+(?:\.\d+)?)(?=\s?%)/g, '$1–$2').replace(/(\d+(?:\.\d+)?)\s+to\s+(\d+(?:\.\d+)?)/g, '$1–$2')
+  for (const m of txt.matchAll(FIG)) {
+    if (/[A-Za-z]$/.test(txt.slice(0, m.index))) continue
+    // A bare number ('plant 2', 'August 25', 'mid-20s') says nothing on its own; only a unit or a currency makes it the figure
+    if (!m[1] && !m[4]) continue
+    const u = m[4] || '', unit = /^x$/i.test(u) ? '×' : /^crore$/i.test(u) ? 'cr' : /^lakh crore$/i.test(u) ? 'lakh cr' : /^(mva|gw|mw|ktpa|mtpa|bps)$/i.test(u) ? (u.toLowerCase() === 'bps' ? 'bps' : u.toUpperCase()) : u.toLowerCase()
+    return [`${m[1] ? m[1].trim() : ''}${m[2]}${m[3] ? `–${m[3]}` : ''}`, unit === '%' || unit === '×' ? unit : unit ? ` ${unit}` : '']
+  }
+  return null
 }
+// No figure in the promise: the year it's due, as they named it ('FY26'), else when it was said
+const dueFig = (p: Promise_) => `${p.target} ${deadline(p)}`.match(/\b(Q\d )?FY\d\d\b|\b20\d\d\b/)?.[0]
 
 // One promise as an outcome: the figure, what they said, the verdict word. Tap for the quote and the evidence.
 function PromiseItem({ p, open, toggle }: { p: Promise_; open: boolean; toggle: () => void }) {
-  const fig = promised(p.target)
-  const size = !fig ? 'xs' : fig[0].length <= 4 ? 's' : 'xs'
+  const fig = promised(p.target), due = fig ? undefined : dueFig(p)
+  const size = !fig ? 'xs' : fig[0].length <= 4 ? 's' : fig[0].length <= 8 ? 'xs' : 'xxs'
   return (
     <li className={`og-item p-item st-${p.status}${open ? ' open' : ''}`} data-pid={p.id}>
       <button className="og-btn" aria-expanded={open} onClick={toggle}>
-        <Outcome size={size} value={fig ? fig[0] : p.period.replace(/ 20/, ' ’')} unit={fig ? fig[1] : undefined} />
+        {fig ? <Outcome size={size} value={fig[0]} unit={fig[1]} /> : due ? <Outcome size="xs" value={due} /> : null}
         <span className="og-d1" style={{ display: 'block' }}>{cap(rupees(p.target))}{deadline(p) ? ` ${deadline(p)}` : ''}.</span>
-        {fig && <span className="og-d2" style={{ display: 'block' }}>Said {p.period.replace(/ 20/, ' ’')}</span>}
+        <span className="og-d2" style={{ display: 'block' }}>Said {p.period.replace(/ 20/, ' ’')}</span>
       </button>
       <StatusLabel status={p.status} />
       {open && (
