@@ -1,5 +1,5 @@
 """Thin Gemini REST client: JSON output, disk cache, retries with fallback, and a usage log."""
-import hashlib, json, os, time, requests
+import hashlib, json, os, re, time, requests
 from . import config
 
 URL = "https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent"
@@ -31,7 +31,7 @@ def generate(prompt, *, model, schema=None, task="misc", temperature=0.1, max_to
         return out["result"]
 
     m, last = model, None
-    for attempt in range(4):
+    for attempt in range(8 if os.environ.get("FINN_PATIENT") else 4):
         try:
             r = requests.post(URL.format(m=m), params={"key": _key()}, json=body, timeout=120)
         except requests.RequestException as e:
@@ -52,8 +52,13 @@ def generate(prompt, *, model, schema=None, task="misc", temperature=0.1, max_to
             _log(task, m, usage, cached=False)
             return result
         last = f"{r.status_code} {r.text[:200]}"
+        if r.status_code == 429 and "free_tier" in r.text and "PerDay" not in r.text and os.environ.get("FINN_PATIENT"):
+            # Batch jobs only: a per-minute limit clears in under a minute, so wait rather than drop a tier.
+            wait = re.search(r'"retryDelay":\s*"(\d+)', r.text)
+            time.sleep(min(65, int(wait.group(1)) + 2 if wait else 30))
+            continue
         if r.status_code == 429 and "free_tier" in r.text and m in config.FALLBACK:
-            # Daily free quota for this model is gone; waiting won't help. Drop a tier now.
+            # Free quota for this model is gone (or, live, we can't afford to wait). Drop a tier now.
             m = config.FALLBACK[m]
             continue
         if r.status_code in (429, 500, 503):
