@@ -49,7 +49,7 @@ Tap "Book".
 **6. Any company (1:55–2:15)**
 Tap "Look up", type ASTRAL, tap "Check their word".
 > "It works on any NSE company. It reads the last five calls right now."
-Let the steps tick through. When the ledger opens:
+Let the steps tick through; each call shows one promise it found as it finishes. When the ledger opens:
 > "Same ledger. About nine cents of model time, and nothing from news or brokers."
 
 **7. Close (2:15–2:20)**
