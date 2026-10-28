@@ -9,7 +9,11 @@
   color-scheme: light;
 }
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+/* One press state instead of the browser's grey flash: rows dim, pills fill. Children dim so the reveal keeps the row's own opacity. */
+:is(.book-row, .ledger-btn, .word-row, .fold-head, .notes li a) > * { transition: opacity 200ms; }
+:is(.book-row, .ledger-btn, .word-row, .fold-head, .notes li a):active > * { opacity: .5; transition: none; }
+:is(.chips button, .tabs button, .window button, .stepper-ctl button):active { background: var(--sheet); }
 body {
   margin: 0; background: var(--paper); color: var(--ink);
   font: 400 15px/21px var(--f); letter-spacing: -0.01em;

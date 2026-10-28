@@ -17,4 +17,7 @@ if (typeof IntersectionObserver !== 'undefined' && typeof MutationObserver !== '
   document.documentElement.classList.add('rv-on')
 }
 
+// iOS Safari only applies :active once a touch listener exists
+document.addEventListener('touchstart', () => {}, { passive: true })
+
 createRoot(document.getElementById('root')!).render(<App />)

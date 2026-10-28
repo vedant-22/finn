@@ -4,11 +4,19 @@ import { Mark, useKept } from './ui'
 
 // The whole book, ordered by how far management's word has held. Weakest first: that's where to look.
 export function Book({ push, openCompany }: { push: Push; openCompany: (s: string) => void }) {
-  const [cos, setCos] = useState<Record<string, Company | null>>(() => Object.fromEntries(push.portfolio.map(p => [p.symbol, cachedCompany(p.symbol)])))
+  // undefined: still loading; null: no file
+  const [cos, setCos] = useState<Record<string, Company | null | undefined>>(() => Object.fromEntries(push.portfolio.map(p => [p.symbol, cachedCompany(p.symbol) ?? undefined])))
   const [only, setOnly] = useKept<Status | null>('book.only', null)
+  const [slow, setSlow] = useState(false)
   useEffect(() => {
-    push.portfolio.forEach(p => getCompany(p.symbol).then(c => setCos(prev => ({ ...prev, [p.symbol]: c }))))
+    push.portfolio.forEach(p => getCompany(p.symbol).catch(() => null).then(c => setCos(prev => ({ ...prev, [p.symbol]: c }))))
+    const t = setTimeout(() => setSlow(true), 400); return () => clearTimeout(t)
   }, [push])
+  const head = <header className="top"><h1>Your book</h1><span className="sub">{push.portfolio.length} holdings, weakest word first</span></header>
+  // Order and tally only once every holding is in, so counts don't climb and rows don't reshuffle
+  if (push.portfolio.some(p => cos[p.symbol] === undefined)) {
+    return <main className="screen book">{head}{slow && <p className="sub opening"><span className="dot-run" />Opening the ledgers</p>}</main>
+  }
 
   const rows = push.portfolio.map(p => {
     const c = cos[p.symbol]
@@ -24,7 +32,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
 
   return (
     <main className="screen book">
-      <header className="top"><h1>Your book</h1><span className="sub">{push.portfolio.length} holdings, weakest word first</span></header>
+      {head}
       <BookTally cos={Object.values(cos)} only={only} setOnly={setOnly} />
       {only && <p className="book-filter sub" aria-live="polite">{shown.length} with {WITH[only]} <button className="text-btn" onClick={() => setOnly(null)}>Show all</button></p>}
       <ul className="book-list">
@@ -64,7 +72,7 @@ const summary = (ss: Status[]) => (['missed', 'quiet', 'partly', 'kept', 'pendin
 
 // Across the whole book: how many promises management teams have kept, missed or let go quiet.
 // Tap a count to see only the companies behind it; tap again for the whole book.
-function BookTally({ cos, only, setOnly }: { cos: (Company | null)[]; only: Status | null; setOnly: (s: Status | null) => void }) {
+function BookTally({ cos, only, setOnly }: { cos: (Company | null | undefined)[]; only: Status | null; setOnly: (s: Status | null) => void }) {
   const all = cos.flatMap(c => (c?.ledger || []).filter(p => p.hard))
   if (!all.length) return null
   const n = (st: Status) => all.filter(p => p.status === st).length
