@@ -40,6 +40,9 @@ No uppercase labels.
 - One reveal: blocks fade in and rise 12px as they enter the view, 900ms, cubic-bezier(.19,1,.22,1); the first three stagger 90ms.
 - Tick marks draw in (280ms) when they come into view; the headline count rolls.
 - Sheets slide up 220ms.
+- Press: tappable rows dim to half while held; pills fill with `sheet`. No browser tap flash.
+- Waiting: under 400ms shows nothing; after that one muted line with a pulsing dot ('Opening the ledger'). Lists and tallies appear whole, never counting up as files arrive.
+- From the home screen on iOS, a swipe in from the left edge goes back; the page follows the finger.
 - `prefers-reduced-motion`: everything appears in place.
 
 ## Icons
