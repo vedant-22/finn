@@ -53,7 +53,7 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
 
         {softTalk > 0 && (
           <button className="soft" aria-expanded={showSoft} onClick={() => setShowSoft(!showSoft)}>
-            Plus {softTalk} statements with no number or date. Not graded.
+            Plus {softTalk} {softTalk === 1 ? 'statement' : 'statements'} with no number or date. Not graded.
           </button>
         )}
         {showSoft && <ul className="ledger soft-list">{soft.map((p, i) => <LedgerRow key={p.id} p={p} i={i} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>}
@@ -69,7 +69,7 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
       {c.open.some(p => p.hard) && (
         <section className="open-book">
           <button className="fold-head" aria-expanded={showOpen} onClick={() => setShowOpen(!showOpen)}>
-            <span>{c.open.filter(p => p.hard).length} new promises on the latest call</span><span className="chev" aria-hidden>{showOpen ? '–' : '+'}</span>
+            <span>{c.open.filter(p => p.hard).length} new {c.open.filter(p => p.hard).length === 1 ? 'promise' : 'promises'} on the latest call</span><span className="chev" aria-hidden>{showOpen ? '–' : '+'}</span>
           </button>
           {showOpen && (
             <ul className="ledger">
@@ -136,7 +136,7 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
           ))}
           <li><Src href={c.source}>Financial tables</Src><span className="sub"> screener.in, {c.basis}, compiled from filed results</span></li>
         </ul>
-        <p className="sub">Read {pages} pages. Every quote above was matched to its page in the PDF{dropped ? `; ${dropped} that didn't match were thrown out` : ''}. Nothing here comes from news, brokers or the model's own memory.</p>
+        <p className="sub">Read {pages} pages. Every quote above was matched to its page in the PDF{dropped ? `; ${dropped} that didn't match ${dropped === 1 ? 'was' : 'were'} thrown out` : ''}. Nothing here comes from news, brokers or the model's own memory.</p>
         {c.usage && <p className="sub">{c.usage.calls} model calls, {Math.round((c.usage.tokens_in + c.usage.tokens_out) / 1000)}k tokens, about ${c.usage.usd_if_billed.toFixed(2)} if billed. {grader(c.usage.by_model)}</p>}
       </footer>
     </main>

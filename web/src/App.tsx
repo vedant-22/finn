@@ -22,7 +22,7 @@ export function App() {
   const [err, setErr] = useState('')
   const [lines, setLinesState] = useState<Lines>(loadLines)
   const [linesOpen, setLinesOpen] = useState(false)
-  const [prev, setPrev] = useState<string>('#/')
+  const [prev, setPrev] = useState<string>('')
 
   useEffect(() => { getPush().then(setPush).catch(e => setErr(e.message)) }, [])
   useEffect(() => {
@@ -36,19 +36,21 @@ export function App() {
   if (err) return <div className="boot"><p>Couldn't load your filings. {plainError(err)}</p><button className="text-btn" onClick={() => location.reload()}>Try again</button></div>
   if (!push) return <div className="boot"><Mark status="kept" size={36} /></div>
   const holding = (s?: string) => push.portfolio.find(p => p.symbol === s)
+  // On a company page, light the tab it was opened from
+  const tab = !route.sym ? route.tab : prev.startsWith('#/book') ? 'book' : prev.startsWith('#/look') ? 'look' : prev || holding(route.sym) ? 'today' : 'look'
 
   return (
     <>
       {route.sym
-        ? <CompanyRoute sym={route.sym} sector={holding(route.sym)?.sector} title={holding(route.sym)?.short} back={() => { location.hash = prev === location.hash ? '#/' : prev }} />
+        ? <CompanyRoute sym={route.sym} sector={holding(route.sym)?.sector} title={holding(route.sym)?.short} back={() => { location.hash = !prev || prev === location.hash ? '#/' : prev }} />
         : route.tab === 'book' ? <Book push={push} openCompany={openCompany} />
           : route.tab === 'look' ? <Look push={push} openCompany={openCompany} />
             : <Today push={push} lines={lines} setLines={setLines} openCompany={openCompany} openLines={() => setLinesOpen(true)} />}
 
       <nav className="tabs" aria-label="Sections">
-        <button className={route.tab === 'today' && !route.sym ? 'on' : ''} onClick={() => go('today')}>Today</button>
-        <button className={route.tab === 'book' ? 'on' : ''} onClick={() => go('book')}>Book</button>
-        <button className={route.tab === 'look' || route.sym ? 'on' : ''} onClick={() => go('look')}>Look up</button>
+        <button className={tab === 'today' ? 'on' : ''} onClick={() => go('today')}>Today</button>
+        <button className={tab === 'book' ? 'on' : ''} onClick={() => go('book')}>Book</button>
+        <button className={tab === 'look' ? 'on' : ''} onClick={() => go('look')}>Look up</button>
       </nav>
 
       <Sheet open={linesOpen} onClose={() => setLinesOpen(false)} title="Your lines">

@@ -69,7 +69,7 @@ function BookTally({ cos, only, setOnly }: { cos: (Company | null)[]; only: Stat
   if (!all.length) return null
   const n = (st: Status) => all.filter(p => p.status === st).length
   const teams = (st: Status) => cos.filter(c => c?.ledger.some(p => p.hard && p.status === st)).length
-  const items: [Status, string][] = [['missed', `missed, at ${teams('missed')} companies`], ['quiet', 'gone quiet'], ['partly', 'partly kept'], ['kept', 'kept'], ['pending', 'not due yet']]
+  const items: [Status, string][] = [['missed', `missed, at ${teams('missed')} ${teams('missed') === 1 ? 'company' : 'companies'}`], ['quiet', 'gone quiet'], ['partly', 'partly kept'], ['kept', 'kept'], ['pending', 'not due yet']]
   return (
     <section className="book-tally" aria-label="Promises across your book">
       <p className="sub">Promises across your book</p>
