@@ -131,8 +131,12 @@ function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; open
   const r = f.results
   const [co, setCo] = useState<Company | null>(null)
   useEffect(() => { getCompany(symbol).then(setCo) }, [symbol])
-  // Promises about the headline numbers, to set the quarter against.
-  const word = (co?.ledger || []).filter(p => p.hard && ['margin', 'revenue_growth', 'profit', 'volume'].includes(p.metric) && p.status !== 'unclear').slice(0, 2)
+  // Promises about the headline numbers, to set the quarter against: the latest one already settled (their record),
+  // then the latest one still running (what this quarter is measured against). Newest calls first.
+  const about = (co?.ledger || []).filter(p => p.hard && ['margin', 'revenue_growth', 'profit', 'volume'].includes(p.metric) && p.status !== 'unclear')
+    .map((p, i) => ({ p, i, t: +p.period.slice(-4) * 12 + MON3.indexOf(p.period.slice(0, 3).toLowerCase()) })).sort((a, b) => b.t - a.t || a.i - b.i).map(x => x.p)
+  const settled = about.find(p => p.status !== 'pending'), running = about.find(p => p.status === 'pending')
+  const word = [settled, running, ...about].filter((p, i, all): p is NonNullable<typeof p> => !!p && all.indexOf(p) === i).slice(0, 2)
   return (
     <div className="results">
       <table className="figs">
