@@ -14,11 +14,11 @@ About 2 minutes 20 seconds. Spoken lines are short. Don't read the screen; say w
 ## Beats
 
 **1. Today (0:00–0:25)**
-Open the app. Today is on screen, "12 things need you".
+Open the app. Today is on screen with the 24h count ("5 things need you" on the 28 Oct evening snapshot; it changes with each rebuild).
 > "This is FINN. It's for someone holding fifteen or twenty stocks for years."
-> "Two hundred and eighty filings came in this month. It shows me the few that matter."
-Tap the "Week" window, then back to "24h".
-*(silence, 2 seconds, while the count changes)*
+> "Close to three hundred filings came in this month. It shows me the few that matter."
+Tap the "Week" window and stay on it; the cards below are in the week.
+*(silence, 2 seconds, while the count rolls)*
 
 **2. A results card (0:25–0:50)**
 Scroll to the Larsen & Toubro results card.

@@ -7,7 +7,7 @@ Each entry: what I chose, what I passed on, and why.
 **The organising idea is a promise ledger.** FINN keeps a record of what management said it would do on its earnings calls and marks each promise kept, partly kept, missed, gone quiet or not due yet. Push and pull both hang off it: a results filing is shown against the promises it settles, and the research page is the ledger first and the numbers second.
 Passed on: a feed with summaries (what MarketPing, Stox AI and Alpha Tribe already do), a chat box, a dashboard. The brief says the thing ENAM values most is "what was promised vs. what was actually delivered", so I made that the spine instead of one tab out of eight. Full ideation in `docs/ideation.md`.
 
-**Push is mostly folding.** Of 282 filings across 18 holdings in 30 days, 45 can interrupt, 110 get one line and 127 are folded into a count. The tier policy is written at the top of `finn/classify.py` and `finn/triage.py` so it can be argued with.
+**Push is mostly folding.** Of 286 filings across 18 holdings in the 30 days to 28 October, 43 can interrupt, 113 get one line and 130 are folded into a count. The tier policy is written at the top of `finn/classify.py` and `finn/triage.py` so it can be argued with.
 
 **Size things against the company.** Any filing with a rupee amount in it (a tax demand, a deal, a debt raise) is read for that amount and divided by the company's trailing revenue. Under 0.5% it becomes a one-line note. A ₹27 cr GST notice at Blue Dart is noise; ₹10,000 cr of NCDs at Sun Pharma is not.
 

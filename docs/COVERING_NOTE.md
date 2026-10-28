@@ -13,7 +13,7 @@ Here is my submission for the FINN build challenge.
 
 FINN keeps management to its word. It reads a company's last five earnings calls, writes down every promise that had a number and a date, and checks each one against what the company later reported. Each promise ends up kept, partly kept, missed, gone quiet or not due yet, with the quote and the page it came from.
 
-The push side is built around the same idea. Across an 18-stock portfolio, a results filing shows revenue, EBITDA, PBT and PAT against last quarter and a year ago, and then the promises that quarter settles. A management change shows who is coming in and where they worked before, from the profile the company files with the exchange. Price and volume alerts use lines you set, and say whether any filing explains the move. Everything else is folded. In the last 30 days the portfolio filed 282 times; 45 of those could interrupt you.
+The push side is built around the same idea. Across an 18-stock portfolio, a results filing shows revenue, EBITDA, PBT and PAT against last quarter and a year ago, and then the promises that quarter settles. A management change shows who is coming in and where they worked before, from the profile the company files with the exchange. Price and volume alerts use lines you set, and say whether any filing explains the move. Everything else is folded. In the 30 days to 28 October the portfolio filed 286 times; 43 of those could interrupt you.
 
 Pull works on any NSE symbol. The portfolio and four other names are prebuilt so they open instantly; any other ticker is read live in about a minute.
 

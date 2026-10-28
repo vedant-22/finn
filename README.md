@@ -74,7 +74,7 @@ Measured from the usage log while building (`data/cache/usage.jsonl`, list price
 | Action | Tokens | Cost if billed |
 |---|---|---|
 | One company's full ledger (average of 19 built) | 94k | $0.09 |
-| Push snapshot for 18 holdings, 30 days, 282 filings | 290k | $0.13 |
+| Push snapshot for 18 holdings, 30 days, 286 filings | 290k | $0.13 |
 | Everything I ran while building, including reruns | 2.5M | $2.20 |
 
 What I actually paid: nothing. It all runs on Gemini's free tier. Every model call is cached by prompt, so rebuilding after a code change is close to free.
