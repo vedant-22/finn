@@ -193,7 +193,7 @@ function LedgerRow({ p, i, open, toggle }: { p: Promise_; i: number; open: boole
             <h4>Said</h4>
             <blockquote>“{p.quote}”</blockquote>
             <p className="sub">{p.speaker}, <Src href={`${p.url}#page=${p.page}`}>{p.period} call, page {p.page}</Src>
-              {p.restated?.length ? <>. Said again: {p.restated.map((r, k) => <span key={k}>{k ? ', ' : ' '}<Src href={`${r.url}#page=${r.page}`}>{r.period}</Src></span>)}</> : null}</p>
+              {p.restated?.length ? <>. Said again: {p.restated.filter((r, k, all) => all.findIndex(x => x.period === r.period) === k).map((r, k) => <span key={k}>{k ? ', ' : ' '}<Src href={`${r.url}#page=${r.page}`}>{r.period}</Src></span>)}</> : null}</p>
           </div>
           {p.evidence && (
             <div className="did">
