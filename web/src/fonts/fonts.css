@@ -16,3 +16,4 @@
   src: url(./inter-rupee-wght.woff2) format('woff2-variations');
   unicode-range: U+20B9;
 }
+/* Not PT Serif: its own ₹ (latin-ext) is drawn like ₽, so ₹ in the serif lines falls back to the system face */
