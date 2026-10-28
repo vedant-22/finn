@@ -1,6 +1,6 @@
 # Progress
 
-Next: regrade job (pid from `pgrep -f regrade.sh`) sleeps to 12:40 IST then rebuilds ledgers; log in data/regrade.log. When done: `git diff --stat web/public/data`, sanity-check a few ledgers, run evals/sample_grades.py, write evals/grades_review.md, redeploy (`npx vercel deploy --prod --yes`), refresh README screenshots, critic round 2, final checklist pass 2. If the log is empty and no process is running, restart: `nohup zsh pipeline/regrade.sh > data/regrade.log &`.
+Next: (12:50 IST: 6/19 regraded) regrade job (pid from `pgrep -f regrade.sh`) sleeps to 12:40 IST then rebuilds ledgers; log in data/regrade.log. When done: `git diff --stat web/public/data`, sanity-check a few ledgers, run evals/sample_grades.py, write evals/grades_review.md, redeploy (`npx vercel deploy --prod --yes`), refresh README screenshots, critic round 2, final checklist pass 2. If the log is empty and no process is running, restart: `nohup zsh pipeline/regrade.sh > data/regrade.log &`.
 
 - [x] Brief analysis, company notes, ideation (docs/)
 - [x] Engine: finn/ (sources, classify, triage, results, people, ledger, research)
@@ -24,3 +24,6 @@ Next: regrade job (pid from `pgrep -f regrade.sh`) sleeps to 12:40 IST then rebu
 - Deployed and checked live 28 Oct ~12:20 IST
 - Company sources footer: "N promises found, quotes checked" (was "kept after checking", which read like a verdict)
 - Company screen: a failed company-file fetch shows the plain error and Try again (was stuck loading); the 'About a minute' note shows only during live research. Tested at 390x844 with an aborted request
+- Today data preloads in index.html, so it downloads alongside the JS (companies.json preload dropped: not used on the first screen)
+- Look up: Ready to open and Recent chips show names (companies.json is now {symbol: name}; the app still reads the old list). After the regrade, rerun the index line: build_ledgers writes it, but the running job uses the old code
+- Today: the headline count rolls when switching 24h/3 days/Week/Month; tabular digits; off under reduced motion
