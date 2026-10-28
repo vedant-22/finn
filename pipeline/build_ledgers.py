@@ -19,7 +19,7 @@ def main(symbols):
             print(s, r["score"], r["usage"]["usd_if_billed"], r["built_in"], "s", flush=True)
         except Exception:
             print(s, "FAILED", traceback.format_exc()[-300:], flush=True)
-    index = sorted(p.stem for p in OUT.glob("*.json"))
+    index = {p.stem: json.loads(p.read_text()).get("name", "") for p in sorted(OUT.glob("*.json"))}
     (OUT.parent / "companies.json").write_text(json.dumps(index))
 
 if __name__ == "__main__":

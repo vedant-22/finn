@@ -133,11 +133,19 @@ function CompanyRoute({ sym, sector, title, back }: { sym: string; sector?: stri
 
 function Look({ push, openCompany }: { push: Push; openCompany: (s: string) => void }) {
   const [q, setQ] = useState('')
-  const [built, setBuilt] = useState<string[]>([])
-  useEffect(() => { fetch('/data/companies.json').then(r => r.json()).then(setBuilt).catch(() => setBuilt([])) }, [])
+  // companies.json: { symbol: name } (older builds: a plain list of symbols)
+  const [built, setBuilt] = useState<Record<string, string>>({})
+  useEffect(() => {
+    fetch('/data/companies.json').then(r => r.json())
+      .then(d => setBuilt(Array.isArray(d) ? Object.fromEntries(d.map((s: string) => [s, ''])) : d))
+      .catch(() => setBuilt({}))
+  }, [])
   const recent: string[] = JSON.parse(localStorage.getItem('finn.recent') || '[]')
   const held = new Set(push.portfolio.map(p => p.symbol))
-  const others = built.filter(s => !held.has(s))
+  const others = Object.keys(built).filter(s => !held.has(s))
+  const names: Record<string, string> = Object.fromEntries(push.portfolio.map(p => [p.symbol, p.short || shortName(p.name)]))
+  for (const [s, n] of Object.entries(built)) if (n && !names[s]) names[s] = shortName(n)
+  for (const s of recent) if (!names[s]) { try { const n = JSON.parse(localStorage.getItem(`finn.c.${s}`) || 'null')?.name; if (n) names[s] = shortName(n) } catch { /* ignore */ } }
   const submit = (e: React.FormEvent) => { e.preventDefault(); const s = q.trim().toUpperCase().replace(/\.(NS|BO)$/, ''); if (s) openCompany(s) }
   return (
     <main className="screen look">
@@ -150,9 +158,9 @@ function Look({ push, openCompany }: { push: Push; openCompany: (s: string) => v
         </div>
       </form>
       <p className="sub look-note">FINN reads the company's last five earnings calls and its filed results, lists what management promised, and checks each promise against what happened. Nothing else goes in.</p>
-      {recent.length > 0 && <Chips title="Recent" syms={recent} open={openCompany} />}
-      {others.length > 0 && <Chips title="Ready to open" syms={others} open={openCompany} />}
-      <Chips title="Your holdings" syms={push.portfolio.map(p => p.symbol)} open={openCompany} names={Object.fromEntries(push.portfolio.map(p => [p.symbol, p.short || shortName(p.name)]))} />
+      {recent.length > 0 && <Chips title="Recent" syms={recent} open={openCompany} names={names} />}
+      {others.length > 0 && <Chips title="Ready to open" syms={others} open={openCompany} names={names} />}
+      <Chips title="Your holdings" syms={push.portfolio.map(p => p.symbol)} open={openCompany} names={names} />
     </main>
   )
 }
