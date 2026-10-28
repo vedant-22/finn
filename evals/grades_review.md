@@ -4,6 +4,8 @@
 
 **Result: 18 of 20 hold up. 2 are wrong.**
 
+Which model graded which: the flash free tier allows 20 requests a day, which ran out after about 11 companies. CEATLTD, MARUTI, PIDILITIND, POLYCAB, SRF, SYNGENE, TCI and ULTRACEMCO were graded by flash-lite (each page says so). In this sample, #3, #8, #13, #14 are flash-lite and the rest are flash. Of the two wrong grades, #8 came from flash-lite and #19 from flash. `pipeline/regrade.sh` regrades those eight once the quota resets.
+
 | # | Company | Promise | FINN | Mine | Note |
 |---|---|---|---|---|---|
 | 1 | DIXON | Semi-auto washing machines in mass production by Mar 2026 | kept | kept | Later call says production started |
