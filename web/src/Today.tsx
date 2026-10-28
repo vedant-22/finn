@@ -111,7 +111,7 @@ function StoryCard({ s, lead, name, asof, bars, openCompany }: { s: Story; lead?
         <button className="card-title" onClick={() => openCompany(s.symbol)}>{name}</button>
         {r && rev?.yoy != null && <div className="card-fig"><Outcome value={v} unit={u} /><span className="card-cap">{rev.label.toLowerCase()}, against {r.compare.yago || 'a year ago'}</span></div>}
         {!r && f.amount_cr != null && f.amount_cr >= 1 && <div className="card-fig"><Outcome value={`₹${cr(f.amount_cr)}`} unit="cr" />{f.pct_rev != null && <span className="card-cap">{f.pct_rev < 0.1 ? 'under 0.1%' : `${f.pct_rev.toFixed(f.pct_rev < 1 ? 1 : 0)}%`} of a year's revenue</span>}</div>}
-        {r ? <p className="card-desc">{resultLine(r, pat)}</p>
+        {r ? <><p className="card-desc">{resultLine(r, pat)}</p><CardWord symbol={s.symbol} openCompany={openCompany} /></>
           : f.people?.length ? <PeopleLead f={f} />
             : <p className="card-desc">{f.line || tidySubject(f.subject)}</p>}
         <button className="read-more" aria-expanded={more} onClick={() => setMore(!more)}>{more ? 'Read less' : 'Read more'}</button>
@@ -128,6 +128,29 @@ function StoryCard({ s, lead, name, asof, bars, openCompany }: { s: Story; lead?
         </div>
       </Accordion>
     </article>
+  )
+}
+
+// Promises about the headline numbers, to set the quarter against: the latest one already settled (their record),
+// then the latest one still running (what this quarter is measured against). Newest calls first.
+function useWord(symbol: string) {
+  const [co, setCo] = useState<Company | null>(null)
+  useEffect(() => { getCompany(symbol).then(setCo).catch(() => setCo(null)) }, [symbol])
+  const about = (co?.ledger || []).filter(p => p.hard && ['margin', 'revenue_growth', 'profit', 'volume'].includes(p.metric) && p.status !== 'unclear')
+    .map((p, i) => ({ p, i, t: +p.period.slice(-4) * 12 + MON3.indexOf(p.period.slice(0, 3).toLowerCase()) })).sort((a, b) => b.t - a.t || a.i - b.i).map(x => x.p)
+  const settled = about.find(p => p.status !== 'pending'), running = about.find(p => p.status === 'pending')
+  return [settled, running, ...about].filter((p, i, all): p is NonNullable<typeof p> => !!p && all.indexOf(p) === i).slice(0, 2)
+}
+
+// FINN's point on a results card: the promise this quarter is held to, and its word
+function CardWord({ symbol, openCompany }: { symbol: string; openCompany: (s: string, pid?: number) => void }) {
+  const p = useWord(symbol)[0]
+  if (!p) return null
+  return (
+    <button className="word-row card-word" onClick={() => openCompany(symbol, p.id)}>
+      <span className="word-t">{rupees(p.target.charAt(0).toUpperCase() + p.target.slice(1))}{deadline(p) ? ` ${deadline(p)}` : ''}</span>
+      <StatusLabel status={p.status} />
+    </button>
   )
 }
 
@@ -171,14 +194,7 @@ function tidyRaw(s: string) {
 
 function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; openCompany: (s: string, pid?: number) => void }) {
   const r = f.results
-  const [co, setCo] = useState<Company | null>(null)
-  useEffect(() => { getCompany(symbol).then(setCo) }, [symbol])
-  // Promises about the headline numbers, to set the quarter against: the latest one already settled (their record),
-  // then the latest one still running (what this quarter is measured against). Newest calls first.
-  const about = (co?.ledger || []).filter(p => p.hard && ['margin', 'revenue_growth', 'profit', 'volume'].includes(p.metric) && p.status !== 'unclear')
-    .map((p, i) => ({ p, i, t: +p.period.slice(-4) * 12 + MON3.indexOf(p.period.slice(0, 3).toLowerCase()) })).sort((a, b) => b.t - a.t || a.i - b.i).map(x => x.p)
-  const settled = about.find(p => p.status !== 'pending'), running = about.find(p => p.status === 'pending')
-  const word = [settled, running, ...about].filter((p, i, all): p is NonNullable<typeof p> => !!p && all.indexOf(p) === i).slice(0, 2)
+  const word = useWord(symbol)
   return (
     <div className="results">
       <table className="figs">

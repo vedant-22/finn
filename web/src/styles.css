@@ -137,6 +137,7 @@ blockquote { margin: 0; }
 .against h4 { margin-bottom: 4px; }
 .word-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 10px 0; border-top: 1px solid var(--rule); width: 100%; font-size: 15px; line-height: 140%; }
 .word-row .lbl { flex: none; }
+.card-word { margin-top: var(--s-2xs); border-bottom: 1px solid var(--rule); }
 
 /* people */
 .people { display: grid; gap: var(--s-3xs); }
