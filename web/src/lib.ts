@@ -248,3 +248,8 @@ export function deadline(p: { target: string; by_when: string }) {
   const said = new Set(dateWords(p.target))
   return dateWords(w).every(x => said.has(x)) ? '' : `by ${w}`
 }
+
+// Model-written text says 'INR1,450 crores'; the app writes '₹1,450 crore'. Never applied to quotes.
+export const rupees = (t: string) => t
+  .replace(/\b(?:INR|Rs\.?)\s?(\d[\d,.]*)(\s?(?:to|-|–)\s?(?:(?:INR|Rs\.?)\s?)?(\d[\d,.]*))?\s?([Cc]r(?:ores?)?)\b/g, (_, a, r, b) => `₹${a}${r ? `–${b}` : ''} crore`)
+  .replace(/\b(?:INR|Rs\.?)\s?(?=\d)/g, '₹')

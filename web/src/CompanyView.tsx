@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { cr, deadline, pct, shortName, tone, type Company, type Promise_, type Status } from './lib'
+import { cr, deadline, pct, rupees, shortName, tone, type Company, type Promise_, type Status } from './lib'
 import { Bars, Mark, Src, STATUS_WORD } from './ui'
 
 const SHOW: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
@@ -45,7 +45,7 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
             : <p className="word-score sub">No promise in these calls had both a number and a date.</p>}
           <p className="sub tally-note">Promises with a number and a date, from the {c.calls.filter(x => !x.error).length - 1} calls before the latest one.</p>
         </div>
-        {c.read && settled >= 3 && <p className="read">{c.read}</p>}
+        {c.read && settled >= 3 && <p className="read">{rupees(c.read)}</p>}
 
         <ul className="ledger">
           {hard.map((p, i) => <LedgerRow key={p.id} p={p} i={i} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}
@@ -62,7 +62,7 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
       {c.questions.length > 0 && (
         <section className="ask">
           <h2>Ask on the next call</h2>
-          <ol>{c.questions.map((x, i) => <li key={i}>{x}</li>)}</ol>
+          <ol>{c.questions.map((x, i) => <li key={i}>{rupees(x)}</li>)}</ol>
         </section>
       )}
 
@@ -76,7 +76,7 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
               {c.open.filter(p => p.hard).map((p, i) => (
                 <li key={i} className="ledger-row static">
                   <Mark status="pending" />
-                  <div><b>{cap(p.target)}</b> <span className="sub">{deadline(p)}</span>
+                  <div><b>{cap(rupees(p.target))}</b> <span className="sub">{deadline(p)}</span>
                     <blockquote>“{p.quote}” <Src href={`${p.url}#page=${p.page}`}>{p.period}, p{p.page}</Src></blockquote></div>
                 </li>
               ))}
@@ -122,8 +122,8 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
 
       {(c.bull.length > 0 || c.bear.length > 0) && (
         <section className="case">
-          <div><h2>For</h2><ul>{c.bull.map((x, i) => <li key={i}>{x}</li>)}</ul></div>
-          <div><h2>Against</h2><ul>{c.bear.map((x, i) => <li key={i}>{x}</li>)}</ul></div>
+          <div><h2>For</h2><ul>{c.bull.map((x, i) => <li key={i}>{rupees(x)}</li>)}</ul></div>
+          <div><h2>Against</h2><ul>{c.bear.map((x, i) => <li key={i}>{rupees(x)}</li>)}</ul></div>
         </section>
       )}
 
@@ -146,6 +146,9 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
 const grader = (by: Record<string, number> = {}) =>
   !Object.keys(by).length ? '' : by['gemini-3.5-flash'] ? 'Graded by gemini-3.5-flash.'
     : 'Graded by gemini-3.5-flash-lite: the stronger model’s free daily quota was used up.'
+// 'X remains ongoing.' / 'X is pending.' only restates the promise; the dash mark already says not due yet
+const FILLER = /\b(remains|is) (still )?(pending|ongoing)\b|\bnot yet due\b/i
+const verdictText = (p: Promise_) => p.status === 'pending' && FILLER.test(p.verdict || '') ? '' : p.verdict ? rupees(p.verdict) : STATUS_WORD[p.status]
 const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
 
 function Fig({ label, value, sub }: { label: string; value: string; sub: any }) {
@@ -158,8 +161,8 @@ function LedgerRow({ p, i, open, toggle }: { p: Promise_; i: number; open: boole
       <button className="ledger-btn" aria-expanded={open} onClick={toggle}>
         <Mark status={p.status} delay={120 + i * 70} />
         <div className="ledger-main">
-          <div className="ledger-target"><b>{cap(p.target)}</b> <span className="sub">{deadline(p)}</span></div>
-          <div className="ledger-verdict">{p.verdict || STATUS_WORD[p.status]}</div>
+          <div className="ledger-target"><b>{cap(rupees(p.target))}</b> <span className="sub">{deadline(p)}</span></div>
+          {verdictText(p) && <div className="ledger-verdict">{verdictText(p)}</div>}
         </div>
         <span className="ledger-when sub">{p.period.replace(/ 20/, ' ’')}</span>
       </button>
@@ -176,7 +179,7 @@ function LedgerRow({ p, i, open, toggle }: { p: Promise_; i: number; open: boole
               <h4>{p.evidence_kind === 'quote' ? 'Latest call' : 'Reported'}</h4>
               {p.evidence_kind === 'quote'
                 ? <><blockquote>“{p.evidence}”</blockquote><p className="sub"><Src href={p.evidence_url ? `${p.evidence_url}#page=${p.evidence_page}` : undefined}>page {p.evidence_page}</Src></p></>
-                : <p className="num-ev">{p.evidence.replace(/(\d)\.0\b/g, '$1')}</p>}
+                : <p className="num-ev">{rupees(p.evidence.replace(/(\d)\.0\b/g, '$1'))}</p>}
             </div>
           )}
         </div>
