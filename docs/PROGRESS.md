@@ -34,3 +34,4 @@ Next: keep polishing from the 'Never sit idle' list. Background: `pgrep -f regra
 - Batch LLM calls wait out per-minute free-tier 429s (FINN_PATIENT=1, set by regrade.sh) instead of dropping to flash-lite; daily limits still drop a tier. Live API unchanged
 - Promise lines drop a 'by ...' the promise already states (every date word already in it), plus 'by by' and 'by unspecified'. Checked against all 194 graded promises
 - docs/DONE created 28 Oct 13:25 IST after final checklist pass 2
+- Today cards: 'and N related' is now a button that lists the other filings in the story, each linked. Filing titles read cleaner everywhere: 'Press release: <title>', no wrapping quotes, 'Financial results for...' instead of ', the financial results'. Tested at 390x844; deployed and checked live 28 Oct ~13:16 IST (the Vercel CLI prints 'Not authorized' after a successful deploy; check the live bundle name)
