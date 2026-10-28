@@ -254,8 +254,8 @@ blockquote { margin: 0; }
 .dot-run { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--brand); animation: pulse 1s ease-in-out infinite alternate; }
 @keyframes pulse { from { opacity: .25; transform: scale(.8); } }
 .opening { display: flex; align-items: center; gap: 10px; margin-top: var(--s-s); }
-.fail { margin-top: var(--s-2xs); font: 16px/140% var(--serif); letter-spacing: 0; }
-.fail-acts { display: flex; gap: var(--s-xs); margin-top: var(--s-5xs); }
+.fail-msg { margin-top: var(--s-s); font: 16px/140% var(--serif); letter-spacing: 0; }
+.fail-acts { display: flex; gap: var(--s-3xs); margin-top: var(--s-s); }
 .not-found { margin-top: var(--s-s); }
 .not-found .btn-outline { margin-top: var(--s-s); }
 

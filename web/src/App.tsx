@@ -159,12 +159,12 @@ function CompanyRoute({ sym, pid, sector, title, close, back }: { sym: string; p
           <li key={i} className={`step ${s.state}`}>
             <span>{s.label}</span>
             <span className={`lbl ${s.state === 'fail' ? 'st-missed' : 'lbl-quiet'}`}>{s.state === 'run' ? <span className="dot-run" aria-label="Working" /> : s.state === 'done' ? 'Done' : s.state === 'fail' ? 'Stopped' : 'Next'}</span>
-            {s.detail && <span className="sub">{s.detail}</span>}{s.note && <span className="step-note">{s.note}</span>}
+            {s.detail && s.detail !== 'stopped' && <span className="sub">{s.detail}</span>}{s.note && <span className="step-note">{s.note}</span>}
           </li>
         ))}
       </ul>
       {failed && <div className="fail-box">
-        <p className="fail">{plainError(failed)}</p>
+        <p className="fail-msg">{plainError(failed)}</p>
         <div className="fail-acts">
           <button className="btn-primary" onClick={() => setAttempt(a => a + 1)}>Try again</button>
           <a className="btn-outline" href="#/look">Pick another</a>
