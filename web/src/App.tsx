@@ -149,17 +149,24 @@ function Look({ push, openCompany }: { push: Push; openCompany: (s: string) => v
   const names: Record<string, string> = Object.fromEntries(push.portfolio.map(p => [p.symbol, p.short || shortName(p.name)]))
   for (const [s, n] of Object.entries(built)) if (n && !names[s]) names[s] = shortName(n)
   for (const s of recent) if (!names[s]) { try { const n = JSON.parse(localStorage.getItem(`finn.c.${s}`) || 'null')?.name; if (n) names[s] = shortName(n) } catch { /* ignore */ } }
-  const submit = (e: React.FormEvent) => { e.preventDefault(); const s = q.trim().toUpperCase().replace(/\.(NS|BO)$/, ''); if (s) openCompany(s) }
+  // Typing a name ('pidilite') finds the symbol FINN already knows (PIDILITIND)
+  const want = q.trim().toUpperCase().replace(/\.(NS|BO)$/, '')
+  const fold = (x: string) => x.toUpperCase().replace(/[^A-Z0-9]/g, '')
+  const known = [...new Set([...push.portfolio.map(p => p.symbol), ...Object.keys(built)])]
+  const full = (s: string) => push.portfolio.find(p => p.symbol === s)?.name || built[s] || names[s] || ''
+  const matches = fold(want).length < 2 ? [] : known.filter(s => s !== want && [s, fold(full(s)), ...full(s).toUpperCase().split(/[^A-Z0-9]+/)].some(x => x.startsWith(fold(want))))
+  const submit = (e: React.FormEvent) => { e.preventDefault(); if (!want) return; openCompany(!known.includes(want) && matches.length === 1 && fold(want).length >= 4 ? matches[0] : want) }
   return (
     <main className="screen look">
       <header className="top"><h1>Look up a company</h1></header>
       <form onSubmit={submit} className="look-form">
-        <label htmlFor="sym" className="sub">NSE symbol</label>
+        <label htmlFor="sym" className="sub">NSE symbol or name</label>
         <div className="look-row">
           <input id="sym" value={q} onChange={e => setQ(e.target.value)} placeholder="e.g. ASTRAL" autoCapitalize="characters" autoCorrect="off" spellCheck={false} />
           <button type="submit" disabled={!q.trim()}>Check their word</button>
         </div>
       </form>
+      {matches.length > 0 && <Chips title={matches.length === 1 && !known.includes(want) ? 'Did you mean' : 'Matches'} syms={matches.slice(0, 6)} open={openCompany} names={names} />}
       <p className="sub look-note">FINN reads the company's last five earnings calls and its filed results, lists what management promised, and checks each promise against what happened. Nothing else goes in.</p>
       {recent.length > 0 && <Chips title="Recent" syms={recent} open={openCompany} names={names} />}
       {others.length > 0 && <Chips title="Ready to open" syms={others} open={openCompany} names={names} />}
