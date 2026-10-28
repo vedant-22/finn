@@ -103,7 +103,7 @@ function CompanyRoute({ sym, sector, title, back }: { sym: string; sector?: stri
       if (!live) return
       if (found) { setC(found); return }
       buildLive(sym, s => live && setSteps(s)).then(x => live && setC(x)).catch(e => live && setFailed(e.message))
-    })
+    }).catch(e => live && setFailed(e.message))
     return () => { live = false }
   }, [sym, attempt])
   if (c) return <CompanyView c={c} sector={sector} title={title} back={back} />
@@ -111,7 +111,7 @@ function CompanyRoute({ sym, sector, title, back }: { sym: string; sector?: stri
     <main className="screen building">
       <header className="top"><button className="text-btn back" onClick={back}>Back</button><span className="sub">{sym}</span></header>
       <h1 className="co-name">{sym}</h1>
-      {!failed && <p className="sub">Reading its last five earnings calls and filed results. About a minute.</p>}
+      {!failed && steps.length > 0 && <p className="sub">Reading its last five earnings calls and filed results. About a minute.</p>}
       <ul className="steps">
         {steps.map((s, i) => (
           <li key={i} className={`step ${s.state}`}>
