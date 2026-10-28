@@ -22,7 +22,7 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
       <header className="top">
         <div className="asof">
           {asof.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
-          <span className="sub"> Filings to {asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()}</span>
+          <span className="sub"> {asof.toDateString() === new Date().toDateString() ? 'Filings' : 'Snapshot, filings'} to {asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()}</span>
         </div>
         <button className="pill" onClick={openLines}>Your lines</button>
       </header>
