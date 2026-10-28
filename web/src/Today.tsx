@@ -159,24 +159,27 @@ function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; open
 
 function PeopleBlock({ f }: { f: any }) {
   const order = { top: 0, board: 1, senior: 2, other: 3 } as Record<string, number>
-  const ppl = [...f.people].sort((a: any, b: any) => (order[a.seniority] - order[b.seniority]) || (a.action === 'appointed' ? -1 : 1))
+  const ppl = [...f.people].sort((a: any, b: any) => (+reclass(a) - +reclass(b)) || (order[a.seniority] - order[b.seniority]) || (a.action === 'appointed' ? -1 : 1))
   return (
     <ul className="people">
       {ppl.slice(0, 3).map((p: any, i: number) => {
         const joining = ['appointed', 're-appointed', 'redesignated'].includes(p.action)
+        const moved = reclass(p)
         return (
-          <li key={i} className={joining ? 'in' : 'out'}>
+          <li key={i} className={joining || moved ? 'in' : 'out'}>
             <div className="who"><b>{p.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')}</b>
-              <span className="role">{verb(p.action)} {p.role}{/\d/.test(p.effective || '') ? `, from ${p.effective.replace(/(\d+)(st|nd|rd|th)/, '$1')}` : ''}</span></div>
-            {joining && p.background && !/not stated|not provided|^$/i.test(p.background) && <p className="bio">{p.background}</p>}
+              <span className="role">{moved ? `Stays ${p.role}, off the senior management list` : `${verb(p.action)} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${p.effective.replace(/(\d+)(st|nd|rd|th)/, '$1')}` : ''}</span></div>
+            {joining && p.background && !/not stated|not provided|^$|^designated as|^.{0,60}\bhas (assumed|been appointed)/i.test(p.background) && <p className="bio">{p.background}</p>}
             {joining && p.previous?.length > 0 && <p className="prev">{p.previous.join('; ')}</p>}
-            {!joining && p.reason && !/not stated/i.test(p.reason) && <p className="bio">Reason given: {p.reason}</p>}
+            {!joining && !moved && p.reason && !/not stated|^leaving the company\.?$|no other material reason/i.test(p.reason) && <p className="bio">Reason given: {p.reason}</p>}
           </li>
         )
       })}
     </ul>
   )
 }
+// 'Changed from SMP to Non-SMP category': same job, just no longer reported as senior management
+const reclass = (p: any) => p.action === 'ceased' && /non[- ]?smp|non[- ]senior management/i.test(p.reason || '')
 const verb = (a: string) => ({ appointed: 'Joins as', resigned: 'Resigns as', retired: 'Retires as', ceased: 'Leaves as', redesignated: 'Now', 're-appointed': 'Re-appointed', died: 'Died,' } as any)[a] || a
 
 function MoveCard({ m, name, lines, openCompany }: { m: Move; name: string; lines: Lines; openCompany: (s: string) => void }) {

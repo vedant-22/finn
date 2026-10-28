@@ -253,3 +253,4 @@ export function deadline(p: { target: string; by_when: string }) {
 export const rupees = (t: string) => t
   .replace(/\b(?:INR|Rs\.?)\s?(\d[\d,.]*)(\s?(?:to|-|–)\s?(?:(?:INR|Rs\.?)\s?)?(\d[\d,.]*))?\s?([Cc]r(?:ores?)?)\b/g, (_, a, r, b) => `₹${a}${r ? `–${b}` : ''} crore`)
   .replace(/\b(?:INR|Rs\.?)\s?(?=\d)/g, '₹')
+  .replace(/₹(\d{4,})(?:–(\d{4,}))?/g, (_, a, b) => `₹${inr.format(+a)}${b ? `–${inr.format(+b)}` : ''}`)
