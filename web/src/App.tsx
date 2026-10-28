@@ -190,9 +190,11 @@ function Look({ push, openCompany }: { push: Push; openCompany: (s: string) => v
   // Typing a name ('pidilite') finds the symbol FINN already knows (PIDILITIND)
   const want = q.trim().toUpperCase().replace(/\.(NS|BO)$/, '')
   const fold = (x: string) => x.toUpperCase().replace(/[^A-Z0-9]/g, '')
+  // 'Ltd' and friends are in every name: 'L&T' shouldn't match HDFC Bank Ltd
+  const FILLER_WORDS = new Set(['LTD', 'LIMITED', 'THE', 'OF', 'AND', 'CO', 'PVT'])
   const known = [...new Set([...push.portfolio.map(p => p.symbol), ...Object.keys(built)])]
   const full = (s: string) => push.portfolio.find(p => p.symbol === s)?.name || built[s] || names[s] || ''
-  const matches = fold(want).length < 2 ? [] : known.filter(s => s !== want && [s, fold(full(s)), ...full(s).toUpperCase().split(/[^A-Z0-9]+/)].some(x => x.startsWith(fold(want))))
+  const matches = fold(want).length < 2 ? [] : known.filter(s => s !== want && [s, fold(full(s)), ...full(s).toUpperCase().split(/[^A-Z0-9]+/).filter(w => !FILLER_WORDS.has(w))].some(x => x.startsWith(fold(want))))
   const submit = (e: React.FormEvent) => { e.preventDefault(); if (!want) return; openCompany(!known.includes(want) && matches.length === 1 && fold(want).length >= 4 ? matches[0] : want) }
   return (
     <main className="screen look">
