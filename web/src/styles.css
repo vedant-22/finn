@@ -40,7 +40,7 @@ blockquote { margin: 0; }
 .window button.on { color: var(--ink); font-weight: 600; border-bottom-color: var(--ink); }
 
 .verdict { padding: 28px 0 20px; }
-.big { font-size: 64px; line-height: 60px; font-weight: 600; font-variation-settings: 'wdth' 125; letter-spacing: -0.02em; }
+.big { font-size: 64px; line-height: 60px; font-weight: 600; font-variation-settings: 'wdth' 125; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .big-label { font-size: 22px; line-height: 28px; font-weight: 600; font-variation-settings: 'wdth' 112; margin-top: 6px; }
 .big-label .sub { display: block; font-size: 13px; line-height: 18px; font-weight: 400; font-variation-settings: 'wdth' 100; margin-top: 4px; }
 

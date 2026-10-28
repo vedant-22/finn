@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   CATEGORY_LABEL, cr, getCompany, pct, shortName, tone, triage, when,
   type Company, type Lines, type Move, type Push, type Story,
@@ -35,7 +35,7 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
       </div>
 
       <section className="verdict" aria-live="polite">
-        <div className="big">{count === 0 ? 'Nothing' : count}</div>
+        <div className="big">{count === 0 ? 'Nothing' : <Roll to={count} />}</div>
         <div className="big-label">
           {count === 0 ? 'needs you' : count === 1 ? 'thing needs you' : 'things need you'}
           <span className="sub"> out of {t.filings} filings across {push.portfolio.length} holdings</span>
@@ -228,4 +228,23 @@ function FoldSummary({ stories, names }: { stories: Story[]; names: Record<strin
       ))}
     </ul>
   )
+}
+
+// The headline number rolls from the last window's count to this one, so switching windows reads as a change.
+function Roll({ to }: { to: number }) {
+  const [n, setN] = useState(to)
+  const from = useRef(to)
+  useEffect(() => {
+    const a = from.current; from.current = to
+    if (a === to || matchMedia('(prefers-reduced-motion: reduce)').matches) { setN(to); return }
+    const t0 = performance.now(); let raf = 0
+    const step = (t: number) => {
+      const k = Math.min(1, (t - t0) / 320)
+      setN(Math.round(a + (to - a) * (1 - (1 - k) ** 3)))
+      if (k < 1) raf = requestAnimationFrame(step)
+    }
+    raf = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(raf)
+  }, [to])
+  return <>{n}</>
 }
