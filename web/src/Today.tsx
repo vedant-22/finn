@@ -29,6 +29,7 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
   const sieve = useRef(!sessionStorage.getItem('finn-sieved'))
   useEffect(() => { sessionStorage.setItem('finn-sieved', '1') }, [])
   const asof = new Date(push.asof)
+  const time = asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()
   const routine = t.folded.reduce((n, s) => n + s.filings.length, 0)
   const bars = (sym: string, upto?: string) => {
     const all = push.eod[sym] || []
@@ -39,19 +40,10 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
   return (
     <main className="screen today">
       <Masthead right={<button className="btn-outline btn-sm" onClick={openLines}>Your lines</button>} />
-      <p className="dateline">
-        {asof.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
-        <span className="sub"> {asof.toDateString() === new Date().toDateString() ? 'Filings' : 'Snapshot, filings'} to {asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()}</span>
-      </p>
-
-      <div className="window" role="radiogroup" aria-label="Time window">
-        {WINDOWS.map(w => (
-          <button key={w.h} role="radio" aria-checked={lines.hours === w.h} className={lines.hours === w.h ? 'on' : ''}
-            onClick={() => setLines({ ...lines, hours: w.h })}>{w.label}</button>
-        ))}
-      </div>
-
       <section className="hero">
+        <p className="lbl lbl-quiet hero-lbl">{asof.toDateString() === new Date().toDateString()
+          ? `Today, filings to ${time}`
+          : `Snapshot, ${asof.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}, ${time}`}</p>
         {/* The roll is for the eye; a screen reader hears the settled count once */}
         <h1 className="sr-only" aria-live="polite">{count === 0 ? 'Nothing needs you' : `${count} ${count === 1 ? 'needs' : 'need'} you`}</h1>
         <div className="hero-fig" aria-hidden="true">
@@ -62,6 +54,12 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
         {count === 0 && <p className="hero-2">{t.filings === 0
           ? 'None of your holdings filed anything in this window, and no price crossed your lines.'
           : 'Nothing crossed your lines. The rest is folded below.'}</p>}
+        <div className="window" role="radiogroup" aria-label="Time window">
+          {WINDOWS.map(w => (
+            <button key={w.h} role="radio" aria-checked={lines.hours === w.h} className={lines.hours === w.h ? 'on' : ''}
+              onClick={() => setLines({ ...lines, hours: w.h })}>{w.label}</button>
+          ))}
+        </div>
       </section>
 
       <ol className="cards">
