@@ -18,6 +18,14 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
   const dropped = c.calls.reduce((n, x) => n + (x.dropped || 0), 0)
   const q = c.quarters
   const lastQ = q[q.length - 1]
+  // Year on year from the same quarter a year back, when it's in the file and positive.
+  const yearAgo = q[q.length - 5]
+  const yoy = (k: string) => {
+    const a = yearAgo?.[k], b = lastQ?.[k]
+    if (a == null || b == null || a <= 0 || yearAgo.q.split(' ')[0] !== lastQ.q.split(' ')[0]) return null
+    const v = (b / a - 1) * 100
+    return <span className={tone(v)}>{pct(v)} on a year ago</span>
+  }
 
   return (
     <main className="screen company">
@@ -92,8 +100,8 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
             <Fig label={`Revenue, ${lastQ.q}`} value={`₹${cr(lastQ.rev)} cr`} sub={lastQ.rev_yoy != null ? <span className={tone(lastQ.rev_yoy)}>{pct(lastQ.rev_yoy)} on a year ago</span> : null} />
             {!s.financial
               ? <Fig label="Operating margin" value={`${lastQ.opm ?? '–'}%`} sub={<>{q.slice(-4).map((x: any) => x.opm ?? '–').join(', ')} over 4 quarters</>} />
-              : <Fig label="Net interest income" value={`₹${cr(lastQ.op)} cr`} sub={null} />}
-            <Fig label="Profit after tax" value={`₹${cr(lastQ.pat)} cr`} sub={null} />
+              : <Fig label="Net interest income" value={`₹${cr(lastQ.op)} cr`} sub={yoy('op')} />}
+            <Fig label="Profit after tax" value={`₹${cr(lastQ.pat)} cr`} sub={yoy('pat')} />
           </div>
         )}
         <div className="traj">
