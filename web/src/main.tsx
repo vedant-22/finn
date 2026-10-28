@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import { createRoot } from 'react-dom/client'
 import '@fontsource-variable/inter/wght.css'
 import '@fontsource/pt-serif/latin-400.css'
@@ -19,5 +20,8 @@ if (typeof IntersectionObserver !== 'undefined' && typeof MutationObserver !== '
 
 // iOS Safari only applies :active once a touch listener exists
 document.addEventListener('touchstart', () => {}, { passive: true })
+
+// Keeps the last snapshot for opening with no signal (public/sw.js); network first, so nothing goes stale
+if (import.meta.env.PROD && 'serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}))
 
 createRoot(document.getElementById('root')!).render(<App />)
