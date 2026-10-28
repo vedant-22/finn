@@ -22,3 +22,4 @@ Next: regrade job (pid from `pgrep -f regrade.sh`) sleeps to 12:40 IST then rebu
 - "Your lines" sheet: grab handle, drag down to close (short drags snap back)
 - Book: on equal kept share, more misses rank weaker
 - Deployed and checked live 28 Oct ~12:20 IST
+- Company sources footer: "N promises found, quotes checked" (was "kept after checking", which read like a verdict)
