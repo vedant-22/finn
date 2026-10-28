@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { cr, pct, shortName, tone, type Company, type Promise_, type Status } from './lib'
+import { cr, deadline, pct, shortName, tone, type Company, type Promise_, type Status } from './lib'
 import { Bars, Mark, Src, STATUS_WORD } from './ui'
 
 const SHOW: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
@@ -76,7 +76,7 @@ export function CompanyView({ c, sector, title, back }: { c: Company; sector?: s
               {c.open.filter(p => p.hard).map((p, i) => (
                 <li key={i} className="ledger-row static">
                   <Mark status="pending" />
-                  <div><b>{cap(p.target)}</b> <span className="sub">by {p.by_when}</span>
+                  <div><b>{cap(p.target)}</b> <span className="sub">{deadline(p)}</span>
                     <blockquote>“{p.quote}” <Src href={`${p.url}#page=${p.page}`}>{p.period}, p{p.page}</Src></blockquote></div>
                 </li>
               ))}
@@ -158,7 +158,7 @@ function LedgerRow({ p, i, open, toggle }: { p: Promise_; i: number; open: boole
       <button className="ledger-btn" aria-expanded={open} onClick={toggle}>
         <Mark status={p.status} delay={120 + i * 70} />
         <div className="ledger-main">
-          <div className="ledger-target"><b>{cap(p.target)}</b> <span className="sub">by {p.by_when}</span></div>
+          <div className="ledger-target"><b>{cap(p.target)}</b> <span className="sub">{deadline(p)}</span></div>
           <div className="ledger-verdict">{p.verdict || STATUS_WORD[p.status]}</div>
         </div>
         <span className="ledger-when sub">{p.period.replace(/ 20/, ' ’')}</span>

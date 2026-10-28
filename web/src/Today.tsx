@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
-  CATEGORY_LABEL, cr, getCompany, pct, shortName, tone, triage, when,
+  CATEGORY_LABEL, cr, deadline, getCompany, pct, shortName, tone, triage, when,
   type Company, type Lines, type Move, type Push, type Story,
 } from './lib'
 import { Mark, Spark, Src, STATUS_WORD } from './ui'
@@ -140,7 +140,7 @@ function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; open
           {word.map((p, i) => (
             <button key={p.id} className="word-row" onClick={() => openCompany(symbol)}>
               <Mark status={p.status} delay={i * 80} />
-              <span><b>{p.target.charAt(0).toUpperCase() + p.target.slice(1)}</b> <span className="sub">by {p.by_when}. {STATUS_WORD[p.status]}.</span></span>
+              <span><b>{p.target.charAt(0).toUpperCase() + p.target.slice(1)}</b> <span className="sub">{[deadline(p), STATUS_WORD[p.status]].filter(Boolean).join('. ')}.</span></span>
             </button>
           ))}
         </div>

@@ -236,3 +236,15 @@ export async function buildLive(sym: string, onStep: (steps: Step[]) => void): P
     steps[last].state = 'fail'; steps[last].detail = e.message.slice(0, 80); emit(); throw e
   }
 }
+
+// The grey "by ..." after a promise. Empty when the promise already names its date ("Ready by August 25")
+// or the date is a placeholder, so lines never read "by Q1 next fiscal by Q1 of next fiscal" or "by by".
+const DATE_STOP = new Set(['of', 'the', 'this', 'next', 'by', 'a', 'in', 'end', 'to', 'and', 'or'])
+const dateWords = (s: string) => s.toLowerCase().replace(/fy\s*20(\d\d)/g, 'fy$1').split(/[^a-z0-9]+/)
+  .map(x => x.replace(/^20(\d\d)$/, '$1')).filter(x => x && !DATE_STOP.has(x))
+export function deadline(p: { target: string; by_when: string }) {
+  const w = (p.by_when || '').replace(/^by\s+/i, '').trim()
+  if (!w || /^(unspecified|not specified|none|n\/a|ongoing)$/i.test(w)) return ''
+  const said = new Set(dateWords(p.target))
+  return dateWords(w).every(x => said.has(x)) ? '' : `by ${w}`
+}
