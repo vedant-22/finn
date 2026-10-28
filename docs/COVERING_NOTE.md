@@ -28,11 +28,11 @@ Pull works on any NSE symbol. The portfolio and four other names are prebuilt so
 
 **What I left out on purpose**
 
-Real lock-screen notifications, a live feed (push data is a snapshot built after market close and labelled as such), annual reports (the ledger reads transcripts and filed numbers), BSE-only companies, and accounts. I also haven't evaluated the grades themselves yet. That is the first thing I'd do next.
+Real lock-screen notifications, a live feed (push data is a snapshot built after market close and labelled as such), annual reports (the ledger reads transcripts and filed numbers), BSE-only companies, and accounts. I checked only 20 grades by hand (18 hold), which is too few to quote an accuracy.
 
 **Where I'd take it next**
 
-- An eval of the grades: 30 promises graded by hand.
+- A bigger grade eval, and the two fixes it points to: stay "not due yet" until the deadline passes, and drop past actions at extraction.
 - Annual reports, read in chunks: MD&A, related-party transactions, contingent liabilities, auditor's remarks. These are where the numbers and the story part ways.
 - A morning push on the phone, sent only when something crosses a line.
 - Repeat promises across companies in a sector, so a claim of "industry-wide demand" can be checked against what peers said.

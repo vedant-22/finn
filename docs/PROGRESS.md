@@ -1,6 +1,6 @@
 # Progress
 
-Next: final checklist pass 2 (docs/FINAL_CHECKLIST.md). Background: `pgrep -f regrade.sh` sleeps to 12:40 IST 29 Oct, then regrades the 8 flash-lite companies (log data/regrade2.log). When it finishes: compare verdicts, rerun evals/sample_grades.py and update evals/grades_review.md, redeploy, recheck screenshots. If the job died, restart: `nohup zsh pipeline/regrade.sh > data/regrade2.log 2>&1 &`.
+Next: keep polishing from the 'Never sit idle' list. Background: `pgrep -f regrade.sh` sleeps to 12:40 IST 29 Oct, then regrades the 8 flash-lite companies (log data/regrade2.log). When it finishes: compare verdicts, rerun evals/sample_grades.py and update evals/grades_review.md, redeploy, recheck screenshots. If the job died, restart: `nohup zsh pipeline/regrade.sh > data/regrade2.log 2>&1 &`.
 
 - [x] Brief analysis, company notes, ideation (docs/)
 - [x] Engine: finn/ (sources, classify, triage, results, people, ledger, research)
@@ -15,7 +15,7 @@ Next: final checklist pass 2 (docs/FINAL_CHECKLIST.md). Background: `pgrep -f re
 - [x] Hand review of 20 sampled grades: 18 hold (evals/grades_review.md)
 - [x] Redeployed and README screenshots refreshed (28 Oct ~13:05 IST)
 - [x] Critic round 2 (done inline on the fresh screenshots, not with sub-agents): repeated deadlines fixed; README company shot retaken
-- [ ] Final checklist x2
+- [x] Final checklist x2 (pass 2 28 Oct 13:20 IST); README, covering note and evals README now report the hand grade check
 - [x] Publish GitHub repo: https://github.com/vedant-22/finn
 
 ## Polish log (28 Oct)

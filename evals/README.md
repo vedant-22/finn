@@ -44,6 +44,6 @@ Last run (`quotes_result.txt`):
 
 The synonym case is where I chose to be strict. A quote with three or four words changed fails the check and the promise is dropped. Losing a real promise costs less than showing a quote management never said.
 
-## Not yet evaluated
+## The grades
 
-The grades themselves: whether "kept" and "missed" are right. That needs promises graded by hand against the transcripts and the numbers. It's the next eval I'd build, and until then the grades should be read as a first pass with the evidence one tap away.
+Whether "kept" and "missed" are right. `sample_grades.py` prints a fixed sample of 20 graded promises with the quote, the verdict, the evidence and the quarterly numbers. I checked each by hand in [grades_review.md](grades_review.md): 18 hold. One was marked kept while its window was still open. One was a past action ("we took a price hike in January") read as a promise and graded against an unrelated quote. Twenty is a small sample, so read the grades as a first pass with the evidence one tap away.

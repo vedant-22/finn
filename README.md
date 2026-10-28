@@ -83,15 +83,16 @@ The free tier's real limit is 20 `gemini-3.5-flash` requests a day. When that ru
 
 ## Evals
 
-All three run on real filings and transcripts. Details and caveats in [evals/README.md](evals/README.md).
+All four run on real filings and transcripts. Details and caveats in [evals/README.md](evals/README.md).
 
 | Eval | What it checks | Result |
 |---|---|---|
 | `run_classify.py` | Category and tier of 24 hand-labelled filings | Category 22/24 (92%), tier 21/24 (88%). One filing that should have interrupted didn't. |
 | `run_results.py` | XBRL first cut against screener's independently compiled table, 18 companies | 62/70 numbers agree within 1%. The 8 that don't are definitions (e.g. TCI books its JV share below PBT; screener adds it). |
 | `run_quotes.py` | The quote check against real and doctored quotes | Real 15/15 pass, small slips 15/15 pass. Changed numbers 10/10, added "not" 12/12 and stitched sentences 15/15 are caught. |
+| `sample_grades.py` | 20 graded promises, checked by hand against the quote, evidence and numbers ([grades_review.md](evals/grades_review.md)) | 18/20 hold. One was marked kept before its deadline. One was a past action read as a promise. |
 
-I haven't built an eval for the grades themselves yet. That's the next one I'd write: 30 promises graded by hand against the transcripts.
+Twenty is a small sample. Eight companies were graded by flash-lite because the flash quota ran out mid-run. They are queued for a regrade when it resets.
 
 ## Run it locally
 
