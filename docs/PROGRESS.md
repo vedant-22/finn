@@ -1,6 +1,6 @@
 # Progress
 
-Next: design upgrade critic round (designer, ENAM evaluator, muted investor) on the new screenshots in docs/img vs shots/ref-bdc-390*.png, then fix. Background: `pgrep -f regrade.sh` sleeps to 12:40 IST 29 Oct, then regrades the 8 flash-lite companies (log data/regrade2.log). When it finishes: compare verdicts, rerun evals/sample_grades.py and update evals/grades_review.md, redeploy, recheck screenshots. If the job died, restart: `nohup zsh pipeline/regrade.sh > data/regrade2.log 2>&1 &`.
+Next: keep polishing from the 'Never sit idle' list in the new design language (check each change against design/inspiration.md). Background: `pgrep -f regrade.sh` sleeps to 12:40 IST 29 Oct, then regrades the 8 flash-lite companies (log data/regrade2.log). When it finishes: compare verdicts, rerun evals/sample_grades.py and update evals/grades_review.md, redeploy, recheck screenshots. If the job died, restart: `nohup zsh pipeline/regrade.sh > data/regrade2.log 2>&1 &`.
 
 - [x] Brief analysis, company notes, ideation (docs/)
 - [x] Engine: finn/ (sources, classify, triage, results, people, ledger, research)
@@ -51,3 +51,4 @@ Next: design upgrade critic round (designer, ENAM evaluator, muted investor) on 
 - ENAM palette sampled from enam.com: white, black, grey #6A6970, ENAM blue #005DA3, #D2D2D2 rules. DESIGN.md now has the palette with roles and contrast, and the new type
 - Restyle (CSS + fonts, no feature changes): white ground, ENAM blue only on the primary button, active tab and newest volume bar; Today cards are hairline sections, not tinted boxes; 72px headline count; window choice is pills; Look up input is a single underline with a blue pill button; PT Serif for the sentences FINN says (story lines, the read, verdicts, notes); one reveal (fade and rise 12px, 900 ms, first three staggered) via one observer in main.tsx; reduced motion shows everything in place. Icon is a white tick on ENAM blue
 - Tested at 390x844 (Today, Book, Company, Look up, Your lines); deployed and checked live 28 Oct ~16:22 IST; README screenshots retaken from the live link; DECISIONS design paragraph updated
+- Critic round on the new screenshots (inline): avoid-ai-design detect.mjs 0 findings. Designer: 'Your lines' now a hairline pill like the reference's single header control (two dark pills competed); ENAM evaluator: blue stays rare (button, active tab, icon), fine; muted investor: the 72px count reads first. A direct link to a holding lights Book (was Today). Deployed and checked live 28 Oct ~16:25 IST; README Today shot retaken
