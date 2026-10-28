@@ -157,12 +157,13 @@ function CardWord({ symbol, openCompany }: { symbol: string; openCompany: (s: st
 // Results first, in one sentence: profit and margin after the revenue figure above it
 function resultLine(r: any, pat: any) {
   const parts: string[] = []
+  const n = (v: number) => String(+Math.abs(v).toFixed(Math.abs(v) < 10 ? 1 : 0))
   if (pat?.value != null) {
-    const base = pat.yago
-    parts.push(pat.yoy != null ? `Profit after tax ₹${cr(pat.value)} crore, ${pat.yoy >= 0 ? 'up' : 'down'} ${Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0)}% on a year ago`
-      : base != null && base < 0 && pat.value >= 0 ? `Profit after tax ₹${cr(pat.value)} crore, from a loss a year ago` : `Profit after tax ₹${cr(pat.value)} crore`)
+    parts.push(pat.yoy != null ? `Profit after tax ${pat.yoy >= 0 ? 'up' : 'down'} ${n(pat.yoy)}% on a year ago, to ₹${cr(pat.value)} crore`
+      : pat.yago != null && pat.yago < 0 && pat.value >= 0 ? `Profit after tax ₹${cr(pat.value)} crore, from a loss a year ago` : `Profit after tax ₹${cr(pat.value)} crore`)
   }
-  if (r.ebitda_margin != null) parts.push(`EBITDA margin ${r.ebitda_margin}%${r.yago_margin != null ? ` from ${r.yago_margin}% a year ago` : ''}`)
+  // After the profit clause the comparison is already a year ago; alone, the margin says so itself
+  if (r.ebitda_margin != null) parts.push(`EBITDA margin ${r.ebitda_margin}%${r.yago_margin != null ? ` against ${r.yago_margin}%${parts.length ? '' : ' a year ago'}` : ''}`)
   return parts.length ? `${parts.join('; ')}.` : `${r.quarter} results are out.`
 }
 
