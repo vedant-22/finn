@@ -17,7 +17,9 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
     return { p, c, score: wordScore(c || undefined), last }
   })
   const missed = (c?: Company | null) => c ? c.ledger.filter(x => x.hard && x.status === 'missed').length : 0
-  rows.sort((a, b) => (a.score?.ratio ?? 2) - (b.score?.ratio ?? 2) || missed(b.c) - missed(a.c) || (b.score?.graded ?? 0) - (a.score?.graded ?? 0))
+  // Kept share with one kept and one not added, so 0 of 1 doesn't outrank 1 of 7
+  const share = (s: ReturnType<typeof wordScore>) => s?.graded ? (s.kept + 1) / (s.graded + 2) : 2
+  rows.sort((a, b) => share(a.score) - share(b.score) || missed(b.c) - missed(a.c) || (b.score?.graded ?? 0) - (a.score?.graded ?? 0))
   const shown = only ? rows.filter(r => r.c?.ledger.some(x => x.hard && x.status === only)) : rows
 
   return (
