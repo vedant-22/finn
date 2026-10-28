@@ -25,9 +25,21 @@ export const STATUS_WORD: Record<Status, string> = {
   kept: 'Kept', partly: 'Partly', missed: 'Missed', quiet: 'Gone quiet', pending: 'Not due yet', unclear: "Can't tell",
 }
 
+// Marks wait until they scroll into view, so the pencil stroke happens where the reader is looking
+let seer: IntersectionObserver | null = null
+function watch(el: Element) {
+  if (typeof IntersectionObserver === 'undefined') return el.classList.add('seen')
+  seer ??= new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('seen'); seer!.unobserve(e.target) }
+  }), { rootMargin: '0px 0px -40px 0px' })
+  seer.observe(el)
+}
+
 export function Mark({ status, size = 20, delay = 0, title }: { status: Status; size?: number; delay?: number; title?: string }) {
+  const ref = useRef<SVGSVGElement>(null)
+  useEffect(() => { const el = ref.current; if (el) { watch(el); return () => seer?.unobserve(el) } }, [])
   return (
-    <svg className={`mark mark-${status}`} width={size} height={size} viewBox="0 0 20 20" role="img" aria-label={title || STATUS_WORD[status]}>
+    <svg ref={ref} className={`mark mark-${status}`} width={size} height={size} viewBox="0 0 20 20" role="img" aria-label={title || STATUS_WORD[status]}>
       {PATHS[status].map((d, i) => (
         <path key={i} d={d} pathLength={1} style={{ animationDelay: `${delay + i * 120}ms` }} />
       ))}

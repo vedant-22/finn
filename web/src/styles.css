@@ -111,7 +111,8 @@ blockquote { margin: 0; }
 
 /* ---------- marks ---------- */
 .mark { flex-shrink: 0; overflow: visible; }
-.mark path { fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 280ms ease-out forwards; }
+.mark path { fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 280ms ease-out forwards paused; }
+.mark.seen path { animation-play-state: running; }
 .mark-kept path { stroke: var(--kept); }
 .mark-missed path { stroke: var(--missed); }
 .mark-partly path { stroke: var(--partly); }
