@@ -1,0 +1,13 @@
+{
+  "buildCommand": "cd web && npm ci && npm run build",
+  "outputDirectory": "web/dist",
+  "installCommand": "echo skip",
+  "functions": {
+    "api/sources.py": { "maxDuration": 60, "includeFiles": "finn/**" },
+    "api/call.py": { "maxDuration": 120, "includeFiles": "finn/**" },
+    "api/grade.py": { "maxDuration": 300, "includeFiles": "finn/**" }
+  },
+  "headers": [
+    { "source": "/data/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=300" }] }
+  ]
+}

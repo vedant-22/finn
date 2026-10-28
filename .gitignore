@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+brief/
+data/cache/
+data/raw/
+data/*.log
+node_modules/
+web/dist/
+.playwright-mcp/
+shots/
+.vercel
+__pycache__/
+*.pyc
+.DS_Store
+data/out/
+*.tsbuildinfo

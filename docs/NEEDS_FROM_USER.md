@@ -1,0 +1,5 @@
+# Needs from you
+
+Nothing is blocking. Optional:
+- **Gemini paid tier (optional).** The key in `.env` is on the free tier. `gemini-3.1-pro-preview` and `gemini-4-argon` return 429 (zero quota), so the "smart" step uses `gemini-3.5-flash`. If you enable billing, set `FINN_SMART_MODEL=gemini-3.1-pro-preview` in Vercel to try the stronger model on grading only. Free-tier daily limits are shared by everyone who opens the live link, so heavy use of live research on new tickers may hit 429s; cached companies are unaffected.
+- **Email submission.** Send the covering note (docs/COVERING_NOTE.md) to assessment@enam.com with subject "ENAM - IIT screening - 2027", plus the AI build history export of this session.
