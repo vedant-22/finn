@@ -279,7 +279,10 @@ blockquote { margin: 0; }
 
 .book-tally { margin-top: 24px; padding: 16px var(--g); background: var(--sheet); }
 .book-tally > .sub { margin: 0; font-size: 13px; }
-.book-tally .tally { margin-top: 4px; gap: 4px 16px; }
+.book-tally .tally { margin-top: 4px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; }
+/* Missed leads on its own line; the rest sit in two even columns */
+.book-tally .tally li:first-child { grid-column: 1 / -1; }
+.book-tally .tally-btn { width: max-content; }
 
 .empty-line { margin: 4px 0 24px; font: 16px/22px var(--serif); letter-spacing: 0; }
 .opening { display: flex; align-items: center; gap: 10px; margin-top: 20px; }

@@ -47,7 +47,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
                   <span className="sub">{p.sector}</span>
                 </div>
                 <div className="book-px">
-                  {last && <><span className="num">{last.close.toLocaleString('en-IN')}</span> <span className={`num ${tone(last.chg)}`}>{pct(last.chg)}</span></>}
+                  {last && <><span className="num">{last.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span> <span className={`num ${tone(last.chg)}`}>{pct(last.chg)}</span></>}
                 </div>
                 <div className="book-word">
                   <span className="marks">
