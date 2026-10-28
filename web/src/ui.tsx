@@ -1,5 +1,12 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import type { Bar, Status } from './lib'
+
+// useState that outlives the screen, so a filter or an open fold is still there after Back from a company
+const kept = new Map<string, unknown>()
+export function useKept<T>(key: string, init: T): [T, (v: T) => void] {
+  const [v, setV] = useState<T>(() => (kept.has(key) ? kept.get(key) as T : init))
+  return [v, (n: T) => { kept.set(key, n); setV(n) }]
+}
 
 // Auditor's tick marks, drawn as pencil strokes. Paths carry a little wobble on purpose.
 const PATHS: Record<Status, string[]> = {

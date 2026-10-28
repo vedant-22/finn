@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { getCompany, pct, shortName, tone, wordScore, type Company, type Push, type Status } from './lib'
-import { Mark } from './ui'
+import { cachedCompany, getCompany, pct, shortName, tone, wordScore, type Company, type Push, type Status } from './lib'
+import { Mark, useKept } from './ui'
 
 // The whole book, ordered by how far management's word has held. Weakest first: that's where to look.
 export function Book({ push, openCompany }: { push: Push; openCompany: (s: string) => void }) {
-  const [cos, setCos] = useState<Record<string, Company | null>>({})
-  const [only, setOnly] = useState<Status | null>(null)
+  const [cos, setCos] = useState<Record<string, Company | null>>(() => Object.fromEntries(push.portfolio.map(p => [p.symbol, cachedCompany(p.symbol)])))
+  const [only, setOnly] = useKept<Status | null>('book.only', null)
   useEffect(() => {
     push.portfolio.forEach(p => getCompany(p.symbol).then(c => setCos(prev => ({ ...prev, [p.symbol]: c }))))
   }, [push])

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { CompanyView } from './CompanyView'
 import { Book } from './Book'
 import { Today } from './Today'
@@ -23,12 +23,22 @@ export function App() {
   const [lines, setLinesState] = useState<Lines>(loadLines)
   const [linesOpen, setLinesOpen] = useState(false)
   const [prev, setPrev] = useState<string>('')
+  const scrolls = useRef(new Map<string, number>())
+  const toY = useRef(0)
 
   useEffect(() => { getPush().then(setPush).catch(e => setErr(e.message)) }, [])
   useEffect(() => {
-    const on = () => { setRoute(parse()); window.scrollTo(0, 0) }
+    // Back from a company returns to where the list was; anything else starts at the top
+    const on = (e: HashChangeEvent) => {
+      const from = new URL(e.oldURL).hash || '#/'
+      scrolls.current.set(from, window.scrollY)
+      const r = parse()
+      toY.current = from.startsWith('#/c/') && !r.sym ? scrolls.current.get(location.hash || '#/') ?? 0 : 0
+      setRoute(r)
+    }
     window.addEventListener('hashchange', on); return () => window.removeEventListener('hashchange', on)
   }, [])
+  useLayoutEffect(() => { window.scrollTo(0, toY.current) }, [route])
   const setLines = (l: Lines) => { setLinesState(l); saveLines(l) }
   const openCompany = useCallback((s: string) => { setPrev(location.hash || '#/'); location.hash = `#/c/${s}` }, [])
   const go = (t: Route['tab']) => { location.hash = t === 'today' ? '#/' : `#/${t}` }

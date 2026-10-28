@@ -3,7 +3,7 @@ import {
   CATEGORY_LABEL, cr, deadline, getCompany, pct, rupees, shortName, tone, triage, when,
   type Company, type Lines, type Move, type Push, type Story,
 } from './lib'
-import { Mark, Spark, Src, STATUS_WORD } from './ui'
+import { Mark, Spark, Src, STATUS_WORD, useKept } from './ui'
 
 const WINDOWS = [{ h: 24, label: '24h' }, { h: 72, label: '3 days' }, { h: 168, label: 'Week' }, { h: 720, label: 'Month' }]
 
@@ -12,8 +12,8 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
 }) {
   const t = useMemo(() => triage(push, lines), [push, lines])
   const names = useMemo(() => Object.fromEntries(push.portfolio.map(p => [p.symbol, p.short || shortName(p.name)])), [push])
-  const [showNotes, setShowNotes] = useState(false)
-  const [showFold, setShowFold] = useState(false)
+  const [showNotes, setShowNotes] = useKept('today.notes', false)
+  const [showFold, setShowFold] = useKept('today.fold', false)
   const count = t.needs.length + t.moves.length
   const asof = new Date(push.asof)
 

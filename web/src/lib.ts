@@ -161,6 +161,7 @@ export async function getPush(): Promise<Push> {
   if (!r.ok) throw new Error('Could not load filings')
   return r.json()
 }
+export const cachedCompany = (sym: string) => cache.get(sym.toUpperCase()) ?? null
 export async function getCompany(sym: string): Promise<Company | null> {
   sym = sym.toUpperCase()
   if (cache.has(sym)) return cache.get(sym)!
