@@ -143,10 +143,10 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
           {lastQ && (
             <div className="fig-grid">
               <Fig label={`Revenue, ${lastQ.q}`} value={`₹${cr(lastQ.rev)}`} unit="cr" sub={lastQ.rev_yoy != null ? `${pct(lastQ.rev_yoy)} on a year ago` : null} />
-              {!s.financial
-                ? <Fig label="Operating margin" value={`${lastQ.opm ?? '–'}`} unit="%" sub={<>{q.slice(-4).map((x: any) => x.opm ?? '–').join(', ')} over 4 quarters</>} />
-                : <Fig label="Net interest income" value={`₹${cr(lastQ.op)}`} unit="cr" sub={yoy('op')} />}
               <Fig label="Profit after tax" value={`₹${cr(lastQ.pat)}`} unit="cr" sub={yoy('pat')} />
+              {!s.financial
+                ? <Fig label="Operating margin" value={`${lastQ.opm ?? '–'}`} unit="%" sub={<>{q.slice(-4).map((x: any) => x.opm ?? '–').join(', ')}% over 4 quarters</>} />
+                : <Fig label="Net interest income" value={`₹${cr(lastQ.op)}`} unit="cr" sub={yoy('op')} />}
             </div>
           )}
           <div className="traj">

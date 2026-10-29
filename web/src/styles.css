@@ -276,12 +276,13 @@ blockquote { margin: 0; }
 .company > :not(.fold) + .fold { margin-top: var(--s-2xl); border-top: 1px solid var(--rule); }
 .fold-body { padding-bottom: var(--s-s); display: grid; gap: var(--s-s); }
 .fig-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--s-3xs); row-gap: var(--s-m); }
+.fig > .outcome { min-height: 48px; }  /* one band per row, so captions start level whatever the figure's size */
 .fig .og-d1 { margin-top: var(--s-nano); }
 .traj { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3xs); }
 .traj .bars { max-width: 100%; height: auto; }
 .traj h3 { font-size: 14px; color: var(--ink-2); margin-bottom: 6px; }
 .traj .sub { font-size: 14px; margin-top: 2px; }
-.bars .bar { fill: var(--rule); }
+.bars .bar-y { fill: var(--rule); }  /* not .bar: that is the Back bar, whose CSS height would override the rect's */
 .bars .bar-last { fill: var(--brand); }
 .bars .bar-neg { fill: var(--ink-2); }
 .bars-label { font-size: 10px; fill: var(--ink-2); font-family: var(--f); }

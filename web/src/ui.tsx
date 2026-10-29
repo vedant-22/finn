@@ -145,7 +145,7 @@ export function Bars({ values, labels, w = 150, h = 44, fmt }: { values: (number
       {vs.map((v, i) => {
         const bh = (Math.abs(v) / max) * h
         return <rect key={i} x={i * bw + bw * 0.18} width={bw * 0.64} y={v >= 0 ? h - bh : h} height={Math.max(bh, 1)}
-          className={i === vs.length - 1 ? 'bar-last' : v < 0 ? 'bar-neg' : 'bar'} />
+          className={i === vs.length - 1 ? 'bar-last' : v < 0 ? 'bar-neg' : 'bar-y'} />
       })}
       <text x={0} y={h + 12} className="bars-label">{fyLabel(labels[0])}</text>
       <text x={w} y={h + 12} className="bars-label" textAnchor="end">{fyLabel(labels[labels.length - 1])}</text>
