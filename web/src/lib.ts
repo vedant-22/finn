@@ -325,3 +325,5 @@ export const rupees = (t: string) => t
   .replace(/(\d)–(?=[₹\d])/g, '$1–\u2060')
   // and an amount keeps its unit: '₹5.23 lakh crore' never breaks before 'crore'
   .replace(/(₹[\d,.–\u2060]+) (lakh )?crore\b/g, (_, a, l) => `${a}\u00a0${l ? 'lakh\u00a0' : ''}crore`)
+  // and a quarter keeps its year: 'Q1 FY27', 'H2 FY26'
+  .replace(/\b([QH][1-4]) (FY\d{2,4})\b/g, '$1\u00a0$2')

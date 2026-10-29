@@ -113,4 +113,5 @@ test('an amount keeps its unit on the same line', () => {
   assert.equal(crBigNb(523000), '5.23 lakh cr')
   assert.equal(rupeesWj('₹7.79 lakh crore'), '₹7.79 lakh crore')
   assert.equal(rupeesWj('2 crore shares'), '2 crore shares')
+  assert.equal(rupeesWj('provision in Q1 FY27?'), 'provision in Q1\u00a0FY27?')
 })

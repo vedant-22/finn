@@ -237,7 +237,7 @@ function promised(t: string): [string, string] | null {
   return null
 }
 // No figure in the promise: the year it's due, as they named it ('FY26'), else when it was said
-const dueFig = (p: Promise_) => `${p.target} ${deadline(p)}`.match(/\b(Q\d )?FY\d\d\b|\b20\d\d\b/)?.[0]
+const dueFig = (p: Promise_) => `${p.target} ${deadline(p)}`.match(/\b(Q\d\s)?FY\d\d\b|\b20\d\d\b/)?.[0]
 
 // One promise as an outcome: the figure, what they said, the verdict word. Tap for the quote and the evidence.
 function PromiseItem({ p, open, toggle }: { p: Promise_; open: boolean; toggle: () => void }) {
