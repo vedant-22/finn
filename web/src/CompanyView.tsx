@@ -54,7 +54,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
   const toggle = (k: string) => setFold(fold === k ? null : k)
   const nKept = hard.filter(p => p.status === 'kept').length, nPartly = hard.filter(p => p.status === 'partly').length
   const nGraded = hard.filter(p => ['kept', 'partly', 'missed', 'quiet'].includes(p.status)).length
-  const nPending = hard.filter(p => p.status === 'pending').length
+  const nPending = hard.filter(p => p.status === 'pending').length, nUnclear = hard.filter(p => p.status === 'unclear').length
   const standing = nGraded ? `${nKept} of ${nGraded} ${nGraded === 1 ? 'promise' : 'promises'} kept${nPartly ? `, ${nPartly} partly` : ''}.`
     : nPending ? `${nPending} ${nPending === 1 ? 'promise' : 'promises'}, none due yet.`
       : 'Nothing to grade yet.'
@@ -90,13 +90,17 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
             : 'No promise in these calls had both a number and a date.'}</p>}
         {hard.length > 0 && (
           <div className="og-panel">
-            <ul className="og" aria-label="Promise record">
-              {SHOW.map(st => {
+            {nUnclear < hard.length && <ul className="og" aria-label="Promise record">
+              {SHOW.filter(st => st !== 'unclear').map(st => {
                 const n = hard.filter(p => p.status === st).length
                 return n ? <li key={st} className="og-item"><Outcome value={n} /><span className="og-d1">{STATUS_WORD[st]}</span></li> : null
               })}
-            </ul>
-            {readable > 1 && <p className="sub tally-note">Promises with a number and a date, from the {readable - 1 === 1 ? 'call' : `${readable - 1} calls`} before the latest one.</p>}
+            </ul>}
+            {/* Can't tell is a footnote, not a figure: it says nothing about their word */}
+            {(readable > 1 || nUnclear > 0) && <p className="sub tally-note">
+              {readable > 1 && `Promises with a number and a date, from the ${readable - 1 === 1 ? 'call' : `${readable - 1} calls`} before the latest one.`}
+              {nUnclear > 0 && `${readable > 1 ? ' ' : ''}${nUnclear} can't be told from what they've reported.`}
+            </p>}
           </div>
         )}
 
@@ -238,7 +242,7 @@ const dueFig = (p: Promise_) => `${p.target} ${deadline(p)}`.match(/\b(Q\d )?FY\
 function PromiseItem({ p, open, toggle }: { p: Promise_; open: boolean; toggle: () => void }) {
   const fig = promised(p.target), due = fig ? undefined : dueFig(p)
   const len = (fig?.[0] || '').replace(/\u2060/g, '').length + (fig?.[1] || '').trim().length
-  const size = !fig ? 'xs' : len <= 5 ? 's' : len <= 9 ? 'xs' : 'xxs'
+  const size = !fig ? 'xs' : len <= 6 ? 's' : len <= 9 ? 'xs' : 'xxs'
   return (
     <li className={`og-item p-item st-${p.status}${open ? ' open' : ''}`} data-pid={p.id}>
       <button className="og-btn" aria-expanded={open} onClick={toggle}>

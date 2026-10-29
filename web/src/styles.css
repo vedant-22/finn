@@ -233,7 +233,7 @@ blockquote { margin: 0; }
 .co-name-n { color: var(--ink-2); }
 .co-meta { margin-top: var(--s-3xs); font-size: 16px; line-height: 140%; color: var(--ink-2); }
 .company > section { margin-top: var(--s-2xl); }
-.co-pic { margin: var(--s-s) calc(-1 * var(--g)) 0; }
+.co-pic { margin: var(--s-3xs) calc(-1 * var(--g)) 0; }
 .co-pic .card-img { aspect-ratio: 390 / 220; }
 .co-pic .lbl { padding: 0 var(--g); }
 .co-pic .lbl { display: block; margin-top: var(--s-3xs); }
@@ -300,7 +300,7 @@ blockquote { margin: 0; }
 .not-found .btn-outline { margin-top: var(--s-s); }
 
 /* ---------- Look up (ui-banner-header) ---------- */
-.banner { padding-top: var(--s-m); }
+.banner { padding-top: var(--s-2xl); }
 .banner p { margin-top: var(--s-3xs); font-size: 16px; line-height: 140%; color: var(--ink-2); }
 .look-form { margin-top: var(--s-l); }
 .look-form label { font-size: 14px; }
