@@ -176,3 +176,4 @@ Next: 29 Oct (iteration 1 of the redesign after the reference, ends 08:10 IST; n
 - Ungraded statements ('Plus 31 statements with no number or date') are compact rows: sentence, 'Said Feb ’26', quote on tap. They were in the promise grid with empty 48 px figure bands and a NOT DUE word, which contradicted 'Not graded'. Deadlines pass through the display tidy-up ('by 2–3 quarters'). Deep link to a statement checked
 - Worth a look rows: an unusual day after results reads as one sentence ('+12% on 43.5× its volume, the day after results.')
 - Routine fold: 'and 14 more' stays on one line. Live flows, folds and the 22-page sweep pass after today's deploys
+- Today ends on one ENAM-blue band, edge to edge to the tab bar, as the reference's pages close: 'That's the last 24 hours.' (per window), a white pill to Book and an outlined one to Your lines (the masthead's pill has scrolled away by then). Tested at 390x844 and 320; live flows and folds pass

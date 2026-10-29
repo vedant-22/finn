@@ -10,7 +10,7 @@ async def main():
         for w in ['24h','3 days','Week','Month']:
             await pg.get_by_role('radio', name=w, exact=True).click(); await pg.wait_for_timeout(500)
             out[w] = (await pg.locator('.hero-fig').first.inner_text()).replace('\n',' '), await pg.locator('.cards .card').count()
-        await pg.get_by_role('button', name='Your lines').click(); await pg.wait_for_timeout(500)
+        await pg.get_by_role('button', name='Your lines', exact=True).click(); await pg.wait_for_timeout(500)
         out['lines_dialog'] = await pg.locator('[role=dialog]').count()
         await pg.keyboard.press('Escape'); await pg.wait_for_timeout(600)
         out['lines_closed'] = not await pg.locator('[role=dialog]').first.is_visible() if await pg.locator('[role=dialog]').count() else True
