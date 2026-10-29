@@ -1,4 +1,4 @@
-# Progress
+Next: 29 Oct, iteration 2 of 2. design/PLAN.md item 6 (critic pass, 8/10 bar): Company top and Today next, then a fresh critic round, detect.mjs, live flows; then item 7 (README shots, DESIGN.md, covering note, walkthrough). Ship with build+test, commit, push, `npx vercel --prod --yes` from app/ after a 390x844 check
 
 Next: 29 Oct (iteration 1 of the redesign after the reference, ends 08:10 IST; nothing new after 07:55). Work down design/PLAN.md's checklist: side-by-side check of each screen against shots/ref-*.png, then the critic pass, detect.mjs, writing pass, DESIGN.md + design/inspiration.md rewrite, README shots. Files: web/src/{styles.css,ui.tsx,Today.tsx,Book.tsx,CompanyView.tsx,App.tsx}. Deploy from app/ with `npx vercel --prod --yes` after a 390x844 check. The older 10:45 snapshot rebuild note still stands for a later session (`python3 pipeline/build_push.py`, then counts in README/DECISIONS/covering note/walkthrough)
 
@@ -136,3 +136,8 @@ Next: 29 Oct (iteration 1 of the redesign after the reference, ends 08:10 IST; n
 - Results cards carry FINN's point in one hairline row: the promise the quarter is held to and its word (L&T: 'Group revenue growth 15% by FY26', MISSED; Home First: '₹5,600–5,800 crore disbursements by FY26', GONE QUIET); tap opens the ledger at it. Walkthrough beat 2 points at it. New screens fade in over 320 ms
 - Critic round 4 (seven pairs): Today 7, card 7, Book 7.5, Book cards 6.5, Company top 7, Company grid 8, Look up 8. Acted on: more air at the top of Today and between cards; section heads lose their rule (the live reference shows none). Not acted on: 'white cards have no card treatment' (they carry the reference's own #FBF8F2), 'centred stat columns' (they are left-set)
 - Writing pass on the sentences FINN writes itself: the results line says 'a year ago' once ('Profit after tax up 27% on a year ago, to ₹5,949 crore; EBITDA margin 8.7% against 10%.'), no trailing '.0'; checked all 16 results sentences in the Month window. The results detail no longer repeats the promise on the card; it adds the one still running
+
+## Redesign, iteration 2 (29 Oct)
+- Today: under the count, 'N more crossed your lines and wait under Worth a look' when more than five did (Month: 75). Tested at 390x844
+- Cards close as the reference's do: Read more on the left, the time as a quiet label on the right, 32 px below the last line; the top label is the kind alone
+- Book: the lead stays full width in ENAM blue; the other 17 sit in a two-column grid of warm cards (the reference's news grid): status label, name, record figure, the weakest promise in serif, sector and price at the foot. A holding with nothing graded shows no figure (was a dash). Page 4,200 -> 3,700 px. Filter checked (8 gone quiet, Show all); no sideways scroll at 320 px
