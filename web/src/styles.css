@@ -137,6 +137,8 @@ blockquote { margin: 0; }
 .fo-trail-p { margin-top: 6px; font: 500 21px/122% var(--fo-serif); letter-spacing: -0.01em; color: var(--fo-ink); }
 .fo-trail-v { display: grid; justify-items: start; gap: 8px; margin-top: 8px; }
 .fo-trail-v p { font-size: 15px; line-height: 145%; }
+.fo-trail-ev { margin-top: 10px; font-size: 14px; line-height: 145%; color: var(--fo-ink-2); }
+.fo-trail-ev q { font-family: var(--fo-serif); font-size: 15px; color: var(--fo-ink); }
 .fo-trail-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: -4px 0 -2px; }
 .fo-chip-fig { background: var(--fo-mark-fig); }
 .fo-chip-date { background: var(--fo-mark-date); }
@@ -157,6 +159,21 @@ blockquote { margin: 0; }
 
 /* ---------- Folio: stat stacks on a tinted block ---------- */
 .fo-tally { margin-top: var(--fo-s-m); padding: var(--fo-s-xs) var(--fo-s-2xs) var(--fo-s-5xs); border-radius: var(--fo-r-card); background: var(--fo-tint); }
+.fo-tally-note { margin: var(--fo-s-nano) 0 var(--fo-s-3xs); font-size: 13px; line-height: 140%; color: var(--fo-ink-2); }
+.company .fo-tally { margin-top: var(--fo-s-s); }
+/* a company's promises: rows on hairlines, each opening on its before-and-after */
+.fo-plist { margin-top: var(--fo-s-s); border-top: 1px solid var(--fo-rule); }
+.fo-prow { border-bottom: 1px solid var(--fo-rule); }
+.fo-prow-head { display: grid; grid-template-columns: 1fr 32px; column-gap: 12px; row-gap: 10px; width: 100%; padding: var(--fo-s-2xs) 0; }
+.fo-prow-t { font: 400 20px/125% var(--fo-serif); letter-spacing: -0.01em; color: var(--fo-ink); }
+.fo-prow-head .fo-round { align-self: start; }
+.fo-prow-meta { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--fo-ink-2); }
+.fo-prow-head[aria-expanded='true'] > .fo-round { transform: rotate(180deg); }
+.fo-prow-head:active .fo-round { background: var(--fo-rule); }
+@media (hover: hover) { .fo-prow-head:hover .fo-round { background: var(--fo-rule); } }
+.fo-prow-body { padding-bottom: var(--fo-s-2xs); }
+.soft-note { margin-top: var(--fo-s-m); font-size: 14px; }
+.word .fold { margin-top: var(--fo-s-l); }
 .fo-tally-h { font: 500 13px/116% var(--fo-sans); color: var(--fo-ink-2); }
 .fo-stats { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--fo-s-2xs); margin-top: var(--fo-s-5xs); }
 .fo-stats > li { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; padding: var(--fo-s-2xs) 0 var(--fo-s-xs); }

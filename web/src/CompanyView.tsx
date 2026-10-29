@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { cr, crBig, deadline, minus, pct, rupees, shortName, tidyEvidence, type Bar, type Company, type Promise_, type Status } from './lib'
-import { BackBar, Bars, Chip, Fold, fyLabel, Outcome, Src, STATUS_WORD, StatusLabel, Strip } from './ui'
-import { cap, verdictText } from './Trail'
+import { Accordion, BackBar, Bars, Chip, Fold, fyLabel, Outcome, Src, STATUS_WORD, StatusLabel, Strip } from './ui'
+import { cap, promiseLine, Trail } from './Trail'
 
 const SHOW: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
 
@@ -86,15 +86,14 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
             ? `None of the ${c.calls.length} call transcripts linked from its exchange filings could be opened, so there is nothing to grade yet.`
             : 'No promise in these calls had both a number and a date.'}</p>}
         {hard.length > 0 && (
-          <div className="og-panel">
-            {nUnclear < hard.length && <ul className="og" aria-label="Promise record">
-              {SHOW.filter(st => st !== 'unclear').map(st => {
-                const n = hard.filter(p => p.status === st).length
-                return n ? <li key={st} className="og-item"><Outcome value={n} /><span className="og-d1">{STATUS_WORD[st]}</span></li> : null
-              })}
+          <div className="fo-tally">
+            {nUnclear < hard.length && <ul className="fo-stats" aria-label="Promise record">
+              {SHOW.filter(st => st !== 'unclear' && hard.some(p => p.status === st)).map(st => (
+                <li key={st}><span className="fo-stat"><span className="fo-stat-n">{hard.filter(p => p.status === st).length}</span><span className="fo-stat-u">{STATUS_WORD[st].toLowerCase()}</span></span></li>
+              ))}
             </ul>}
             {/* Can't tell is a footnote, not a figure: it says nothing about their word */}
-            {(readable > 1 || nUnclear > 0) && <p className="sub tally-note">
+            {(readable > 1 || nUnclear > 0) && <p className="fo-tally-note">
               {readable > 1 && `Promises with a number and a date, from the ${readable - 1 === 1 ? 'call' : `${readable - 1} calls`} before the latest one.`}
               {nUnclear > 0 && `${readable > 1 ? ' ' : ''}${nUnclear} can't be told from what they've reported.`}
             </p>}
@@ -102,16 +101,16 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
         )}
 
         {hard.length > 0 && <h3 className="sec-head pgrid-head">Promise by promise</h3>}
-        {hard.length > 0 && <ul className="og pgrid">
-          {hard.map(p => <PromiseItem key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}
+        {hard.length > 0 && <ul className="fo-plist">
+          {hard.map(p => <PromiseRow key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}
         </ul>}
 
-        {softTalk > 0 && (
-          <button className="soft" aria-expanded={showSoft} onClick={() => setShowSoft(!showSoft)}>
-            Plus {softTalk} {softTalk === 1 ? 'statement' : 'statements'} with no number or date. Not graded.
-          </button>
-        )}
-        {showSoft && <ul className="soft-list">{soft.map(p => <PromiseItem key={p.id} p={p} soft open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>}
+        {soft.length > 0
+          ? <Fold title="Said without a number or date" count={soft.length} open={showSoft} toggle={() => setShowSoft(!showSoft)}
+              line={`Not graded. These touch margins, growth or capex${softTalk > soft.length ? `; ${softTalk - soft.length} vaguer ones are only counted` : ''}.`}>
+              <ul className="soft-list">{soft.map(p => <SoftRow key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>
+            </Fold>
+          : softTalk > 0 && <p className="sub soft-note">Plus {softTalk} {softTalk === 1 ? 'statement' : 'statements'} with no number or date. Not graded.</p>}
       </section>
 
       {c.questions.length > 0 && (
@@ -211,64 +210,34 @@ function Fig({ label, value, unit, sub }: { label: string; value: string; unit?:
   return <div className="fig og-item"><Outcome size={value.length > 9 ? 'xxs' : value.length > 5 ? 'xs' : 's'} value={value} unit={unit} /><span className="og-d1">{label}</span>{sub && <span className="og-d2">{sub}</span>}</div>
 }
 
-// The figure they promised, pulled from the promise itself: '15%', '₹5,600–5,800 cr', '0.8–0.9×'.
-// A number glued to letters ('FY26', 'Q3', 'Lakshya 31' is fine) is a date or a name, not the figure; so is a bare year.
-const FIG = /(₹\s?|\$)?(\d[\d,]*(?:\.\d+)?)(?:\u2060?[–-]\u2060?(\d[\d,]*(?:\.\d+)?))?\s?(%|x\b|×|bps|lakh\scrore|crore|cr\b|GW|MW|MVA|days|months|years|million tons?|million|billion|trillion|lakh|KTPA|MTPA)?s?(?![a-z])/gi
-function promised(t: string): [string, string] | null {
-  // '12 to 15 percent', '23% to 24%' -> '12–15%', '23–24%'
-  const txt = rupees(t).replace(/\bpercent\b/gi, '%').replace(/\s+%/g, '%')
-    .replace(/(\d+(?:\.\d+)?)\s(billion|million|crore) to (\d+(?:\.\d+)?)\s\2/g, '$1–$3 $2')
-    .replace(/(\d+(?:\.\d+)?)%?[\s\u2060]*(?:to|[-–])[\s\u2060]*(\d+(?:\.\d+)?)(?=\s?%)/g, '$1–$2').replace(/(\d+(?:\.\d+)?)\s+to\s+(\d+(?:\.\d+)?)/g, '$1–$2')
-  for (const m of txt.matchAll(FIG)) {
-    if (/[A-Za-z]$/.test(txt.slice(0, m.index))) continue
-    // A bare number ('plant 2', 'August 25', 'mid-20s') says nothing on its own; only a unit or a currency makes it the figure
-    if (!m[1] && !m[4]) continue
-    const u = m[4] || '', unit = /^x$/i.test(u) ? '×' : /^crore$/i.test(u) ? 'cr' : /^lakh\scrore$/i.test(u) ? 'lakh cr' : /^(mva|gw|mw|ktpa|mtpa|bps)$/i.test(u) ? (u.toLowerCase() === 'bps' ? 'bps' : u.toUpperCase()) : u.toLowerCase()
-    return [`${m[1] ? m[1].trim() : ''}${m[2]}${m[3] ? `–${m[3]}` : ''}`, unit === '%' || unit === '×' ? unit : unit ? ` ${unit}` : '']
-  }
-  // A count of things: 'Add 6 new branches', '50 new branches', '100–200 trucks'
-  const n = txt.match(/(?<![\w.])(\d[\d,]*(?:–\d[\d,]*)?)\s+(?:new\s+|more\s+|additional\s+)?(branches|clients|stores|trucks|rooftops|ships|rakes|products|plants|tires|outlets|customers)\b/i)
-  if (n) return [n[1], ` ${n[2].toLowerCase()}`]
-  return null
-}
-// No figure in the promise: the year it's due, as they named it ('FY26'), else when it was said
-const dueFig = (p: Promise_) => `${p.target} ${deadline(p)}`.match(/\b(Q\d\s)?FY\d\d\b|\b20\d\d\b/)?.[0]
-
-// One promise as an outcome: the figure, what they said, the verdict word. Tap for the quote and the evidence.
-// soft: a statement with no number or date. It isn't graded, so it gets no figure and no verdict word, only the quote behind the tap
-function PromiseItem({ p, open, toggle, soft }: { p: Promise_; open: boolean; toggle: () => void; soft?: boolean }) {
-  const fig = soft ? null : promised(p.target), due = fig || soft ? undefined : dueFig(p)
-  const len = (fig?.[0] || '').replace(/\u2060/g, '').length + (fig?.[1] || '').trim().length
-  const size = !fig ? 'xs' : len <= 5 ? 's' : len <= 6 ? 'm' : len <= 9 ? 'xs' : 'xxs'
+// One promise as a row: what they promised, its verdict chip and when it was said. It opens on the before-and-after
+function PromiseRow({ p, open, toggle }: { p: Promise_; open: boolean; toggle: () => void }) {
   return (
-    <li className={soft ? `soft-row${open ? ' open' : ''}` : `og-item p-item st-${p.status}${open ? ' open' : ''}`} data-pid={p.id}>
-      <button className="og-btn" aria-expanded={open} onClick={toggle}>
-        {/* Figures sit in one 48 px band, so the sentences under them start level across the row */}
-        {!soft && <span className="p-fig">{fig ? <Outcome size={size} value={fig[0]} unit={fig[1]} /> : due ? (/^FY\d\d$/.test(due) ? <Outcome size="s" pre="FY" value={due.slice(2)} /> : <Outcome size={due.length > 5 ? "xs" : "s"} value={due} />) : null}</span>}
-        <span className="og-d1" style={{ display: 'block' }}>{cap(rupees(p.target))}{deadline(p) ? ` ${rupees(deadline(p))}` : ''}.</span>
-        <span className="og-d2" style={{ display: 'block' }}>Said {p.period.replace(/ 20/, ' ’')}</span>
+    <li className={`fo-prow${open ? ' open' : ''}`} data-pid={p.id}>
+      <button className="fo-prow-head" aria-expanded={open} onClick={toggle}>
+        <span className="fo-prow-t">{promiseLine(p)}.</span>
+        <span className="fo-round" aria-hidden><svg viewBox="0 0 16 16"><path d="M3.5 6l4.5 4.5L12.5 6" /></svg></span>
+        <span className="fo-prow-meta"><StatusLabel status={p.status} /><span>Said {p.period.replace(/ 20/, ' ’')}</span></span>
       </button>
-      {!soft && <StatusLabel status={p.status} />}
+      <Accordion open={open}><div className="fo-prow-body"><Trail p={p} /></div></Accordion>
+    </li>
+  )
+}
+
+// A statement with no number or date isn't graded: no verdict, only the quote behind the tap
+function SoftRow({ p, open, toggle }: { p: Promise_; open: boolean; toggle: () => void }) {
+  return (
+    <li className={`soft-row${open ? ' open' : ''}`} data-pid={p.id}>
+      <button className="og-btn" aria-expanded={open} onClick={toggle}>
+        <span className="og-d1">{promiseLine(p)}.</span>
+        <span className="og-d2">Said {p.period.replace(/ 20/, ' ’')}</span>
+      </button>
       {open && (
         <div className="p-detail">
-          {!soft && verdictText(p) && <p className="verdict-t">{verdictText(p)}</p>}
-          <div>
-            <h4 className="lbl lbl-quiet">Said</h4>
-            <blockquote>“{p.quote}”</blockquote>
-            <p className="sub">{p.speaker}, <Src href={`${p.url}#page=${p.page}`}>{p.period} call, page {p.page}</Src>
-              {p.restated?.length ? <>. Said again: {p.restated.filter((r, k, all) => all.findIndex(x => x.period === r.period) === k).map((r, k) => <span key={k}>{k ? ', ' : ' '}<Src href={`${r.url}#page=${r.page}`}>{r.period}</Src></span>)}</> : null}</p>
-          </div>
-          {!soft && p.evidence && (
-            <div>
-              <h4 className="lbl lbl-quiet">{p.evidence_kind === 'quote' ? 'Latest call' : 'Reported'}</h4>
-              {p.evidence_kind === 'quote'
-                ? <><blockquote>“{p.evidence}”</blockquote><p className="sub"><Src href={p.evidence_url ? `${p.evidence_url}#page=${p.evidence_page}` : undefined}>page {p.evidence_page}</Src></p></>
-                : <p className="verdict-t">{tidyEvidence(p.evidence)}</p>}
-            </div>
-          )}
+          <blockquote>“{p.quote}”</blockquote>
+          <p className="sub">{p.speaker}, <Src href={`${p.url}#page=${p.page}`}>{p.period} call, page {p.page}</Src></p>
         </div>
       )}
-      {!open && !soft && <a className="og-link" href={`${p.url}#page=${p.page}`} target="_blank" rel="noopener noreferrer">See the call</a>}
     </li>
   )
 }

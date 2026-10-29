@@ -127,7 +127,6 @@ export function Accordion({ open, children, id }: { open: boolean; children: Rea
   )
 }
 
-// A section that folds: title and count on the left, a plus that turns into a minus on the right
 // An index row that opens in place: serif title, a count, one line on what's inside; the arrow turns down when open
 export function Fold({ title, count, line, open, toggle, children }: { title: string; count?: number; line?: ReactNode; open: boolean; toggle: () => void; children: ReactNode }) {
   return (

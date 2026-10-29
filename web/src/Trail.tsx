@@ -1,4 +1,4 @@
-import { deadline, markQuote, rupees, type Promise_, type QuotePart } from './lib'
+import { deadline, markQuote, rupees, tidyEvidence, type Promise_, type QuotePart } from './lib'
 import { Src, STATUS_WORD, StatusLabel } from './ui'
 
 // A not-due verdict that only restates the promise ('... remains ongoing') says nothing; the chip already does
@@ -41,7 +41,8 @@ export function Trail({ p, compact }: { p: Promise_; compact?: boolean }) {
       <div className="fo-trail-step fo-said">
         <p className="fo-trail-k">They said{compact ? `, ${p.period.replace(/ 20/, ' ’')}` : ''}</p>
         <blockquote className="fo-trail-q">“{parts.map((x, i) => x.k ? <mark key={i} className={`fo-mk fo-mk-${x.k}`}>{x.t}</mark> : <span key={i}>{x.t}</span>)}”</blockquote>
-        {!compact && <p className="fo-trail-who">{p.speaker}, <Src href={`${p.url}#page=${p.page}`}>{p.period} call, page {p.page}</Src></p>}
+        {!compact && <p className="fo-trail-who">{p.speaker}, <Src href={`${p.url}#page=${p.page}`}>{p.period} call, page {p.page}</Src>
+          {p.restated?.length ? <>. Said again: {p.restated.filter((r, k, all) => all.findIndex(x => x.period === r.period) === k).map((r, k) => <span key={k}>{k ? ', ' : ' '}<Src href={`${r.url}#page=${r.page}`}>{r.period}</Src></span>)}</> : null}</p>}
       </div>
       {(m.fig || m.date) && <div className="fo-trail-chips" aria-label="What FINN found in the quote">
         {m.fig && <span className="fo-chip fo-chip-fig">Target found</span>}
@@ -54,6 +55,9 @@ export function Trail({ p, compact }: { p: Promise_; compact?: boolean }) {
       <div className="fo-trail-step fo-shown">
         <p className="fo-trail-k">What the filings showed</p>
         <div className="fo-trail-v"><StatusLabel status={p.status} />{v && <p>{v}</p>}</div>
+        {!compact && p.evidence && (p.evidence_kind === 'quote'
+          ? <p className="fo-trail-ev">On the latest call: <q>{p.evidence}</q> <Src href={p.evidence_url ? `${p.evidence_url}#page=${p.evidence_page}` : undefined}>page {p.evidence_page}</Src></p>
+          : <p className="fo-trail-ev">Reported: {tidyEvidence(p.evidence)}</p>)}
       </div>
     </div>
   )
