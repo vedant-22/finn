@@ -165,3 +165,5 @@ Next: 29 Oct (iteration 1 of the redesign after the reference, ends 08:10 IST; n
 - Size notes and promise figures read the no-break space ('₹422.76 crore. ₹423 cr, 3%...' had crept back with it, caught on the Month Routine fold); ship.sh now stages web/test
 - Card sources: each its own row (28 px+ to tap), a related filing's time under its title
 - README screenshots retaken at 2x from the live link; DESIGN.md synced (Book tiles without price, Look up tiles with record, figures and wrapping rules)
+- Your lines closes when the route changes (Back with the sheet up left it over Book). Tested Book -> Today -> sheet -> Back
+- Switches: off is a grey outline and knob (the pale track was 1.4:1 on white); DESIGN.md follows

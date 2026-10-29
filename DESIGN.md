@@ -44,7 +44,7 @@ Spacing scale 4, 6, 8, 12, 16, 20, 24, 32, 40, 48, 60, 80. Gutter 16. Cards: pan
 - **Outcomes grid**: two columns, number, one dark line, one muted line, a link. A company's promises keep their figures in one 48px band so every row's sentences start level.
 - **Fold**: hairline above and below, 21px title with a count, a plus that turns into a minus; opens on a grid-rows transition.
 - **Buttons**: one filled brand pill per screen at most; the rest outlined brand pills or plain text.
-- **Switch**: grey track off, brand track on, white knob.
+- **Switch**: off is a grey outline with a grey knob (3:1 on white), on is a brand track with a white knob.
 
 ## Motion
 - Reveal: blocks fade in (opacity only) over 1200 ms on expo-decelerate as they enter the view; the first cards step 120 ms apart.
