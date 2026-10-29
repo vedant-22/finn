@@ -220,10 +220,15 @@ blockquote { margin: 0; }
 .bar .back { color: var(--brand); }
 .bar-name { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; animation: fade-in 300ms var(--expo) both; }
 @keyframes fade-in { from { opacity: 0; } }
-.co-name { margin-top: var(--s-m); }
+.co-bar { background: var(--panel); transition: border-color 200ms, background-color 200ms; }
+.co-bar.past { background: var(--paper); }
+.co-top { background: var(--panel); margin: 0 calc(-1 * var(--g)); padding: var(--s-xl) var(--g) var(--s-l); border-radius: 0 0 var(--r-12) var(--r-12); }
+.co-sector { white-space: normal; }
+.co-name { margin-top: var(--s-3xs); }
+.co-name-n { color: var(--ink-2); }
 .co-meta { margin-top: var(--s-3xs); font-size: 16px; line-height: 140%; color: var(--ink-2); }
 .company > section { margin-top: var(--s-2xl); }
-.co-pic { margin-top: var(--s-s); background: var(--panel); padding: var(--s-2xs); }
+.co-pic { margin-top: var(--s-s); }
 .co-pic .lbl { display: block; margin-top: var(--s-3xs); }
 .word-intro { margin-top: var(--s-3xs); }
 .read { font-size: 16px; line-height: 140%; color: var(--ink-2); }

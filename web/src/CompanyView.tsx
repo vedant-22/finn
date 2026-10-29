@@ -52,20 +52,31 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
 
   const readFirst = c.read ? rupees(c.read).match(/^.+?[.!?](?=\s+[A-Z]|$)/)?.[0] ?? rupees(c.read) : ''
   const toggle = (k: string) => setFold(fold === k ? null : k)
+  const nKept = hard.filter(p => p.status === 'kept').length, nPartly = hard.filter(p => p.status === 'partly').length
+  const nGraded = hard.filter(p => ['kept', 'partly', 'missed', 'quiet'].includes(p.status)).length
+  const nPending = hard.filter(p => p.status === 'pending').length
+  const standing = nGraded ? `${nKept} of ${nGraded} ${nGraded === 1 ? 'promise' : 'promises'} kept${nPartly ? `, ${nPartly} partly` : ''}.`
+    : nPending ? `${nPending} ${nPending === 1 ? 'promise' : 'promises'}, none due yet.`
+      : 'Nothing to grade yet.'
+
   const newHard = c.open.filter(p => p.hard)
 
   return (
     <main className="screen company">
-      <header className={`bar${past ? ' past' : ''}`}>
+      {/* Page header as the reference's: a warm panel with rounded foot, the sector as a label,
+          the name in grey running into the one thing to know, in ink */}
+      <header className={`bar co-bar${past ? ' past' : ''}`}>
         <button className="text-btn back" onClick={back}>Back</button>
         {past ? <span className="bar-name">{title || shortName(c.name)}</span> : <span className="lbl lbl-quiet">{c.symbol}{c.live ? ', read just now' : ''}</span>}
       </header>
-      <h1 className="co-name" ref={nameRef}>{title || shortName(c.name)}</h1>
-      <p className="co-meta">
-        {sector && <>{sector}. </>}
-        {price != null && <>₹{price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)}{close && ` at the ${new Date(close.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} close`}. </>}
-        {s.mcap != null && <>Worth ₹{crBig(s.mcap * k)}{s.pe ? `, ${(s.pe * k).toFixed(1)}× earnings` : ''}.</>}
-      </p>
+      <div className="co-top">
+        <p className="lbl lbl-quiet co-sector">{sector || 'NSE'}</p>
+        <h1 className="co-name" ref={nameRef}><span className="co-name-n">{title || shortName(c.name)}.</span> {standing}</h1>
+        <p className="co-meta">
+          {price != null && <>₹{price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)}{close && ` at the ${new Date(close.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} close`}. </>}
+          {s.mcap != null && <>Worth ₹{crBig(s.mcap * k)}{s.pe ? `, ${(s.pe * k).toFixed(1)}× earnings` : ''}.</>}
+        </p>
+      </div>
       {/* A holding's page opens on its picture, as the cards do: the last 30 sessions */}
       {bars && bars.length > 1 && <div className="co-pic"><div className="card-img"><Chart series={bars.slice(-30)} /></div><p className="lbl lbl-quiet">Last 30 sessions, {pct((bars[bars.length - 1].close / bars[Math.max(0, bars.length - 30)].close - 1) * 100)}</p></div>}
 
