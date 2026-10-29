@@ -221,7 +221,7 @@ function Look({ push, openCompany }: { push: Push; openCompany: (s: string) => v
 // Companies already read, as small panel cards in two columns: the symbol as the label, the name as the title
 function Tiles({ title, syms, open, names }: { title: string; syms: string[]; open: (s: string) => void; names: Record<string, string> }) {
   return (
-    <section className="chips-sec"><h2 className="lbl lbl-quiet">{title}</h2>
+    <section className="chips-sec tiles-sec"><h2 className="sec-head">{title}</h2>
       <ul className="tiles">{syms.map(s => <li key={s}><button className="tile" onClick={() => open(s)}><span className="lbl lbl-quiet">{s}</span><span className="tile-name">{names[s] || s}</span></button></li>)}</ul>
     </section>
   )

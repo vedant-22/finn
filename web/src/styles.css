@@ -198,7 +198,6 @@ blockquote { margin: 0; }
 .tile-card .book-rec { margin-top: var(--s-3xs); text-align: left; }
 .tile-card .card-desc { font-size: 15px; }
 .book-foot { margin-top: auto; padding-top: var(--s-2xs); display: grid; gap: 4px; }
-.book-foot .lbl { white-space: normal; font-size: 11px; }
 .tile-card .book-px { margin-top: 0; font-size: 13px; }
 .book-card { display: flex; flex-direction: column; width: 100%; background: var(--panel); padding: var(--s-xs) var(--s-2xs) var(--s-2xs); }
 .book-card .card-lbl { width: 100%; }
@@ -309,8 +308,9 @@ blockquote { margin: 0; }
 .look-row .btn-primary { margin-top: var(--s-s); }
 .chips-sec { margin-top: var(--s-xl); }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: var(--s-3xs); }
-.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3xs); margin-top: var(--s-3xs); }
-.tile { display: flex; flex-direction: column; justify-content: space-between; gap: var(--s-s); width: 100%; min-height: 112px; background: var(--panel); padding: var(--s-2xs); }
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3xs); margin-top: var(--s-s); }
+.tiles-sec { margin-top: var(--s-2xl); }
+.tile { display: flex; flex-direction: column; justify-content: space-between; gap: var(--s-5xs); width: 100%; min-height: 0; height: 100%; background: var(--panel); padding: var(--s-2xs); }
 .tile-name { font-size: 16px; line-height: 140%; color: var(--ink); }
 .chips .btn-outline { height: 36px; padding: 0 var(--s-2xs); font-size: 15px; }
 

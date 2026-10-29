@@ -66,13 +66,13 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
                     <div className="book-head"><span className="card-title">{p.short || shortName(p.name)}</span><span className="book-rec">{rec}</span></div>
                     {desc}{px}
                   </button>
-                // In the grid, as the reference's news cards: label, title, figure, one sentence; sector and price close it
+                // In the grid, as the reference's news cards: label, title, figure, one sentence; the price closes it
                 : <button className="book-card tile-card" onClick={() => openCompany(p.symbol)}>
                     {weak ? <StatusLabel status={weak.status} /> : <span className="lbl lbl-quiet">Nothing graded</span>}
                     <span className="card-title">{p.short || shortName(p.name)}</span>
                     {rec && <span className="book-rec">{rec}</span>}
                     {desc}
-                    <span className="book-foot"><span className="lbl lbl-quiet">{p.sector}</span>{px}</span>
+                    {px && <span className="book-foot">{px}</span>}
                   </button>}
             </li>
           )
