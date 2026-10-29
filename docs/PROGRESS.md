@@ -1,4 +1,4 @@
-Next: 29 Oct, stage 3 (brief/UX_SPEC.md). Build Folio, FINN's own design system, following design/UX_PLAN.md's checklist from item 1 (foundations). Research done (git-ignored notes and shots in design/). Commit and push after each working change; deploy only when a whole screen is finished (Today first)
+Next: 29 Oct, stage 3. Today in Folio is built and tested locally (flows, folds, 320/390); act on the Today critic round, then deploy Today (npx vercel --prod --yes from app/, or web/test/e2e/ship.sh). Then Book (design/UX_PLAN.md item 8): tally as stat stacks, holdings as index rows with chips
 
 Next: 29 Oct, iteration 2 polish. PLAN checklist done; README shots, DESIGN.md, preview card current (29 Oct ~09:30 IST). Keep polishing screen by screen at 390x844 (checked today: Today cards and folds, card detail, people detail, Book and its filter, company header, numbers, for/against, sources, soft statements, Look up, Your lines). Ship with web/test/e2e/ship.sh; it stages web/test too. Retake README shots if a first screen changes
 
@@ -179,3 +179,12 @@ Next: 29 Oct (iteration 1 of the redesign after the reference, ends 08:10 IST; n
 - Worth a look rows: an unusual day after results reads as one sentence ('+12% on 43.5× its volume, the day after results.')
 - Routine fold: 'and 14 more' stays on one line. Live flows, folds and the 22-page sweep pass after today's deploys
 - Today ends on one ENAM-blue band, edge to edge to the tab bar, as the reference's pages close: 'That's the last 24 hours.' (per window), a white pill to Book and an outlined one to Your lines (the masthead's pill has scrolled away by then). Tested at 390x844 and 320; live flows and folds pass
+
+## Stage 3: Folio, FINN's own design system (29 Oct)
+- Studied references B and C at 390x844 and 1440x900 with Playwright (computed styles, menus, the before-and-after demo frame by frame, App Store screens); notes and shots are git-ignored. Plan in design/UX_PLAN.md
+- Foundations: every token renamed into Folio (--fo-*); Newsreader (variable, optical sizes, its own ₹ in a 2 KB file, 104 KB) for headlines, names, figures and quotes; Inter at 400/500 with -0.01em for sentences and controls; PT Serif dropped. Caps micro-labels gone: sentence case everywhere
+- Header: a floating rounded bar, the lowercase 'finn' mark after a small blue tick square, one square Menu control. The menu is an index list (Today, Book, Look up) ending on 'Alert lines' (was 'Your lines' in the header), which opens the lines sheet. Steppers are square controls
+- Status chips: rounded, sentence case, a small mark (tick, cross, ring, clock, dash, ?); kept on a blue wash, missed on a red wash
+- Today: the Folio card (chip and time, serif name and figure, one sentence, the picture in a rounded tinted inset, a round control that turns); the window is a segmented control; Worth a look and Routine filings are index rows with a count and arrow, each opening a sheet (and open again after Back from a company); the end band rises with rounded corners; buttons are square
+- The before-and-after (web/src/Trail.tsx, markQuote in lib.ts): the quote with the target figure and the date marked where they stand, 'Target found' / 'Date found' chips only when they are really in the quote (107 and 139 of 194 graded promises), the promise as one serif line, then what the filings showed. Marks sweep, chips spring in, steps fade up as it scrolls into view; reduced motion shows it in place. On results cards and on unusual days explained by results. Unit-tested
+- Tests: lib 13/13; flows and folds pass on the local build (folds now checks the sheets); no sideways scroll at 320 in any window with every card open; detect.mjs clean (the spring is marked as chosen)

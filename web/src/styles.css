@@ -22,7 +22,7 @@
   --fo-serif: 'Newsreader', Georgia, 'Times New Roman', serif;
   /* motion: calm reveals, a small spring for chips and controls */
   --fo-ease-out: cubic-bezier(.19, 1, .22, 1); --fo-ease-decel: cubic-bezier(0, 0, 0, 1); --fo-ease-std: cubic-bezier(.2, 0, 0, 1);
-  --fo-spring: cubic-bezier(.34, 1.56, .64, 1);
+  --fo-spring: cubic-bezier(.34, 1.56, .64, 1);  /* avoid-ai-design-ignore: M4. Chosen: a small spring on chips, arrows and the round control only */
   color-scheme: light;
 }
 * { box-sizing: border-box; }

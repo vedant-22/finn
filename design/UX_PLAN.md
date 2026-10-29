@@ -47,12 +47,12 @@ Used on Today's card detail (the company's promise on that topic) and on every o
 - **Look up.** Serif headline with one italic phrase, a rounded field with a square button, Ready to open as index rows with records.
 
 ## Ordered checklist
-- [ ] 1. Folio foundations: tokens renamed into Folio, Newsreader loaded, type roles, chips, square controls, spring motion. Port reference A's remaining pieces (section header, modal/sheet, motion helpers) under Folio names
-- [ ] 2. Header: floating bar, new wordmark, Menu sheet with the index list and the Alert lines row
-- [ ] 3. Status chips everywhere caps labels were
-- [ ] 4. The Folio card on Today
-- [ ] 5. The before-and-after component, on Today's card detail
-- [ ] 6. Fold rows as index rows opening sheets
+- [x] 1. Folio foundations: tokens renamed into Folio, Newsreader loaded, type roles, chips, square controls, spring motion. Port reference A's remaining pieces (section header, modal/sheet, motion helpers) under Folio names
+- [x] 2. Header: floating bar, new wordmark, Menu sheet with the index list and the Alert lines row
+- [x] 3. Status chips everywhere caps labels were
+- [x] 4. The Folio card on Today
+- [x] 5. The before-and-after component, on Today's card detail
+- [x] 6. Fold rows as index rows opening sheets
 - [ ] 7. Today finished: test at 390x844 and 320, flows and folds scripts, critic round, deploy
 - [ ] 8. Book: stat stacks and index rows; test, critic, deploy
 - [ ] 9. Company: header, before-and-after on every promise, index rows; test, critic, deploy
