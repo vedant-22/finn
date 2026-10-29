@@ -157,6 +157,32 @@ blockquote { margin: 0; }
 .fo-more svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 250ms var(--fo-spring); }
 @media (hover: hover) { .fo-more:hover svg { transform: translateX(3px); } }
 
+/* ---------- Folio: stat stacks on a tinted block ---------- */
+.fo-tally { margin-top: var(--fo-s-m); padding: var(--fo-s-xs) var(--fo-s-2xs) var(--fo-s-5xs); border-radius: var(--fo-r-card); background: var(--fo-tint); }
+.fo-tally-h { font: 500 13px/116% var(--fo-sans); color: var(--fo-ink-2); }
+.fo-stats { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--fo-s-2xs); margin-top: var(--fo-s-5xs); }
+.fo-stats > li { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; padding: var(--fo-s-2xs) 0 var(--fo-s-xs); }
+.fo-stats > li:nth-child(n+3) { border-top: 1px solid rgba(0, 93, 163, .14); }
+.fo-stat { display: grid; justify-items: start; width: 100%; text-align: left; border-radius: 6px; }
+.fo-stat-n { font: 400 50px/92% var(--fo-serif); letter-spacing: -0.025em; font-variant-numeric: lining-nums tabular-nums; color: var(--fo-ink); }
+.fo-stat-u { margin-top: 2px; font: 400 21px/120% var(--fo-serif); color: var(--fo-ink); }
+.fo-stat-l { margin-top: var(--fo-s-5xs); font-size: 14px; line-height: 140%; color: var(--fo-ink-2); }
+.fo-stat[aria-pressed='true'] :is(.fo-stat-n, .fo-stat-u) { color: var(--fo-blue); }
+.fo-stat[aria-pressed='true'] .fo-stat-u { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.fo-stats .og-link { padding-left: 0; }
+
+/* ---------- Folio: a holding as an index row ---------- */
+.fo-hold { display: grid; grid-template-columns: 1fr auto 16px; align-items: baseline; column-gap: 10px; width: 100%; padding: var(--fo-s-2xs) 0; border-bottom: 1px solid var(--fo-rule); text-align: left; }
+.fo-hold-name { font: 400 22px/120% var(--fo-serif); letter-spacing: -0.01em; color: var(--fo-ink); min-width: 0; }
+.fo-hold-rec .outcome-xs .o-val { font-size: 24px; }
+.fo-hold-rec .outcome-xs .o-unit { font: 400 14px/1 var(--fo-sans); color: var(--fo-ink-2); }
+.fo-hold .fo-row-arrow { align-self: center; }
+.fo-hold-line { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: var(--fo-s-5xs); font-size: 14px; line-height: 140%; color: var(--fo-ink-2); }
+.fo-hold:active > * { opacity: .5; }
+@media (hover: hover) { .fo-hold:hover .fo-row-arrow { transform: translateX(3px); } }
+.book-lead { display: flex; flex-direction: column; width: 100%; text-align: left; padding-bottom: var(--fo-s-2xs); }
+.book-lead .card-desc { margin-top: var(--fo-s-5xs); }
+
 /* ---------- Folio: index rows ---------- */
 /* a title, a count and an arrow on one line; what's behind it in one plain line under */
 .fo-row { display: grid; grid-template-columns: 1fr auto 16px; align-items: center; column-gap: 10px; width: 100%; min-height: 64px; padding: 14px 0; border-bottom: 1px solid var(--fo-rule); text-align: left; }
@@ -289,8 +315,9 @@ blockquote { margin: 0; }
 .page-top { padding-top: var(--fo-s-m); }
 
 .book-filter { display: flex; align-items: center; justify-content: space-between; margin-top: var(--fo-s-s); font-size: 14px; }
-.book-head2 { margin-top: var(--fo-s-2xl); }
-.book-list { display: grid; grid-template-columns: 1fr 1fr; gap: var(--fo-s-3xs); margin-top: var(--fo-s-s); }
+.book-head2 { margin-top: var(--fo-s-xl); }
+.book-list { display: grid; grid-template-columns: minmax(0, 1fr); margin-top: var(--fo-s-2xs); }
+.book-list > li.wide { margin-bottom: var(--fo-s-3xs); }
 .book-list > li { min-width: 0; display: flex; }
 .book-list > li.wide { grid-column: 1 / -1; }
 .tile-card { align-items: flex-start; text-align: left; min-height: 100%; padding-bottom: var(--fo-s-s); }

@@ -23,7 +23,7 @@ async def main():
         await pg.locator('.og-btn').nth(0).click(); await pg.wait_for_timeout(400)
         await pg.evaluate('scrollTo(0,1400)'); await pg.wait_for_timeout(600)
         y0 = await pg.evaluate('scrollY')
-        await pg.locator('.tile-card').nth(4).click(); await pg.wait_for_timeout(1500)
+        await pg.locator('.fo-hold').nth(4).click(); await pg.wait_for_timeout(1500)
         out['co'] = await pg.locator('.co-name').inner_text()
         await pg.get_by_role('button', name='Back').click(); await pg.wait_for_timeout(1500)
         out['scroll'] = (y0, await pg.evaluate('scrollY'))

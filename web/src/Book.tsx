@@ -15,16 +15,14 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
   // Prices are the last exchange close in the snapshot, often the day before it; say which
   const closeDay = Object.values(push.eod).reduce((m, bars: any) => { const d = bars?.[bars.length - 1]?.d; return d && d > m ? d : m }, '')
   const closeLabel = closeDay ? new Date(closeDay + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : ''
-  // The top of the page is warm edge to edge, as the reference's outcomes page: title, line, tally
+  // Title, one line, then the tally on a tinted block
   const head = (tally?: ReactNode) => <>
-    <Masthead warm />
-    <div className="warm-top">
-      <header className="page-top">
-        <h1 className="t-h1">Your book</h1>
-        <p className="serif-line">{push.portfolio.length} holdings, and how well each management team has kept its word. Prices at the {closeLabel} close.</p>
-      </header>
-      {tally}
-    </div>
+    <Masthead />
+    <header className="page-top">
+      <h1 className="t-h1">Your book</h1>
+      <p className="serif-line">{push.portfolio.length} holdings, and how well each management team has kept its word. Prices at the {closeLabel} close.</p>
+    </header>
+    {tally}
   </>
   // Order and tally only once every holding is in, so counts don't climb and rows don't reshuffle
   if (push.portfolio.some(p => cos[p.symbol] === undefined)) {
@@ -47,7 +45,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
       {head(<BookTally cos={Object.values(cos)} only={only} setOnly={setOnly} />)}
       {only && <p className="book-filter sub" aria-live="polite">{shown.length} with {WITH[only]} <button className="text-btn" onClick={() => setOnly(null)}>Show all</button></p>}
       {!only && <h2 className="sec-head book-head2">Weakest word first</h2>}
-      <ul className="book-list">
+      <ul className="book-list" aria-label="Holdings, weakest word first">
         {shown.map(({ p, c, score, last }, i) => {
           const weak = weakest(c, only)
           const kept = score ? Math.floor(score.kept) : 0
@@ -56,23 +54,24 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
           const rec = score?.graded
             ? <Outcome size="xs" value={kept} unit={`/${score.graded} kept`} />
             : pending ? <Outcome size="xs" value={pending} unit={'\u00a0not due'} /> : null
-          const desc = <p className="card-desc">{weak ? weakLine(weak) : c && c.calls.length && c.calls.every(x => x.error) ? "The call transcripts couldn't be opened." : 'No promise with a number and a date yet.'}</p>
+          const line = weak ? weakLine(weak) : c && c.calls.length && c.calls.every(x => x.error) ? "The call transcripts couldn't be opened." : 'No promise with a number and a date yet.'
+          const desc = <p className="card-desc">{line}</p>
           const px = last && <p className="book-px"><span className="num">₹{last.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>, <span className="num">{pct(last.chg)}</span> on the day</p>
           return (
             <li key={p.symbol} className={lead ? 'wide' : undefined}>
               {lead
-                ? <button className="book-card lead" onClick={() => openCompany(p.symbol)}>
-                    <div className="card-img"><Chart series={(push.eod[p.symbol] || []).slice(-30)} /></div>
-                    <div className="card-lbl"><span className="lbl lbl-quiet">{p.sector}</span>{weak && <StatusLabel status={weak.status} />}</div>
+                // The weakest word leads as a Folio card, with its picture; the rest are index rows
+                ? <button className="card book-lead" onClick={() => openCompany(p.symbol)}>
+                    <div className="card-lbl"><span className="card-when">{p.sector}</span>{weak && <StatusLabel status={weak.status} />}</div>
                     <div className="book-head"><span className="card-title">{p.short || shortName(p.name)}</span><span className="book-rec">{rec}</span></div>
                     {desc}{px}
+                    <div className="fo-media"><Chart series={(push.eod[p.symbol] || []).slice(-30)} /></div>
                   </button>
-                // In the grid, as the reference's news cards: status, name, record, the weakest promise. The price is on the lead and each company page
-                : <button className="book-card tile-card" onClick={() => openCompany(p.symbol)}>
-                    {weak ? <StatusLabel status={weak.status} /> : <span className="lbl lbl-quiet">Nothing graded</span>}
-                    <span className="card-title">{p.short || shortName(p.name)}</span>
-                    {rec && <span className="book-rec">{rec}</span>}
-                    {desc}
+                : <button className="fo-hold" onClick={() => openCompany(p.symbol)}>
+                    <span className="fo-hold-name">{p.short || shortName(p.name)}</span>
+                    <span className="fo-hold-rec">{rec}</span>
+                    <svg className="fo-row-arrow" viewBox="0 0 16 16" aria-hidden><path d="M6 3.5l4.5 4.5L6 12.5" /></svg>
+                    <span className="fo-hold-line">{weak && <StatusLabel status={weak.status} />}<span>{line}</span></span>
                   </button>}
             </li>
           )
@@ -99,23 +98,23 @@ function BookTally({ cos, only, setOnly }: { cos: (Company | null | undefined)[]
   const n = (st: Status) => all.filter(p => p.status === st).length
   const teams = (st: Status) => cos.filter(c => c?.ledger.some(p => p.hard && p.status === st)).length
   const at = (st: Status) => `At ${teams(st)} ${teams(st) === 1 ? 'company' : 'companies'}`
-  // Four in the grid, as on an outcomes page; partly kept rides under kept, still tappable
-  const items: [Status, string, string][] = [
-    ['missed', 'Missed: the date passed without it.', at('missed')],
-    ['quiet', 'Gone quiet: due, and not mentioned.', at('quiet')],
-    ['kept', 'Kept: delivered, or on track.', at('kept')],
-    ['pending', 'Not due yet.', 'Still running'],
+  // Four stat stacks: a serif figure, its word, one line; partly kept rides under kept, still tappable
+  const items: [Status, string, string, string][] = [
+    ['missed', 'missed', 'The date passed without it.', at('missed')],
+    ['quiet', 'gone quiet', 'Due, and not mentioned.', at('quiet')],
+    ['kept', 'kept', 'Delivered, or on track.', at('kept')],
+    ['pending', 'not due yet', 'Still running,', at('pending').toLowerCase()],
   ]
   return (
-    <section className="og-panel" aria-label="Promises across your book">
-      <h2 className="lbl lbl-quiet">Promises across your book</h2>
-      <ul className="og book-og">
-        {items.map(([st, d1, d2]) => (
-          <li key={st} className="og-item">
-            <button className="og-item og-btn" aria-pressed={only === st} onClick={() => setOnly(only === st ? null : st)}>
-              <Outcome value={n(st)} />
-              <span className="og-d1">{d1}</span>
-              <span className="og-d2">{d2}</span>
+    <section className="fo-tally" aria-label="Promises across your book">
+      <h2 className="fo-tally-h">Promises across your book</h2>
+      <ul className="fo-stats">
+        {items.map(([st, word, d1, d2]) => (
+          <li key={st}>
+            <button className="fo-stat og-btn" aria-pressed={only === st} onClick={() => setOnly(only === st ? null : st)}>
+              <span className="fo-stat-n">{n(st)}</span>
+              <span className="fo-stat-u">{word}</span>
+              <span className="fo-stat-l">{d1} {d2}.</span>
             </button>
             {st === 'kept' && n('partly') > 0 && <button className={`og-link${only === 'partly' ? ' on' : ''}`} aria-pressed={only === 'partly'} onClick={() => setOnly(only === 'partly' ? null : 'partly')}>And {n('partly')} partly kept</button>}
           </li>
