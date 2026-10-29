@@ -162,3 +162,6 @@ Next: 29 Oct (iteration 1 of the redesign after the reference, ends 08:10 IST; n
 - Body text in proportional figures: Inter's tabular hyphen read '20 - day' and 'NWC - to - Revenue'; tabular figures stay on .num and outcome figures. Deployed 29 Oct ~09:15 IST
 - Amounts keep their unit on one line ('Worth ₹5.23 lakh / cr' broke): no-break spaces in crBig and rupees(). Tests 12/12; sweep 22 pages at 320/390 clean. Deployed
 - Headings wrap balanced, paragraphs avoid orphans ('Look up any NSE / company' -> 'Look up any / NSE company'). Live flows and folds pass
+- Size notes and promise figures read the no-break space ('₹422.76 crore. ₹423 cr, 3%...' had crept back with it, caught on the Month Routine fold); ship.sh now stages web/test
+- Card sources: each its own row (28 px+ to tap), a related filing's time under its title
+- README screenshots retaken at 2x from the live link; DESIGN.md synced (Book tiles without price, Look up tiles with record, figures and wrapping rules)
