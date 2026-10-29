@@ -114,6 +114,14 @@ blockquote { margin: 0; }
 .boot .fo-mark-word { font-size: 34px; }
 .boot .fo-mark-sym { width: 28px; height: 28px; }
 
+/* ---------- Folio: chips ---------- */
+.fo-chip { display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 10px; border-radius: var(--fo-r-pill); background: var(--fo-chip); color: var(--fo-ink); font: 500 13px/1 var(--fo-sans); white-space: nowrap; flex: none; }
+.fo-chip svg { width: 12px; height: 12px; margin-left: -2px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.fo-chip-kept { background: var(--fo-kept-wash); }
+.fo-chip-kept svg { stroke: var(--fo-blue); stroke-width: 1.9; }
+.fo-chip-missed { background: var(--fo-missed-wash); color: var(--fo-missed); }
+.fo-chip-quiet, .fo-chip-pending, .fo-chip-unclear { color: var(--fo-ink-2); }
+
 /* ---------- Folio: index rows ---------- */
 /* a title, a count and an arrow on one line; what's behind it in one plain line under */
 .fo-row { display: grid; grid-template-columns: 1fr auto 16px; align-items: center; column-gap: 10px; width: 100%; min-height: 64px; padding: 14px 0; border-bottom: 1px solid var(--fo-rule); text-align: left; }
@@ -297,7 +305,7 @@ blockquote { margin: 0; }
 .o-pre { margin-right: 2px; }
 .p-fig { display: flex; align-items: flex-end; min-height: 48px; max-width: 100%; }
 .p-item .outcome { max-width: 100%; flex-wrap: wrap; }
-.p-item .lbl { margin: var(--fo-s-5xs) 0 0 var(--fo-s-nano); }
+.p-item .lbl, .p-item > .fo-chip { margin: var(--fo-s-5xs) 0 0 var(--fo-s-nano); }
 .p-item .og-d1 { overflow-wrap: anywhere; }
 .p-item.open { grid-column: 1 / -1; }
 .p-detail { padding: var(--fo-s-3xs) 0 0 var(--fo-s-nano); display: grid; gap: var(--fo-s-3xs); width: 100%; }

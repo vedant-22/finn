@@ -47,15 +47,22 @@ export function useEdgeBack(back: () => void) {
   }, [])
 }
 
-// Status is a word, never a mark: KEPT, MISSED, GONE QUIET... in caps, ink except MISSED
 export const STATUS_WORD: Record<Status, string> = {
   kept: 'Kept', partly: 'Partly kept', missed: 'Missed', quiet: 'Gone quiet', pending: 'Not due yet', unclear: "Can't tell",
 }
 const STATUS_LABEL: Record<Status, string> = {
   kept: 'Kept', partly: 'Partly kept', missed: 'Missed', quiet: 'Gone quiet', pending: 'Not due', unclear: "Can't tell",
 }
+// Folio's status chip: rounded, sentence case, a small mark before the word. Blue wash for kept, red for missed, grey for the rest
+const CHIP_MARK: Record<Status, string> = {
+  kept: 'M2.5 6.2l2.3 2.3 4.7-5', partly: 'M2.5 6h7', missed: 'M3 3l6 6M9 3l-6 6', quiet: 'M6 2.6a3.4 3.4 0 1 0 0 6.8a3.4 3.4 0 1 0 0-6.8', pending: 'M6 1.9a4.1 4.1 0 1 0 0 8.2a4.1 4.1 0 1 0 0-8.2M6 4v2.2l1.5 1', unclear: 'M6 9.4v.1M4.4 4.3a1.7 1.7 0 1 1 2.4 1.6c-.5.3-.8.6-.8 1.3',
+}
 export function StatusLabel({ status }: { status: Status }) {
-  return <span className={`lbl st-${status}`}>{STATUS_LABEL[status]}</span>
+  return <span className={`fo-chip fo-chip-${status}`}><svg viewBox="0 0 12 12" aria-hidden><path d={CHIP_MARK[status]} /></svg>{STATUS_LABEL[status]}</span>
+}
+// A neutral chip for a kind of thing: Results, Unusual day, People
+export function Chip({ children }: { children: ReactNode }) {
+  return <span className="fo-chip">{children}</span>
 }
 
 // Folio's mark: a small ENAM-blue square holding a tick (the app icon), then 'finn' in the book serif, lowercase

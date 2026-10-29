@@ -3,7 +3,7 @@ import {
   CATEGORY_LABEL, cr, deadline, getCompany, pct, rupees, shortName, triage, when,
   type Bar, type Company, type Lines, type Move, type Push, type Story,
 } from './lib'
-import { Accordion, Chart, Fold, Masthead, Outcome, pctParts, Src, StatusLabel, useKept } from './ui'
+import { Accordion, Chart, Chip, Fold, Masthead, Outcome, pctParts, Src, StatusLabel, useKept } from './ui'
 
 const WINDOWS = [{ h: 24, label: '24h' }, { h: 72, label: '3 days' }, { h: 168, label: 'Week' }, { h: 720, label: 'Month' }]
 // However busy the window, at most five things interrupt; the rest wait in the first fold
@@ -107,7 +107,7 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
 
 // What kind of thing opens the card; when it happened closes it, beside Read more
 function CardLabel({ kind }: { kind: string }) {
-  return <div className="card-lbl"><span className="lbl">{kind}</span></div>
+  return <div className="card-lbl"><Chip>{kind}</Chip></div>
 }
 
 function CardFoot({ at, more, setMore }: { at: string; more: boolean; setMore: (b: boolean) => void }) {
