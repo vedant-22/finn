@@ -3,7 +3,7 @@ import {
   CATEGORY_LABEL, cr, deadline, getCompany, pct, rupees, shortName, triage, when,
   type Bar, type Company, type Lines, type Move, type Push, type Story,
 } from './lib'
-import { Accordion, Chart, Chip, Fold, Masthead, Outcome, pctParts, Src, StatusLabel, useKept } from './ui'
+import { Accordion, Chart, Chip, IndexRow, Masthead, Sheet, Outcome, pctParts, Src, StatusLabel, useKept } from './ui'
 
 const WINDOWS = [{ h: 24, label: '24h' }, { h: 72, label: '3 days' }, { h: 168, label: 'Week' }, { h: 720, label: 'Month' }]
 // However busy the window, at most five things interrupt; the rest wait in the first fold
@@ -32,6 +32,9 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
   const asof = new Date(push.asof)
   const time = asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()
   const routine = t.folded.reduce((n, s) => n + s.filings.length, 0)
+  const worth = spill.length + t.notes.length
+  const worthCos = [...new Set([...spill.map(x => names[(x.s || x.m)!.symbol]), ...t.notes.map(s => names[s.symbol])])]
+  const routineCos = [...new Set(t.folded.map(s => names[s.symbol]))]
   const bars = (sym: string, upto?: string) => {
     const all = push.eod[sym] || []
     const end = upto ? all.findIndex(b => b.d > upto.slice(0, 10)) : -1
@@ -74,22 +77,26 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
           : <li key={x.m.symbol + x.m.d}><MoveCard m={x.m} lead={i === 0} name={names[x.m.symbol]} lines={lines} openCompany={openCompany} /></li>)}
       </ol>
 
-      {(spill.length + t.notes.length) > 0 && (
-        <Fold title="Worth a look" count={spill.length + t.notes.length} open={showNotes} toggle={() => setShowNotes(!showNotes)}>
-          <ul className="notes">
-            {spill.map(x => x.s
-              ? <NoteRow key={x.s.key} s={x.s} name={names[x.s.symbol]} asof={push.asof} />
-              : <MoveRow key={x.m.symbol + x.m.d} m={x.m} name={names[x.m.symbol]} openCompany={openCompany} />)}
-            {t.notes.map(s => <NoteRow key={s.key} s={s} name={names[s.symbol]} asof={push.asof} />)}
-          </ul>
-        </Fold>
+      {/* What can wait: two index rows, each opening its list in a sheet */}
+      {(worth > 0 || routine > 0) && (
+        <section className="fo-index" aria-label="What can wait">
+          {worth > 0 && <IndexRow title="Worth a look" count={worth} line={`Under your lines, at ${few(worthCos)}`} onClick={() => setShowNotes(true)} />}
+          {routine > 0 && <IndexRow title="Routine filings" count={routine} line={`Notices and call papers, at ${few(routineCos)}`} onClick={() => setShowFold(true)} />}
+        </section>
       )}
-
-      {routine > 0 && (
-        <Fold title="Routine filings" count={routine} quiet open={showFold} toggle={() => setShowFold(!showFold)}>
-          <FoldSummary stories={t.folded} names={names} />
-        </Fold>
-      )}
+      <Sheet open={showNotes} onClose={() => setShowNotes(false)} title="Worth a look" full>
+        <p className="sheet-intro sub">Filings and moves that didn't cross your lines but may be worth a minute.</p>
+        <ul className="notes">
+          {spill.map(x => x.s
+            ? <NoteRow key={x.s.key} s={x.s} name={names[x.s.symbol]} asof={push.asof} />
+            : <MoveRow key={x.m.symbol + x.m.d} m={x.m} name={names[x.m.symbol]} openCompany={openCompany} />)}
+          {t.notes.map(s => <NoteRow key={s.key} s={s} name={names[s.symbol]} asof={push.asof} />)}
+        </ul>
+      </Sheet>
+      <Sheet open={showFold} onClose={() => setShowFold(false)} title="Routine filings" full>
+        <p className="sheet-intro sub">Notices, call papers and the like. Nothing here needs you.</p>
+        <FoldSummary stories={t.folded} names={names} />
+      </Sheet>
 
       {/* The page ends as the reference's do, on one brand band: the window is done, and the two next moves */}
       <section className="end-band" aria-label="End of the window">
@@ -105,14 +112,22 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
   )
 }
 
-// What kind of thing opens the card; when it happened closes it, beside Read more
-function CardLabel({ kind }: { kind: string }) {
-  return <div className="card-lbl"><Chip>{kind}</Chip></div>
+// A Folio card opens on what kind of thing it is, and when
+function CardLabel({ kind, at }: { kind: string; at: string }) {
+  return <div className="card-lbl"><Chip>{kind}</Chip><span className="card-when">{at}</span></div>
 }
 
-function CardFoot({ at, more, setMore }: { at: string; more: boolean; setMore: (b: boolean) => void }) {
-  return <div className="card-foot"><button className="read-more" aria-expanded={more} onClick={() => setMore(!more)}>{more ? 'Read less' : 'Read more'}</button><span className="lbl lbl-quiet">{at}</span></div>
+// and closes on one round control that turns as the detail opens
+function CardFoot({ more, setMore }: { more: boolean; setMore: (b: boolean) => void }) {
+  return (
+    <button className="card-foot" aria-expanded={more} onClick={() => setMore(!more)}>
+      <span>{more ? 'Less' : 'The detail'}</span>
+      <span className="fo-round" aria-hidden><svg viewBox="0 0 16 16"><path d="M4 6.5l4 4 4-4" /></svg></span>
+    </button>
+  )
 }
+// 'L&T, Syngene and 2 more'
+const few = (xs: string[]) => xs.length <= 3 ? xs.join(xs.length === 2 ? ' and ' : ', ').replace(/, ([^,]*)$/, ' and $1') : `${xs.slice(0, 2).join(', ')} and ${xs.length - 2} more`
 const shortDay = (iso: string) => new Date(iso.length > 10 ? iso : iso + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
 
 function StoryCard({ s, lead, name, asof, bars, openCompany }: { s: Story; lead?: boolean; name: string; asof: string; bars: Bar[]; openCompany: (s: string, pid?: number) => void }) {
@@ -125,16 +140,17 @@ function StoryCard({ s, lead, name, asof, bars, openCompany }: { s: Story; lead?
   const [v, u] = pctParts(rev?.yoy)
   return (
     <article className={`card story cat-${s.category}${lead ? ' lead' : ''}`}>
-      <div className="card-img"><Chart series={bars} /></div>
       <div className="card-info">
-        <CardLabel kind={r ? `Results, ${r.quarter}` : CATEGORY_LABEL[s.category] || s.category} />
+        <CardLabel kind={r ? `Results, ${r.quarter}` : CATEGORY_LABEL[s.category] || s.category} at={when(s.at, asof)} />
         <button className="card-title" onClick={() => openCompany(s.symbol)}>{name}</button>
         {r && rev?.yoy != null && <div className="card-fig"><Outcome value={v} unit={u} /><span className="card-cap">{rev.label.toLowerCase()}, against {r.compare.yago || 'a year ago'}</span></div>}
         {!r && f.amount_cr != null && f.amount_cr >= 1 && <div className="card-fig"><Outcome value={`₹${cr(f.amount_cr)}`} unit="cr" />{f.pct_rev != null && <span className="card-cap">{f.pct_rev < 0.1 ? 'under 0.1%' : `${f.pct_rev.toFixed(f.pct_rev < 1 ? 1 : 0)}%`} of a year's revenue</span>}</div>}
-        {r ? <><p className="card-desc">{resultLine(r, pat)}</p><CardWord symbol={s.symbol} openCompany={openCompany} /></>
+        {r ? <p className="card-desc">{resultLine(r, pat)}</p>
           : f.people?.length ? <PeopleLead f={f} />
             : <p className="card-desc">{f.line || tidySubject(f.subject)}</p>}
-        <CardFoot at={when(s.at, asof)} more={more} setMore={setMore} />
+        {bars.length > 1 && <div className="fo-media"><Chart series={bars} /></div>}
+        {r && <CardWord symbol={s.symbol} openCompany={openCompany} />}
+        <CardFoot more={more} setMore={setMore} />
       </div>
       <Accordion open={more}>
         <div className="card-more">
@@ -309,13 +325,13 @@ function MoveCard({ m, lead, name, lines, openCompany }: { m: Move; lead?: boole
   const [v, u] = pctParts(m.chg)
   return (
     <article className={`card move${lead ? ' lead' : ''}`}>
-      <div className="card-img"><Chart series={m.series} /></div>
       <div className="card-info">
-        <CardLabel kind="Unusual day" />
+        <CardLabel kind="Unusual day" at={shortDay(m.d)} />
         <button className="card-title" onClick={() => openCompany(m.symbol)}>{name}</button>
         <div className="card-fig"><Outcome value={v} unit={u} /><span className="card-cap"><span className="num">{m.volX.toFixed(1)}×</span> its 20-day volume</span></div>
         <p className="card-desc">{moveWhy(m)}</p>
-        <CardFoot at={shortDay(m.d)} more={more} setMore={setMore} />
+        {m.series.length > 1 && <div className="fo-media"><Chart series={m.series} /></div>}
+        <CardFoot more={more} setMore={setMore} />
       </div>
       <Accordion open={more}>
         <div className="card-more">
