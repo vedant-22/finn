@@ -21,7 +21,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
     <div className="warm-top">
       <header className="page-top">
         <h1 className="t-h1">Your book</h1>
-        <p className="serif-line">{push.portfolio.length} holdings, the weakest word first. Prices at the {closeLabel} close.</p>
+        <p className="serif-line">{push.portfolio.length} holdings, and how well each management team has kept its word. Prices at the {closeLabel} close.</p>
       </header>
       {tally}
     </div>
@@ -46,6 +46,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
     <main className="screen book">
       {head(<BookTally cos={Object.values(cos)} only={only} setOnly={setOnly} />)}
       {only && <p className="book-filter sub" aria-live="polite">{shown.length} with {WITH[only]} <button className="text-btn" onClick={() => setOnly(null)}>Show all</button></p>}
+      {!only && <h2 className="sec-head book-head2">Weakest word first</h2>}
       <ul className="book-list">
         {shown.map(({ p, c, score, last }, i) => {
           const weak = weakest(c, only)

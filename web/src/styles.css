@@ -194,6 +194,7 @@ blockquote { margin: 0; }
 .page-top { padding-top: var(--s-m); }
 
 .book-filter { display: flex; align-items: center; justify-content: space-between; margin-top: var(--s-s); font-size: 14px; }
+.book-head2 { margin-top: var(--s-2xl); }
 .book-list { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3xs); margin-top: var(--s-s); }
 .book-list > li { min-width: 0; display: flex; }
 .book-list > li.wide { grid-column: 1 / -1; }
