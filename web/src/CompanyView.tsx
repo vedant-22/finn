@@ -72,7 +72,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
         <h1 className="co-name" ref={nameRef}>{name}</h1>
         <p className="co-rec">{standing}</p>
         {price != null && <div className="co-px">
-          <Outcome size="m" pre="₹" value={price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)} />
+          <Outcome size="xs" pre="₹" value={price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)} />
           <p className="card-cap">{close ? `At the ${new Date(close.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} close. ` : ''}{s.mcap != null && <>Worth ₹{crBig(s.mcap * k)}{s.pe ? `, ${(s.pe * k).toFixed(1)}× earnings` : ''}.</>}</p>
         </div>}
         {bars && <Strip bars={bars.slice(-30)} />}
