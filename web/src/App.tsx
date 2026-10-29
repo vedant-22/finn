@@ -6,7 +6,7 @@ import {
   buildLive, CATEGORY_LABEL, plainError, DEFAULT_LINES, forgetCompanies, getCompany, getPush, loadLines, saveLines, shortName, wordScore,
   type Bar, type Company, type Lines, type Push, type Status, type Step,
 } from './lib'
-import { BackBar, Chip, IndexRow, Mark, Masthead, MenuCtx, Sheet, StatusLabel, useEdgeBack } from './ui'
+import { BackBar, Chip, IndexRow, Mark, Masthead, MenuCtx, Outcome, Sheet, StatusLabel, useEdgeBack } from './ui'
 
 type Route = { tab: 'today' | 'book' | 'look'; sym?: string; pid?: number }
 const parse = (): Route => {
@@ -240,14 +240,15 @@ function Look({ push, openCompany }: { push: Push; openCompany: (s: string) => v
     <main className="screen look">
       <Masthead />
       <header className="banner">
-        <h1>Look up any NSE company</h1>
-        <p>FINN reads its last five earnings calls and filed results, and checks each promise against what happened.</p>
+        {/* the screen's one italic phrase */}
+        <h1>What did they <em className="fo-it">promise</em>?</h1>
+        <p>Type any NSE company. FINN reads its last five earnings calls and filed results, and checks each promise against what happened.</p>
       </header>
       <form onSubmit={submit} className="look-form">
-        <label htmlFor="sym" className="lbl lbl-quiet">NSE symbol or name</label>
-        <div className="look-row">
-          <input id="sym" value={q} onChange={e => setQ(e.target.value)} placeholder="ASTRAL, or a name" autoCapitalize="characters" autoCorrect="off" spellCheck={false} />
-          <button type="submit" className="btn-primary">Check their word</button>
+        <label htmlFor="sym" className="sr-only">NSE symbol or name</label>
+        <div className="fo-field">
+          <input id="sym" value={q} onChange={e => setQ(e.target.value)} placeholder="ASTRAL, or a name" autoCapitalize="characters" autoCorrect="off" spellCheck={false} enterKeyHint="go" />
+          <button type="submit" className="fo-go" aria-label="Check their word"><svg viewBox="0 0 16 16" aria-hidden><path d="M3 8h9.5M8.5 3.5L13 8l-4.5 4.5" /></svg></button>
         </div>
       </form>
       {matches.length > 0 && <Chips title={matches.length === 1 && !known.includes(want) ? 'Did you mean' : 'Matches'} syms={matches.slice(0, 6)} open={openCompany} names={names} />}
@@ -256,30 +257,37 @@ function Look({ push, openCompany }: { push: Push; openCompany: (s: string) => v
     </main>
   )
 }
-// Companies already read, as small panel cards in two columns: the symbol as the label, the name as the title,
-// and their record once the ledger is in
+// Companies already read, as index rows: the name in serif, their record as a figure, the symbol under
 function Tiles({ title, syms, open, names }: { title: string; syms: string[]; open: (s: string) => void; names: Record<string, string> }) {
-  const [rec, setRec] = useState<Record<string, string>>({})
+  const [rec, setRec] = useState<Record<string, { kept: number; graded: number; hard: number }>>({})
   useEffect(() => {
     let live = true
     syms.forEach(s => getCompany(s).then(c => {
       const w = wordScore(c ?? undefined)
-      if (!live || !w) return
-      const line = w.graded ? `${Math.floor(w.kept)}/${w.graded} kept` : w.hard ? 'None due yet' : 'Nothing to grade'
-      setRec(r => ({ ...r, [s]: line }))
+      if (live && w) setRec(r => ({ ...r, [s]: { kept: Math.floor(w.kept), graded: w.graded, hard: w.hard } }))
     }).catch(() => {}))
     return () => { live = false }
   }, [syms.join()])
   return (
     <section className="chips-sec tiles-sec"><h2 className="sec-head">{title}</h2>
-      <ul className="tiles">{syms.map(s => <li key={s}><button className="tile" onClick={() => open(s)}><span className="lbl lbl-quiet">{s}</span><span className="tile-name">{names[s] || s}</span><span className="tile-rec">{rec[s] || '\u00a0'}</span></button></li>)}</ul>
+      <ul className="fo-index">{syms.map(s => {
+        const r = rec[s]
+        return (
+          <li key={s}><button className="fo-hold" onClick={() => open(s)}>
+            <span className="fo-hold-name">{names[s] || s}</span>
+            <span className="fo-hold-rec">{r?.graded ? <Outcome size="xs" value={r.kept} unit={`/${r.graded} kept`} /> : null}</span>
+            <svg className="fo-row-arrow" viewBox="0 0 16 16" aria-hidden><path d="M6 3.5l4.5 4.5L6 12.5" /></svg>
+            <span className="fo-hold-line">{s}{r && !r.graded ? (r.hard ? ', none due yet' : ', nothing to grade yet') : ''}</span>
+          </button></li>
+        )
+      })}</ul>
     </section>
   )
 }
 function Chips({ title, syms, open, names }: { title: string; syms: string[]; open: (s: string) => void; names?: Record<string, string> }) {
   return (
-    <section className="chips-sec"><h2 className="lbl lbl-quiet">{title}</h2>
-      <div className="chips">{syms.map(s => <button key={s} className="btn-outline" onClick={() => open(s)}>{names?.[s] || s}</button>)}</div>
+    <section className="chips-sec"><h2 className="fo-tally-h">{title}</h2>
+      <div className="chips">{syms.map(s => <button key={s} className="fo-chip fo-chip-btn" onClick={() => open(s)}>{names?.[s] || s}</button>)}</div>
     </section>
   )
 }

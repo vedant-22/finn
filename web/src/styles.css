@@ -416,21 +416,27 @@ blockquote { margin: 0; }
 
 /* ---------- Look up (ui-banner-header) ---------- */
 .banner { padding-top: var(--fo-s-2xl); }
+.fo-it { font-style: italic; letter-spacing: -0.01em; }  /* the one italic phrase a screen may have */
+.look .banner h1 { font-size: 46px; line-height: 102%; letter-spacing: -0.025em; }
 .banner p { margin-top: var(--fo-s-3xs); font-size: 16px; line-height: 140%; color: var(--fo-ink-2); }
 .look-form { margin-top: var(--fo-s-l); }
-.look-form label { font-size: 14px; }
-.look-row input { display: block; width: 100%; font: 400 32px/112% var(--fo-serif); letter-spacing: -0.015em; color: var(--fo-ink); background: none; border: 0; border-bottom: 1px solid var(--fo-ink); border-radius: 0; padding: 10px 0; text-transform: uppercase; }
-.look-row input::placeholder { text-transform: none; color: var(--fo-ink-2); }
-.look-row input:focus { outline: none; border-bottom-color: var(--fo-blue); }
-.look-row .btn-primary { margin-top: var(--fo-s-s); }
-.chips-sec { margin-top: var(--fo-s-xl); }
+/* a rounded field with its square button inside, on the right */
+.fo-field { display: flex; align-items: center; gap: 8px; height: 60px; padding: 0 8px 0 16px; border: 1px solid var(--fo-rule); border-radius: 16px; background: var(--fo-paper); transition: border-color 200ms, box-shadow 200ms; }
+.fo-field:focus-within { border-color: var(--fo-blue); box-shadow: 0 0 0 3px var(--fo-kept-wash); }
+.fo-field input { flex: 1; min-width: 0; height: 100%; font: 400 24px/1 var(--fo-serif); letter-spacing: -0.01em; color: var(--fo-ink); background: none; border: 0; padding: 0; text-transform: uppercase; }
+.fo-field input::placeholder { text-transform: none; color: var(--fo-ink-2); }
+.fo-field input:focus { outline: none; }
+.fo-go { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: var(--fo-r-control); background: var(--fo-blue); color: #fff; transition: background-color 150ms; }
+.fo-go svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform 250ms var(--fo-spring); }
+.fo-go:active { background: var(--fo-blue-pressed); }
+@media (hover: hover) { .fo-go:hover svg { transform: translateX(2px); } }
+.chips-sec { margin-top: var(--fo-s-m); }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: var(--fo-s-3xs); }
-.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: var(--fo-s-3xs); margin-top: var(--fo-s-s); }
+.fo-chip-btn { height: 36px; padding: 0 14px; font-size: 15px; transition: background-color 150ms; }
+.fo-chip-btn:active { background: var(--fo-rule); }
+@media (hover: hover) { .fo-chip-btn:hover { background: var(--fo-rule); } }
 .tiles-sec { margin-top: var(--fo-s-2xl); }
-.tile { display: flex; flex-direction: column; text-align: left; width: 100%; min-height: 0; height: 100%; background: var(--fo-panel); padding: var(--fo-s-2xs); }
-.tile-name { font-size: 17px; line-height: 130%; color: var(--fo-ink); margin-top: var(--fo-s-5xs); }
-.tile-rec { font: 15px/140% var(--fo-sans); color: var(--fo-ink-2); margin-top: auto; padding-top: var(--fo-s-2xs); }
-.chips .btn-outline { height: 36px; padding: 0 var(--fo-s-2xs); font-size: 15px; }
+.tiles-sec .fo-index { margin-top: var(--fo-s-2xs); }
 
 /* ---------- tabs ---------- */
 .tabs { position: fixed; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; background: var(--fo-paper); border-top: 1px solid var(--fo-rule); padding-bottom: env(safe-area-inset-bottom); z-index: 5; }
@@ -467,8 +473,8 @@ blockquote { margin: 0; }
 .lines .text-btn { margin-top: var(--fo-s-3xs); color: var(--fo-blue); }
 
 /* press: rows dim while held */
-:is(.note, .word-row, .fold-head, .og-btn, .soft, .tile) > * { transition: opacity 200ms; }
-:is(.note, .word-row, .fold-head, .og-btn, .soft, .tile):active > * { opacity: .5; transition: none; }
+:is(.note, .word-row, .fold-head, .og-btn, .soft) > * { transition: opacity 200ms; }
+:is(.note, .word-row, .fold-head, .og-btn, .soft):active > * { opacity: .5; transition: none; }
 
 @media (min-width: 720px) { .case { grid-template-columns: 1fr 1fr; } }
 
