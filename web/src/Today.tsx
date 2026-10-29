@@ -343,7 +343,7 @@ function NoteRow({ s, name, asof }: { s: Story; name: string; asof: string }) {
     <li>
       <a className="note" href={f.url} target="_blank" rel="noopener noreferrer">
         <span className="note-co">{name}</span>
-        <span className="note-text">{f.pct_rev != null ? stop(text) : text}{f.pct_rev != null && <span className="sub"> {sizeWords(f)}</span>}</span>
+        <span className="note-text">{stop(text)}{f.pct_rev != null && <span className="sub"> {sizeWords(f)}</span>}</span>
         <span className="note-when">{when(s.at, asof)}</span>
       </a>
     </li>
