@@ -96,7 +96,7 @@ blockquote { margin: 0; }
 .hero-fig { display: flex; flex-wrap: wrap; align-items: flex-end; column-gap: 10px; }
 .hero-unit { font: 500 36px/112% var(--f); letter-spacing: -2.16px; padding-bottom: 2px; }
 .hero-1 { font-size: 16px; margin-top: var(--s-3xs); padding-left: var(--s-nano); }
-.hero-2 { font: 16px/140% var(--serif); letter-spacing: 0; color: var(--ink-2); margin-top: var(--s-3xs); padding-left: var(--s-nano); }
+.hero-2 { font: 17px/140% var(--serif); letter-spacing: 0; color: var(--ink-2); margin-top: var(--s-2xs); padding-left: var(--s-nano); }
 
 .cards { display: grid; gap: var(--s-m); }
 /* ui-article-card: warm panel, square corners, picture inset on top */
@@ -175,7 +175,7 @@ blockquote { margin: 0; }
 .og { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--s-3xs); row-gap: var(--s-l); }
 .og-panel { background: var(--panel); padding: var(--s-s) var(--s-2xs) var(--s-m); margin: 0 calc(-1 * var(--g)); padding-inline: var(--g); }
 .og-panel > .lbl { display: block; margin-bottom: var(--s-s); }
-.company .og-panel .og { grid-template-columns: repeat(3, 1fr); row-gap: var(--s-s); }
+.company .og-panel .og { grid-template-columns: 1fr 1fr; row-gap: var(--s-l); }
 .og-item { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
 .og-btn { text-align: left; border-radius: 2px; }
 .og-btn .og-d1 { text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px; text-decoration-thickness: 1px; transition: text-decoration-color 200ms; }
@@ -232,7 +232,9 @@ blockquote { margin: 0; }
 .co-name-n { color: var(--ink-2); }
 .co-meta { margin-top: var(--s-3xs); font-size: 16px; line-height: 140%; color: var(--ink-2); }
 .company > section { margin-top: var(--s-2xl); }
-.co-pic { margin-top: var(--s-s); }
+.co-pic { margin: var(--s-s) calc(-1 * var(--g)) 0; }
+.co-pic .card-img { aspect-ratio: 390 / 220; }
+.co-pic .lbl { padding: 0 var(--g); }
 .co-pic .lbl { display: block; margin-top: var(--s-3xs); }
 .word-intro { margin-top: var(--s-3xs); }
 .read { font-size: 16px; line-height: 140%; color: var(--ink-2); }
@@ -240,7 +242,7 @@ blockquote { margin: 0; }
 .company .og-panel { margin-top: var(--s-s); }
 .tally-note { font-size: 13px; line-height: 140%; margin-top: var(--s-s); }
 .pgrid { margin-top: var(--s-xl); }
-.o-gap { display: block; height: 30px; }
+.p-fig { display: flex; align-items: flex-end; min-height: 48px; max-width: 100%; }
 .p-item .outcome { max-width: 100%; flex-wrap: wrap; }
 .p-item .lbl { margin: var(--s-5xs) 0 0 var(--s-nano); }
 .p-item .og-d1 { overflow-wrap: anywhere; }

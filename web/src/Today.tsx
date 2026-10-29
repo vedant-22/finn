@@ -50,11 +50,14 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
           {count === 0 ? <Outcome size="l" value="Nothing" /> : <Outcome size="l" value={<Roll to={count} start={sieve.current ? t.filings : undefined} />} />}
           <span className="hero-unit">{count === 1 ? 'needs you' : count === 0 ? 'needs you' : 'need you'}</span>
         </div>
-        {t.filings > 0 && <p className="hero-1">Out of {t.filings} {t.filings === 1 ? 'filing' : 'filings'} across {push.portfolio.length} holdings.</p>}
-        {spill.length > 0 && <p className="hero-2">{spill.length} more crossed your lines and {spill.length === 1 ? 'waits' : 'wait'} under Worth a look.</p>}
-        {count === 0 && <p className="hero-2">{t.filings === 0
-          ? 'None of your holdings filed anything in this window, and no price crossed your lines.'
-          : 'Nothing crossed your lines. The rest is folded below.'}</p>}
+        {/* One serif sentence or two under the figure, as the reference sets a dek */}
+        <p className="hero-2">
+          {t.filings > 0 && `Out of ${t.filings} ${t.filings === 1 ? 'filing' : 'filings'} across ${push.portfolio.length} holdings.`}
+          {spill.length > 0 && ` ${spill.length} more crossed your lines and ${spill.length === 1 ? 'waits' : 'wait'} under Worth a look.`}
+          {count === 0 && (t.filings === 0
+            ? 'None of your holdings filed anything in this window, and no price crossed your lines.'
+            : ' Nothing crossed your lines. The rest is folded below.')}
+        </p>
         <div className="window" role="radiogroup" aria-label="Time window">
           {WINDOWS.map(w => (
             <button key={w.h} role="radio" aria-checked={lines.hours === w.h} className={lines.hours === w.h ? 'on' : ''}

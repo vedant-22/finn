@@ -67,10 +67,10 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
           the name in grey running into the one thing to know, in ink */}
       <header className={`bar co-bar${past ? ' past' : ''}`}>
         <button className="text-btn back" onClick={back}>Back</button>
-        {past ? <span className="bar-name">{title || shortName(c.name)}</span> : <span className="lbl lbl-quiet">{c.symbol}{c.live ? ', read just now' : ''}</span>}
+        {past ? <span className="bar-name">{title || shortName(c.name)}</span> : null}
       </header>
       <div className="co-top">
-        <p className="lbl lbl-quiet co-sector">{sector || 'NSE'}</p>
+        <p className="lbl lbl-quiet co-sector">{sector || 'NSE'}, {c.symbol}{c.live ? ', read just now' : ''}</p>
         {/* the reference's own two-tone title, chosen: avoid-ai-design-ignore: SD5 */}
         <h1 className="co-name" ref={nameRef}><span className="co-name-n">{title || shortName(c.name)}.</span> {standing}</h1>
         <p className="co-meta">
@@ -242,7 +242,8 @@ function PromiseItem({ p, open, toggle }: { p: Promise_; open: boolean; toggle: 
   return (
     <li className={`og-item p-item st-${p.status}${open ? ' open' : ''}`} data-pid={p.id}>
       <button className="og-btn" aria-expanded={open} onClick={toggle}>
-        {fig ? <Outcome size={size} value={fig[0]} unit={fig[1]} /> : due ? <Outcome size="xs" value={due} /> : <span className="o-gap" aria-hidden />}
+        {/* Figures sit in one 48 px band, so the sentences under them start level across the row */}
+        <span className="p-fig">{fig ? <Outcome size={size} value={fig[0]} unit={fig[1]} /> : due ? <Outcome size={due.length > 5 ? "xs" : "s"} value={due} /> : null}</span>
         <span className="og-d1" style={{ display: 'block' }}>{cap(rupees(p.target))}{deadline(p) ? ` ${deadline(p)}` : ''}.</span>
         <span className="og-d2" style={{ display: 'block' }}>Said {p.period.replace(/ 20/, ' ’')}</span>
       </button>
