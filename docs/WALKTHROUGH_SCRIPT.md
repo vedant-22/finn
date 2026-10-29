@@ -33,6 +33,7 @@ Scroll to the Syngene management change card (its CFO resigns).
 
 **4. The ledger (1:05–1:40)**
 Go Book → Larsen & Toubro (or tap the name on its card). Tapping that MISSED row on the card instead opens the ledger already at that promise.
+The page opens on its record in one line: "Larsen & Toubro. 1 of 3 promises kept, 1 partly."
 > "This is the ledger. Every promise from their last calls that had a number and a date."
 Tap the first promise marked MISSED to open it.
 > "Here's what they said, with the page. Here's what happened."
@@ -45,6 +46,7 @@ Scroll to "Ask on the next call".
 Tap "Book".
 > "My whole portfolio, sorted by whose word is weakest."
 *(silence, 2 seconds on the tally)*
+Scroll once: the weakest holding leads in blue, the rest follow two to a row, each naming its weakest promise.
 
 **6. Any company (1:55–2:15)**
 Tap "Look up", type ASTRAL, tap "Check their word".
