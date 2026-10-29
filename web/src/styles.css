@@ -190,7 +190,7 @@ blockquote { margin: 0; }
 .hero-1 { font-size: 16px; margin-top: var(--fo-s-3xs); padding-left: var(--fo-s-nano); }
 .hero-2 { font: 16px/145% var(--fo-sans); color: var(--fo-ink-2); margin-top: var(--fo-s-3xs); }
 
-.cards { display: grid; gap: var(--fo-s-3xs); }
+.cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--fo-s-3xs); }
 /* the Folio card: white, rounded, a hairline; the picture sits in a rounded inset below the words */
 .card { background: var(--fo-paper); border: 1px solid var(--fo-rule); border-radius: var(--fo-r-card); padding: 18px var(--fo-s-2xs) 4px; }
 .card-img { background: var(--fo-paper); aspect-ratio: 390 / 230; }
@@ -233,7 +233,7 @@ blockquote { margin: 0; }
 .figs { width: 100%; border-collapse: collapse; }
 .figs caption { text-align: left; font-size: 13px; color: var(--fo-ink-2); padding-bottom: 4px; }
 .figs th, .figs td { padding: 8px 0; border-top: 1px solid var(--fo-rule); font-size: 15px; }
-.figs thead th { border-top: 0; font-size: 12px; font-weight: 500; color: var(--fo-ink-2); padding: 0 0 4px; text-align: right; text-transform: uppercase; letter-spacing: .24px; }
+.figs thead th { border-top: 0; font-size: 13px; font-weight: 500; color: var(--fo-ink-2); padding: 0 0 4px; text-align: right; }
 .figs tbody th { text-align: left; font-weight: 500; }
 .figs td.num { text-align: right; padding-left: 10px; }
 .figs td:nth-child(2) { font-weight: 500; }
