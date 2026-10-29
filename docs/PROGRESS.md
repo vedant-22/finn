@@ -1,4 +1,4 @@
-Next: 29 Oct, iteration 2. PLAN checklist done, critic rounds stopped at 8 (levelled ~7, contradicting each other). Keep polishing toward the reference screen by screen. Checks live in web/test/e2e (flows, folds, sweep at 320/390; ship.sh deploys). Deploy from app/ with `npx vercel --prod --yes` after a 390x844 check
+Next: 29 Oct, iteration 2 polish. PLAN checklist done. Keep polishing toward the reference screen by screen (open folds on Today and the company page next), then retake README shots if a screen changed visibly. Checks live in web/test/e2e (flows, folds, sweep at 320/390; ship.sh deploys). Deploy from app/ with `npx vercel --prod --yes` after a 390x844 check
 
 Next: 29 Oct (iteration 1 of the redesign after the reference, ends 08:10 IST; nothing new after 07:55). Work down design/PLAN.md's checklist: side-by-side check of each screen against shots/ref-*.png, then the critic pass, detect.mjs, writing pass, DESIGN.md + design/inspiration.md rewrite, README shots. Files: web/src/{styles.css,ui.tsx,Today.tsx,Book.tsx,CompanyView.tsx,App.tsx}. Deploy from app/ with `npx vercel --prod --yes` after a 390x844 check. The older 10:45 snapshot rebuild note still stands for a later session (`python3 pipeline/build_push.py`, then counts in README/DECISIONS/covering note/walkthrough)
 
@@ -157,3 +157,8 @@ Next: 29 Oct (iteration 1 of the redesign after the reference, ends 08:10 IST; n
 - Critic round 8 (nine pairs): 6.5 / 7.5 / 7 / 7 / 6.5 / 7 / 6.5 / 7 / 8. Scores have levelled around 7 and the rounds now contradict each other (round 6 asked for the window words, round 8 asks to remove them; round 4 asked for more air between cards, round 8 for less), so further critic rounds stop here. Acted on: 'FY' set at unit size in year figures; the company picture taller (390:300); one way to write a record on Look up and Book ('6/14 kept'). Fold rows on Today always end with a full stop (165 rows checked)
 - Book: a 'Weakest word first' section head between the warm tally and the holdings, as the reference heads its card lists; the serif line under 'Your book' now says what the page measures ('18 holdings, and how well each management team has kept its word. Prices at the 28 Oct close.')
 - Browser checks kept in web/test/e2e (flows, folds, sweep, ship.sh). Live: all flows and folds pass after the last deploy
+
+## Polish, iteration 2 (29 Oct, after the checklist)
+- Body text in proportional figures: Inter's tabular hyphen read '20 - day' and 'NWC - to - Revenue'; tabular figures stay on .num and outcome figures. Deployed 29 Oct ~09:15 IST
+- Amounts keep their unit on one line ('Worth ₹5.23 lakh / cr' broke): no-break spaces in crBig and rupees(). Tests 12/12; sweep 22 pages at 320/390 clean. Deployed
+- Headings wrap balanced, paragraphs avoid orphans ('Look up any NSE / company' -> 'Look up any / NSE company'). Live flows and folds pass
