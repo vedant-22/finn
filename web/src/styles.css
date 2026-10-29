@@ -47,16 +47,13 @@ blockquote { margin: 0; }
 /* ---------- type roles ---------- */
 /* serif: headlines, names, figures, quotes. Light weight, optical size follows the font size */
 .t-h1, .co-name, .banner h1 { font: 400 34px/108% var(--fo-serif); letter-spacing: -0.02em; }
-.t-h2, .sec-head { font: 400 28px/112% var(--fo-serif); letter-spacing: -0.015em; }
-.t-b1, .card-title { font: 500 23px/118% var(--fo-serif); letter-spacing: -0.01em; }
-.fo-it { font-style: italic; }  /* the one italic phrase a screen may have */
-.fo-quote, .p-detail blockquote, .open-list blockquote { font-family: var(--fo-serif); font-weight: 400; letter-spacing: 0; }
+.sec-head { font: 400 28px/112% var(--fo-serif); letter-spacing: -0.015em; }
+.card-title { font: 500 23px/118% var(--fo-serif); letter-spacing: -0.01em; }
+.p-detail blockquote, .open-list blockquote { font-family: var(--fo-serif); font-weight: 400; letter-spacing: 0; }
 /* sans: everything FINN says in sentences, and every control */
-.t-b3 { font: 400 14px/145% var(--fo-sans); }
 .lbl { font: 500 13px/116% var(--fo-sans); color: var(--fo-ink); white-space: nowrap; }
 .lbl-quiet { color: var(--fo-ink-2); }
-.st-missed { color: var(--fo-missed); }
-.serif, .card-desc, .serif-line, .co-meta, .banner p, .read, .note-text, .bio, .verdict-t { font-family: var(--fo-sans); font-weight: 400; }
+.serif, .card-desc, .serif-line, .banner p, .read, .note-text, .bio { font-family: var(--fo-sans); font-weight: 400; }
 
 /* figures: serif, light, lining and tabular, the unit set smaller beside it */
 .outcome { display: inline-flex; align-items: baseline; gap: 3px; font-family: var(--fo-serif); font-weight: 400; color: var(--fo-ink); font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
@@ -83,17 +80,13 @@ blockquote { margin: 0; }
 .btn-sm { height: 32px; padding: 0 var(--fo-s-3xs); font-size: 15px; }
 .text-btn { color: var(--fo-ink-2); min-height: 44px; display: inline-flex; align-items: center; transition: color 200ms; }
 .text-btn:active { color: var(--fo-ink); }
-.read-more, .see { color: var(--fo-blue); font: 400 16px/140% var(--fo-sans); min-height: 40px; align-self: flex-start; }
-.read-more:active, .see:active { color: var(--fo-blue-pressed); }
+.see { color: var(--fo-blue); font: 400 16px/140% var(--fo-sans); min-height: 40px; align-self: flex-start; }
 @media (hover: hover) { .btn-outline:hover { background: var(--fo-blue); color: #fff; } .text-btn:hover { color: var(--fo-ink); } }
 
 /* ---------- frame ---------- */
 .screen { max-width: 560px; margin: 0 auto; padding: 0 var(--fo-gutter) calc(env(safe-area-inset-bottom) + 112px); }
 /* A new screen fades in, so a tab change reads as a change of page, not a flash */
 .screen { animation: fade-in 320ms var(--fo-ease-out) both; }
-.warm-top { background: var(--fo-panel); margin: 0 calc(-1 * var(--fo-gutter)); padding: 0 var(--fo-gutter); border-radius: 0 0 var(--fo-r-12) var(--fo-r-12); }
-.warm-top .page-top { padding-top: var(--fo-s-2xl); }
-.warm-top .og-panel { margin-top: var(--fo-s-l); padding-bottom: var(--fo-s-l); background: transparent; }
 .boot { min-height: 100dvh; display: grid; place-items: center; align-content: center; gap: 12px; padding: 24px; text-align: center; }
 /* ---------- Folio: the floating bar and the mark ---------- */
 .fo-bar { position: sticky; top: 0; z-index: 6; margin: 0 calc(-1 * var(--fo-gutter)); padding: calc(env(safe-area-inset-top) + 8px) 10px 6px; pointer-events: none; transition: transform 400ms var(--fo-ease-out); }
@@ -172,6 +165,7 @@ blockquote { margin: 0; }
 .fo-prow-head:active .fo-round { background: var(--fo-rule); }
 @media (hover: hover) { .fo-prow-head:hover .fo-round { background: var(--fo-rule); } }
 .fo-prow-body { padding-bottom: var(--fo-s-2xs); }
+.fo-prow-head:focus-visible { border-radius: var(--fo-r-12); outline-offset: 4px; }
 .soft-note { margin-top: var(--fo-s-m); font-size: 14px; }
 .word .fold { margin-top: var(--fo-s-l); }
 .fo-tally-h { font: 500 13px/116% var(--fo-sans); color: var(--fo-ink-2); }
@@ -212,7 +206,6 @@ blockquote { margin: 0; }
 .fo-menu { margin-top: var(--fo-s-3xs); }
 .fo-index { margin-top: var(--fo-s-l); border-top: 1px solid var(--fo-rule); }
 .sheet-intro { margin: var(--fo-s-3xs) 0 var(--fo-s-5xs); font-size: 14px; line-height: 145%; }
-.fo-menu-h { margin: var(--fo-s-l) 0 0; font: 500 13px/116% var(--fo-sans); color: var(--fo-ink-2); }
 .grades li { display: grid; grid-template-columns: 112px 1fr; align-items: start; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--fo-rule); font-size: 15px; line-height: 145%; }
 .grades li .fo-chip { justify-self: start; margin-top: -1px; }
 .fo-menu-foot { margin-top: var(--fo-s-m); font-size: 13px; line-height: 145%; }
@@ -221,8 +214,6 @@ blockquote { margin: 0; }
 .serif-line { font-size: 16px; line-height: 140%; color: var(--fo-ink-2); margin-top: var(--fo-s-3xs); }
 
 /* ---------- Today ---------- */
-.dateline { font-size: 16px; line-height: 140%; font-weight: 500; margin-top: var(--fo-s-5xs); }
-.dateline .sub { display: block; font-size: 14px; font-weight: 400; }
 /* The window: a segmented control, a rounded track with the one that's on lifted onto white */
 .window { display: inline-flex; gap: 2px; margin-top: var(--fo-s-m); padding: 3px; background: var(--fo-chip); border-radius: 12px; }
 .window button { height: 38px; padding: 0 14px; border-radius: 9px; color: var(--fo-ink-2); font-size: 15px; font-weight: 500; text-align: center; transition: color 200ms, background-color 200ms, box-shadow 200ms; }
@@ -231,18 +222,14 @@ blockquote { margin: 0; }
 .hero-lbl { margin-bottom: var(--fo-s-s); }
 .hero-fig { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 10px; }
 .hero-unit { font: italic 400 38px/100% var(--fo-serif); letter-spacing: -0.015em; }
-.hero-1 { font-size: 16px; margin-top: var(--fo-s-3xs); padding-left: var(--fo-s-nano); }
 .hero-2 { font: 16px/145% var(--fo-sans); color: var(--fo-ink-2); margin-top: var(--fo-s-3xs); }
 
 .cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--fo-s-3xs); }
 /* the Folio card: white, rounded, a hairline; the picture sits in a rounded inset below the words */
 .card { background: var(--fo-paper); border: 1px solid var(--fo-rule); border-radius: var(--fo-r-card); padding: 18px var(--fo-s-2xs) 4px; }
-.card-img { background: var(--fo-paper); aspect-ratio: 390 / 230; }
 .chart { display: block; width: 100%; height: 100%; }
 .chart .line { fill: none; stroke: var(--fo-blue); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
 .chart .wash { fill: var(--fo-wash); }
-.chart .vol { fill: var(--fo-rule); }
-.chart .vol-last { fill: var(--fo-blue); }
 .chart .day { stroke: var(--fo-ink-2); stroke-width: 1; stroke-dasharray: 2 3; }
 .card-info { display: flex; flex-direction: column; }
 .card-lbl { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
@@ -314,10 +301,6 @@ blockquote { margin: 0; }
 .folded li .sub { grid-column: 2; font-size: 13px; }
 
 /* ---------- outcomes grid (ui-outcomes-grid) ---------- */
-.og { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--fo-s-3xs); row-gap: var(--fo-s-l); }
-.og-panel { background: var(--fo-panel); padding: var(--fo-s-s) var(--fo-s-2xs) var(--fo-s-m); margin: 0 calc(-1 * var(--fo-gutter)); padding-inline: var(--fo-gutter); }
-.og-panel > .lbl { display: block; margin-bottom: var(--fo-s-s); }
-.company .og-panel .og { grid-template-columns: 1fr 1fr; row-gap: var(--fo-s-l); }
 .og-item { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
 .og-btn { text-align: left; border-radius: 2px; }
 .og-btn .og-d1 { text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px; text-decoration-thickness: 1px; transition: text-decoration-color 200ms; }
@@ -337,27 +320,17 @@ blockquote { margin: 0; }
 .book-list > li.wide { margin-bottom: var(--fo-s-3xs); }
 .book-list > li { min-width: 0; display: flex; }
 .book-list > li.wide { grid-column: 1 / -1; }
-.tile-card { align-items: flex-start; text-align: left; min-height: 100%; padding-bottom: var(--fo-s-s); }
-.tile-card .card-title { margin-top: var(--fo-s-3xs); font-size: 17px; line-height: 130%; font-weight: 500; min-height: 0; }
-.tile-card .book-rec { margin-top: var(--fo-s-3xs); text-align: left; }
-.tile-card .card-desc { font-size: 15px; }
-.book-card { display: flex; flex-direction: column; width: 100%; background: var(--fo-panel); padding: var(--fo-s-xs) var(--fo-s-2xs) var(--fo-s-2xs); }
-.book-card .card-lbl { width: 100%; }
 .book-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; margin-top: var(--fo-s-3xs); width: 100%; }
 .book-head .card-title { margin: 0; }
 .book-rec { text-align: right; flex: none; }
-.book-card .card-desc { margin-top: var(--fo-s-3xs); }
 .book-px { margin-top: var(--fo-s-3xs); font-size: 14px; color: var(--fo-ink-2); }
 
-/* The brand fill goes on a text-only block, as the reference sets its coloured tiles: a company's questions.
-   Cards with a picture stay warm. The tokens flip inside it, so links and labels follow. */
+/* The brand fill goes on one text-only block: a company's questions. The tokens flip inside it, so links and labels follow */
 .ask.lead {
   --fo-ink: #FFFFFF; --fo-ink-2: rgba(255, 255, 255, .78); --fo-rule: rgba(255, 255, 255, .24); --fo-blue: #FFFFFF; --fo-blue-pressed: rgba(255, 255, 255, .7);
   --fo-missed: #FFFFFF; --fo-paper: rgba(255, 255, 255, .08); --fo-wash: rgba(255, 255, 255, .12);
   background: #005DA3; color: var(--fo-ink);
 }
-.book-card.lead .card-img { margin: calc(var(--fo-s-2xs) - var(--fo-s-xs)) 0 var(--fo-s-xs); width: 100%; }
-.book-og .og-d1 { min-height: 2.8em; }
 
 /* ---------- Company ---------- */
 /* the floating bar again, holding Back; it stays, so Back is always in reach */
@@ -381,29 +354,16 @@ blockquote { margin: 0; }
 .read { font-size: 16px; line-height: 140%; color: var(--fo-ink-2); }
 .read .see { min-height: 0; font-size: 16px; }
 .word-intro .see { display: block; margin-top: var(--fo-s-5xs); min-height: 40px; }
-.company .og-panel { margin-top: var(--fo-s-s); }
-.tally-note { font-size: 13px; line-height: 140%; margin-top: var(--fo-s-s); }
 .pgrid-head { margin-top: var(--fo-s-2xl); }
-.pgrid { margin-top: var(--fo-s-m); }
-@media (min-width: 360px) { .pgrid { column-gap: var(--fo-s-xs); } }
-/* The reference sets its 'see the case' links grey; blue stays for Read more */
-.p-item .og-link { color: var(--fo-ink-2); font-size: 15px; }
 .o-pre { margin-right: 2px; }
-.p-fig { display: flex; align-items: flex-end; min-height: 48px; max-width: 100%; }
-.p-item .outcome { max-width: 100%; flex-wrap: wrap; }
-.p-item .lbl, .p-item > .fo-chip { margin: var(--fo-s-5xs) 0 0 var(--fo-s-nano); }
-.p-item .og-d1 { overflow-wrap: anywhere; }
-.p-item.open { grid-column: 1 / -1; }
-.p-detail { padding: var(--fo-s-3xs) 0 0 var(--fo-s-nano); display: grid; gap: var(--fo-s-3xs); width: 100%; }
-.p-detail h4 { margin: 0 0 4px; }  /* the detail is already indented; .p-item .lbl would indent its labels twice */
+.p-detail { padding: var(--fo-s-3xs) 0 0; display: grid; gap: var(--fo-s-3xs); width: 100%; }
 .p-detail blockquote { font: 17px/140% var(--fo-serif); letter-spacing: 0; color: var(--fo-ink); }
 .p-detail .sub { font-size: 13px; margin-top: 4px; }
-.verdict-t { font-size: 15px; line-height: 140%; color: var(--fo-ink-2); }
 .soft { margin-top: var(--fo-s-l); color: var(--fo-ink-2); font-size: 14px; min-height: 44px; text-decoration: underline; text-decoration-color: var(--fo-rule); text-underline-offset: 4px; }
-.soft-list { margin-top: var(--fo-s-2xs); border-bottom: 1px solid var(--fo-rule); }
+.soft-list { padding-bottom: var(--fo-s-2xs); }
 .soft-row { padding: var(--fo-s-3xs) 0; border-top: 1px solid var(--fo-rule); }
 .soft-row .og-btn { display: block; width: 100%; min-height: 44px; }
-.soft-row .og-d1, .soft-row .og-d2, .soft-row .p-detail { padding-left: 0; }
+.soft-row .og-d1, .soft-row .og-d2, .soft-row .p-detail { display: block; padding-left: 0; }
 .soft-row .og-d1 { font-size: 15px; }
 .ask.lead { padding: var(--fo-s-s) var(--fo-s-xs) var(--fo-s-xs); border-radius: var(--fo-r-card); }
 .ask.lead .sec-head { padding-bottom: var(--fo-s-2xs); }
@@ -418,6 +378,7 @@ blockquote { margin: 0; }
 .fig-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--fo-s-3xs); row-gap: var(--fo-s-m); }
 .fig > .outcome { min-height: 48px; }  /* one band per row, so captions start level whatever the figure's size */
 .fig .og-d1 { margin-top: var(--fo-s-nano); }
+.fig :is(.og-d1, .og-d2) { padding-left: 0; }
 .traj { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--fo-s-3xs); }
 .traj .bars { max-width: 100%; height: auto; }
 .traj h3 { font-size: 14px; color: var(--fo-ink-2); margin-bottom: 6px; }
@@ -506,8 +467,8 @@ blockquote { margin: 0; }
 .lines .text-btn { margin-top: var(--fo-s-3xs); color: var(--fo-blue); }
 
 /* press: rows dim while held */
-:is(.note, .word-row, .fold-head, .book-card, .og-btn, .soft, .tile) > * { transition: opacity 200ms; }
-:is(.note, .word-row, .fold-head, .book-card, .og-btn, .soft, .tile):active > * { opacity: .5; transition: none; }
+:is(.note, .word-row, .fold-head, .og-btn, .soft, .tile) > * { transition: opacity 200ms; }
+:is(.note, .word-row, .fold-head, .og-btn, .soft, .tile):active > * { opacity: .5; transition: none; }
 
 @media (min-width: 720px) { .case { grid-template-columns: 1fr 1fr; } }
 
@@ -524,11 +485,11 @@ blockquote { margin: 0; }
 @media (hover: hover) { .btn-light:hover { background: rgba(255, 255, 255, .88); } .btn-light-outline:hover { background: #fff; color: var(--fo-blue); } }
 
 /* ---------- reveal: the reference's stagger fade, opacity only ---------- */
-.rv-on :is(.card, .book-card, .company > section, .fold, .chips-sec, .og-panel, .end-band-in) { opacity: 0; transition: opacity 1200ms var(--fo-ease-out); }
-.rv-on :is(.card, .book-card, .company > section, .fold, .chips-sec, .og-panel, .end-band-in)[data-seen] { opacity: 1; }
-.cards li:nth-child(2) .card, .book-list li:nth-child(2) .book-card { transition-delay: 120ms; }
-.cards li:nth-child(3) .card, .book-list li:nth-child(3) .book-card { transition-delay: 240ms; }
+.rv-on :is(.card, .company > section, .fold, .chips-sec, .end-band-in) { opacity: 0; transition: opacity 1200ms var(--fo-ease-out); }
+.rv-on :is(.card, .company > section, .fold, .chips-sec, .end-band-in)[data-seen] { opacity: 1; }
+.cards li:nth-child(2) .card { transition-delay: 120ms; }
+.cards li:nth-child(3) .card { transition-delay: 240ms; }
 @media (prefers-reduced-motion: reduce) {
-  .rv-on :is(.card, .book-card, .company > section, .fold, .chips-sec, .og-panel, .end-band-in) { opacity: 1; }
+  .rv-on :is(.card, .company > section, .fold, .chips-sec, .end-band-in) { opacity: 1; }
   * { transition: none !important; animation: none !important; }
 }
