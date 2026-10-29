@@ -10,10 +10,13 @@ async def main():
         for w in ['24h','3 days','Week','Month']:
             await pg.get_by_role('radio', name=w, exact=True).click(); await pg.wait_for_timeout(500)
             out[w] = (await pg.locator('.hero-fig').first.inner_text()).replace('\n',' '), await pg.locator('.cards .card').count()
-        await pg.get_by_role('button', name='Your lines', exact=True).click(); await pg.wait_for_timeout(500)
-        out['lines_dialog'] = await pg.locator('[role=dialog]').count()
+        # Alert lines live in the menu's index list
+        await pg.get_by_role('button', name='Menu', exact=True).click(); await pg.wait_for_timeout(500)
+        await pg.locator('.fo-row', has_text='Alert lines').click(); await pg.wait_for_timeout(500)
+        lines = pg.locator('.sheet[aria-label="Alert lines"]')
+        out['lines_open'] = await lines.is_visible() and not await pg.locator('.sheet[aria-label="Menu"]').is_visible()
         await pg.keyboard.press('Escape'); await pg.wait_for_timeout(600)
-        out['lines_closed'] = not await pg.locator('[role=dialog]').first.is_visible() if await pg.locator('[role=dialog]').count() else True
+        out['lines_closed'] = not await lines.is_visible()
         await pg.goto(base + '/#/book'); await pg.wait_for_timeout(2500)
         await pg.locator('.og-btn').nth(0).click(); await pg.wait_for_timeout(400)
         out['filter'] = await pg.locator('.book-filter').inner_text()

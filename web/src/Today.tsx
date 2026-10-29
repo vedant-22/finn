@@ -40,7 +40,7 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
 
   return (
     <main className="screen today">
-      <Masthead right={<button className="btn-outline btn-sm" onClick={openLines}>Your lines</button>} />
+      <Masthead />
       <section className="hero">
         <p className="lbl lbl-quiet hero-lbl">{asof.toDateString() === new Date().toDateString()
           ? `Today, filings to ${time}`
@@ -97,7 +97,7 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
           <h2 className="t-h1">{END[lines.hours] ?? 'That’s everything.'}</h2>
           <div className="end-band-btns">
             <a className="btn-light" href="#/book">Open your book</a>
-            <button className="btn-light-outline" onClick={openLines}>Change your lines</button>
+            <button className="btn-light-outline" onClick={openLines}>Change alert lines</button>
           </div>
         </div>
       </section>

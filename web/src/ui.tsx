@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 import type { Bar, Status } from './lib'
 
 // useState that outlives the screen, so a filter or an open fold is still there after Back from a company
@@ -58,21 +58,49 @@ export function StatusLabel({ status }: { status: Status }) {
   return <span className={`lbl st-${status}`}>{STATUS_LABEL[status]}</span>
 }
 
-// The masthead: wordmark left, one outlined pill right. Hides on the way down, comes back on the way up.
-// Warm: the page opens on a warm block, so the masthead is warm while it sits over it.
-export function Masthead({ right, warm }: { right?: ReactNode; warm?: boolean }) {
+// Folio's mark: a small ENAM-blue square holding a tick (the app icon), then 'finn' in the book serif, lowercase
+export function Mark({ label = 'FINN' }: { label?: string }) {
+  return (
+    <span className="fo-mark" aria-label={label} role="img">
+      <svg className="fo-mark-sym" viewBox="0 0 20 20" aria-hidden><rect width="20" height="20" rx="5.5" /><path d="M5.6 10.4l2.9 2.9 5.9-6.4" /></svg>
+      <span className="fo-mark-word" aria-hidden>finn</span>
+    </span>
+  )
+}
+
+// The menu opens from any screen's bar; App owns the sheet
+export const MenuCtx = createContext<() => void>(() => {})
+
+// The floating bar: the mark left, one small square Menu control right. Hides on the way down, back on the way up.
+export function Masthead(_: { warm?: boolean } = {}) {
+  const openMenu = useContext(MenuCtx)
   const [hide, setHide] = useState(false)
-  const [top, setTop] = useState(true)
   useEffect(() => {
     let y0 = scrollY
-    const on = () => { const y = scrollY; setTop(y < 320); if (Math.abs(y - y0) < 6) return; setHide(y > y0 && y > 80); y0 = y }
+    const on = () => { const y = scrollY; if (Math.abs(y - y0) < 6) return; setHide(y > y0 && y > 80); y0 = y }
     addEventListener('scroll', on, { passive: true }); return () => removeEventListener('scroll', on)
   }, [])
   return (
-    <header className={`mast${hide ? ' hide' : ''}${warm && top ? ' warm' : ''}`}>
-      <a className="wordmark" href="#/" aria-label="FINN, Today">FINN</a>
-      {right}
+    <header className={`fo-bar${hide ? ' hide' : ''}`}>
+      <div className="fo-bar-in">
+        <a className="fo-home" href="#/" aria-label="FINN, Today"><Mark label="" /></a>
+        <button className="fo-icon-btn" aria-label="Menu" aria-haspopup="dialog" onClick={openMenu}>
+          <svg viewBox="0 0 20 20" aria-hidden><path d="M3.5 7h13M3.5 13h13" /></svg>
+        </button>
+      </div>
     </header>
+  )
+}
+
+// An index row: a title, one line saying what's behind it, a count, an arrow. Opens a sheet or a page.
+export function IndexRow({ title, line, count, onClick, big }: { title: ReactNode; line?: ReactNode; count?: number; onClick: () => void; big?: boolean }) {
+  return (
+    <button className={`fo-row${big ? ' fo-row-big' : ''}`} onClick={onClick}>
+      <span className="fo-row-t">{title}</span>
+      {count != null && <span className="fo-row-n num">{count}</span>}
+      <svg className="fo-row-arrow" viewBox="0 0 16 16" aria-hidden><path d="M6 3.5l4.5 4.5L6 12.5" /></svg>
+      {line && <span className="fo-row-l">{line}</span>}
+    </button>
   )
 }
 
@@ -153,7 +181,7 @@ export function Bars({ values, labels, w = 150, h = 44, fmt }: { values: (number
   )
 }
 
-export function Sheet({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: ReactNode }) {
+export function Sheet({ open, onClose, title, children, full }: { open: boolean; onClose: () => void; title: string; children: ReactNode; full?: boolean }) {
   const ref = useRef<HTMLDivElement>(null)
   const close = useRef(onClose); close.current = onClose
   useEffect(() => {
@@ -183,7 +211,7 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
   return (
     <div className={`sheet-wrap ${open ? 'open' : ''}`} aria-hidden={!open}>
       <div className="scrim" onClick={onClose} />
-      <div className="sheet" role="dialog" aria-modal="true" aria-label={title} tabIndex={-1} ref={ref}>
+      <div className={`sheet${full ? ' sheet-full' : ''}`} role="dialog" aria-modal="true" aria-label={title} tabIndex={-1} ref={ref}>
         <div className="sheet-head" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
           <span className="grab" aria-hidden />
           <h2>{title}</h2>

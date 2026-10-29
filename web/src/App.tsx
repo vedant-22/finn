@@ -6,7 +6,7 @@ import {
   buildLive, CATEGORY_LABEL, plainError, DEFAULT_LINES, forgetCompanies, getCompany, getPush, loadLines, saveLines, shortName, wordScore,
   type Bar, type Company, type Lines, type Push, type Step,
 } from './lib'
-import { Masthead, Sheet, useEdgeBack } from './ui'
+import { IndexRow, Mark, Masthead, MenuCtx, Sheet, useEdgeBack } from './ui'
 
 type Route = { tab: 'today' | 'book' | 'look'; sym?: string; pid?: number }
 const parse = (): Route => {
@@ -22,6 +22,7 @@ export function App() {
   const [err, setErr] = useState('')
   const [lines, setLinesState] = useState<Lines>(loadLines)
   const [linesOpen, setLinesOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const [prev, setPrev] = useState<string>('')
   const scrolls = useRef(new Map<string, number>())
   const toY = useRef(0)
@@ -49,7 +50,7 @@ export function App() {
       // However a company was reached (tap, forward, a pasted link), Back and the lit tab follow where it came from
       if (r.sym && !from.startsWith('#/c/')) setPrev(from)
       toY.current = from.startsWith('#/c/') && !r.sym ? scrolls.current.get(location.hash || '#/') ?? 0 : 0
-      setLinesOpen(false)  // the sheet belongs to Today; Back with it up shouldn't carry it onto the next screen
+      setLinesOpen(false); setMenuOpen(false)  // a sheet belongs to the screen it opened on; Back with it up shouldn't carry it over
       setRoute(r)
     }
     window.addEventListener('hashchange', on); return () => window.removeEventListener('hashchange', on)
@@ -65,14 +66,16 @@ export function App() {
     else location.hash = h
   }
 
-  if (err) return <div className="boot"><span className="wordmark">FINN</span><p className="serif-line">Couldn't load your filings. {plainError(err)}</p><button className="btn-outline" onClick={() => location.reload()}>Try again</button></div>
-  if (!push) return <div className="boot"><span className="wordmark" aria-label="FINN, loading">FINN</span></div>
+  if (err) return <div className="boot"><Mark /> <p className="serif-line">Couldn't load your filings. {plainError(err)}</p><button className="btn-outline" onClick={() => location.reload()}>Try again</button></div>
+  if (!push) return <div className="boot"><Mark label="FINN, loading" /></div>
   const holding = (s?: string) => push.portfolio.find(p => p.symbol === s)
   // On a company page, light the tab it was opened from
   const tab = !route.sym ? route.tab : prev.startsWith('#/book') ? 'book' : prev.startsWith('#/look') ? 'look' : prev ? 'today' : holding(route.sym) ? 'book' : 'look'
 
+  const linesSummary = `${lines.interrupt.length} kinds of filing, a ±${lines.movePct}% day or ${lines.volX}× volume`
+  const menuGo = (t: Route['tab']) => { setMenuOpen(false); go(t) }
   return (
-    <>
+    <MenuCtx.Provider value={() => setMenuOpen(true)}>
       {route.sym
         ? <CompanyRoute sym={route.sym} pid={route.pid} sector={holding(route.sym)?.sector} title={holding(route.sym)?.short} close={push.eod[route.sym]?.[push.eod[route.sym].length - 1]} bars={push.eod[route.sym]} back={() => { location.hash = !prev || prev === location.hash ? '#/' : prev }} />
         : route.tab === 'book' ? <Book push={push} openCompany={openCompany} />
@@ -85,10 +88,22 @@ export function App() {
         <button className={tab === 'look' ? 'on' : ''} aria-current={tab === 'look' ? 'page' : undefined} onClick={() => go('look')}>Look up</button>
       </nav>
 
-      <Sheet open={linesOpen} onClose={() => setLinesOpen(false)} title="Your lines">
+      {/* The menu: an index list. The three screens, then the one setting FINN has, the alert lines */}
+      <Sheet open={menuOpen} onClose={() => setMenuOpen(false)} title="Menu" full>
+        <nav className="fo-menu" aria-label="Menu">
+          <IndexRow big title="Today" line="What crossed your lines, and what can wait" onClick={() => menuGo('today')} />
+          <IndexRow big title="Book" line={`Your ${push.portfolio.length} holdings, weakest word first`} onClick={() => menuGo('book')} />
+          <IndexRow big title="Look up" line="Any NSE company, its promises checked" onClick={() => menuGo('look')} />
+        </nav>
+        <h3 className="fo-menu-h">Alerts</h3>
+        <IndexRow title="Alert lines" line={linesSummary} onClick={() => { setMenuOpen(false); setLinesOpen(true) }} />
+        <p className="fo-menu-foot sub">Filings to {new Date(push.asof).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}. Promises are read from the last five earnings calls and checked against filed results.</p>
+      </Sheet>
+
+      <Sheet open={linesOpen} onClose={() => setLinesOpen(false)} title="Alert lines">
         <LinesForm lines={lines} setLines={setLines} />
       </Sheet>
-    </>
+    </MenuCtx.Provider>
   )
 }
 
