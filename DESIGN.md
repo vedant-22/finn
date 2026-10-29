@@ -35,9 +35,11 @@ Spacing scale 4, 6, 8, 12, 16, 20, 24, 32, 40, 48, 60, 80. Gutter 16. Cards: pan
 
 ## Components
 - **Masthead**: FINN wordmark (brand, 600, wide tracking) left; one outlined pill right ("Your lines" on Today). Hides on the way down and returns on the way up.
-- **Section head**: 26px title over a hairline, one serif line under it.
-- **Card**: picture, label row (kind left, when right), title, outcome figure with a muted caption, one serif sentence, "Read more" opening an accordion with the detail and sources.
-- **Outcomes grid**: two columns (three for a company's tally), number, one dark line, one muted line, a link.
+- **Section head**: 26px title, no rule, one serif line under it.
+- **Page header** (company page, Book): a warm panel edge to edge with a 12px rounded foot. On a company page: the sector and symbol as a caps label, then a 30px title where the name in grey runs into its record in ink ('Larsen & Toubro. 1 of 3 promises kept, 1 partly.'), then the price line in serif; the 30-session picture runs edge to edge on white under it. Book's holds its title, serif line and the tally. The masthead or Back bar is warm while it sits over the panel.
+- **Card**: picture, caps label (the kind), title, outcome figure with a muted caption, one serif sentence, then a foot row 32px below: "Read more" left (opens an accordion with the detail and sources), when it happened as a quiet label right. The first card on Today and Book is ENAM blue.
+- **Tile** (Book after its lead, Look up): two columns of warm cards. On Book: status label, name, record figure, the weakest promise in serif, the price at the foot. On Look up: the symbol over the name.
+- **Outcomes grid**: two columns, number, one dark line, one muted line, a link. A company's promises keep their figures in one 48px band so every row's sentences start level.
 - **Fold**: hairline above and below, 21px title with a count, a plus that turns into a minus; opens on a grid-rows transition.
 - **Buttons**: one filled brand pill per screen at most; the rest outlined brand pills or plain text.
 - **Switch**: grey track off, brand track on, white knob.
