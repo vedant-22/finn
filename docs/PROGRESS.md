@@ -169,3 +169,5 @@ Next: 29 Oct (iteration 1 of the redesign after the reference, ends 08:10 IST; n
 - Switches: off is a grey outline and knob (the pale track was 1.4:1 on white); DESIGN.md follows
 - A quarter keeps its year on one line ('Q1 / FY27' split in an L&T question). Tests 12/12
 - Company 'Read for this page': each source is a row, link then '20 pages, 4 promises' (or 'none to grade', 'Could not be read') under it; the long 'with a number and a date, quotes checked' on every row is gone, the note and closing line say it once. 'New on the latest call' titles at 500 (were browser bold 700)
+- Bug: the company page's 6-year bars shared the class '.bar' with the Back bar, whose CSS height overrode each rect's, so every grey bar was one height and ran over the FY21 label (live since the sticky Back bar, 28 Oct). Renamed; the bars show their values (L&T's FY22 profit dip is visible). The numbers: revenue beside profit, figures in one 48 px band, '13, 13, 12, 11% over 4 quarters'. Sweep 22 pages at 320/390 clean
+- Link-preview card retaken from the current company page; web/scripts/og.py makes it
