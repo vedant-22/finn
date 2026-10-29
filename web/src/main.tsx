@@ -1,7 +1,6 @@
 /// <reference types="vite/client" />
 import { createRoot } from 'react-dom/client'
 import './fonts/fonts.css'
-import '@fontsource/pt-serif/latin-400.css'
 import './styles.css'
 import { App } from './App'
 

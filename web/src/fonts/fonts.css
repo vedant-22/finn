@@ -16,4 +16,40 @@
   src: url(./inter-rupee-wght.woff2) format('woff2-variations');
   unicode-range: U+20B9;
 }
-/* Not PT Serif: its own ₹ (latin-ext) is drawn like ₽, so ₹ in the serif lines falls back to the system face */
+/* PT Serif is gone: its ₹ was drawn like ₽ */
+/* Newsreader, Folio's book serif: headlines, big numbers, quotes, names. Latin cut to what FINN prints, the
+   weight axis held to 380-600 and optical size to 12-72 (so a 72 px figure gets the display cut); 104 KB.
+   Its ₹ is a proper rupee and lives in a 2 KB file of its own. The italic is one static cut at 400, for the one
+   italic phrase a screen may have. */
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 380 600;
+  src: url(./newsreader-normal.woff2) format('woff2-variations');
+  unicode-range: U+0020-007E,U+00A0-00FF,U+2009-200A,U+2010-2027,U+202F-2030,U+2032-203A,U+2122,U+2190-2193,U+2212;
+}
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 380 600;
+  src: url(./newsreader-rupee-normal.woff2) format('woff2-variations');
+  unicode-range: U+20B9;
+}
+@font-face {
+  font-family: 'Newsreader';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400;
+  src: url(./newsreader-italic.woff2) format('woff2');
+  unicode-range: U+0020-007E,U+00A0-00FF,U+2009-200A,U+2010-2027,U+202F-2030,U+2032-203A,U+2122,U+2212;
+}
+@font-face {
+  font-family: 'Newsreader';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400;
+  src: url(./newsreader-rupee-italic.woff2) format('woff2');
+  unicode-range: U+20B9;
+}
