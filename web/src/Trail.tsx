@@ -31,7 +31,7 @@ function clip(parts: QuotePart[]): QuotePart[] {
 
 // Folio's before-and-after. What management said, with the figure and the date marked where they stand; chips naming
 // what FINN found in it; the promise as one clean line; then what the filings showed. Compact on a card: one sentence
-// of the quote and the verdict as a chip; the company page shows it whole.
+// of the quote, no speaker line; the company page shows it whole.
 export function Trail({ p, compact }: { p: Promise_; compact?: boolean }) {
   const m = markQuote(p.quote, p.target, p.by_when)
   const parts = compact ? clip(m.parts) : m.parts
@@ -53,7 +53,7 @@ export function Trail({ p, compact }: { p: Promise_; compact?: boolean }) {
       </div>
       <div className="fo-trail-step fo-shown">
         <p className="fo-trail-k">What the filings showed</p>
-        <div className="fo-trail-v"><StatusLabel status={p.status} />{!compact && v && <p>{v}</p>}</div>
+        <div className="fo-trail-v"><StatusLabel status={p.status} />{v && <p>{v}</p>}</div>
       </div>
     </div>
   )

@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import type { Bar, Status } from './lib'
 
 // useState that outlives the screen, so a filter or an open fold is still there after Back from a company
@@ -65,11 +66,11 @@ export function Chip({ children }: { children: ReactNode }) {
   return <span className="fo-chip">{children}</span>
 }
 
-// Folio's mark: a small ENAM-blue square holding a tick (the app icon), then 'finn' in the book serif, lowercase
+// Folio's mark: a small solid ENAM-blue square standing on the x-height, then 'finn' in the book serif, lowercase
 export function Mark({ label = 'FINN' }: { label?: string }) {
   return (
-    <span className="fo-mark" aria-label={label} role="img">
-      <svg className="fo-mark-sym" viewBox="0 0 20 20" aria-hidden><rect width="20" height="20" rx="5.5" /><path d="M5.6 10.4l2.9 2.9 5.9-6.4" /></svg>
+    <span className="fo-mark" aria-label={label || undefined} role={label ? 'img' : undefined}>
+      <span className="fo-mark-sym" aria-hidden />
       <span className="fo-mark-word" aria-hidden>finn</span>
     </span>
   )
@@ -215,7 +216,8 @@ export function Sheet({ open, onClose, title, children, full }: { open: boolean;
     ref.current.style.transition = ''; ref.current.style.transform = ''
     if (dy > 80) onClose()
   }
-  return (
+  // On the body, so a sheet opened inside a screen still covers the tab bar
+  return createPortal(
     <div className={`sheet-wrap ${open ? 'open' : ''}`} aria-hidden={!open}>
       <div className="scrim" onClick={onClose} />
       <div className={`sheet${full ? ' sheet-full' : ''}`} role="dialog" aria-modal="true" aria-label={title} tabIndex={-1} ref={ref}>
@@ -226,8 +228,7 @@ export function Sheet({ open, onClose, title, children, full }: { open: boolean;
         </div>
         {children}
       </div>
-    </div>
-  )
+    </div>, document.body)
 }
 
 export function Src({ href, children }: { href?: string; children: ReactNode }) {

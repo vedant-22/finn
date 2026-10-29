@@ -4,9 +4,9 @@ import { Book } from './Book'
 import { Today } from './Today'
 import {
   buildLive, CATEGORY_LABEL, plainError, DEFAULT_LINES, forgetCompanies, getCompany, getPush, loadLines, saveLines, shortName, wordScore,
-  type Bar, type Company, type Lines, type Push, type Step,
+  type Bar, type Company, type Lines, type Push, type Status, type Step,
 } from './lib'
-import { IndexRow, Mark, Masthead, MenuCtx, Sheet, useEdgeBack } from './ui'
+import { IndexRow, Mark, Masthead, MenuCtx, Sheet, StatusLabel, useEdgeBack } from './ui'
 
 type Route = { tab: 'today' | 'book' | 'look'; sym?: string; pid?: number }
 const parse = (): Route => {
@@ -23,6 +23,7 @@ export function App() {
   const [lines, setLinesState] = useState<Lines>(loadLines)
   const [linesOpen, setLinesOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [gradesOpen, setGradesOpen] = useState(false)
   const [prev, setPrev] = useState<string>('')
   const scrolls = useRef(new Map<string, number>())
   const toY = useRef(0)
@@ -50,7 +51,7 @@ export function App() {
       // However a company was reached (tap, forward, a pasted link), Back and the lit tab follow where it came from
       if (r.sym && !from.startsWith('#/c/')) setPrev(from)
       toY.current = from.startsWith('#/c/') && !r.sym ? scrolls.current.get(location.hash || '#/') ?? 0 : 0
-      setLinesOpen(false); setMenuOpen(false)  // a sheet belongs to the screen it opened on; Back with it up shouldn't carry it over
+      setLinesOpen(false); setMenuOpen(false); setGradesOpen(false)  // a sheet belongs to the screen it opened on; Back with it up shouldn't carry it over
       setRoute(r)
     }
     window.addEventListener('hashchange', on); return () => window.removeEventListener('hashchange', on)
@@ -73,7 +74,6 @@ export function App() {
   const tab = !route.sym ? route.tab : prev.startsWith('#/book') ? 'book' : prev.startsWith('#/look') ? 'look' : prev ? 'today' : holding(route.sym) ? 'book' : 'look'
 
   const linesSummary = `${lines.interrupt.length} kinds of filing, a ±${lines.movePct}% day or ${lines.volX}× volume`
-  const menuGo = (t: Route['tab']) => { setMenuOpen(false); go(t) }
   return (
     <MenuCtx.Provider value={() => setMenuOpen(true)}>
       {route.sym
@@ -88,22 +88,40 @@ export function App() {
         <button className={tab === 'look' ? 'on' : ''} aria-current={tab === 'look' ? 'page' : undefined} onClick={() => go('look')}>Look up</button>
       </nav>
 
-      {/* The menu: an index list. The three screens, then the one setting FINN has, the alert lines */}
-      <Sheet open={menuOpen} onClose={() => setMenuOpen(false)} title="Menu" full>
+      {/* The menu: an index list of what isn't on a screen. The alert lines, and how FINN grades a promise */}
+      <Sheet open={menuOpen} onClose={() => setMenuOpen(false)} title="Menu">
         <nav className="fo-menu" aria-label="Menu">
-          <IndexRow big title="Today" line="What crossed your lines, and what can wait" onClick={() => menuGo('today')} />
-          <IndexRow big title="Book" line={`Your ${push.portfolio.length} holdings, weakest word first`} onClick={() => menuGo('book')} />
-          <IndexRow big title="Look up" line="Any NSE company, its promises checked" onClick={() => menuGo('look')} />
+          <IndexRow title="Alert lines" line={linesSummary} onClick={() => { setMenuOpen(false); setLinesOpen(true) }} />
+          <IndexRow title="How a promise is graded" line="Kept, missed, gone quiet: what each word means" onClick={() => { setMenuOpen(false); setGradesOpen(true) }} />
         </nav>
-        <h3 className="fo-menu-h">Alerts</h3>
-        <IndexRow title="Alert lines" line={linesSummary} onClick={() => { setMenuOpen(false); setLinesOpen(true) }} />
         <p className="fo-menu-foot sub">Filings to {new Date(push.asof).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}. Promises are read from the last five earnings calls and checked against filed results.</p>
+      </Sheet>
+      <Sheet open={gradesOpen} onClose={() => setGradesOpen(false)} title="How a promise is graded">
+        <Grades />
       </Sheet>
 
       <Sheet open={linesOpen} onClose={() => setLinesOpen(false)} title="Alert lines">
         <LinesForm lines={lines} setLines={setLines} />
       </Sheet>
     </MenuCtx.Provider>
+  )
+}
+
+// What each verdict word means, as the grader applies it. Only promises with a number or a date are graded.
+function Grades() {
+  const rows: [Status, string][] = [
+    ['kept', 'Delivered by the date, or on track where the filings show the path.'],
+    ['partly', 'Some of it delivered: one of two targets, or close but short.'],
+    ['missed', 'The date passed and the filed numbers fall short.'],
+    ['quiet', 'Due, and neither the filings nor the latest call mention it.'],
+    ['pending', 'The date hasn\u2019t come yet.'],
+    ['unclear', 'The filings don\u2019t carry the number needed to judge it.'],
+  ]
+  return (
+    <div className="grades">
+      <p className="sheet-intro sub">FINN grades a promise only when it has a number or a date. Each verdict cites the filing or the call it rests on.</p>
+      <ul>{rows.map(([st, t]) => <li key={st}><StatusLabel status={st} /><span>{t}</span></li>)}</ul>
+    </div>
   )
 }
 

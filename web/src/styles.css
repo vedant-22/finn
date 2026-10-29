@@ -100,10 +100,8 @@ blockquote { margin: 0; }
 .fo-bar.hide { transform: translateY(-110%); }
 .fo-bar-in { pointer-events: auto; display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 6px 0 12px; background: rgba(255, 255, 255, .94); -webkit-backdrop-filter: saturate(1.6) blur(16px); backdrop-filter: saturate(1.6) blur(16px); border: 1px solid var(--fo-rule); border-radius: 14px; }
 .fo-home { display: flex; align-items: center; min-height: 44px; text-decoration: none; }
-.fo-mark { display: inline-flex; align-items: center; gap: 7px; color: var(--fo-ink); }
-.fo-mark-sym { width: 20px; height: 20px; flex: none; }
-.fo-mark-sym rect { fill: var(--fo-blue); }
-.fo-mark-sym path { fill: none; stroke: #fff; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; }
+.fo-mark { display: inline-flex; align-items: baseline; gap: 6px; color: var(--fo-ink); }
+.fo-mark-sym { width: 12px; height: 12px; flex: none; border-radius: 3px; background: var(--fo-blue); }
 .fo-mark-word { font: 600 25px/1 var(--fo-serif); letter-spacing: -0.02em; padding-bottom: 3px; }
 /* small square controls */
 .fo-icon-btn { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--fo-r-control); color: var(--fo-ink); transition: background-color 150ms; }
@@ -112,7 +110,7 @@ blockquote { margin: 0; }
 @media (hover: hover) { .fo-icon-btn:hover { background: var(--fo-chip); } }
 .boot .fo-mark { animation: breathe 1.4s ease-in-out infinite alternate; }
 .boot .fo-mark-word { font-size: 34px; }
-.boot .fo-mark-sym { width: 28px; height: 28px; }
+.boot .fo-mark-sym { width: 16px; height: 16px; border-radius: 4px; }
 
 /* ---------- Folio: chips ---------- */
 .fo-chip { display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 10px; border-radius: var(--fo-r-pill); background: var(--fo-chip); color: var(--fo-ink); font: 500 13px/1 var(--fo-sans); white-space: nowrap; flex: none; }
@@ -130,7 +128,7 @@ blockquote { margin: 0; }
 .fo-trail-step { position: relative; }
 .fo-trail-step::before { content: ''; position: absolute; left: -19px; top: 3px; width: 9px; height: 9px; border-radius: 50%; background: var(--fo-panel); box-shadow: inset 0 0 0 1.5px var(--fo-ink-2); }
 .fo-trail-step:last-child::before { background: var(--fo-ink); box-shadow: none; }
-.fo-shown::after { content: ''; position: absolute; left: -16px; top: 12px; bottom: -24px; width: 3px; background: var(--fo-panel); }  /* the hairline stops at the last dot */
+.fo-shown::after { content: ''; position: absolute; left: -16px; top: 12px; bottom: calc(-1 * var(--fo-s-2xs)); width: 3px; background: var(--fo-panel); }  /* the hairline stops at the last dot */
 .fo-trail-k { font: 500 13px/116% var(--fo-sans); color: var(--fo-ink-2); }
 .fo-trail-q { margin-top: 8px; font: 400 18px/140% var(--fo-serif); color: var(--fo-ink); letter-spacing: 0; }
 .fo-trail-compact .fo-trail-q { font-size: 17px; }
@@ -197,6 +195,8 @@ blockquote { margin: 0; }
 .fo-index { margin-top: var(--fo-s-l); border-top: 1px solid var(--fo-rule); }
 .sheet-intro { margin: var(--fo-s-3xs) 0 var(--fo-s-5xs); font-size: 14px; line-height: 145%; }
 .fo-menu-h { margin: var(--fo-s-l) 0 0; font: 500 13px/116% var(--fo-sans); color: var(--fo-ink-2); }
+.grades li { display: grid; grid-template-columns: 112px 1fr; align-items: start; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--fo-rule); font-size: 15px; line-height: 145%; }
+.grades li .fo-chip { justify-self: start; margin-top: -1px; }
 .fo-menu-foot { margin-top: var(--fo-s-m); font-size: 13px; line-height: 145%; }
 @keyframes breathe { from { opacity: .35; } }
 .sec-head { padding-bottom: 0; }
@@ -231,6 +231,10 @@ blockquote { margin: 0; }
 .card-when { font-size: 13px; color: var(--fo-ink-2); white-space: nowrap; }
 .fo-media { margin-top: var(--fo-s-2xs); border-radius: var(--fo-r-media); overflow: hidden; background: var(--fo-tint); aspect-ratio: 390 / 180; }
 .fo-media .chart .wash { fill: rgba(0, 93, 163, .08); }
+/* the price picture kept small on a card: context, not the point */
+.fo-strip { margin: var(--fo-s-2xs) 0 0; }
+.fo-strip .fo-media { margin-top: 0; aspect-ratio: 320 / 80; }
+.fo-strip figcaption { margin-top: 6px; font-size: 13px; line-height: 140%; color: var(--fo-ink-2); }
 .card-title { margin-top: var(--fo-s-3xs); align-self: flex-start; min-height: 28px; }
 .card-fig { display: flex; flex-direction: column; align-items: flex-start; margin-top: var(--fo-s-3xs); }
 .card-cap { font-size: 14px; line-height: 140%; color: var(--fo-ink-2); margin-top: var(--fo-s-nano); }

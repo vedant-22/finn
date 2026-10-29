@@ -113,6 +113,13 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
   )
 }
 
+// The price picture, kept small: context for the card, not its point
+function Strip({ bars }: { bars: Bar[] }) {
+  if (bars.length < 2) return null
+  const chg = bars[bars.length - 1].close / bars[0].close - 1
+  return <figure className="fo-strip"><div className="fo-media"><Chart series={bars} h={80} /></div><figcaption>Last {bars.length} sessions, {pct(chg * 100)}</figcaption></figure>
+}
+
 // A Folio card opens on what kind of thing it is, and when
 function CardLabel({ kind, at }: { kind: string; at: string }) {
   return <div className="card-lbl"><Chip>{kind}</Chip><span className="card-when">{at}</span></div>
@@ -149,8 +156,8 @@ function StoryCard({ s, lead, name, asof, bars, openCompany }: { s: Story; lead?
         {r ? <p className="card-desc">{resultLine(r, pat)}</p>
           : f.people?.length ? <PeopleLead f={f} />
             : <p className="card-desc">{f.line || tidySubject(f.subject)}</p>}
-        {bars.length > 1 && <div className="fo-media"><Chart series={bars} /></div>}
         {r && <CardWord symbol={s.symbol} openCompany={openCompany} />}
+        {!f.people?.length && <Strip bars={bars} />}
         <CardFoot more={more} setMore={setMore} />
       </div>
       <Accordion open={more}>
@@ -332,8 +339,8 @@ function MoveCard({ m, lead, name, lines, openCompany }: { m: Move; lead?: boole
         <button className="card-title" onClick={() => openCompany(m.symbol)}>{name}</button>
         <div className="card-fig"><Outcome value={v} unit={u} /><span className="card-cap"><span className="num">{m.volX.toFixed(1)}×</span> its 20-day volume</span></div>
         <p className="card-desc">{moveWhy(m)}</p>
-        {m.series.length > 1 && <div className="fo-media"><Chart series={m.series} /></div>}
         {m.explainedBy?.category === 'results' && <CardWord symbol={m.symbol} openCompany={openCompany} />}
+        <Strip bars={m.series} />
         <CardFoot more={more} setMore={setMore} />
       </div>
       <Accordion open={more}>
