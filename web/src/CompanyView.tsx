@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { cr, crBig, deadline, minus, pct, rupees, shortName, tidyEvidence, type Bar, type Company, type Promise_, type Status } from './lib'
-import { Bars, Chart, Fold, fyLabel, Outcome, Src, STATUS_WORD, StatusLabel } from './ui'
+import { BackBar, Bars, Chip, Fold, fyLabel, Outcome, Src, STATUS_WORD, StatusLabel, Strip } from './ui'
 import { cap, verdictText } from './Trail'
 
 const SHOW: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
@@ -61,26 +61,22 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
       : 'Nothing to grade yet.'
 
   const newHard = c.open.filter(p => p.hard)
+  const name = title || shortName(c.name)
 
   return (
     <main className="screen company">
-      {/* Page header as the reference's: a warm panel with rounded foot, the sector as a label,
-          the name in grey running into the one thing to know, in ink */}
-      <header className={`bar co-bar${past ? ' past' : ''}`}>
-        <button className="text-btn back" onClick={back}>Back</button>
-        {past ? <span className="bar-name">{title || shortName(c.name)}</span> : null}
-      </header>
+      <BackBar back={back} name={past ? name : undefined} />
+      {/* The page opens as a card does: what it is, the name, the one thing to know, then the price and its picture */}
       <div className="co-top">
-        <p className="lbl lbl-quiet co-sector">{sector || 'NSE'}, {c.symbol}{c.live ? ', read just now' : ''}</p>
-        {/* the reference's own two-tone title, chosen: avoid-ai-design-ignore: SD5 */}
-        <h1 className="co-name" ref={nameRef}><span className="co-name-n">{title || shortName(c.name)}.</span> {standing}</h1>
-        <p className="co-meta">
-          {price != null && <>₹{price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)}{close && ` at the ${new Date(close.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} close`}. </>}
-          {s.mcap != null && <>Worth ₹{crBig(s.mcap * k)}{s.pe ? `, ${(s.pe * k).toFixed(1)}× earnings` : ''}.</>}
-        </p>
+        <div className="card-lbl"><Chip>{sector || 'NSE'}</Chip><span className="card-when">{c.symbol}{c.live ? ', read just now' : ''}</span></div>
+        <h1 className="co-name" ref={nameRef}>{name}</h1>
+        <p className="co-rec">{standing}</p>
+        {price != null && <div className="co-px">
+          <Outcome size="m" pre="₹" value={price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)} />
+          <p className="card-cap">{close ? `At the ${new Date(close.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} close. ` : ''}{s.mcap != null && <>Worth ₹{crBig(s.mcap * k)}{s.pe ? `, ${(s.pe * k).toFixed(1)}× earnings` : ''}.</>}</p>
+        </div>}
+        {bars && <Strip bars={bars.slice(-30)} />}
       </div>
-      {/* A holding's page opens on its picture, as the cards do: the last 30 sessions */}
-      {bars && bars.length > 1 && <div className="co-pic"><div className="card-img"><Chart series={bars.slice(-30)} /></div><p className="lbl lbl-quiet">Last 30 sessions, {pct((bars[bars.length - 1].close / bars[Math.max(0, bars.length - 30)].close - 1) * 100)}</p></div>}
 
       <section className="word">
         <h2 className="sec-head">Their word</h2>
@@ -127,7 +123,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
       )}
 
       {newHard.length > 0 && (
-        <Fold title={`New on the latest call`} count={newHard.length} open={showOpen} toggle={() => setShowOpen(!showOpen)}>
+        <Fold title="New on the latest call" count={newHard.length} line={`From the ${newHard[0]?.period} call; too new to check against results`} open={showOpen} toggle={() => setShowOpen(!showOpen)}>
           <ul className="open-list fold-body">
             {newHard.map((p, i) => (
               <li key={i}>
@@ -139,7 +135,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
         </Fold>
       )}
 
-      <Fold title="The numbers" open={fold === 'num'} toggle={() => toggle('num')}>
+      <Fold title="The numbers" line={lastQ ? `The ${lastQ.q} quarter, ${s.years.length} years of revenue and profit${s.financial ? '' : ', cash and debt'}` : `${s.years.length} years of revenue and profit`} open={fold === 'num'} toggle={() => toggle('num')}>
         <div className="fold-body">
           {lastQ && (
             <div className="fig-grid">
@@ -176,7 +172,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
       </Fold>
 
       {(c.bull.length > 0 || c.bear.length > 0) && (
-        <Fold title="For and against" open={fold === 'case'} toggle={() => toggle('case')}>
+        <Fold title="For and against" line={`${c.bull.length} ${c.bull.length === 1 ? 'point' : 'points'} for, ${c.bear.length} against`} open={fold === 'case'} toggle={() => toggle('case')}>
           <div className="case fold-body">
             <div><h3 className="lbl lbl-quiet">For</h3><ul>{c.bull.map((x, i) => <li key={i}>{rupees(x)}</li>)}</ul></div>
             <div><h3 className="lbl lbl-quiet">Against</h3><ul>{c.bear.map((x, i) => <li key={i}>{rupees(x)}</li>)}</ul></div>
@@ -184,7 +180,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
         </Fold>
       )}
 
-      <Fold title="Read for this page" open={fold === 'src'} toggle={() => toggle('src')}>
+      <Fold title="Read for this page" line={`${readable} earnings ${readable === 1 ? 'call' : 'calls'}${pages ? `, ${pages} pages` : ''}, and the filed results`} open={fold === 'src'} toggle={() => toggle('src')}>
         <div className="sources fold-body">
           <ul>
             {c.calls.map(x => {
@@ -283,5 +279,5 @@ function CopyQuestions({ name, qs }: { name: string; qs: string[] }) {
   if (!navigator.clipboard) return null
   const copy = () => navigator.clipboard.writeText(`${name}: ask on the next call\n${qs.map((q, i) => `${i + 1}. ${q}`).join('\n')}`)
     .then(() => { setDone(true); setTimeout(() => setDone(false), 2000) }).catch(() => { /* clipboard refused: nothing to undo */ })
-  return <button className="text-btn copy" onClick={copy} aria-live="polite">{done ? 'Copied' : 'Copy the questions'}</button>
+  return <button className="btn-outline btn-sm copy" onClick={copy} aria-live="polite">{done ? 'Copied' : 'Copy the questions'}</button>
 }

@@ -6,7 +6,7 @@ import {
   buildLive, CATEGORY_LABEL, plainError, DEFAULT_LINES, forgetCompanies, getCompany, getPush, loadLines, saveLines, shortName, wordScore,
   type Bar, type Company, type Lines, type Push, type Status, type Step,
 } from './lib'
-import { IndexRow, Mark, Masthead, MenuCtx, Sheet, StatusLabel, useEdgeBack } from './ui'
+import { BackBar, Chip, IndexRow, Mark, Masthead, MenuCtx, Sheet, StatusLabel, useEdgeBack } from './ui'
 
 type Route = { tab: 'today' | 'book' | 'look'; sym?: string; pid?: number }
 const parse = (): Route => {
@@ -180,14 +180,14 @@ function CompanyRoute({ sym, pid, sector, title, close, bars, back }: { sym: str
   const notFound = /NotFound|404/.test(failed)
   return (
     <main className="screen building">
-      {/* The same warm page header the finished company page opens on, so one becomes the other */}
-      <header className="bar co-bar"><button className="text-btn back" onClick={back}>Back</button></header>
+      {/* The same header the finished company page opens on, so one becomes the other */}
+      <BackBar back={back} />
       <div className="co-top">
-        <p className="lbl lbl-quiet co-sector">{sector || 'NSE'}, {sym}</p>
+        <div className="card-lbl"><Chip>{sector || 'NSE'}</Chip><span className="card-when">{sym}</span></div>
         <h1 className="co-name">{title || sym}</h1>
         {!failed && steps.length === 0 && slow && <p className="sub opening"><span className="dot-run" />Opening the ledger</p>}
-        {!failed && steps.length > 0 && <p className="co-meta">Reading its last five earnings calls and filed results. About a minute.</p>}
-        {notFound && <p className="co-meta">There's no NSE company with the symbol {sym}. Check the spelling, or type part of the name.</p>}
+        {!failed && steps.length > 0 && <p className="co-rec">Reading its last five earnings calls and filed results. About a minute.</p>}
+        {notFound && <p className="co-rec">There's no NSE company with the symbol {sym}. Check the spelling, or type part of the name.</p>}
       </div>
       {notFound ? <div className="not-found">
         <a className="btn-outline" href="#/look">Look up another</a>

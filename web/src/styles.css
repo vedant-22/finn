@@ -285,13 +285,8 @@ blockquote { margin: 0; }
 /* folds: section rule, title, a plus that turns */
 .fold { border-bottom: 1px solid var(--fo-rule); }
 .fold:first-of-type, .cards + .fold { margin-top: var(--fo-s-l); border-top: 1px solid var(--fo-rule); }
-.fold-head { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 64px; font: 400 23px/120% var(--fo-serif); }
-.fold-n { color: var(--fo-ink-2); }
-.fold-n { color: var(--fo-ink-2); }
-.plus { position: relative; width: 16px; height: 16px; flex: none; }
-.plus::before, .plus::after { content: ''; position: absolute; left: 0; right: 0; top: 7.5px; height: 1.2px; background: var(--fo-ink); transition: transform 200ms var(--fo-ease-decel); }
-.plus::after { transform: rotate(90deg); }
-.is-open .plus::after { transform: rotate(0); }
+.fold-head.fo-row { border-bottom: 0; }
+.fold-head[aria-expanded='true'] .fo-row-arrow { transform: rotate(90deg); }
 .notes { padding-bottom: var(--fo-s-2xs); }
 .note { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: var(--fo-s-3xs) 0; border-top: 1px solid var(--fo-rule); text-decoration: none; width: 100%; }
 .note-co { font-weight: 500; }
@@ -348,23 +343,23 @@ blockquote { margin: 0; }
 .book-og .og-d1 { min-height: 2.8em; }
 
 /* ---------- Company ---------- */
-.bar { position: sticky; top: 0; z-index: 6; display: flex; justify-content: space-between; align-items: center; gap: 12px; height: calc(var(--fo-h-bar) + env(safe-area-inset-top)); padding: env(safe-area-inset-top) var(--fo-gutter) 0; margin: 0 calc(-1 * var(--fo-gutter)); background: var(--fo-paper); border-bottom: 1px solid transparent; transition: border-color 200ms; }
-.bar.past { border-bottom-color: var(--fo-rule); }
-.bar .back { color: var(--fo-blue); }
-.bar-name { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; animation: fade-in 300ms var(--fo-ease-out) both; }
+/* the floating bar again, holding Back; it stays, so Back is always in reach */
+.co-bar.fo-bar { margin-bottom: 0; }
+.co-bar .fo-bar-in { justify-content: flex-start; gap: 10px; padding: 0 14px 0 4px; }
+.fo-back { display: inline-flex; align-items: center; gap: 2px; min-height: 44px; padding: 0 8px 0 4px; border-radius: var(--fo-r-control); color: var(--fo-blue); font-size: 16px; font-weight: 500; }
+.fo-back svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; transition: transform 250ms var(--fo-spring); }
+.fo-back:active { background: var(--fo-chip); }
+@media (hover: hover) { .fo-back:hover svg { transform: translateX(-3px); } }
+.bar-name { min-width: 0; padding-left: 10px; border-left: 1px solid var(--fo-rule); font: 500 19px/1.2 var(--fo-serif); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; animation: fade-in 300ms var(--fo-ease-out) both; }
 @keyframes fade-in { from { opacity: 0; } }
-.co-bar { background: var(--fo-panel); transition: border-color 200ms, background-color 200ms; }
-.co-bar.past { background: var(--fo-paper); }
-.co-top { background: var(--fo-panel); margin: 0 calc(-1 * var(--fo-gutter)); padding: var(--fo-s-xl) var(--fo-gutter) var(--fo-s-l); border-radius: 0 0 var(--fo-r-12) var(--fo-r-12); }
-.co-sector { white-space: normal; }
+/* the page opens as a card does: chip row, serif name, the one thing to know, the price as a stat stack, the small picture */
+.co-top { padding-top: var(--fo-s-l); }
 .co-name { margin-top: var(--fo-s-3xs); }
-.co-name-n { color: var(--fo-ink-2); }
-.co-meta { margin-top: var(--fo-s-3xs); font-size: 16px; line-height: 140%; color: var(--fo-ink-2); }
+.co-rec { margin-top: var(--fo-s-5xs); font-size: 18px; line-height: 140%; color: var(--fo-ink); }
+.co-px { margin-top: var(--fo-s-s); padding-top: var(--fo-s-2xs); border-top: 1px solid var(--fo-rule); }
+.co-px .card-cap { margin-top: var(--fo-s-5xs); }
+.co-top .fo-strip { margin-top: var(--fo-s-xs); }
 .company > section { margin-top: var(--fo-s-2xl); }
-.co-pic { margin: var(--fo-s-3xs) calc(-1 * var(--fo-gutter)) 0; }
-.co-pic .card-img { aspect-ratio: 390 / 300; }
-.co-pic .lbl { padding: 0 var(--fo-gutter); }
-.co-pic .lbl { display: block; margin-top: var(--fo-s-3xs); }
 .word-intro { margin-top: var(--fo-s-3xs); }
 .read { font-size: 16px; line-height: 140%; color: var(--fo-ink-2); }
 .read .see { min-height: 0; font-size: 16px; }
@@ -393,12 +388,13 @@ blockquote { margin: 0; }
 .soft-row .og-btn { display: block; width: 100%; min-height: 44px; }
 .soft-row .og-d1, .soft-row .og-d2, .soft-row .p-detail { padding-left: 0; }
 .soft-row .og-d1 { font-size: 15px; }
-.ask.lead { padding: var(--fo-s-s) var(--fo-s-2xs) var(--fo-s-2xs); }
+.ask.lead { padding: var(--fo-s-s) var(--fo-s-xs) var(--fo-s-xs); border-radius: var(--fo-r-card); }
 .ask.lead .sec-head { padding-bottom: var(--fo-s-2xs); }
 .ask ol { counter-reset: q; padding-bottom: var(--fo-s-2xs); }
 .ask li { counter-increment: q; display: grid; grid-template-columns: 28px 1fr; padding: var(--fo-s-3xs) 0; border-top: 1px solid var(--fo-rule); font: 16px/145% var(--fo-sans); }
 .ask li::before { content: counter(q); font: 500 14px/160% var(--fo-sans); color: var(--fo-ink-2); }
-.copy { margin-bottom: var(--fo-s-3xs); color: var(--fo-blue); }
+.copy.btn-outline { border-color: rgba(255, 255, 255, .6); color: #fff; }
+.copy.btn-outline:active { background: #fff; color: #005DA3; }
 .company .fold { margin-top: 0; }
 .company > :not(.fold) + .fold { margin-top: var(--fo-s-2xl); border-top: 1px solid var(--fo-rule); }
 .fold-body { padding-bottom: var(--fo-s-s); display: grid; gap: var(--fo-s-s); }

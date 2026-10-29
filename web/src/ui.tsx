@@ -128,14 +128,30 @@ export function Accordion({ open, children, id }: { open: boolean; children: Rea
 }
 
 // A section that folds: title and count on the left, a plus that turns into a minus on the right
-export function Fold({ title, count, open, toggle, quiet, children }: { title: string; count?: number; open: boolean; toggle: () => void; quiet?: boolean; children: ReactNode }) {
+// An index row that opens in place: serif title, a count, one line on what's inside; the arrow turns down when open
+export function Fold({ title, count, line, open, toggle, children }: { title: string; count?: number; line?: ReactNode; open: boolean; toggle: () => void; children: ReactNode }) {
   return (
-    <section className={`fold${open ? ' is-open' : ''}${quiet ? ' quiet' : ''}`}>
-      <button className="fold-head" aria-expanded={open} onClick={toggle}>
-        <span>{title}{count != null && <span className="fold-n"> ({count})</span>}</span><span className="plus" aria-hidden />
+    <section className={`fold${open ? ' is-open' : ''}`}>
+      <button className="fo-row fold-head" aria-expanded={open} onClick={toggle}>
+        <span className="fo-row-t">{title}</span>
+        {count != null && <span className="fo-row-n num">{count}</span>}
+        <svg className="fo-row-arrow" viewBox="0 0 16 16" aria-hidden><path d="M6 3.5l4.5 4.5L6 12.5" /></svg>
+        {line && <span className="fo-row-l">{line}</span>}
       </button>
       <Accordion open={open}>{children}</Accordion>
     </section>
+  )
+}
+
+// A company page's bar: the floating bar again, holding Back, and the name once the heading has scrolled away
+export function BackBar({ back, name }: { back: () => void; name?: string }) {
+  return (
+    <header className="fo-bar co-bar">
+      <div className="fo-bar-in">
+        <button className="fo-back" onClick={back}><svg viewBox="0 0 16 16" aria-hidden><path d="M10 3.5L5.5 8l4.5 4.5" /></svg>Back</button>
+        {name && <span className="bar-name">{name}</span>}
+      </div>
+    </header>
   )
 }
 
