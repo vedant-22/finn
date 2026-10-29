@@ -3,6 +3,7 @@ import {
   CATEGORY_LABEL, cr, deadline, getCompany, pct, rupees, shortName, triage, when,
   type Bar, type Company, type Lines, type Move, type Push, type Story,
 } from './lib'
+import { Trail } from './Trail'
 import { Accordion, Chart, Chip, IndexRow, Masthead, Sheet, Outcome, pctParts, Src, StatusLabel, useKept } from './ui'
 
 const WINDOWS = [{ h: 24, label: '24h' }, { h: 72, label: '3 days' }, { h: 168, label: 'Week' }, { h: 720, label: 'Month' }]
@@ -178,15 +179,16 @@ function useWord(symbol: string) {
   return [settled, running, ...about].filter((p, i, all): p is NonNullable<typeof p> => !!p && all.indexOf(p) === i).slice(0, 2)
 }
 
-// FINN's point on a results card: the promise this quarter is held to, and its word
+// FINN's point on a results card: the promise this quarter is held to, as a before-and-after. What they said, the
+// promise pulled out of it, and its word so far; the whole of it is one tap away on the company page.
 function CardWord({ symbol, openCompany }: { symbol: string; openCompany: (s: string, pid?: number) => void }) {
   const p = useWord(symbol)[0]
   if (!p) return null
   return (
-    <button className="word-row card-word" onClick={() => openCompany(symbol, p.id)}>
-      <span className="word-t">{rupees(p.target.charAt(0).toUpperCase() + p.target.slice(1))}{deadline(p) ? ` ${rupees(deadline(p))}` : ''}</span>
-      <StatusLabel status={p.status} />
-    </button>
+    <div className="card-word">
+      <Trail p={p} compact />
+      <button className="fo-more" onClick={() => openCompany(symbol, p.id)}>The promise in full<svg viewBox="0 0 16 16" aria-hidden><path d="M6 3.5l4.5 4.5L6 12.5" /></svg></button>
+    </div>
   )
 }
 
@@ -320,7 +322,7 @@ function PeopleLead({ f }: { f: any }) {
   return <p className="card-desc"><span className="card-who">{p.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')}</span> {reclass(p) ? `stays ${p.role}, off the senior management list` : `${verb(p.action).toLowerCase()} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${effDate(p.effective, f.at)}` : ''}.{more > 0 ? ` ${more} more ${more === 1 ? 'change' : 'changes'} in the filing.` : ''}</p>
 }
 
-function MoveCard({ m, lead, name, lines, openCompany }: { m: Move; lead?: boolean; name: string; lines: Lines; openCompany: (s: string) => void }) {
+function MoveCard({ m, lead, name, lines, openCompany }: { m: Move; lead?: boolean; name: string; lines: Lines; openCompany: (s: string, pid?: number) => void }) {
   const [more, setMore] = useState(false)
   const [v, u] = pctParts(m.chg)
   return (
@@ -331,6 +333,7 @@ function MoveCard({ m, lead, name, lines, openCompany }: { m: Move; lead?: boole
         <div className="card-fig"><Outcome value={v} unit={u} /><span className="card-cap"><span className="num">{m.volX.toFixed(1)}×</span> its 20-day volume</span></div>
         <p className="card-desc">{moveWhy(m)}</p>
         {m.series.length > 1 && <div className="fo-media"><Chart series={m.series} /></div>}
+        {m.explainedBy?.category === 'results' && <CardWord symbol={m.symbol} openCompany={openCompany} />}
         <CardFoot more={more} setMore={setMore} />
       </div>
       <Accordion open={more}>

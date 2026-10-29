@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { cr, crBig, deadline, minus, pct, rupees, shortName, tidyEvidence, type Bar, type Company, type Promise_, type Status } from './lib'
 import { Bars, Chart, Fold, fyLabel, Outcome, Src, STATUS_WORD, StatusLabel } from './ui'
+import { cap, verdictText } from './Trail'
 
 const SHOW: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
 
@@ -209,9 +210,6 @@ const grader = (by: Record<string, number> = {}) =>
   !Object.keys(by).length ? '' : by['gemini-3.5-flash'] ? 'Graded by gemini-3.5-flash.'
     : 'Graded by gemini-3.5-flash-lite: the stronger model’s free daily quota was used up.'
 // 'X remains ongoing.' / 'X is pending.' only restates the promise; the dash mark already says not due yet
-const FILLER = /\b(remains|is) (still )?(pending|ongoing)\b|\bnot yet due\b/i
-const verdictText = (p: Promise_) => p.status === 'pending' && FILLER.test(p.verdict || '') ? '' : p.verdict ? rupees(p.verdict) : STATUS_WORD[p.status]
-const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
 
 function Fig({ label, value, unit, sub }: { label: string; value: string; unit?: string; sub: any }) {
   return <div className="fig og-item"><Outcome size={value.length > 9 ? 'xxs' : value.length > 5 ? 'xs' : 's'} value={value} unit={unit} /><span className="og-d1">{label}</span>{sub && <span className="og-d2">{sub}</span>}</div>

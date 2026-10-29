@@ -115,3 +115,18 @@ test('an amount keeps its unit on the same line', () => {
   assert.equal(rupeesWj('2 crore shares'), '2 crore shares')
   assert.equal(rupeesWj('provision in Q1 FY27?'), 'provision in Q1\u00a0FY27?')
 })
+
+test('the before-and-after marks only what is in the quote', async () => {
+  const { markQuote } = await import('../src/lib.ts')
+  const marked = (q, t, w) => { const r = markQuote(q, t, w); return [r.parts.filter(p => p.k).map(p => `${p.k}:${p.t}`), r.fig, r.date] }
+  assert.deepEqual(marked('We expect our group order inflows and group revenues to grow at 10% and 15% respectively for FY26.', 'Group revenue growth 15%', 'FY26'),
+    [['fig:15%', 'date:FY26'], true, true])
+  assert.deepEqual(marked('Our Net Working Capital-to-Revenue guidance for March ‘26 remains at 12%.', 'NWC-to-Revenue 12%', 'March 2026'),
+    [['date:March ‘26', 'fig:12%'], true, true])
+  assert.deepEqual(marked('we continue to target the 8.3% to 8.5% range for the full year FY26', 'P&M margin 8.3% to 8.5%', 'FY26'),
+    [['fig:8.3%', 'fig:8.5%', 'date:FY26'], true, true])
+  assert.deepEqual(marked('Disbursements of Rs 5,600 crores to 5,800 crores in 2025-26', '₹5,600–5,800 crore disbursements', 'FY26'),
+    [['fig:Rs 5,600 crores', 'fig:5,800 crores', 'date:2025-26'], true, true])
+  // a year inside the target is a date, not a figure; nothing found means no claim
+  assert.deepEqual(marked('We will grow faster than the industry.', 'Revenue growth 20% by FY27', 'FY27'), [[], false, false])
+})

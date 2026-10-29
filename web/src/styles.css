@@ -98,7 +98,7 @@ blockquote { margin: 0; }
 /* ---------- Folio: the floating bar and the mark ---------- */
 .fo-bar { position: sticky; top: 0; z-index: 6; margin: 0 calc(-1 * var(--fo-gutter)); padding: calc(env(safe-area-inset-top) + 8px) 10px 6px; pointer-events: none; transition: transform 400ms var(--fo-ease-out); }
 .fo-bar.hide { transform: translateY(-110%); }
-.fo-bar-in { pointer-events: auto; display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 6px 0 12px; background: rgba(255, 255, 255, .88); -webkit-backdrop-filter: saturate(1.6) blur(16px); backdrop-filter: saturate(1.6) blur(16px); border: 1px solid var(--fo-rule); border-radius: 14px; }
+.fo-bar-in { pointer-events: auto; display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 6px 0 12px; background: rgba(255, 255, 255, .94); -webkit-backdrop-filter: saturate(1.6) blur(16px); backdrop-filter: saturate(1.6) blur(16px); border: 1px solid var(--fo-rule); border-radius: 14px; }
 .fo-home { display: flex; align-items: center; min-height: 44px; text-decoration: none; }
 .fo-mark { display: inline-flex; align-items: center; gap: 7px; color: var(--fo-ink); }
 .fo-mark-sym { width: 20px; height: 20px; flex: none; }
@@ -121,6 +121,41 @@ blockquote { margin: 0; }
 .fo-chip-kept svg { stroke: var(--fo-blue); stroke-width: 1.9; }
 .fo-chip-missed { background: var(--fo-missed-wash); color: var(--fo-missed); }
 .fo-chip-quiet, .fo-chip-pending, .fo-chip-unclear { color: var(--fo-ink-2); }
+
+/* ---------- Folio: the before-and-after ---------- */
+/* Three steps on one hairline: what they said (figure and date marked), the promise, what the filings showed */
+.card-word { margin-top: var(--fo-s-2xs); }
+.fo-trail { position: relative; display: grid; gap: var(--fo-s-2xs); padding: var(--fo-s-2xs) var(--fo-s-2xs) var(--fo-s-2xs) 34px; border-radius: 16px; background: var(--fo-panel); }
+.fo-trail::before { content: ''; position: absolute; left: 19px; top: 24px; bottom: 30px; width: 1px; background: var(--fo-rule); }
+.fo-trail-step { position: relative; }
+.fo-trail-step::before { content: ''; position: absolute; left: -19px; top: 3px; width: 9px; height: 9px; border-radius: 50%; background: var(--fo-panel); box-shadow: inset 0 0 0 1.5px var(--fo-ink-2); }
+.fo-trail-step:last-child::before { background: var(--fo-ink); box-shadow: none; }
+.fo-shown::after { content: ''; position: absolute; left: -16px; top: 12px; bottom: -24px; width: 3px; background: var(--fo-panel); }  /* the hairline stops at the last dot */
+.fo-trail-k { font: 500 13px/116% var(--fo-sans); color: var(--fo-ink-2); }
+.fo-trail-q { margin-top: 8px; font: 400 18px/140% var(--fo-serif); color: var(--fo-ink); letter-spacing: 0; }
+.fo-trail-compact .fo-trail-q { font-size: 17px; }
+.fo-trail-who { margin-top: 6px; font-size: 13px; line-height: 140%; color: var(--fo-ink-2); }
+.fo-trail-who .src { color: var(--fo-ink-2); }
+.fo-trail-p { margin-top: 6px; font: 500 21px/122% var(--fo-serif); letter-spacing: -0.01em; color: var(--fo-ink); }
+.fo-trail-v { display: grid; justify-items: start; gap: 8px; margin-top: 8px; }
+.fo-trail-v p { font-size: 15px; line-height: 145%; }
+.fo-trail-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: -4px 0 -2px; }
+.fo-chip-fig { background: var(--fo-mark-fig); }
+.fo-chip-date { background: var(--fo-mark-date); }
+/* the marks are a highlighter stroke under the words, swept in left to right */
+.fo-mk { color: inherit; padding: 0 1px; border-radius: 2px; background: linear-gradient(var(--fo-mark-fig), var(--fo-mark-fig)) no-repeat 0 88% / 100% 62%; -webkit-box-decoration-break: clone; box-decoration-break: clone; transition: background-size 650ms var(--fo-ease-out) 250ms; }
+.fo-mk-date { background-image: linear-gradient(var(--fo-mark-date), var(--fo-mark-date)); transition-delay: 450ms; }
+.fo-trail-chips .fo-chip, .fo-promise, .fo-shown { transition: opacity 420ms var(--fo-ease-out), transform 460ms var(--fo-spring); }
+.rv-on .fo-trail:not([data-seen]) .fo-mk { background-size: 0% 62%; }
+.rv-on .fo-trail:not([data-seen]) .fo-trail-chips .fo-chip { opacity: 0; transform: translateY(6px) scale(.85) rotate(-4deg); }
+.rv-on .fo-trail:not([data-seen]) :is(.fo-promise, .fo-shown) { opacity: 0; transform: translateY(8px); }
+.fo-trail-chips .fo-chip:nth-child(1) { transition-delay: 700ms; }
+.fo-trail-chips .fo-chip:nth-child(2) { transition-delay: 790ms; }
+.fo-promise { transition-delay: 950ms; }
+.fo-shown { transition-delay: 1150ms; }
+.fo-more { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; margin-top: 2px; color: var(--fo-blue); font-size: 15px; }
+.fo-more svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 250ms var(--fo-spring); }
+@media (hover: hover) { .fo-more:hover svg { transform: translateX(3px); } }
 
 /* ---------- Folio: index rows ---------- */
 /* a title, a count and an arrow on one line; what's behind it in one plain line under */
@@ -207,7 +242,6 @@ blockquote { margin: 0; }
 .against h4 { margin-bottom: 4px; }
 .word-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 10px 0; border-top: 1px solid var(--fo-rule); width: 100%; font-size: 15px; line-height: 140%; }
 .word-row .lbl { flex: none; }
-.card-word { margin-top: var(--fo-s-2xs); border-bottom: 1px solid var(--fo-rule); }
 
 /* people */
 .people { display: grid; gap: var(--fo-s-3xs); }

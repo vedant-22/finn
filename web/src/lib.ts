@@ -327,3 +327,52 @@ export const rupees = (t: string) => t
   .replace(/(₹[\d,.–\u2060]+) (lakh )?crore\b/g, (_, a, l) => `${a}\u00a0${l ? 'lakh\u00a0' : ''}crore`)
   // and a quarter keeps its year: 'Q1 FY27', 'H2 FY26'
   .replace(/\b([QH][1-4]) (FY\d{2,4})\b/g, '$1\u00a0$2')
+
+// ---------- the before-and-after: where a promise stands in the words it came from ----------
+// Finds the promise's figures and its deadline inside the verbatim quote, so the quote can be shown with them marked.
+// Only what is really in the quote is marked; 'Target found' and 'Date found' are claimed from this and nothing else.
+export type QuotePart = { t: string; k?: 'fig' | 'date' }
+const MON = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+const ORD = ['first', 'second', 'third', 'fourth']
+export function markQuote(quote: string, target: string, byWhen: string): { parts: QuotePart[]; fig: boolean; date: boolean } {
+  const spans: [number, number, 'fig' | 'date'][] = []
+  const free = (a: number, b: number) => spans.every(([x, y]) => b <= x || a >= y)
+  const take = (re: RegExp, k: 'fig' | 'date') => {
+    for (const m of quote.matchAll(re)) {
+      const a = m.index!, b = a + m[0].length
+      if (m[0].trim() && free(a, b)) { spans.push([a, b, k]); return true }
+    }
+    return false
+  }
+  // Figures: each number in the promise that isn't part of a date (FY26, Q4, 2026), with its unit as the quote writes it
+  const nums = [...new Set([...target.matchAll(/(?<![A-Za-z'’\d.,])\d[\d,]*(?:\.\d+)?/g)]
+    .map(m => m[0].replace(/,/g, '')).filter(n => !/^20\d\d$/.test(n)))]
+  for (const n of nums) {
+    const body = n.split('.').map(part => part.split('').join(',?')).join('\\.')
+    take(new RegExp(`(?<![\\d.,])(?:(?:Rs\\.?|INR|₹)\\s?)?${body}(?![\\d])(?:\\s?(?:%|per\\s?cent|percent|times|crores?|bps|basis points|billion|million|lakh|days|MW|GW|MTPA|x|cr)(?![a-z]))?`, 'gi'), 'fig')
+  }
+  const fig = spans.length > 0
+  // The deadline: as written first ('FY26', 'March 2026'), then the usual ways a call says it
+  const when = (byWhen || '').replace(/^by\s+/i, '').trim()
+  const yy = when.match(/(?:FY|fiscal)\s*['’]?(?:20)?(\d\d)\b/i)?.[1] || when.match(/\b20(\d\d)\b/)?.[1] || when.match(/['’](\d\d)\b/)?.[1]
+  const res: RegExp[] = []
+  if (when.length > 1) res.push(new RegExp(`(?<![\\w])${when.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+')}(?![\\w])`, 'gi'))
+  if (yy) {
+    const prev = String(+yy - 1).padStart(2, '0')
+    const q = when.match(/\b([QH])([1-4])\b/i)
+    if (q) res.push(new RegExp(`\\b(?:${q[1]}${q[2]}|${q[1].toUpperCase() === 'Q' ? ORD[+q[2] - 1] + ' quarter' : (q[2] === '1' ? 'first' : 'second') + ' half'})(?:\\s*(?:of\\s*)?(?:FY|fiscal|financial year)?\\s*['’]?\\s*(?:20)?${yy})?\\b`, 'gi'))
+    const mon = MON.findIndex(m => new RegExp(`\\b${m}`, 'i').test(when))
+    if (mon >= 0) res.push(new RegExp(`\\b${MON[mon]}[a-z]*\\.?\\s*[-'’‘]?\\s*(?:20)?${yy}\\b`, 'gi'))
+    res.push(new RegExp(`\\b(?:FY|F\\.Y\\.?|fiscal(?:\\s+year)?|financial\\s+year)\\s*['’‘]?\\s*(?:20)?${yy}\\b`, 'gi'))
+    res.push(new RegExp(`\\b(?:20)?${prev}\\s*[-–/]\\s*(?:20)?${yy}\\b`, 'g'))
+    res.push(new RegExp(`\\b20${yy}\\b`, 'g'))
+    if (q) res.push(new RegExp(`\\b${q[1]}${q[2]}\\b`, 'gi'))
+  }
+  const date = res.some(re => take(re, 'date'))
+  spans.sort((a, b) => a[0] - b[0])
+  const parts: QuotePart[] = []
+  let at = 0
+  for (const [a, b, k] of spans) { if (a > at) parts.push({ t: quote.slice(at, a) }); parts.push({ t: quote.slice(a, b), k }); at = b }
+  if (at < quote.length) parts.push({ t: quote.slice(at) })
+  return { parts, fig, date }
+}
