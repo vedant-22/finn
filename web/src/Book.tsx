@@ -56,7 +56,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
             ? <Outcome size="xs" value={kept} unit={`/${score.graded} kept`} />
             : pending ? <Outcome size="xs" value={pending} unit={'\u00a0not due'} /> : null
           const desc = <p className="card-desc">{weak ? weakLine(weak) : c && c.calls.length && c.calls.every(x => x.error) ? "The call transcripts couldn't be opened." : 'No promise with a number and a date yet.'}</p>
-          const px = last && <p className="book-px"><span className="num">₹{last.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>, <span className="num">{pct(last.chg)}</span>{lead ? ' on the day' : ''}</p>
+          const px = last && <p className="book-px"><span className="num">₹{last.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>, <span className="num">{pct(last.chg)}</span> on the day</p>
           return (
             <li key={p.symbol} className={lead ? 'wide' : undefined}>
               {lead
@@ -66,13 +66,12 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
                     <div className="book-head"><span className="card-title">{p.short || shortName(p.name)}</span><span className="book-rec">{rec}</span></div>
                     {desc}{px}
                   </button>
-                // In the grid, as the reference's news cards: label, title, figure, one sentence; the price closes it
+                // In the grid, as the reference's news cards: status, name, record, the weakest promise. The price is on the lead and each company page
                 : <button className="book-card tile-card" onClick={() => openCompany(p.symbol)}>
                     {weak ? <StatusLabel status={weak.status} /> : <span className="lbl lbl-quiet">Nothing graded</span>}
                     <span className="card-title">{p.short || shortName(p.name)}</span>
                     {rec && <span className="book-rec">{rec}</span>}
                     {desc}
-                    {px && <span className="book-foot">{px}</span>}
                   </button>}
             </li>
           )
