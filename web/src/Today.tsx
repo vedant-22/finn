@@ -181,7 +181,7 @@ function sizeWords(f: { amount_cr?: number; pct_rev?: number; line?: string }) {
   if (f.amount_cr < 1) return 'Under ₹1 cr.'
   // The line already names the amount ('buyback of ₹150 crore'): just the share of revenue
   const a = f.amount_cr
-  const said = [...(f.line || '').matchAll(/₹([\d,]+(?:\.\d+)?)(?:–[\d,.]+)? crore/g)].some(m => Math.abs(+m[1].replace(/,/g, '') - a) <= Math.max(0.5, a * 0.01))
+  const said = [...(f.line || '').matchAll(/₹([\d,]+(?:\.\d+)?)(?:–[\d,.\u2060]+)?\scrore/g)].some(m => Math.abs(+m[1].replace(/,/g, '') - a) <= Math.max(0.5, a * 0.01))
   return said ? `${p.charAt(0).toUpperCase()}${p.slice(1)} of a year's revenue.` : `₹${cr(a)} cr, ${p} of a year's revenue.`
 }
 

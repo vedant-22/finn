@@ -1,15 +1,18 @@
 // What the screen says, checked. Run: npm test (Node 22.6+ reads lib.ts directly)
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { cr, crBig, deadline, pct, rupees as rupeesWj, tidyEvidence as tidyWj, when } from '../src/lib.ts'
+import { cr, crBig as crBigNb, deadline, pct, rupees as rupeesWj, tidyEvidence as tidyWj, when } from '../src/lib.ts'
 
 // The word joiner that keeps a range on one line is invisible; compare without it
-const rupees = s => rupeesWj(s).replace(/\u2060/g, '')
-const tidyEvidence = s => tidyWj(s).replace(/\u2060/g, '')
+// and the no-break space that keeps an amount with its unit
+const plain = s => s.replace(/\u2060/g, '').replace(/\u00a0/g, ' ')
+const rupees = s => plain(rupeesWj(s))
+const tidyEvidence = s => plain(tidyWj(s))
+const crBig = v => plain(crBigNb(v))
 
 test('ranges never break at the dash', () => {
   assert.equal(rupeesWj('EBITDA margin 22-23%'), 'EBITDA margin 22–\u206023%')
-  assert.equal(rupeesWj('Rs 5600-5800 Cr'), '₹5,600–\u20605,800 crore')
+  assert.equal(rupeesWj('Rs 5600-5800 Cr'), '₹5,600–\u20605,800\u00a0crore')
   assert.equal(rupeesWj('FY 2022-23'), 'FY 2022-23')
 })
 
@@ -104,4 +107,10 @@ test('big sums in lakh crore', () => {
   assert.equal(crBig(140300), '1.4 lakh cr')
   assert.equal(crBig(200000), '2 lakh cr')
   assert.equal(crBig(78750), '78,750 cr')
+})
+
+test('an amount keeps its unit on the same line', () => {
+  assert.equal(crBigNb(523000), '5.23 lakh cr')
+  assert.equal(rupeesWj('₹7.79 lakh crore'), '₹7.79 lakh crore')
+  assert.equal(rupeesWj('2 crore shares'), '2 crore shares')
 })
