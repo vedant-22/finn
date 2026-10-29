@@ -263,7 +263,7 @@ function PeopleBlock({ f }: { f: any }) {
   const ppl = sortPeople(f.people)
   return (
     <ul className="people">
-      {ppl.slice(0, 3).map((p: any, i: number) => {
+      {ppl.map((p: any, i: number) => {
         const joining = ['appointed', 're-appointed', 'redesignated'].includes(p.action)
         const moved = reclass(p)
         return (
