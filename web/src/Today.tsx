@@ -131,7 +131,7 @@ function StoryCard({ s, lead, name, asof, bars, openCompany }: { s: Story; lead?
             {r?.source?.xbrl && <li><Src href={r.source.xbrl}>Exchange XBRL</Src></li>}
             {/\.pdf$/i.test(r?.source?.pdf || '') && <li><Src href={r!.source.pdf}>Results PDF</Src></li>}
             <li><Src href={f.url}>The filing</Src></li>
-            {others.map((o, i) => <li key={i}><Src href={o.url}>{tidySubject(o.subject)}</Src> <span className="sub">{when(o.at, asof)}</span></li>)}
+            {others.map((o, i) => <li key={i}><Src href={o.url}>{tidySubject(o.subject)}</Src><span className="sub">{when(o.at, asof)}</span></li>)}
           </ul>
         </div>
       </Accordion>
