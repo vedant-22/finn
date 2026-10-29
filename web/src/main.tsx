@@ -5,13 +5,14 @@ import '@fontsource/pt-serif/latin-400.css'
 import './styles.css'
 import { App } from './App'
 
-// One reveal style: blocks fade in and rise as they enter the view (CSS under 'reveal')
+// One reveal style: blocks fade in as they enter the view (CSS under 'reveal')
 const REVEAL = '.card, .book-card, .company > section, .fold, .chips-sec, .og-panel'
 if (typeof IntersectionObserver !== 'undefined' && typeof MutationObserver !== 'undefined') {
   const io = new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('seen'); io.unobserve(e.target) }
+    // A data attribute, not a class: React rewrites className when a fold opens, and a class would be lost with it
+    if (e.isIntersecting) { e.target.setAttribute('data-seen', ''); io.unobserve(e.target) }
   }), { rootMargin: '0px 0px -40px 0px' })
-  const scan = () => document.querySelectorAll(`:is(${REVEAL}):not(.seen):not([data-rv])`).forEach(el => {
+  const scan = () => document.querySelectorAll(`:is(${REVEAL}):not([data-rv])`).forEach(el => {
     el.setAttribute('data-rv', ''); io.observe(el)
   })
   new MutationObserver(scan).observe(document.getElementById('root')!, { childList: true, subtree: true })

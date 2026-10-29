@@ -363,7 +363,7 @@ blockquote { margin: 0; }
 
 /* ---------- reveal: the reference's stagger fade, opacity only ---------- */
 .rv-on :is(.card, .book-card, .company > section, .fold, .chips-sec, .og-panel) { opacity: 0; transition: opacity 1200ms var(--expo); }
-.rv-on :is(.card, .book-card, .company > section, .fold, .chips-sec, .og-panel).seen { opacity: 1; }
+.rv-on :is(.card, .book-card, .company > section, .fold, .chips-sec, .og-panel)[data-seen] { opacity: 1; }
 .cards li:nth-child(2) .card, .book-list li:nth-child(2) .book-card { transition-delay: 120ms; }
 .cards li:nth-child(3) .card, .book-list li:nth-child(3) .book-card { transition-delay: 240ms; }
 @media (prefers-reduced-motion: reduce) {
