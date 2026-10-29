@@ -78,7 +78,7 @@ blockquote { margin: 0; }
 .warm-top { background: var(--panel); margin: 0 calc(-1 * var(--g)); padding: 0 var(--g); border-radius: 0 0 var(--r-12) var(--r-12); }
 .warm-top .page-top { padding-top: var(--s-2xl); }
 .warm-top .og-panel { margin-top: var(--s-l); padding-bottom: var(--s-l); background: transparent; }
-.wordmark { color: var(--brand); text-decoration: none; font: 600 19px/1 var(--f); letter-spacing: 0.14em; padding: 12px 0; }
+.wordmark { color: var(--brand); text-decoration: none; font: 600 19px/1 var(--f); letter-spacing: 0.08em; padding: 12px 0; }
 .boot { min-height: 100dvh; display: grid; place-items: center; align-content: center; gap: 12px; padding: 24px; text-align: center; }
 .boot .wordmark { font-size: 28px; animation: breathe 1.4s ease-in-out infinite alternate; }
 @keyframes breathe { from { opacity: .35; } }
@@ -88,9 +88,11 @@ blockquote { margin: 0; }
 /* ---------- Today ---------- */
 .dateline { font-size: 16px; line-height: 140%; font-weight: 500; letter-spacing: -0.42px; margin-top: var(--s-5xs); }
 .dateline .sub { display: block; font-size: 14px; font-weight: 400; letter-spacing: -0.39px; }
-.window { display: flex; gap: var(--s-5xs); margin-top: var(--s-l); }
-.window button { flex: 1; height: 36px; text-align: center; border-radius: var(--r-pill); border: 1px solid var(--rule); color: var(--ink-2); font-size: 15px; transition: border-color 200ms, color 200ms; }
-.window button.on { border-color: var(--brand); color: var(--brand); }
+.window { display: flex; gap: var(--s-s); margin-top: var(--s-m); }
+/* Windows are words, set as the tab bar is: ink and a short brand rule under the one that's on */
+.window button { height: 44px; position: relative; color: var(--ink-2); font-size: 16px; letter-spacing: -0.3px; transition: color 200ms; }
+.window button.on { color: var(--ink); }
+.window button.on::after { content: ''; position: absolute; left: 0; right: 0; bottom: 6px; height: 2px; background: var(--brand); }
 .hero { padding: var(--s-xl) 0 var(--s-xl); }
 .hero-lbl { margin-bottom: var(--s-s); }
 .hero-fig { display: flex; flex-wrap: wrap; align-items: flex-end; column-gap: 10px; }
@@ -207,9 +209,9 @@ blockquote { margin: 0; }
 .book-card .card-desc { margin-top: var(--s-3xs); }
 .book-px { margin-top: var(--s-3xs); font-size: 14px; color: var(--ink-2); }
 
-/* One block per page in the brand colour, as the reference does: Today's first card, Book's weakest word.
-   The tokens flip inside it, so everything in the card (detail table, links, labels) follows. */
-:is(.card, .book-card, .ask).lead {
+/* The brand fill goes on a text-only block, as the reference sets its coloured tiles: a company's questions.
+   Cards with a picture stay warm. The tokens flip inside it, so links and labels follow. */
+.ask.lead {
   --ink: #FFFFFF; --ink-2: rgba(255, 255, 255, .78); --rule: rgba(255, 255, 255, .24); --brand: #FFFFFF; --brand-pressed: rgba(255, 255, 255, .7);
   --missed: #FFFFFF; --paper: rgba(255, 255, 255, .08); --wash: rgba(255, 255, 255, .12);
   background: #005DA3; color: var(--ink);
