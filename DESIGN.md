@@ -34,10 +34,11 @@ Inter (variable) and PT Serif, both bundled. The reference's mobile mixins:
 Spacing scale 4, 6, 8, 12, 16, 20, 24, 32, 40, 48, 60, 80. Gutter 16. Cards: panel, square corners, 16px inside, the picture inset at the top. Pills are full radius (1000px). The bottom sheet's top corners are 12px. No shadows, gradients or glass.
 
 ## Components
-- **Masthead**: FINN wordmark (brand, 600, wide tracking) left; one outlined pill right ("Your lines" on Today). Hides on the way down and returns on the way up.
+- **Masthead**: FINN wordmark (brand, 600, 0.08em tracking) left; one outlined pill right ("Your lines" on Today). Hides on the way down and returns on the way up.
 - **Section head**: 26px title, no rule, one serif line under it.
 - **Page header** (company page, Book): a warm panel edge to edge with a 12px rounded foot. On a company page: the sector and symbol as a caps label, then a 30px title where the name in grey runs into its record in ink ('Larsen & Toubro. 1 of 3 promises kept, 1 partly.'), then the price line in serif; the 30-session picture runs edge to edge on white under it. Book's holds its title, serif line and the tally. The masthead or Back bar is warm while it sits over the panel.
-- **Card**: picture, caps label (the kind), title, outcome figure with a muted caption, one serif sentence, then a foot row 32px below: "Read more" left (opens an accordion with the detail and sources), when it happened as a quiet label right. The first card on Today and Book is ENAM blue.
+- **Card**: picture, caps label (the kind), title, outcome figure with a muted caption, one serif sentence, then a foot row 32px below: "Read more" left (opens an accordion with the detail and sources), when it happened as a quiet label right. Cards with a picture stay warm; the one ENAM-blue block is a company's 'Ask on the next call', which is text only.
+- **Window choice** (Today): four words in a row, the one that's on in ink with a 2px brand rule under it, as the tab bar.
 - **Tile** (Book after its lead, Look up): two columns of warm cards. On Book: status label, name, record figure, the weakest promise in serif, the price at the foot. On Look up: the symbol over the name.
 - **Outcomes grid**: two columns, number, one dark line, one muted line, a link. A company's promises keep their figures in one 48px band so every row's sentences start level.
 - **Fold**: hairline above and below, 21px title with a count, a plus that turns into a minus; opens on a grid-rows transition.

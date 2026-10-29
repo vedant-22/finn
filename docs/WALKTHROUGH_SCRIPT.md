@@ -46,7 +46,7 @@ Scroll to "Ask on the next call".
 Tap "Book".
 > "My whole portfolio, sorted by whose word is weakest."
 *(silence, 2 seconds on the tally)*
-Scroll once: the weakest holding leads in blue, the rest follow two to a row, each naming its weakest promise.
+Scroll once: the weakest holding leads with its price picture, the rest follow two to a row, each naming its weakest promise.
 
 **6. Any company (1:55–2:15)**
 Tap "Look up", type ASTRAL, tap "Check their word".
