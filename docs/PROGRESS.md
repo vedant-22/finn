@@ -167,3 +167,5 @@ Next: 29 Oct (iteration 1 of the redesign after the reference, ends 08:10 IST; n
 - README screenshots retaken at 2x from the live link; DESIGN.md synced (Book tiles without price, Look up tiles with record, figures and wrapping rules)
 - Your lines closes when the route changes (Back with the sheet up left it over Book). Tested Book -> Today -> sheet -> Back
 - Switches: off is a grey outline and knob (the pale track was 1.4:1 on white); DESIGN.md follows
+- A quarter keeps its year on one line ('Q1 / FY27' split in an L&T question). Tests 12/12
+- Company 'Read for this page': each source is a row, link then '20 pages, 4 promises' (or 'none to grade', 'Could not be read') under it; the long 'with a number and a date, quotes checked' on every row is gone, the note and closing line say it once. 'New on the latest call' titles at 500 (were browser bold 700)
