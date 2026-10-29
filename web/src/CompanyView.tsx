@@ -130,7 +130,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
           <ul className="open-list fold-body">
             {newHard.map((p, i) => (
               <li key={i}>
-                <b className="og-d1" style={{ padding: 0 }}>{cap(rupees(p.target))}</b> <span className="sub">{deadline(p)}</span>
+                <span className="open-t">{cap(rupees(p.target))}</span> <span className="sub">{deadline(p)}</span>
                 <blockquote>“{p.quote}” <Src href={`${p.url}#page=${p.page}`}>{p.period}, page {p.page}</Src></blockquote>
               </li>
             ))}
@@ -187,14 +187,15 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
         <div className="sources fold-body">
           <ul>
             {c.calls.map(x => {
-              // What this call adds to the page: promises with a number and a date first made on it (repeats sit with the first call)
+              // What this call adds to the page: promises with a number and a date first made on it (repeats sit with the first call).
+              // The tally note says what counts and the line below says the quotes were checked, so each row is just the count
               const n = [...c.ledger, ...c.open].filter(p => p.hard && p.period === x.period).length
               return (
                 <li key={x.period}><Src href={x.url}>{x.period} call</Src>
-                  <span className="sub"> {x.error ? 'could not be read' : !n ? `${x.pages} pages, no new promise with a number and a date` : `${x.pages} pages, ${n} ${n === 1 ? 'promise' : 'promises'} with a number and a date, quotes checked`}</span></li>
+                  <span className="sub">{x.error ? 'Could not be read' : !n ? `${x.pages} pages, none to grade` : `${x.pages} pages, ${n} ${n === 1 ? 'promise' : 'promises'}`}</span></li>
               )
             })}
-            <li><Src href={c.source}>Financial tables</Src><span className="sub"> screener.in, {c.basis}, compiled from filed results</span></li>
+            <li><Src href={c.source}>Financial tables</Src><span className="sub">screener.in, {c.basis}, compiled from filed results</span></li>
           </ul>
           {pages > 0 && <p className="sub">Read {pages} pages. Every quote above was matched to its page in the PDF{dropped ? `; ${dropped} that didn't match ${dropped === 1 ? 'was' : 'were'} thrown out` : ''}. Nothing here comes from news, brokers or the model's own memory.</p>}
           {c.usage?.calls > 0 && <p className="sub">{c.usage.calls} model calls, {Math.round((c.usage.tokens_in + c.usage.tokens_out) / 1000)}k tokens, about ${c.usage.usd_if_billed.toFixed(2)} if billed. {grader(c.usage.by_model)}</p>}
