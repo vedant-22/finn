@@ -3,7 +3,7 @@ import { CompanyView } from './CompanyView'
 import { Book } from './Book'
 import { Today } from './Today'
 import {
-  buildLive, CATEGORY_LABEL, plainError, DEFAULT_LINES, forgetCompanies, getCompany, getPush, loadLines, saveLines, shortName,
+  buildLive, CATEGORY_LABEL, plainError, DEFAULT_LINES, forgetCompanies, getCompany, getPush, loadLines, saveLines, shortName, wordScore,
   type Bar, type Company, type Lines, type Push, type Step,
 } from './lib'
 import { Masthead, Sheet, useEdgeBack } from './ui'
@@ -218,11 +218,23 @@ function Look({ push, openCompany }: { push: Push; openCompany: (s: string) => v
     </main>
   )
 }
-// Companies already read, as small panel cards in two columns: the symbol as the label, the name as the title
+// Companies already read, as small panel cards in two columns: the symbol as the label, the name as the title,
+// and their record once the ledger is in
 function Tiles({ title, syms, open, names }: { title: string; syms: string[]; open: (s: string) => void; names: Record<string, string> }) {
+  const [rec, setRec] = useState<Record<string, string>>({})
+  useEffect(() => {
+    let live = true
+    syms.forEach(s => getCompany(s).then(c => {
+      const w = wordScore(c ?? undefined)
+      if (!live || !w) return
+      const line = w.graded ? `${Math.floor(w.kept)} of ${w.graded} kept` : w.hard ? 'None due yet' : 'Nothing to grade'
+      setRec(r => ({ ...r, [s]: line }))
+    }).catch(() => {}))
+    return () => { live = false }
+  }, [syms.join()])
   return (
     <section className="chips-sec tiles-sec"><h2 className="sec-head">{title}</h2>
-      <ul className="tiles">{syms.map(s => <li key={s}><button className="tile" onClick={() => open(s)}><span className="lbl lbl-quiet">{s}</span><span className="tile-name">{names[s] || s}</span></button></li>)}</ul>
+      <ul className="tiles">{syms.map(s => <li key={s}><button className="tile" onClick={() => open(s)}><span className="lbl lbl-quiet">{s}</span><span className="tile-name">{names[s] || s}</span><span className="tile-rec">{rec[s] || '\u00a0'}</span></button></li>)}</ul>
     </section>
   )
 }

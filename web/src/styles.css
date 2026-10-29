@@ -317,8 +317,9 @@ blockquote { margin: 0; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: var(--s-3xs); }
 .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3xs); margin-top: var(--s-s); }
 .tiles-sec { margin-top: var(--s-2xl); }
-.tile { display: flex; flex-direction: column; justify-content: space-between; gap: var(--s-5xs); width: 100%; min-height: 0; height: 100%; background: var(--panel); padding: var(--s-2xs); }
-.tile-name { font-size: 16px; line-height: 140%; color: var(--ink); }
+.tile { display: flex; flex-direction: column; text-align: left; width: 100%; min-height: 0; height: 100%; background: var(--panel); padding: var(--s-2xs); }
+.tile-name { font-size: 17px; line-height: 130%; letter-spacing: -0.3px; color: var(--ink); margin-top: var(--s-5xs); }
+.tile-rec { font: 15px/140% var(--serif); color: var(--ink-2); margin-top: auto; padding-top: var(--s-2xs); }
 .chips .btn-outline { height: 36px; padding: 0 var(--s-2xs); font-size: 15px; }
 
 /* ---------- tabs ---------- */
