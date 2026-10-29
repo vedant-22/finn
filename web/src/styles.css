@@ -244,7 +244,8 @@ blockquote { margin: 0; }
 .company .og-panel { margin-top: var(--s-s); }
 .tally-note { font-size: 13px; line-height: 140%; margin-top: var(--s-s); }
 .pgrid-head { margin-top: var(--s-2xl); }
-.pgrid { margin-top: var(--s-m); column-gap: var(--s-xs); }
+.pgrid { margin-top: var(--s-m); }
+@media (min-width: 360px) { .pgrid { column-gap: var(--s-xs); } }
 /* The reference sets its 'see the case' links grey; blue stays for Read more */
 .p-item .og-link { color: var(--ink-2); font-size: 15px; }
 .p-fig { display: flex; align-items: flex-end; min-height: 48px; max-width: 100%; }
