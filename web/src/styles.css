@@ -47,6 +47,8 @@ blockquote { margin: 0; }
 .outcome-l .o-unit { font-size: 36px; line-height: 112%; letter-spacing: -2.16px; padding-bottom: 2px; }
 .outcome-s .o-val { font-size: 48px; line-height: 100%; letter-spacing: -2.4px; }
 .outcome-s .o-unit { font-size: 24px; line-height: 112%; letter-spacing: -1.44px; padding-bottom: 2px; }
+.outcome-m .o-val { font-size: 40px; line-height: 100%; letter-spacing: -2px; }
+.outcome-m .o-unit { font-size: 20px; line-height: 112%; letter-spacing: -1px; padding-bottom: 2px; }
 .outcome-xs .o-val { font-size: 30px; line-height: 100%; letter-spacing: -1.4px; }
 .outcome-xs .o-unit { font-size: 16px; line-height: 112%; letter-spacing: -0.6px; padding-bottom: 1px; }
 
@@ -158,7 +160,7 @@ blockquote { margin: 0; }
 .fold { border-bottom: 1px solid var(--rule); }
 .fold:first-of-type, .cards + .fold { margin-top: var(--s-l); border-top: 1px solid var(--rule); }
 .fold-head { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 64px; font: 450 21px/124% var(--f); letter-spacing: -0.36px; }
-.fold.quiet .fold-head { color: var(--ink-2); }
+.fold-n { color: var(--ink-2); }
 .fold-n { color: var(--ink-2); }
 .plus { position: relative; width: 16px; height: 16px; flex: none; }
 .plus::before, .plus::after { content: ''; position: absolute; left: 0; right: 0; top: 7.5px; height: 1.2px; background: var(--ink); transition: transform 200ms var(--decel); }
@@ -196,7 +198,7 @@ blockquote { margin: 0; }
 .book-list > li { min-width: 0; display: flex; }
 .book-list > li.wide { grid-column: 1 / -1; }
 .tile-card { align-items: flex-start; text-align: left; min-height: 100%; padding-bottom: var(--s-s); }
-.tile-card .card-title { margin-top: var(--s-3xs); font-size: 19px; line-height: 124%; letter-spacing: -0.5px; min-height: 0; }
+.tile-card .card-title { margin-top: var(--s-3xs); font-size: 17px; line-height: 130%; letter-spacing: -0.3px; font-weight: 450; min-height: 0; }
 .tile-card .book-rec { margin-top: var(--s-3xs); text-align: left; }
 .tile-card .card-desc { font-size: 15px; }
 .book-card { display: flex; flex-direction: column; width: 100%; background: var(--panel); padding: var(--s-xs) var(--s-2xs) var(--s-2xs); }
@@ -238,9 +240,13 @@ blockquote { margin: 0; }
 .word-intro { margin-top: var(--s-3xs); }
 .read { font-size: 16px; line-height: 140%; color: var(--ink-2); }
 .read .see { min-height: 0; font-size: 16px; }
+.word-intro .see { display: block; margin-top: var(--s-5xs); min-height: 40px; }
 .company .og-panel { margin-top: var(--s-s); }
 .tally-note { font-size: 13px; line-height: 140%; margin-top: var(--s-s); }
-.pgrid { margin-top: var(--s-xl); }
+.pgrid-head { margin-top: var(--s-2xl); }
+.pgrid { margin-top: var(--s-m); column-gap: var(--s-xs); }
+/* The reference sets its 'see the case' links grey; blue stays for Read more */
+.p-item .og-link { color: var(--ink-2); font-size: 15px; }
 .p-fig { display: flex; align-items: flex-end; min-height: 48px; max-width: 100%; }
 .p-item .outcome { max-width: 100%; flex-wrap: wrap; }
 .p-item .lbl { margin: var(--s-5xs) 0 0 var(--s-nano); }

@@ -104,7 +104,7 @@ export function Fold({ title, count, open, toggle, quiet, children }: { title: s
 }
 
 // A big figure with its unit set smaller on the baseline, as on an outcomes page: +12%, 1/7
-export function Outcome({ value, unit, size = 's' }: { value: ReactNode; unit?: ReactNode; size?: 'l' | 's' | 'xs' | 'xxs' }) {
+export function Outcome({ value, unit, size = 's' }: { value: ReactNode; unit?: ReactNode; size?: 'l' | 's' | 'm' | 'xs' | 'xxs' }) {
   return <span className={`outcome outcome-${size}`}><span className="o-val">{value}</span>{unit != null && <span className="o-unit">{unit}</span>}</span>
 }
 // '+12.4%' -> ['+12', '%']; one decimal under 10 so small moves still read
@@ -117,15 +117,16 @@ export function pctParts(v: number | null | undefined): [string, string] {
 // The card's picture: the stock's last sessions, drawn full width, a brand line over a pale wash
 export function Chart({ series, h = 120 }: { series: Bar[]; h?: number }) {
   if (series.length < 2) return null
-  const w = 320, top = 14, base = h - 10
+  // The picture fills its plate as the reference's photos do: the wash runs to the edges, the line keeps clear of the top
+  const w = 320, top = 22, base = h - 14
   const closes = series.map(b => b.close)
   const lo = Math.min(...closes), hi = Math.max(...closes)
-  const x = (i: number) => (i / (series.length - 1)) * (w - 12) + 6
+  const x = (i: number) => (i / (series.length - 1)) * w
   const y = (v: number) => base - ((v - lo) / (hi - lo || 1)) * (base - top)
   const pts = closes.map((c, i) => `${x(i).toFixed(1)} ${y(c).toFixed(1)}`)
   return (
     <svg className="chart" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden>
-      <path className="wash" d={`M${pts.join('L')}L${x(closes.length - 1).toFixed(1)} ${base}L${x(0).toFixed(1)} ${base}Z`} />
+      <path className="wash" d={`M${pts.join('L')}L${w} ${h}L0 ${h}Z`} />
       <path className="line" d={`M${pts.join('L')}`} vectorEffect="non-scaling-stroke" />
     </svg>
   )

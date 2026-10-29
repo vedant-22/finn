@@ -104,6 +104,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
           </div>
         )}
 
+        {hard.length > 0 && <h3 className="sec-head pgrid-head">Promise by promise</h3>}
         {hard.length > 0 && <ul className="og pgrid">
           {hard.map(p => <PromiseItem key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}
         </ul>}
@@ -242,7 +243,7 @@ const dueFig = (p: Promise_) => `${p.target} ${deadline(p)}`.match(/\b(Q\d )?FY\
 function PromiseItem({ p, open, toggle }: { p: Promise_; open: boolean; toggle: () => void }) {
   const fig = promised(p.target), due = fig ? undefined : dueFig(p)
   const len = (fig?.[0] || '').replace(/\u2060/g, '').length + (fig?.[1] || '').trim().length
-  const size = !fig ? 'xs' : len <= 6 ? 's' : len <= 9 ? 'xs' : 'xxs'
+  const size = !fig ? 'xs' : len <= 5 ? 's' : len <= 6 ? 'm' : len <= 9 ? 'xs' : 'xxs'
   return (
     <li className={`og-item p-item st-${p.status}${open ? ' open' : ''}`} data-pid={p.id}>
       <button className="og-btn" aria-expanded={open} onClick={toggle}>
