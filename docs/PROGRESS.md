@@ -172,3 +172,5 @@ Next: 29 Oct (iteration 1 of the redesign after the reference, ends 08:10 IST; n
 - Bug: the company page's 6-year bars shared the class '.bar' with the Back bar, whose CSS height overrode each rect's, so every grey bar was one height and ran over the FY21 label (live since the sticky Back bar, 28 Oct). Renamed; the bars show their values (L&T's FY22 profit dip is visible). The numbers: revenue beside profit, figures in one 48 px band, '13, 13, 12, 11% over 4 quarters'. Sweep 22 pages at 320/390 clean
 - Link-preview card retaken from the current company page; web/scripts/og.py makes it
 - People cards: the detail lists everyone in the filing (stopped at three while the card counted four; Syngene's Head of Biology was missing)
+- Opened promise: SAID/REPORTED labels align with their text (were indented twice)
+- Ungraded statements ('Plus 31 statements with no number or date') are compact rows: sentence, 'Said Feb ’26', quote on tap. They were in the promise grid with empty 48 px figure bands and a NOT DUE word, which contradicted 'Not graded'. Deadlines pass through the display tidy-up ('by 2–3 quarters'). Deep link to a statement checked
