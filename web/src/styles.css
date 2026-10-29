@@ -74,6 +74,10 @@ blockquote { margin: 0; }
 .screen { animation: fade-in 320ms var(--expo) both; }
 .mast { position: sticky; top: 0; z-index: 6; height: calc(var(--h-mast) + env(safe-area-inset-top)); padding: env(safe-area-inset-top) var(--g) 0; margin: 0 calc(-1 * var(--g)); display: flex; align-items: center; justify-content: space-between; gap: var(--s-2xs); background: var(--paper); transition: transform 400ms var(--expo); }
 .mast.hide { transform: translateY(-100%); }
+.mast.warm { background: var(--panel); }
+.warm-top { background: var(--panel); margin: 0 calc(-1 * var(--g)); padding: 0 var(--g); border-radius: 0 0 var(--r-12) var(--r-12); }
+.warm-top .page-top { padding-top: var(--s-2xl); }
+.warm-top .og-panel { margin-top: var(--s-l); padding-bottom: var(--s-l); background: transparent; }
 .wordmark { color: var(--brand); text-decoration: none; font: 600 19px/1 var(--f); letter-spacing: 0.14em; padding: 12px 0; }
 .boot { min-height: 100dvh; display: grid; place-items: center; align-content: center; gap: 12px; padding: 24px; text-align: center; }
 .boot .wordmark { font-size: 28px; animation: breathe 1.4s ease-in-out infinite alternate; }
@@ -184,7 +188,7 @@ blockquote { margin: 0; }
 
 /* ---------- Book ---------- */
 .page-top { padding-top: var(--s-m); }
-.book .og-panel { margin-top: var(--s-m); }
+
 .book-filter { display: flex; align-items: center; justify-content: space-between; margin-top: var(--s-s); font-size: 14px; }
 .book-list { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3xs); margin-top: var(--s-s); }
 .book-list > li { min-width: 0; display: flex; }

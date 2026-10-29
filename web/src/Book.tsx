@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import { cachedCompany, deadline, getCompany, pct, rupees, shortName, wordScore, type Company, type Promise_, type Push, type Status } from './lib'
 import { Chart, Masthead, Outcome, StatusLabel, useKept } from './ui'
 
@@ -15,16 +15,20 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
   // Prices are the last exchange close in the snapshot, often the day before it; say which
   const closeDay = Object.values(push.eod).reduce((m, bars: any) => { const d = bars?.[bars.length - 1]?.d; return d && d > m ? d : m }, '')
   const closeLabel = closeDay ? new Date(closeDay + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : ''
-  const head = <>
-    <Masthead />
-    <header className="page-top">
-      <h1 className="sec-head">Your book</h1>
-      <p className="serif-line">{push.portfolio.length} holdings, the weakest word first. Prices at the {closeLabel} close.</p>
-    </header>
+  // The top of the page is warm edge to edge, as the reference's outcomes page: title, line, tally
+  const head = (tally?: ReactNode) => <>
+    <Masthead warm />
+    <div className="warm-top">
+      <header className="page-top">
+        <h1 className="t-h1">Your book</h1>
+        <p className="serif-line">{push.portfolio.length} holdings, the weakest word first. Prices at the {closeLabel} close.</p>
+      </header>
+      {tally}
+    </div>
   </>
   // Order and tally only once every holding is in, so counts don't climb and rows don't reshuffle
   if (push.portfolio.some(p => cos[p.symbol] === undefined)) {
-    return <main className="screen book">{head}{slow && <p className="sub opening"><span className="dot-run" />Opening the ledgers</p>}</main>
+    return <main className="screen book">{head()}{slow && <p className="sub opening"><span className="dot-run" />Opening the ledgers</p>}</main>
   }
 
   const rows = push.portfolio.map(p => {
@@ -40,8 +44,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
 
   return (
     <main className="screen book">
-      {head}
-      <BookTally cos={Object.values(cos)} only={only} setOnly={setOnly} />
+      {head(<BookTally cos={Object.values(cos)} only={only} setOnly={setOnly} />)}
       {only && <p className="book-filter sub" aria-live="polite">{shown.length} with {WITH[only]} <button className="text-btn" onClick={() => setOnly(null)}>Show all</button></p>}
       <ul className="book-list">
         {shown.map(({ p, c, score, last }, i) => {

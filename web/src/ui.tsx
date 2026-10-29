@@ -59,15 +59,17 @@ export function StatusLabel({ status }: { status: Status }) {
 }
 
 // The masthead: wordmark left, one outlined pill right. Hides on the way down, comes back on the way up.
-export function Masthead({ right }: { right?: ReactNode }) {
+// Warm: the page opens on a warm block, so the masthead is warm while it sits over it.
+export function Masthead({ right, warm }: { right?: ReactNode; warm?: boolean }) {
   const [hide, setHide] = useState(false)
+  const [top, setTop] = useState(true)
   useEffect(() => {
     let y0 = scrollY
-    const on = () => { const y = scrollY; if (Math.abs(y - y0) < 6) return; setHide(y > y0 && y > 80); y0 = y }
+    const on = () => { const y = scrollY; setTop(y < 320); if (Math.abs(y - y0) < 6) return; setHide(y > y0 && y > 80); y0 = y }
     addEventListener('scroll', on, { passive: true }); return () => removeEventListener('scroll', on)
   }, [])
   return (
-    <header className={`mast${hide ? ' hide' : ''}`}>
+    <header className={`mast${hide ? ' hide' : ''}${warm && top ? ' warm' : ''}`}>
       <a className="wordmark" href="#/" aria-label="FINN, Today">FINN</a>
       {right}
     </header>
