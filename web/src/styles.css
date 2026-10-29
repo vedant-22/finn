@@ -186,7 +186,16 @@ blockquote { margin: 0; }
 .page-top { padding-top: var(--s-m); }
 .book .og-panel { margin-top: var(--s-m); }
 .book-filter { display: flex; align-items: center; justify-content: space-between; margin-top: var(--s-s); font-size: 14px; }
-.book-list { display: grid; gap: var(--s-3xs); margin-top: var(--s-s); }
+.book-list { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3xs); margin-top: var(--s-s); }
+.book-list > li { min-width: 0; display: flex; }
+.book-list > li.wide { grid-column: 1 / -1; }
+.tile-card { align-items: flex-start; text-align: left; min-height: 100%; }
+.tile-card .card-title { margin-top: var(--s-3xs); font-size: 19px; line-height: 124%; letter-spacing: -0.5px; min-height: 0; }
+.tile-card .book-rec { margin-top: var(--s-3xs); text-align: left; }
+.tile-card .card-desc { font-size: 15px; }
+.book-foot { margin-top: auto; padding-top: var(--s-2xs); display: grid; gap: 4px; }
+.book-foot .lbl { white-space: normal; font-size: 11px; }
+.tile-card .book-px { margin-top: 0; font-size: 13px; }
 .book-card { display: flex; flex-direction: column; width: 100%; background: var(--panel); padding: var(--s-xs) var(--s-2xs) var(--s-2xs); }
 .book-card .card-lbl { width: 100%; }
 .book-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; margin-top: var(--s-3xs); width: 100%; }

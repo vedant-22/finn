@@ -48,22 +48,29 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
           const weak = weakest(c, only)
           const kept = score ? Math.floor(score.kept) : 0
           const pending = c ? c.ledger.filter(x => x.hard && x.status === 'pending').length : 0
+          const lead = i === 0 && !only
+          const rec = score?.graded
+            ? <Outcome size="xs" value={kept} unit={`/${score.graded} kept`} />
+            : pending ? <Outcome size="xs" value={pending} unit={'\u00a0not due'} /> : null
+          const desc = <p className="card-desc">{weak ? weakLine(weak) : c && c.calls.length && c.calls.every(x => x.error) ? "The call transcripts couldn't be opened." : 'No promise with a number and a date yet.'}</p>
+          const px = last && <p className="book-px"><span className="num">₹{last.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>, <span className="num">{pct(last.chg)}</span>{lead ? ' on the day' : ''}</p>
           return (
-            <li key={p.symbol}>
-              <button className={`book-card${i === 0 && !only ? ' lead' : ''}`} onClick={() => openCompany(p.symbol)}>
-                {i === 0 && !only && <div className="card-img"><Chart series={(push.eod[p.symbol] || []).slice(-30)} /></div>}
-                <div className="card-lbl"><span className="lbl lbl-quiet">{p.sector}</span>{weak && <StatusLabel status={weak.status} />}</div>
-                <div className="book-head">
-                  <span className="card-title">{p.short || shortName(p.name)}</span>
-                  <span className="book-rec">
-                    {score?.graded
-                      ? <Outcome size="xs" value={kept} unit={`/${score.graded} kept`} />
-                      : <Outcome size="xs" value={pending || '–'} unit={pending ? ' not due' : ''} />}
-                  </span>
-                </div>
-                <p className="card-desc">{weak ? weakLine(weak) : c && c.calls.length && c.calls.every(x => x.error) ? "The call transcripts couldn't be opened." : 'No promise with a number and a date yet.'}</p>
-                {last && <p className="book-px"><span className="num">₹{last.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>, <span className="num">{pct(last.chg)}</span> on the day</p>}
-              </button>
+            <li key={p.symbol} className={lead ? 'wide' : undefined}>
+              {lead
+                ? <button className="book-card lead" onClick={() => openCompany(p.symbol)}>
+                    <div className="card-img"><Chart series={(push.eod[p.symbol] || []).slice(-30)} /></div>
+                    <div className="card-lbl"><span className="lbl lbl-quiet">{p.sector}</span>{weak && <StatusLabel status={weak.status} />}</div>
+                    <div className="book-head"><span className="card-title">{p.short || shortName(p.name)}</span><span className="book-rec">{rec}</span></div>
+                    {desc}{px}
+                  </button>
+                // In the grid, as the reference's news cards: label, title, figure, one sentence; sector and price close it
+                : <button className="book-card tile-card" onClick={() => openCompany(p.symbol)}>
+                    {weak ? <StatusLabel status={weak.status} /> : <span className="lbl lbl-quiet">Nothing graded</span>}
+                    <span className="card-title">{p.short || shortName(p.name)}</span>
+                    {rec && <span className="book-rec">{rec}</span>}
+                    {desc}
+                    <span className="book-foot"><span className="lbl lbl-quiet">{p.sector}</span>{px}</span>
+                  </button>}
             </li>
           )
         })}
