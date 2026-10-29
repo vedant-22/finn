@@ -1,60 +1,63 @@
-# FINN design
+# Folio, FINN's design system
 
-FINN follows the reference design system (studied at 390×844 and in its source; see `design/inspiration.md` and `design/PLAN.md`) in ENAM's colours. None of its branding, photos or copy is used.
+A folio is a numbered leaf of an account book, and in India it is also the number on an investor's holding. Folio is the page FINN keeps for each management team: what they said, and what happened. It is built on a base design's code and scales (tokens, spacing, the accordion, the sheet, the calm reveal), then made FINN's own: a book serif for what FINN reports, rounded cards and chips, a floating bar, index rows, and the before-and-after. None of any reference's branding, images or copy is used. Tokens live in `web/src/styles.css` as `--fo-*`.
 
 ## Idea
-- **A title and one sentence.** Every card says one thing; the rest waits behind "Read more" or a fold.
-- **Figures lead.** Tallies and promises are set as outcome figures, a big number with its unit set smaller on the baseline.
-- **Status is a word.** KEPT, MISSED, GONE QUIET, PARTLY KEPT, NOT DUE, CAN'T TELL, in small caps. No marks or icons.
-- **The card's picture is the stock.** Where the reference puts a photo, FINN draws the last 30 sessions of the holding's price.
+- **The before-and-after is the signature.** What management said, the promise FINN pulled out of it, and what the filings showed, read top to bottom in one block.
+- **One idea per block.** A card says one thing in one sentence; the rest waits behind a round control, a sheet or a row that opens in place.
+- **The serif reports, the sans speaks.** Names, figures, quotes and headlines are in the book serif. Sentences and controls are in a plain sans.
+- **Status is a chip.** Sentence case with a small mark, never caps.
 
 ## Colour
 | Token | Hex | Role | Contrast on white |
 |---|---|---|---|
-| paper | #FFFFFF | page | |
-| panel | #FBF8F2 | cards, tally grids | |
-| ink | #333333 | text, figures | 12.6 |
-| ink-2 | #6A6970 | secondary text (ENAM grey) | 5.4 |
-| rule | #D9D9D9 | hairlines, idle switch track, volume ticks | |
-| brand | #005DA3 | ENAM blue: wordmark, the one filled button, outlined pills, Read more and links, the chart line, the active tab, switches when on | 6.8 |
-| brand-pressed | #004A82 | the filled button and links while pressed | |
-| missed | #9E2B25 | the word MISSED, nothing else | 7.4 |
+| `--fo-paper` | #FFFFFF | page, cards | |
+| `--fo-ink` | #333333 | text, figures | 12.6 |
+| `--fo-ink-2` | #6A6970 | secondary text (ENAM grey) | 5.4 |
+| `--fo-rule` | #D9D9D9 | hairlines, card borders | |
+| `--fo-blue` | #005DA3 | ENAM blue, kept rare: the mark, the one filled button, links, the price line, the lit tab, the end band, the questions block | 6.8 |
+| `--fo-missed` | #9E2B25 | a missed promise, nothing else | 7.4 |
+| `--fo-panel` | #FBF8F2 | the before-and-after block | |
+| `--fo-tint` | #F2F7FB | the tally block and the picture's inset | |
+| `--fo-chip` | #F1F1F2 | neutral chips, the window's track | |
+| `--fo-mark-fig` / `--fo-mark-date` | blue 16% / amber 26% | a target figure and a date, marked in a quote | |
 
-Moves and changes are ink with a sign and a true minus; there is no green or red for up and down.
+Moves are ink with a sign and a true minus; there is no green or red for up and down.
 
 ## Type
-Inter (variable) and PT Serif, both bundled. The reference's mobile mixins:
-- Outcome large: 72/100%, 500, −3.6px; unit 36px. Outcome: 48/100%, 500, −2.4px; unit 24px. Smaller steps 30 and 24 for long figures.
-- Page title 30/112% 450 −1.04px. Section head 26/116% 450 −1.1px with a hairline under it. Card title 21/124% 500 −0.36px.
-- Body 16/140% −0.42px. Small text 14/140%.
-- Label: 12px uppercase, 450, +0.24px.
-- PT Serif 400 16/140% for the one sentence under a title (card sentences, the read, page descriptions), muted.
-- Proportional figures in running text (Inter's tabular hyphen reads '20 - day'); tabular only for tables, outcome figures and the rolling count. An amount keeps its unit on its line (no-break space in '₹5.23 lakh cr'). Headings wrap balanced, paragraphs without orphans.
+- **Newsreader** (variable, optical sizes, lining and tabular figures, its own ₹) for headlines, company names, figures, quotes and index-row titles. Light: 400 for figures and headlines, 500 for card names and the promise line, 600 only in the mark.
+- **Inter** (variable) at 400 and 500, tracking −0.01em, for sentences, captions and every control.
+- Page headline 34/108% (Look up's 46/102%), section head 28/112%, card name 23/118%, index-row title 22/120%, promise row 20/125%.
+- Figures: 76, 50, 42 and 32 px steps with the unit set at about half size on the baseline; stat figures 50/92%.
+- Body 16/145%, card sentences 15/145%, captions 13 to 14 px.
+- One italic phrase per screen at most, and only where it carries the meaning: "2 *need you*", "What did they *promise*?".
+- No caps labels anywhere. Headings wrap balanced, paragraphs without orphans; an amount keeps its unit on its line.
 
 ## Space and shape
-Spacing scale 4, 6, 8, 12, 16, 20, 24, 32, 40, 48, 60, 80. Gutter 16. Cards: panel, square corners, 16px inside, the picture inset at the top. Pills are full radius (1000px). The bottom sheet's top corners are 12px. No shadows, gradients or glass.
+Spacing 4, 6, 8, 12, 16, 20, 24, 32, 40, 48, 60, 80; gutter 16; the column stops at 560 px. Radii: controls 8, media insets 14, cards 20, the end band's top 28, chips round. Hairlines, no shadows except the lifted segment in the window control.
 
 ## Components
-- **Masthead**: FINN wordmark (brand, 600, 0.08em tracking) left; one outlined pill right ("Your lines" on Today). Hides on the way down and returns on the way up.
-- **Section head**: 26px title, no rule, one serif line under it.
-- **Page header** (company page, Book): a warm panel edge to edge with a 12px rounded foot. On a company page: the sector and symbol as a caps label, then a 30px title where the name in grey runs into its record in ink ('Larsen & Toubro. 1 of 3 promises kept, 1 partly.'), then the price line in serif; the 30-session picture runs edge to edge on white under it. Book's holds its title, serif line and the tally. The masthead or Back bar is warm while it sits over the panel.
-- **Card**: picture, caps label (the kind), title, outcome figure with a muted caption, one serif sentence, then a foot row 32px below: "Read more" left (opens an accordion with the detail and sources, each source a row of its own), when it happened as a quiet label right. Cards with a picture stay warm; the ENAM-blue blocks are text only: a company's 'Ask on the next call', and the band Today ends on.
-- **End band** (Today): ENAM blue edge to edge down to the tab bar, the window named in white at 30px, centred ('That's the week.'), a white pill (Open your book) over a white outlined pill (Change your lines). The reference closes its pages the same way.
-- **Window choice** (Today): four words in a row, the one that's on in ink with a 2px brand rule under it, as the tab bar.
-- **Tile** (Book after its lead, Look up): two columns of warm cards. On Book, under a 'Weakest word first' section head: status label, name, record figure, the weakest promise in serif (no price; Book's lead holding carries the picture and price). On Look up: the symbol over the name, the record in serif at the foot ('6/14 kept').
-- **Outcomes grid**: two columns, number, one dark line, one muted line, a link. A company's promises keep their figures in one 48px band so every row's sentences start level.
-- **Fold**: hairline above and below, 21px title with a count, a plus that turns into a minus; opens on a grid-rows transition.
-- **Buttons**: one filled brand pill per screen at most; the rest outlined brand pills or plain text.
-- **Switch**: off is a grey outline with a grey knob (3:1 on white), on is a brand track with a white knob.
+- **Mark.** A small solid ENAM-blue square standing on the baseline, then *finn* in lowercase serif at 600.
+- **Floating bar.** A rounded bar inset 10 px from the edges, white at 94% with a blur and a hairline. On a tab: the mark and one square Menu control; it slides away on the way down and returns on the way up. On a company page: Back with its arrow, then the name once the heading has scrolled off; it stays.
+- **Menu.** A short sheet with two index rows: Alert lines (what's on, in a line) and How a promise is graded (what each verdict means).
+- **Folio card.** White, 20 px radius, a hairline. A chip and the time; the company in serif; a stat stack (serif figure, sans caption); one sentence; the before-and-after when the company made a promise on this topic; the small price strip; a foot row with a round control that turns to open the detail.
+- **Stat stack.** A serif figure, its word in serif under it, one plain sentence; set two to a row on the tinted block with a blue-tinted hairline between rows. Book's are tappable filters.
+- **Index row.** Serif title, a count or a record figure and an arrow on the right, one plain line under; hairlines between. It opens a sheet (Today's Worth a look and Routine filings) or opens in place, the arrow turning down (a company's numbers, for and against, sources).
+- **Promise row.** The promise in serif, a round control, then its status chip and when it was said; it opens on the before-and-after.
+- **The before-and-after.** A warm rounded block with three steps on a hairline: *They said* (the quote in serif, the target figure and the date marked where they stand, the speaker and page), chips naming what was found (Target found, Date found, only when the words are in the quote), *The promise* as one serif line, *What the filings showed* (the status chip, the verdict, the evidence). On a card it shows one sentence of the quote.
+- **Status chips.** Kept (tick, blue wash), Partly kept (dash), Missed (cross, red wash, red text), Gone quiet (ring), Not due (clock), Can't tell (?). Kinds of filing (Results, Unusual day, People) are neutral chips.
+- **Price strip.** The last 30 sessions in a 14 px rounded tinted inset, 80 units tall, with its change as a caption. Context, never the point.
+- **Controls.** Square-ish (8 px) buttons: one filled blue per screen at most, the rest outlined. The window is a segmented control. Look up's field is rounded with its square arrow button inside.
+- **End band.** Today closes on ENAM blue rising with 28 px rounded corners: the window named in white serif, then Open your book and Change alert lines.
+- **Sheet.** Slides up over the tab bar with a grab handle; drag down to close.
 
 ## Motion
-- Reveal: blocks fade in (opacity only) over 1200 ms on expo-decelerate as they enter the view; the first cards step 120 ms apart.
-- Today's count: on the first open of a session it falls from the filing count to what needs you (the sieve); switching windows rolls it in 320 ms.
-- Accordions open in 200 ms (decelerate) and close in 100 ms; the plus turns with them.
-- The masthead slides away on scroll down (400 ms, expo).
-- Sheets slide up 220 ms. Rows dim while pressed; pills fill brand.
-- Waiting: nothing under 400 ms, then one muted line with a pulsing brand dot.
+- Reveal: blocks fade in over 1200 ms on expo-decelerate as they enter the view; the first cards step 120 ms apart.
+- The before-and-after, as it scrolls in: the marks sweep under the figure and the date (650 ms), the chips arrive with a small spring (cubic-bezier(.34, 1.56, .64, 1), 90 ms apart), then the promise and the verdict fade up.
+- The round control turns 180° on the same spring; arrows nudge on hover.
+- Today's count rolls when the window changes. Accordions open in 200 ms and close in 100 ms. Sheets slide up in 220 ms.
+- Waiting: nothing under 400 ms, then one muted line with a pulsing blue dot.
 - `prefers-reduced-motion`: everything appears in place.
 
 ## Words on screen
-Speak to the investor. Sentence case except labels. Numbers before adjectives. A card gets one sentence.
+Speak to the investor in short, plain sentences. Sentence case everywhere. Numbers before adjectives. A card gets one sentence. Say why something isn't graded rather than hiding it.
