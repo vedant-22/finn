@@ -259,7 +259,7 @@ blockquote { margin: 0; }
 .p-item .og-d1 { overflow-wrap: anywhere; }
 .p-item.open { grid-column: 1 / -1; }
 .p-detail { padding: var(--s-3xs) 0 0 var(--s-nano); display: grid; gap: var(--s-3xs); width: 100%; }
-.p-detail h4 { margin-bottom: 4px; }
+.p-detail h4 { margin: 0 0 4px; }  /* the detail is already indented; .p-item .lbl would indent its labels twice */
 .p-detail blockquote { font: 15px/140% var(--serif); letter-spacing: 0; color: var(--ink); }
 .p-detail .sub { font-size: 13px; margin-top: 4px; }
 .verdict-t { font-size: 15px; line-height: 140%; color: var(--ink-2); }
