@@ -25,6 +25,7 @@ Pull works on any NSE symbol. The portfolio and four other names are prebuilt so
 4. Only promises with a number or a concrete deliverable and a date get graded. "We remain confident" is counted, not judged.
 5. Size decides loudness. A tax demand or a deal under 0.5% of a year's revenue becomes a one-line note.
 6. Cheap model for reading, stronger model for judging. Flash-lite does the bulk work; flash does one grading call per company. A full company costs about $0.09 at list prices, and I've paid nothing, because it all fits in Gemini's free tier.
+7. FINN has its own design system, Folio, built around one moment: the before-and-after. On a results card and on every promise you open, you see what management said with the figure and the date marked, the promise FINN pulled out of it, and what the filings later showed. Names, figures and quotes are set in a book serif; a verdict is a plain word in a small chip.
 
 **What I left out on purpose**
 

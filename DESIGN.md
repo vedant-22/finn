@@ -1,11 +1,11 @@
 # Folio, FINN's design system
 
-A folio is a numbered leaf of an account book, and in India it is also the number on an investor's holding. Folio is the page FINN keeps for each management team: what they said, and what happened. It is built on a base design's code and scales (tokens, spacing, the accordion, the sheet, the calm reveal), then made FINN's own: a book serif for what FINN reports, rounded cards and chips, a floating bar, index rows, and the before-and-after. None of any reference's branding, images or copy is used. Tokens live in `web/src/styles.css` as `--fo-*`.
+A folio is a numbered leaf of an account book, and in India it is also the number on an investor's holding. Folio is the page FINN keeps for each management team: what they said, and what happened. It is built on a base design's code and scales (tokens, spacing, the accordion, the sheet, the calm reveal), then made FINN's own around the before-and-after, with a book serif for what FINN reports and rounded cards to hold it. No reference's branding or copy is used. Tokens live in `web/src/styles.css` as `--fo-*`.
 
 ## Idea
 - **The before-and-after is the signature.** What management said, the promise FINN pulled out of it, and what the filings showed, read top to bottom in one block.
-- **One idea per block.** A card says one thing in one sentence; the rest waits behind a round control, a sheet or a row that opens in place.
-- **The serif reports, the sans speaks.** Names, figures, quotes and headlines are in the book serif. Sentences and controls are in a plain sans.
+- **One idea per block.** A card says one thing in one sentence; the rest waits behind a round control or a sheet.
+- **The serif reports, the sans speaks.** What FINN reports is in the book serif: names, figures, quotes. Sentences and controls are in a plain sans.
 - **Status is a chip.** Sentence case with a small mark, never caps.
 
 ## Colour
@@ -25,10 +25,10 @@ A folio is a numbered leaf of an account book, and in India it is also the numbe
 Moves are ink with a sign and a true minus; there is no green or red for up and down.
 
 ## Type
-- **Newsreader** (variable, optical sizes, lining and tabular figures, its own ₹) for headlines, company names, figures, quotes and index-row titles. Light: 400 for figures and headlines, 500 for card names and the promise line, 600 only in the mark.
-- **Inter** (variable) at 400 and 500, tracking −0.01em, for sentences, captions and every control.
+- **Newsreader**, a variable book serif with optical sizes and its own ₹, for what FINN reports: headlines, names, figures, quotes, index-row titles. Light: 400 for figures and headlines, 500 for card names and the promise line, 600 only in the mark.
+- **Inter** (variable) at 400 and 500, tracking −0.01em, for sentences and every control.
 - Page headline 34/108% (Look up's 46/102%), section head 28/112%, card name 23/118%, index-row title 22/120%, promise row 20/125%.
-- Figures: 76, 50, 42 and 32 px steps with the unit set at about half size on the baseline; stat figures 50/92%.
+- Figures step down from 76 px to 32 px, with the unit set at about half size on the baseline; stat figures 50/92%.
 - Body 16/145%, card sentences 15/145%, captions 13 to 14 px.
 - One italic phrase per screen at most, and only where it carries the meaning: "2 *need you*", "What did they *promise*?".
 - No caps labels anywhere. Headings wrap balanced, paragraphs without orphans; an amount keeps its unit on its line.
@@ -42,9 +42,9 @@ Spacing 4, 6, 8, 12, 16, 20, 24, 32, 40, 48, 60, 80; gutter 16; the column stops
 - **Menu.** A short sheet with two index rows: Alert lines (what's on, in a line) and How a promise is graded (what each verdict means).
 - **Folio card.** White, 20 px radius, a hairline. A chip and the time; the company in serif; a stat stack (serif figure, sans caption); one sentence; the before-and-after when the company made a promise on this topic; the small price strip; a foot row with a round control that turns to open the detail.
 - **Stat stack.** A serif figure, its word in serif under it, one plain sentence; set two to a row on the tinted block with a blue-tinted hairline between rows. Book's are tappable filters.
-- **Index row.** Serif title, a count or a record figure and an arrow on the right, one plain line under; hairlines between. It opens a sheet (Today's Worth a look and Routine filings) or opens in place, the arrow turning down (a company's numbers, for and against, sources).
+- **Index row.** A serif title with a count and an arrow on the right, one plain line under; hairlines between. It opens a sheet (Today's Worth a look and Routine filings) or opens in place with the arrow turning down (the folds on a company page).
 - **Promise row.** The promise in serif, a round control, then its status chip and when it was said; it opens on the before-and-after.
-- **The before-and-after.** A warm rounded block with three steps on a hairline: *They said* (the quote in serif, the target figure and the date marked where they stand, the speaker and page), chips naming what was found (Target found, Date found, only when the words are in the quote), *The promise* as one serif line, *What the filings showed* (the status chip, the verdict, the evidence). On a card it shows one sentence of the quote.
+- **The before-and-after.** A warm rounded block with three steps on a hairline: *They said* (the quote in serif with the target figure and the date marked where they stand; under it, the speaker and the page), chips naming what was found (Target found, Date found, only when the words are in the quote), *The promise* as one serif line, *What the filings showed* (the status chip, the verdict, the evidence). On a card it shows one sentence of the quote.
 - **Status chips.** Kept (tick, blue wash), Partly kept (dash), Missed (cross, red wash, red text), Gone quiet (ring), Not due (clock), Can't tell (?). Kinds of filing (Results, Unusual day, People) are neutral chips.
 - **Price strip.** The last 30 sessions in a 14 px rounded tinted inset, 80 units tall, with its change as a caption. Context, never the point.
 - **Controls.** Square-ish (8 px) buttons: one filled blue per screen at most, the rest outlined. The window is a segmented control. Look up's field is rounded with its square arrow button inside.

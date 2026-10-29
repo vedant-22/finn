@@ -6,7 +6,7 @@ FINN is a phone app for a long-only investor that keeps management to its word. 
 
 <p>
 <img src="docs/img/today.png" width="240" alt="Today: what needs you across the portfolio">
-<img src="docs/img/company.png" width="240" alt="A company's promise ledger">
+<img src="docs/img/company.png" width="240" alt="A promise opened: what management said, the promise, what the filings showed">
 <img src="docs/img/book.png" width="240" alt="The book, weakest word first">
 </p>
 
