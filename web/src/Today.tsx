@@ -367,7 +367,7 @@ function FoldSummary({ stories, names }: { stories: Story[]; names: Record<strin
   return (
     <ul className="folded">
       {[...byDesc.entries()].sort((a, b) => b[1].n - a[1].n).map(([k, v]) => (
-        <li key={k}><span className="num">{v.n}</span> <span>{k}</span> <span className="sub">{[...v.cos].slice(0, 3).join(', ')}{v.cos.size > 3 ? ` and ${v.cos.size - 3} more` : ''}</span></li>
+        <li key={k}><span className="num">{v.n}</span> <span>{k}</span> <span className="sub">{[...v.cos].slice(0, 3).join(', ')}{v.cos.size > 3 ? ` and\u00a0${v.cos.size - 3}\u00a0more` : ''}</span></li>
       ))}
     </ul>
   )
