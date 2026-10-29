@@ -1,6 +1,6 @@
 import { type ReactNode, useEffect, useState } from 'react'
 import { cachedCompany, deadline, getCompany, pct, rupees, shortName, wordScore, type Company, type Promise_, type Push, type Status } from './lib'
-import { Chart, Masthead, Outcome, StatusLabel, useKept } from './ui'
+import { Masthead, Outcome, StatusLabel, Strip, useKept } from './ui'
 
 // The whole book, ordered by how far management's word has held. Weakest first: that's where to look.
 export function Book({ push, openCompany }: { push: Push; openCompany: (s: string) => void }) {
@@ -20,7 +20,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
     <Masthead />
     <header className="page-top">
       <h1 className="t-h1">Your book</h1>
-      <p className="serif-line">{push.portfolio.length} holdings, and how well each management team has kept its word. Prices at the {closeLabel} close.</p>
+      <p className="serif-line">{push.portfolio.length} holdings, and how well each management team has kept its word. Prices at the <span className="num">{closeLabel}</span> close.</p>
     </header>
     {tally}
   </>
@@ -65,7 +65,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
                     <div className="card-lbl"><span className="card-when">{p.sector}</span>{weak && <StatusLabel status={weak.status} />}</div>
                     <div className="book-head"><span className="card-title">{p.short || shortName(p.name)}</span><span className="book-rec">{rec}</span></div>
                     {desc}{px}
-                    <div className="fo-media"><Chart series={(push.eod[p.symbol] || []).slice(-30)} /></div>
+                    <Strip bars={(push.eod[p.symbol] || []).slice(-30)} />
                   </button>
                 : <button className="fo-hold" onClick={() => openCompany(p.symbol)}>
                     <span className="fo-hold-name">{p.short || shortName(p.name)}</span>

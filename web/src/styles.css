@@ -175,7 +175,8 @@ blockquote { margin: 0; }
 .fo-hold-rec .outcome-xs .o-val { font-size: 24px; }
 .fo-hold-rec .outcome-xs .o-unit { font: 400 14px/1 var(--fo-sans); color: var(--fo-ink-2); }
 .fo-hold .fo-row-arrow { align-self: center; }
-.fo-hold-line { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: var(--fo-s-5xs); font-size: 14px; line-height: 140%; color: var(--fo-ink-2); }
+.fo-hold-line { grid-column: 1 / -1; margin-top: var(--fo-s-5xs); font-size: 14px; line-height: 140%; color: var(--fo-ink-2); }
+.fo-hold-line .fo-chip { vertical-align: 1px; margin-right: 8px; }
 .fo-hold:active > * { opacity: .5; }
 @media (hover: hover) { .fo-hold:hover .fo-row-arrow { transform: translateX(3px); } }
 .book-lead { display: flex; flex-direction: column; width: 100%; text-align: left; padding-bottom: var(--fo-s-2xs); }

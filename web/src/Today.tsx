@@ -4,7 +4,7 @@ import {
   type Bar, type Company, type Lines, type Move, type Push, type Story,
 } from './lib'
 import { Trail } from './Trail'
-import { Accordion, Chart, Chip, IndexRow, Masthead, Sheet, Outcome, pctParts, Src, StatusLabel, useKept } from './ui'
+import { Accordion, Chip, Strip, IndexRow, Masthead, Sheet, Outcome, pctParts, Src, StatusLabel, useKept } from './ui'
 
 const WINDOWS = [{ h: 24, label: '24h' }, { h: 72, label: '3 days' }, { h: 168, label: 'Week' }, { h: 720, label: 'Month' }]
 // However busy the window, at most five things interrupt; the rest wait in the first fold
@@ -111,13 +111,6 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
       </section>
     </main>
   )
-}
-
-// The price picture, kept small: context for the card, not its point
-function Strip({ bars }: { bars: Bar[] }) {
-  if (bars.length < 2) return null
-  const chg = bars[bars.length - 1].close / bars[0].close - 1
-  return <figure className="fo-strip"><div className="fo-media"><Chart series={bars} h={80} /></div><figcaption>Last {bars.length} sessions, {pct(chg * 100)}</figcaption></figure>
 }
 
 // A Folio card opens on what kind of thing it is, and when

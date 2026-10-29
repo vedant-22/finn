@@ -53,8 +53,8 @@ Used on Today's card detail (the company's promise on that topic) and on every o
 - [x] 4. The Folio card on Today
 - [x] 5. The before-and-after component, on Today's card detail
 - [x] 6. Fold rows as index rows opening sheets
-- [ ] 7. Today finished: test at 390x844 and 320, flows and folds scripts, critic round, deploy
-- [ ] 8. Book: stat stacks and index rows; test, critic, deploy
+- [x] 7. Today finished: test at 390x844 and 320, flows and folds scripts, critic round, deploy
+- [x] 8. Book: stat stacks and index rows; test, critic, deploy
 - [ ] 9. Company: header, before-and-after on every promise, index rows; test, critic, deploy
 - [ ] 10. Look up; test, critic, deploy
 - [ ] 11. README shots, DESIGN.md (Folio), covering note, walkthrough; git grep for reference names finds nothing

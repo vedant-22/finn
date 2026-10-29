@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import type { Bar, Status } from './lib'
+import { pct, type Bar, type Status } from './lib'
 
 // useState that outlives the screen, so a filter or an open fold is still there after Back from a company
 const kept = new Map<string, unknown>()
@@ -167,6 +167,13 @@ export function Chart({ series, h = 120 }: { series: Bar[]; h?: number }) {
       <path className="line" d={`M${pts.join('L')}`} vectorEffect="non-scaling-stroke" />
     </svg>
   )
+}
+
+// The price picture, kept small: context for a card, not its point
+export function Strip({ bars }: { bars: Bar[] }) {
+  if (bars.length < 2) return null
+  const chg = bars[bars.length - 1].close / bars[0].close - 1
+  return <figure className="fo-strip"><div className="fo-media"><Chart series={bars} h={80} /></div><figcaption>Last {bars.length} sessions, {pct(chg * 100)}</figcaption></figure>
 }
 
 // 'Mar 2021' is the year to March 2021: FY21
