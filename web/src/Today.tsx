@@ -320,13 +320,18 @@ const moveWhy = (m: Move) => m.explainedBy
     : `After: ${(m.explainedBy.line || tidySubject(m.explainedBy.subject)).replace(/\.$/, '')}.`
   : 'No filing explains it.'
 
+// The same reason as one clause, for a fold row: '+12% on 43.5× its volume, the day after results.'
+const moveTail = (m: Move) => m.explainedBy?.category === 'results'
+  ? m.explainedBy.at.slice(0, 10) === m.d ? ', on results day.' : ', the day after results.'
+  : `. ${moveWhy(m)}`
+
 // Past the fifth card, an unusual day is one line in the fold
 function MoveRow({ m, name, openCompany }: { m: Move; name: string; openCompany: (s: string) => void }) {
   return (
     <li>
       <button className="note" onClick={() => openCompany(m.symbol)}>
         <span className="note-co">{name}</span>
-        <span className="note-text">{pct(m.chg)} on {m.volX.toFixed(1)}× its volume. {moveWhy(m)}</span>
+        <span className="note-text">{pct(m.chg)} on {m.volX.toFixed(1)}× its volume{moveTail(m)}</span>
         <span className="note-when">{shortDay(m.d)}</span>
       </button>
     </li>
