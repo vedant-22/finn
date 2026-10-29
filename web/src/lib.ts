@@ -42,7 +42,8 @@ export interface Company {
 const inr = new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 })
 export const cr = (v: number | null | undefined) => (v == null ? '–' : minus(inr.format(Math.round(v))))
 // Big sums the way they're said: ₹5,04,279 cr is '5.04 lakh cr'
-export const crBig = (v: number) => v >= 1e5 ? `${(v / 1e5).toFixed(2).replace(/\.?0+$/, '')} lakh cr` : `${cr(v)} cr`
+// No-break spaces: 'Worth ₹5.23 lakh cr' never leaves 'cr' alone on the next line
+export const crBig = (v: number) => v >= 1e5 ? `${(v / 1e5).toFixed(2).replace(/\.?0+$/, '')}\u00a0lakh\u00a0cr` : `${cr(v)}\u00a0cr`
 export const minus = (s: string | number) => String(s).replace(/^-/, '−')
 export const pct = (v: number | null | undefined, sign = true) => {
   if (v == null) return '–'
@@ -322,3 +323,5 @@ export const rupees = (t: string) => t
   .replace(/₹(\d{1,3}(?:,\d{3})+)(?![\d,])/g, (_, n) => `₹${inr.format(+n.replace(/,/g, ''))}`)
   // A range never splits at its dash ('22–' at a line end, '23%' on the next): word joiner after it
   .replace(/(\d)–(?=[₹\d])/g, '$1–\u2060')
+  // and an amount keeps its unit: '₹5.23 lakh crore' never breaks before 'crore'
+  .replace(/(₹[\d,.–\u2060]+) (lakh )?crore\b/g, (_, a, l) => `${a}\u00a0${l ? 'lakh\u00a0' : ''}crore`)
