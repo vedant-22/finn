@@ -90,9 +90,13 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
   )
 }
 
-// One label row on every card: what kind of thing, and when
-function CardLabel({ kind, at }: { kind: string; at: string }) {
-  return <div className="card-lbl"><span className="lbl">{kind}</span><span className="lbl lbl-quiet">{at}</span></div>
+// What kind of thing opens the card; when it happened closes it, beside Read more
+function CardLabel({ kind }: { kind: string }) {
+  return <div className="card-lbl"><span className="lbl">{kind}</span></div>
+}
+
+function CardFoot({ at, more, setMore }: { at: string; more: boolean; setMore: (b: boolean) => void }) {
+  return <div className="card-foot"><button className="read-more" aria-expanded={more} onClick={() => setMore(!more)}>{more ? 'Read less' : 'Read more'}</button><span className="lbl lbl-quiet">{at}</span></div>
 }
 const shortDay = (iso: string) => new Date(iso.length > 10 ? iso : iso + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
 
@@ -108,14 +112,14 @@ function StoryCard({ s, lead, name, asof, bars, openCompany }: { s: Story; lead?
     <article className={`card story cat-${s.category}${lead ? ' lead' : ''}`}>
       <div className="card-img"><Chart series={bars} /></div>
       <div className="card-info">
-        <CardLabel kind={r ? `Results, ${r.quarter}` : CATEGORY_LABEL[s.category] || s.category} at={when(s.at, asof)} />
+        <CardLabel kind={r ? `Results, ${r.quarter}` : CATEGORY_LABEL[s.category] || s.category} />
         <button className="card-title" onClick={() => openCompany(s.symbol)}>{name}</button>
         {r && rev?.yoy != null && <div className="card-fig"><Outcome value={v} unit={u} /><span className="card-cap">{rev.label.toLowerCase()}, against {r.compare.yago || 'a year ago'}</span></div>}
         {!r && f.amount_cr != null && f.amount_cr >= 1 && <div className="card-fig"><Outcome value={`₹${cr(f.amount_cr)}`} unit="cr" />{f.pct_rev != null && <span className="card-cap">{f.pct_rev < 0.1 ? 'under 0.1%' : `${f.pct_rev.toFixed(f.pct_rev < 1 ? 1 : 0)}%`} of a year's revenue</span>}</div>}
         {r ? <><p className="card-desc">{resultLine(r, pat)}</p><CardWord symbol={s.symbol} openCompany={openCompany} /></>
           : f.people?.length ? <PeopleLead f={f} />
             : <p className="card-desc">{f.line || tidySubject(f.subject)}</p>}
-        <button className="read-more" aria-expanded={more} onClick={() => setMore(!more)}>{more ? 'Read less' : 'Read more'}</button>
+        <CardFoot at={when(s.at, asof)} more={more} setMore={setMore} />
       </div>
       <Accordion open={more}>
         <div className="card-more">
@@ -292,11 +296,11 @@ function MoveCard({ m, lead, name, lines, openCompany }: { m: Move; lead?: boole
     <article className={`card move${lead ? ' lead' : ''}`}>
       <div className="card-img"><Chart series={m.series} /></div>
       <div className="card-info">
-        <CardLabel kind="Unusual day" at={shortDay(m.d)} />
+        <CardLabel kind="Unusual day" />
         <button className="card-title" onClick={() => openCompany(m.symbol)}>{name}</button>
         <div className="card-fig"><Outcome value={v} unit={u} /><span className="card-cap"><span className="num">{m.volX.toFixed(1)}×</span> its 20-day volume</span></div>
         <p className="card-desc">{moveWhy(m)}</p>
-        <button className="read-more" aria-expanded={more} onClick={() => setMore(!more)}>{more ? 'Read less' : 'Read more'}</button>
+        <CardFoot at={shortDay(m.d)} more={more} setMore={setMore} />
       </div>
       <Accordion open={more}>
         <div className="card-more">

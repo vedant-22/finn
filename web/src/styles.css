@@ -111,7 +111,8 @@ blockquote { margin: 0; }
 .card-cap { font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink-2); margin-top: var(--s-nano); padding-left: var(--s-nano); }
 .card-desc { margin-top: var(--s-3xs); font-size: 16px; line-height: 140%; color: var(--ink-2); }
 .card-who { font-family: var(--f); letter-spacing: -0.42px; color: var(--ink); font-weight: 500; }
-.read-more { margin-top: var(--s-5xs); }
+.card-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: var(--s-m); }
+.card-foot .read-more { align-self: center; }
 .card-more { padding-top: var(--s-5xs); display: grid; gap: var(--s-2xs); }
 .card-more > .sub { font-size: 14px; }
 .srcs { display: grid; gap: 2px; font-size: 14px; border-top: 1px solid var(--rule); padding-top: var(--s-3xs); }
