@@ -231,7 +231,7 @@ function Tiles({ title, syms, open, names }: { title: string; syms: string[]; op
     syms.forEach(s => getCompany(s).then(c => {
       const w = wordScore(c ?? undefined)
       if (!live || !w) return
-      const line = w.graded ? `${Math.floor(w.kept)} of ${w.graded} kept` : w.hard ? 'None due yet' : 'Nothing to grade'
+      const line = w.graded ? `${Math.floor(w.kept)}/${w.graded} kept` : w.hard ? 'None due yet' : 'Nothing to grade'
       setRec(r => ({ ...r, [s]: line }))
     }).catch(() => {}))
     return () => { live = false }

@@ -104,8 +104,9 @@ export function Fold({ title, count, open, toggle, quiet, children }: { title: s
 }
 
 // A big figure with its unit set smaller on the baseline, as on an outcomes page: +12%, 1/7
-export function Outcome({ value, unit, size = 's' }: { value: ReactNode; unit?: ReactNode; size?: 'l' | 's' | 'm' | 'xs' | 'xxs' }) {
-  return <span className={`outcome outcome-${size}`}><span className="o-val">{value}</span>{unit != null && <span className="o-unit">{unit}</span>}</span>
+// A prefix ('FY' in FY26) is set at unit size too, as the reference sets its letters beside a number
+export function Outcome({ value, unit, pre, size = 's' }: { value: ReactNode; unit?: ReactNode; pre?: ReactNode; size?: 'l' | 's' | 'm' | 'xs' | 'xxs' }) {
+  return <span className={`outcome outcome-${size}`}>{pre != null && <span className="o-unit o-pre">{pre}</span>}<span className="o-val">{value}</span>{unit != null && <span className="o-unit">{unit}</span>}</span>
 }
 // '+12.4%' -> ['+12', '%']; one decimal under 10 so small moves still read
 export function pctParts(v: number | null | undefined): [string, string] {

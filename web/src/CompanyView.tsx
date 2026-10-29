@@ -248,7 +248,7 @@ function PromiseItem({ p, open, toggle }: { p: Promise_; open: boolean; toggle: 
     <li className={`og-item p-item st-${p.status}${open ? ' open' : ''}`} data-pid={p.id}>
       <button className="og-btn" aria-expanded={open} onClick={toggle}>
         {/* Figures sit in one 48 px band, so the sentences under them start level across the row */}
-        <span className="p-fig">{fig ? <Outcome size={size} value={fig[0]} unit={fig[1]} /> : due ? <Outcome size={due.length > 5 ? "xs" : "s"} value={due} /> : null}</span>
+        <span className="p-fig">{fig ? <Outcome size={size} value={fig[0]} unit={fig[1]} /> : due ? (/^FY\d\d$/.test(due) ? <Outcome size="s" pre="FY" value={due.slice(2)} /> : <Outcome size={due.length > 5 ? "xs" : "s"} value={due} />) : null}</span>
         <span className="og-d1" style={{ display: 'block' }}>{cap(rupees(p.target))}{deadline(p) ? ` ${deadline(p)}` : ''}.</span>
         <span className="og-d2" style={{ display: 'block' }}>Said {p.period.replace(/ 20/, ' ’')}</span>
       </button>
