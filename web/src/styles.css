@@ -264,8 +264,11 @@ blockquote { margin: 0; }
 .p-detail .sub { font-size: 13px; margin-top: 4px; }
 .verdict-t { font-size: 15px; line-height: 140%; color: var(--ink-2); }
 .soft { margin-top: var(--s-l); color: var(--ink-2); font-size: 14px; min-height: 44px; text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 4px; }
-.soft-list { margin-top: var(--s-2xs); }
-.soft-row { padding: var(--s-3xs) 0; border-top: 1px solid var(--rule); font-size: 15px; }
+.soft-list { margin-top: var(--s-2xs); border-bottom: 1px solid var(--rule); }
+.soft-row { padding: var(--s-3xs) 0; border-top: 1px solid var(--rule); }
+.soft-row .og-btn { display: block; width: 100%; min-height: 44px; }
+.soft-row .og-d1, .soft-row .og-d2, .soft-row .p-detail { padding-left: 0; }
+.soft-row .og-d1 { font-size: 15px; }
 .ask.lead { padding: var(--s-s) var(--s-2xs) var(--s-2xs); }
 .ask.lead .sec-head { padding-bottom: var(--s-2xs); }
 .ask ol { counter-reset: q; padding-bottom: var(--s-2xs); }

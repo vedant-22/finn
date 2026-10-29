@@ -89,7 +89,7 @@ function weakest(c: Company | null | undefined, only: Status | null): Promise_ |
   return [...hard].sort((a, b) => ORDER.indexOf(a.status) - ORDER.indexOf(b.status))[0]
 }
 const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
-const weakLine = (p: Promise_) => `${cap(rupees(p.target))}${deadline(p) ? ` ${deadline(p)}` : ''}.`
+const weakLine = (p: Promise_) => `${cap(rupees(p.target))}${deadline(p) ? ` ${rupees(deadline(p))}` : ''}.`
 
 // Across the whole book: how many promises management teams have kept, missed or let go quiet.
 // Tap a count to see only the companies behind it; tap again for the whole book.

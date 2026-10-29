@@ -156,7 +156,7 @@ function CardWord({ symbol, openCompany }: { symbol: string; openCompany: (s: st
   if (!p) return null
   return (
     <button className="word-row card-word" onClick={() => openCompany(symbol, p.id)}>
-      <span className="word-t">{rupees(p.target.charAt(0).toUpperCase() + p.target.slice(1))}{deadline(p) ? ` ${deadline(p)}` : ''}</span>
+      <span className="word-t">{rupees(p.target.charAt(0).toUpperCase() + p.target.slice(1))}{deadline(p) ? ` ${rupees(deadline(p))}` : ''}</span>
       <StatusLabel status={p.status} />
     </button>
   )
@@ -232,7 +232,7 @@ function ResultsBlock({ f, symbol, openCompany }: { f: any; symbol: string; open
           <h4 className="lbl lbl-quiet">{word.slice(1).every(p => p.status === 'pending') ? 'Still running' : 'Also against what they said'}</h4>
           {word.slice(1).map(p => (
             <button key={p.id} className="word-row" onClick={() => openCompany(symbol, p.id)}>
-              <span className="word-t">{rupees(p.target.charAt(0).toUpperCase() + p.target.slice(1))}{deadline(p) ? ` ${deadline(p)}` : ''}</span>
+              <span className="word-t">{rupees(p.target.charAt(0).toUpperCase() + p.target.slice(1))}{deadline(p) ? ` ${rupees(deadline(p))}` : ''}</span>
               <StatusLabel status={p.status} />
             </button>
           ))}

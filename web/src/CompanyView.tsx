@@ -114,7 +114,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
             Plus {softTalk} {softTalk === 1 ? 'statement' : 'statements'} with no number or date. Not graded.
           </button>
         )}
-        {showSoft && <ul className="og pgrid soft-list">{soft.map(p => <PromiseItem key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>}
+        {showSoft && <ul className="soft-list">{soft.map(p => <PromiseItem key={p.id} p={p} soft open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>}
       </section>
 
       {c.questions.length > 0 && (
@@ -130,7 +130,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
           <ul className="open-list fold-body">
             {newHard.map((p, i) => (
               <li key={i}>
-                <span className="open-t">{cap(rupees(p.target))}</span> <span className="sub">{deadline(p)}</span>
+                <span className="open-t">{cap(rupees(p.target))}</span> <span className="sub">{rupees(deadline(p))}</span>
                 <blockquote>“{p.quote}” <Src href={`${p.url}#page=${p.page}`}>{p.period}, page {p.page}</Src></blockquote>
               </li>
             ))}
@@ -241,29 +241,30 @@ function promised(t: string): [string, string] | null {
 const dueFig = (p: Promise_) => `${p.target} ${deadline(p)}`.match(/\b(Q\d\s)?FY\d\d\b|\b20\d\d\b/)?.[0]
 
 // One promise as an outcome: the figure, what they said, the verdict word. Tap for the quote and the evidence.
-function PromiseItem({ p, open, toggle }: { p: Promise_; open: boolean; toggle: () => void }) {
-  const fig = promised(p.target), due = fig ? undefined : dueFig(p)
+// soft: a statement with no number or date. It isn't graded, so it gets no figure and no verdict word, only the quote behind the tap
+function PromiseItem({ p, open, toggle, soft }: { p: Promise_; open: boolean; toggle: () => void; soft?: boolean }) {
+  const fig = soft ? null : promised(p.target), due = fig || soft ? undefined : dueFig(p)
   const len = (fig?.[0] || '').replace(/\u2060/g, '').length + (fig?.[1] || '').trim().length
   const size = !fig ? 'xs' : len <= 5 ? 's' : len <= 6 ? 'm' : len <= 9 ? 'xs' : 'xxs'
   return (
-    <li className={`og-item p-item st-${p.status}${open ? ' open' : ''}`} data-pid={p.id}>
+    <li className={soft ? `soft-row${open ? ' open' : ''}` : `og-item p-item st-${p.status}${open ? ' open' : ''}`} data-pid={p.id}>
       <button className="og-btn" aria-expanded={open} onClick={toggle}>
         {/* Figures sit in one 48 px band, so the sentences under them start level across the row */}
-        <span className="p-fig">{fig ? <Outcome size={size} value={fig[0]} unit={fig[1]} /> : due ? (/^FY\d\d$/.test(due) ? <Outcome size="s" pre="FY" value={due.slice(2)} /> : <Outcome size={due.length > 5 ? "xs" : "s"} value={due} />) : null}</span>
-        <span className="og-d1" style={{ display: 'block' }}>{cap(rupees(p.target))}{deadline(p) ? ` ${deadline(p)}` : ''}.</span>
+        {!soft && <span className="p-fig">{fig ? <Outcome size={size} value={fig[0]} unit={fig[1]} /> : due ? (/^FY\d\d$/.test(due) ? <Outcome size="s" pre="FY" value={due.slice(2)} /> : <Outcome size={due.length > 5 ? "xs" : "s"} value={due} />) : null}</span>}
+        <span className="og-d1" style={{ display: 'block' }}>{cap(rupees(p.target))}{deadline(p) ? ` ${rupees(deadline(p))}` : ''}.</span>
         <span className="og-d2" style={{ display: 'block' }}>Said {p.period.replace(/ 20/, ' ’')}</span>
       </button>
-      <StatusLabel status={p.status} />
+      {!soft && <StatusLabel status={p.status} />}
       {open && (
         <div className="p-detail">
-          {verdictText(p) && <p className="verdict-t">{verdictText(p)}</p>}
+          {!soft && verdictText(p) && <p className="verdict-t">{verdictText(p)}</p>}
           <div>
             <h4 className="lbl lbl-quiet">Said</h4>
             <blockquote>“{p.quote}”</blockquote>
             <p className="sub">{p.speaker}, <Src href={`${p.url}#page=${p.page}`}>{p.period} call, page {p.page}</Src>
               {p.restated?.length ? <>. Said again: {p.restated.filter((r, k, all) => all.findIndex(x => x.period === r.period) === k).map((r, k) => <span key={k}>{k ? ', ' : ' '}<Src href={`${r.url}#page=${r.page}`}>{r.period}</Src></span>)}</> : null}</p>
           </div>
-          {p.evidence && (
+          {!soft && p.evidence && (
             <div>
               <h4 className="lbl lbl-quiet">{p.evidence_kind === 'quote' ? 'Latest call' : 'Reported'}</h4>
               {p.evidence_kind === 'quote'
@@ -273,7 +274,7 @@ function PromiseItem({ p, open, toggle }: { p: Promise_; open: boolean; toggle: 
           )}
         </div>
       )}
-      {!open && <a className="og-link" href={`${p.url}#page=${p.page}`} target="_blank" rel="noopener noreferrer">See the call</a>}
+      {!open && !soft && <a className="og-link" href={`${p.url}#page=${p.page}`} target="_blank" rel="noopener noreferrer">See the call</a>}
     </li>
   )
 }
