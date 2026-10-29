@@ -71,6 +71,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
       </header>
       <div className="co-top">
         <p className="lbl lbl-quiet co-sector">{sector || 'NSE'}</p>
+        {/* the reference's own two-tone title, chosen: avoid-ai-design-ignore: SD5 */}
         <h1 className="co-name" ref={nameRef}><span className="co-name-n">{title || shortName(c.name)}.</span> {standing}</h1>
         <p className="co-meta">
           {price != null && <>₹{price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)}{close && ` at the ${new Date(close.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} close`}. </>}
