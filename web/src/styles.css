@@ -373,12 +373,24 @@ blockquote { margin: 0; }
 
 @media (min-width: 720px) { .case { grid-template-columns: 1fr 1fr; } }
 
+/* ---------- the band a page ends on: the reference's closing block, in ENAM blue, edge to edge down to the tab bar ---------- */
+.today { padding-bottom: 0; }
+.end-band { margin: var(--s-3xl) calc(-1 * var(--g)) 0; padding: var(--s-3xl) var(--g) calc(env(safe-area-inset-bottom) + 57px + var(--s-3xl)); background: var(--brand); color: #fff; text-align: center; }
+.end-band h2 { max-width: 300px; margin: 0 auto; text-wrap: balance; }
+.end-band-btns { display: grid; justify-items: center; gap: var(--s-5xs); margin-top: var(--s-m); }
+.btn-light, .btn-light-outline { display: inline-flex; align-items: center; justify-content: center; min-width: 180px; height: 44px; padding: 0 var(--s-s); border-radius: var(--r-pill); font: 400 16px/116% var(--f); letter-spacing: -0.42px; text-decoration: none; transition: background-color 100ms ease-in-out, color 100ms ease-in-out; }
+.btn-light { background: #fff; color: var(--brand); }
+.btn-light:active { background: rgba(255, 255, 255, .8); }
+.btn-light-outline { border: 1px solid #fff; color: #fff; }
+.btn-light-outline:active { background: #fff; color: var(--brand); }
+@media (hover: hover) { .btn-light:hover { background: rgba(255, 255, 255, .88); } .btn-light-outline:hover { background: #fff; color: var(--brand); } }
+
 /* ---------- reveal: the reference's stagger fade, opacity only ---------- */
-.rv-on :is(.card, .book-card, .company > section, .fold, .chips-sec, .og-panel) { opacity: 0; transition: opacity 1200ms var(--expo); }
-.rv-on :is(.card, .book-card, .company > section, .fold, .chips-sec, .og-panel)[data-seen] { opacity: 1; }
+.rv-on :is(.card, .book-card, .company > section, .fold, .chips-sec, .og-panel, .end-band-in) { opacity: 0; transition: opacity 1200ms var(--expo); }
+.rv-on :is(.card, .book-card, .company > section, .fold, .chips-sec, .og-panel, .end-band-in)[data-seen] { opacity: 1; }
 .cards li:nth-child(2) .card, .book-list li:nth-child(2) .book-card { transition-delay: 120ms; }
 .cards li:nth-child(3) .card, .book-list li:nth-child(3) .book-card { transition-delay: 240ms; }
 @media (prefers-reduced-motion: reduce) {
-  .rv-on :is(.card, .book-card, .company > section, .fold, .chips-sec, .og-panel) { opacity: 1; }
+  .rv-on :is(.card, .book-card, .company > section, .fold, .chips-sec, .og-panel, .end-band-in) { opacity: 1; }
   * { transition: none !important; animation: none !important; }
 }

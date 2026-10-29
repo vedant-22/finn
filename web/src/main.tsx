@@ -6,7 +6,7 @@ import './styles.css'
 import { App } from './App'
 
 // One reveal style: blocks fade in as they enter the view (CSS under 'reveal')
-const REVEAL = '.card, .book-card, .company > section, .fold, .chips-sec, .og-panel'
+const REVEAL = '.card, .book-card, .company > section, .fold, .chips-sec, .og-panel, .end-band-in'
 if (typeof IntersectionObserver !== 'undefined' && typeof MutationObserver !== 'undefined') {
   const io = new IntersectionObserver(es => es.forEach(e => {
     // A data attribute, not a class: React rewrites className when a fold opens, and a class would be lost with it

@@ -8,6 +8,7 @@ import { Accordion, Chart, Fold, Masthead, Outcome, pctParts, Src, StatusLabel, 
 const WINDOWS = [{ h: 24, label: '24h' }, { h: 72, label: '3 days' }, { h: 168, label: 'Week' }, { h: 720, label: 'Month' }]
 // However busy the window, at most five things interrupt; the rest wait in the first fold
 const MAX_CARDS = 5
+const END: Record<number, string> = { 24: 'That’s the last 24 hours.', 72: 'That’s the last 3 days.', 168: 'That’s the week.', 720: 'That’s the month.' }
 
 export function Today({ push, lines, setLines, openCompany, openLines }: {
   push: Push; lines: Lines; setLines: (l: Lines) => void; openCompany: (s: string, pid?: number) => void; openLines: () => void
@@ -89,6 +90,17 @@ export function Today({ push, lines, setLines, openCompany, openLines }: {
           <FoldSummary stories={t.folded} names={names} />
         </Fold>
       )}
+
+      {/* The page ends as the reference's do, on one brand band: the window is done, and the two next moves */}
+      <section className="end-band" aria-label="End of the window">
+        <div className="end-band-in">
+          <h2 className="t-h1">{END[lines.hours] ?? 'That’s everything.'}</h2>
+          <div className="end-band-btns">
+            <a className="btn-light" href="#/book">Open your book</a>
+            <button className="btn-light-outline" onClick={openLines}>Change your lines</button>
+          </div>
+        </div>
+      </section>
     </main>
   )
 }
