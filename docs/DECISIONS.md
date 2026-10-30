@@ -1,6 +1,18 @@
 # Decisions
 
+**Point of view (stage 4): FINN is a brief you finish. Each morning it hands you the few things that changed, holds each one against what management promised, and lets you go.**
+
 Each entry: what I chose, what I passed on, and why.
+
+## Interaction model (stage 4, 31 Oct)
+
+**A brief you finish is the spine.** The investor opens FINN before the open, reads the few items that need them one after another, keeps or clears each, and reaches "You're up to date" with a count of the routine filings set aside. Tomorrow starts from where they left off. I scored seven models against the investor's day in `docs/INVESTOR.md`; this one won on every axis because it ends. A feed never tells you you're done, and knowing you've seen everything is what saves the time. Full scoring in `design/STAGE4_EXPLORE.md`.
+
+**Push lives at the top of the brief, as notifications.** Anything that crossed one of the investor's lines (a ±% day, a volume multiple, a kind of filing) arrives as a notification card with the line printed on it, and the line can be moved from there. FINN's data is a snapshot built after the close, so I don't claim a background push the pipeline doesn't do; with permission, opening the app raises a real system notification for what's new.
+
+**Pull lives inside every item, as Ask.** Each item can be asked about in place ("Did they deliver on margins?"), and the answer comes back as promised against delivered, quoted with its page. Questions about promises are answered from the 22 cached ledgers with no model call, so Ask works when Gemini is out of quota. A company outside the cache runs the existing live research.
+
+**Passed on:** chat as the home screen (typing is the slowest way to ask a phone anything, and a blank box hands the filtering back to the investor); a dashboard of tiles (aggregation, which the brief says isn't the scarce skill); voice as the main mode (fine on a commute, useless in a meeting). Voice stays as a Listen control that reads the brief aloud with the browser's own speech.
 
 ## Product
 

@@ -20,7 +20,7 @@ Coffee, the commute, the minutes before the morning meeting. The question: what 
 
 They are in meetings or on other screens. The question: did something just cross my line?
 
-- **10 seconds:** a notification that names the company, what happened and the line it crossed ("Crompton fell 6.2%, past your 4% line").
+- **10 seconds:** a notification that names the company, what happened and the line it crossed ("Syngene rose 12.2%, past your 4% line").
 - **1 minute:** is there a filing that explains it, or is the move unexplained? What the price did over the last month.
 - **10 minutes:** rarely. Usually they move the line if it fires too often.
 - **Next:** dismiss it, or keep it for the evening.
