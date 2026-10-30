@@ -1,3 +1,13 @@
+Next: 31 Oct, stage 4 (brief/STAGE4_SPEC.md). Explore five interaction models in design/STAGE4_EXPLORE.md, then compare v4 and v5 at 390x844 and write design/STAGE4_PLAN.md, then build in web/src. Deploy only to finn-ledger-next.
+
+## Stage 4 (31 Oct)
+- [x] docs/BRIEF_TRACE.md: both PDFs line by line
+- [x] docs/INVESTOR.md: four moments of the day
+- [ ] Interaction models explored and scored (design/STAGE4_EXPLORE.md); point of view at the top of DECISIONS
+- [ ] design/STAGE4_PLAN.md (why v4 reads cleaner, screens, motion, build checklist)
+- [ ] Build, screen by screen; deploy to finn-ledger-next
+- [ ] Section 7 comparison against v4 and v5; promote only if it wins
+
 Next: 29 Oct, stage 3. All four screens in Folio are deployed. Next is item 11 of design/UX_PLAN.md: retake README shots (web/scripts or the shot script in docs), rewrite DESIGN.md as Folio (tokens, type, components, motion, voice), sync the covering note and walkthrough, `git grep -i` each reference name finds nothing; then a cross-screen critic round
 
 Next: 29 Oct, iteration 2 polish. PLAN checklist done; README shots, DESIGN.md, preview card current (29 Oct ~09:30 IST). Keep polishing screen by screen at 390x844 (checked today: Today cards and folds, card detail, people detail, Book and its filter, company header, numbers, for/against, sources, soft statements, Look up, Your lines). Ship with web/test/e2e/ship.sh; it stages web/test too. Retake README shots if a first screen changes
