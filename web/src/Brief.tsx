@@ -139,10 +139,13 @@ export const closeWhen = (d: string, asof: string) => d === asof.slice(0, 10) ? 
 
 export const Arrow = () => <svg className="arrow" viewBox="0 0 16 16" aria-hidden><path d="M6 3.5l4.5 4.5L6 12.5" /></svg>
 
-// The figure an alert leads with, where one number carries it: profit on a year ago, or a deal's size.
-// A move already has its number in the headline; a management change has none.
-function alertFig(i: Item): { v: string; c: string; body: string } | null {
-  const f = i.story?.lead
+// The figure an alert leads with, where one number carries it: profit on a year ago, the day's move, a deal's size.
+// A management change has none. With the number on the right, a move's headline is just the company.
+function alertFig(i: Item, name: string): { v: string; c: string; body: string; t?: string } | null {
+  const f = i.story?.lead, m = i.move
+  if (i.kind === 'move' && m && !f) return m.why.includes('price')
+    ? { v: `${m.chg >= 0 ? '+' : '−'}${pct1(m.chg)}`, c: 'on the day', t: name, body: `On ${m.volX.toFixed(1)}× its usual volume. ${moveWhy(m)}` }
+    : { v: `${m.volX.toFixed(1)}×`, c: 'usual volume', t: name, body: `${m.chg >= 0 ? 'Up' : 'Down'} ${pct1(m.chg)} on the day. ${moveWhy(m)}` }
   const pat = f?.results?.lines.find((l: any) => l.key === 'pat')
   if (i.kind === 'results' && pat?.yoy != null) {
     const r = f!.results!, rest = r.ebitda_margin != null ? `; EBITDA margin ${r.ebitda_margin}%${r.yago_margin != null ? ` against ${r.yago_margin}%` : ''}` : ''
@@ -155,12 +158,12 @@ function alertFig(i: Item): { v: string; c: string; body: string } | null {
 
 // An alert: when, what happened with its number, and the line it crossed. Flat rows, like the rest of the brief.
 function Notif({ i, fresh, name, push, lines, open, openLines }: { i: Item; fresh: boolean; name: string; push: Push; lines: Lines; open: () => void; openLines: () => void }) {
-  const fig = alertFig(i)
+  const fig = alertFig(i, name)
   return (
     <article className="notif">
       <button className="notif-main" onClick={open}>
         <span className="notif-when">{i.kind === 'move' ? closeWhen(i.move!.d, push.asof) : when(i.at, push.asof)}{fresh && <span className="notif-new">New</span>}</span>
-        <span className="notif-t">{itemTitle(i, name)}</span>
+        <span className="notif-t">{fig?.t ?? itemTitle(i, name)}</span>
         <span className="notif-b">{fig ? fig.body : itemLine(i)}</span>
         {fig && <span className="notif-fig"><span className="notif-v">{fig.v}</span><span className="notif-c">{fig.c}</span></span>}
       </button>

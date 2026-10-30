@@ -124,7 +124,7 @@ function CompanyAnswer({ p, name, openCompany, inline }: { p: Parsed; name: stri
       {xs.length
         ? <p className="sub">{tally(xs)}, from the last {c.calls.filter(x => !x.error).length} earnings calls.</p>
         : <p>Nothing{about}{fy} with a number and a date in {name}’s last {c.calls.filter(x => !x.error).length} calls. FINN only grades what management put a number or date on.</p>}
-      {shown.map(x => <BeforeAfter key={x.id} p={x} compact={inline} />)}
+      {shown.map(x => <BeforeAfter key={x.id} p={x} compact={inline} lead />)}
       {!xs.length && <Others c={c} open={pid => openCompany(c.symbol, pid)} />}
       <button className="link" onClick={() => openCompany(c.symbol, shown[0]?.id)}>{xs.length > shown.length ? `All ${xs.length}, and the rest of their record` : `${name}’s full record`}<Arrow /></button>
     </section>
