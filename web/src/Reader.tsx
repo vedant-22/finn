@@ -72,7 +72,7 @@ export function Reader({ push, brief, done, setDone, lines, names, start, close,
         <article key={at} className={`r-page${leaving ? ` out-${leaving}` : ''}`} style={dx ? { transform: `translateX(${dx}px) rotate(${dx / 60}deg)`, transition: 'none' } : undefined}
           onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp}>
           {page.kind === 'item' && <ItemPage i={page.item} push={push} lines={lines} names={names} openCompany={openCompany} openLines={openLines} />}
-          {page.kind === 'notes' && <><p className="small kicker">Under your lines</p><h1 className="title">Worth a line</h1><p className="lede">Filed in the window, none of it past your lines. One line each.</p><NotesList brief={brief} names={names} asof={push.asof} /></>}
+          {page.kind === 'notes' && <><p className="small kicker">The rest of the window</p><h1 className="title">Worth a line</h1><p className="lede">{brief.spill.length ? `${brief.spill.length} more crossed your lines; the rest didn’t.` : 'None of it crossed your lines.'} One line each.</p><NotesList brief={brief} names={names} asof={push.asof} /></>}
           {page.kind === 'done' && <DonePage brief={brief} done={done} names={names} close={close} />}
         </article>
       </div>

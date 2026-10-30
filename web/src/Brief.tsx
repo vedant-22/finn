@@ -104,7 +104,7 @@ export function BriefScreen({ push, brief, done, setDone, lines, setLines, names
 
       <section className="sec sec-quiet" aria-label="Set aside">
         <ul className="rows">
-          {nNotes > 0 && <li><button className="row" onClick={() => setSheet('notes')}><span>Worth a line<span className="row-sub">{nNotes} under your lines{done.notes.length && left.notesLeft === false ? ', read' : ''}</span></span><span className="row-n num">{nNotes}</span><Arrow /></button></li>}
+          {nNotes > 0 && <li><button className="row" onClick={() => setSheet('notes')}><span>Worth a line<span className="row-sub">The rest of the window, one line each{left.notesLeft ? '' : ', read'}</span></span><span className="row-n num">{nNotes}</span><Arrow /></button></li>}
           {brief.routine > 0 && <li><button className="row" onClick={() => setSheet('fold')}><span>Routine filings<span className="row-sub">Notices, call papers, newspaper ads</span></span><span className="row-n num">{brief.routine}</span><Arrow /></button></li>}
           <li><button className="row" onClick={openLines}><span>Your lines<span className="row-sub">{`±${lines.movePct}% in a day, ${lines.volX}× volume, ${lines.interrupt.length} kinds of filing`}</span></span><Arrow /></button></li>
         </ul>
