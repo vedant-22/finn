@@ -97,12 +97,12 @@ table { border-collapse: collapse; }
 .row .arrow { color: var(--ink-2); }
 
 /* ---------- the brief ---------- */
-.hero { padding: 20px 0 8px; }
+.hero { padding: 12px 0 4px; }
 .hero-fig { display: flex; align-items: baseline; gap: 10px; margin: 10px 0 10px; }
 .fig-unit { font: 500 28px/1 var(--sans); letter-spacing: -0.025em; }
 .fig-word { font-size: 48px; font-weight: 400; letter-spacing: -0.04em; }
 .hero-line { color: var(--ink-2); max-width: 34em; }
-.progress { display: flex; gap: 4px; margin: 22px 0 6px; }
+.progress { display: flex; gap: 4px; margin: 18px 0 4px; }
 .progress span { flex: 1; height: 3px; border-radius: 2px; background: var(--rule); position: relative; overflow: hidden; }
 .progress span::after { content: ''; position: absolute; inset: 0; background: var(--blue); transform: scaleX(0); transform-origin: left; transition: transform 200ms var(--ease); }
 .progress span.on::after { transform: scaleX(1); }
@@ -111,7 +111,7 @@ table { border-collapse: collapse; }
 .stops button.on { color: var(--ink); font-weight: 500; }
 .stops button.on::after { content: ''; position: absolute; left: 0; right: 0; bottom: 6px; height: 2px; background: var(--blue); border-radius: 1px; }
 
-.sec { margin-top: 32px; }
+.sec { margin-top: 28px; }
 .sec > .head { margin-bottom: 12px; }
 .sec-quiet { margin-top: 36px; }
 .cta { margin-top: 20px; }
@@ -421,3 +421,13 @@ table { border-collapse: collapse; }
   .title { font-size: 25px; }
 }
 .r-acts .btn { white-space: nowrap; }
+
+.notif-new { color: var(--blue); font-weight: 500; }
+.hint { margin-top: 8px; }
+.row-switch { cursor: pointer; }
+.row-switch input { appearance: none; width: 44px; height: 26px; border-radius: 13px; background: var(--rule-2); position: relative; transition: background var(--fast) var(--ease); cursor: pointer; flex: none; }
+.row-switch input::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 10px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.2); transition: transform var(--fast) var(--ease); }
+.row-switch input:checked { background: var(--blue); }
+.row-switch input:checked::after { transform: translateX(18px); }
+.r-first { text-align: center; padding: 8px var(--g) 0; border-top: 1px solid var(--rule); }
+.r-first + .r-acts { border-top: 0; }

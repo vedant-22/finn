@@ -4,7 +4,9 @@ import { Book } from './Book'
 import { BriefScreen } from './Brief'
 import { AskHere, Reader } from './Reader'
 import { AskScreen } from './Ask'
-import { buildBrief, loadDone, saveDone, type Done } from './queue'
+import { buildBrief, lastSeen, loadDone, markSeen, saveDone, type Done } from './queue'
+import { raise } from './alerts'
+import { crossedText, itemLine, itemTitle } from './Brief'
 import {
   buildLive, CATEGORY_LABEL, plainError, DEFAULT_LINES, forgetCompanies, getCompany, getPush, loadLines, saveLines, shortName,
   type Bar, type Company, type Lines, type Push, type Step,
@@ -74,6 +76,18 @@ export function App() {
   }
   const brief = useMemo(() => push ? buildBrief(push, lines) : null, [push, lines])
   const names = useMemo(() => Object.fromEntries((push?.portfolio || []).map(p => [p.symbol, p.short || shortName(p.name)])), [push])
+  // Since you last looked: items newer than the last snapshot this phone opened are marked, and raised as alerts if they're on
+  const [fresh, setFresh] = useState<Set<string>>(new Set())
+  useEffect(() => {
+    if (!push || !brief) return
+    const seen = lastSeen()
+    if (seen && seen < push.asof) {
+      const news = brief.items.filter(i => i.at > seen)
+      setFresh(new Set(news.map(i => i.key)))
+      raise(news.map(i => ({ key: i.key, title: itemTitle(i, names[i.symbol]), body: `${itemLine(i)} ${crossedText(i, lines)}.` })))
+    }
+    markSeen(push.asof)
+  }, [push?.asof])  // eslint-disable-line react-hooks/exhaustive-deps
 
   if (err) return <div className="boot"><Mark /><p>Couldn’t load your filings. {plainError(err)}</p><button className="btn" onClick={() => location.reload()}>Try again</button></div>
   if (!push || !brief) return <BootSkeleton />
@@ -88,7 +102,7 @@ export function App() {
         ? <CompanyRoute push={push} openCompany={openCompany} sym={route.sym} pid={route.pid} sector={holding(route.sym)?.sector} title={holding(route.sym)?.short} close={push.eod[route.sym]?.[push.eod[route.sym].length - 1]} bars={push.eod[route.sym]} back={() => { location.hash = !prev || prev === location.hash ? '#/' : prev }} />
         : route.tab === 'book' ? <Book push={push} openCompany={openCompany} />
           : route.tab === 'ask' ? <AskScreen push={push} q0={route.q} openCompany={openCompany} />
-            : <BriefScreen push={push} brief={brief} done={done} setDone={setDone} lines={lines} setLines={setLines} names={names} openReader={openReader} openLines={() => setLinesOpen(true)} />}
+            : <BriefScreen push={push} brief={brief} fresh={fresh} done={done} setDone={setDone} lines={lines} setLines={setLines} names={names} openReader={openReader} openLines={() => setLinesOpen(true)} />}
 
       {route.read && <Reader push={push} brief={brief} done={done} setDone={setDone} lines={lines} names={names} start={readFrom}
         close={closeReader} openCompany={openCompany} openLines={() => setLinesOpen(true)} />}

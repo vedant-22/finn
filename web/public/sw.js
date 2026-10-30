@@ -26,3 +26,14 @@ function keep(key, r) {
   if (r.ok) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(key, copy)) }
   return r
 }
+
+// A tapped notification opens the brief's reader, in the open window if there is one
+self.addEventListener('notificationclick', e => {
+  e.notification.close()
+  const url = (e.notification.data && e.notification.data.url) || '/'
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(cs => {
+    const c = cs.find(x => new URL(x.url).origin === location.origin)
+    if (c) { c.navigate(url).catch(() => {}); return c.focus() }
+    return self.clients.openWindow(url)
+  }))
+})

@@ -4,6 +4,7 @@ import { isDone, remaining, type Brief, type Done, type Item } from './queue'
 import { CATEGORY_LABEL, when, type Lines, type Push } from './lib'
 import { FoldSummary, NoteRow, Roll, few, moveWhy, reclass, resultLine, sizeWords, sortPeople, tidySubject } from './items'
 import { Masthead, Sheet } from './ui'
+import { alertsBlocked, alertsOn, canAlert, disableAlerts, enableAlerts } from './alerts'
 
 export const WINDOWS = [{ h: 24, label: '24 hours' }, { h: 72, label: '3 days' }, { h: 168, label: 'Week' }, { h: 720, label: 'Month' }]
 
@@ -43,8 +44,8 @@ export function crossedText(i: Item, lines: Lines): string {
 }
 
 // ---------- the screen ----------
-export function BriefScreen({ push, brief, done, setDone, lines, setLines, names, openReader, openLines }: {
-  push: Push; brief: Brief; done: Done; setDone: (d: Done) => void; lines: Lines; setLines: (l: Lines) => void; names: Record<string, string>
+export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines, names, openReader, openLines }: {
+  push: Push; brief: Brief; fresh: Set<string>; done: Done; setDone: (d: Done) => void; lines: Lines; setLines: (l: Lines) => void; names: Record<string, string>
   openReader: (key?: string) => void; openLines: () => void
 }) {
   const left = remaining(brief, done)
@@ -77,6 +78,7 @@ export function BriefScreen({ push, brief, done, setDone, lines, setLines, names
             : n ? `${few(cos)}. ${brief.filings} ${brief.filings === 1 ? 'filing' : 'filings'} in the window, ${brief.routine} of them routine.`
               : `Nothing crossed your lines in the ${WINDOWS.find(w => w.h === lines.hours)?.label.toLowerCase() || 'window'}. ${nNotes} worth a line.`}
         </p>
+        {!finished && <div className="cta"><button className="btn btn-wide" onClick={() => openReader()}>{filled ? 'Carry on reading' : 'Read the brief'}</button></div>}
         {segs > 0 && <div className="progress" role="progressbar" aria-label="Read so far" aria-valuemin={0} aria-valuemax={segs} aria-valuenow={filled}>
           {Array.from({ length: segs }, (_, k) => <span key={k} className={k < filled ? 'on' : ''} />)}
         </div>}
@@ -89,12 +91,11 @@ export function BriefScreen({ push, brief, done, setDone, lines, setLines, names
         <section className="sec" aria-labelledby="crossed-h">
           <h2 id="crossed-h" className="head">Crossed your lines</h2>
           <ul className="notifs">
-            {left.items.map(i => <li key={i.key}><Notif i={i} name={names[i.symbol]} push={push} lines={lines} open={() => openReader(i.key)} openLines={openLines} /></li>)}
+            {left.items.map(i => <li key={i.key}><Notif i={i} fresh={fresh.has(i.key)} name={names[i.symbol]} push={push} lines={lines} open={() => openReader(i.key)} openLines={openLines} /></li>)}
           </ul>
         </section>
       )}
 
-      {!finished && <div className="cta"><button className="btn btn-wide" onClick={() => openReader()}>{filled ? 'Carry on reading' : 'Read the brief'}</button></div>}
       {kept.length > 0 && (
         <section className="sec" aria-labelledby="kept-h">
           <h2 id="kept-h" className="head">Kept for later</h2>
@@ -106,6 +107,7 @@ export function BriefScreen({ push, brief, done, setDone, lines, setLines, names
         <ul className="rows">
           {nNotes > 0 && <li><button className="row" onClick={() => setSheet('notes')}><span>Worth a line<span className="row-sub">The rest of the window, one line each{left.notesLeft ? '' : ', read'}</span></span><span className="row-n num">{nNotes}</span><Arrow /></button></li>}
           {brief.routine > 0 && <li><button className="row" onClick={() => setSheet('fold')}><span>Routine filings<span className="row-sub">Notices, call papers, newspaper ads</span></span><span className="row-n num">{brief.routine}</span><Arrow /></button></li>}
+          <AlertsRow top={brief.items[0]} names={names} lines={lines} />
           <li><button className="row" onClick={openLines}><span>Your lines<span className="row-sub">{`±${lines.movePct}% in a day, ${lines.volX}× volume, ${lines.interrupt.length} kinds of filing`}</span></span><Arrow /></button></li>
         </ul>
       </section>
@@ -137,11 +139,11 @@ export const closeWhen = (d: string, asof: string) => d === asof.slice(0, 10) ? 
 export const Arrow = () => <svg className="arrow" viewBox="0 0 16 16" aria-hidden><path d="M6 3.5l4.5 4.5L6 12.5" /></svg>
 
 // A notification as the phone would show it: who sent it and when, what happened, and the line it crossed
-function Notif({ i, name, push, lines, open, openLines }: { i: Item; name: string; push: Push; lines: Lines; open: () => void; openLines: () => void }) {
+function Notif({ i, fresh, name, push, lines, open, openLines }: { i: Item; fresh: boolean; name: string; push: Push; lines: Lines; open: () => void; openLines: () => void }) {
   return (
     <article className="notif">
       <button className="notif-main" onClick={open}>
-        <span className="notif-from"><span className="notif-app" aria-hidden /> FINN<span className="notif-when">{i.kind === 'move' ? closeWhen(i.move!.d, push.asof) : when(i.at, push.asof)}</span></span>
+        <span className="notif-from"><span className="notif-app" aria-hidden /> FINN{fresh && <span className="notif-new">New</span>}<span className="notif-when">{i.kind === 'move' ? closeWhen(i.move!.d, push.asof) : when(i.at, push.asof)}</span></span>
         <span className="notif-t">{itemTitle(i, name)}</span>
         <span className="notif-b">{itemLine(i)}</span>
       </button>
@@ -184,4 +186,22 @@ function Listen({ push, brief, done, lines, names }: { push: Push; brief: Brief;
     <svg viewBox="0 0 20 20" aria-hidden><path d="M3.5 7.5h3l4-3.5v12l-4-3.5h-3z" />{on ? <path d="M13.5 7.5v5M16 6v8" /> : <path d="M13.5 7.2a4 4 0 0 1 0 5.6M15.6 5.2a7 7 0 0 1 0 9.6" />}</svg>
     {on ? 'Stop' : 'Listen'}
   </button>
+}
+
+// Alerts on this phone: asks the browser once; when on, the top item arrives as a real notification straight away
+function AlertsRow({ top, names, lines }: { top?: Item; names: Record<string, string>; lines: Lines }) {
+  const [on, setOn] = useState(alertsOn)
+  const [note, setNote] = useState('')
+  if (!canAlert()) return null
+  const flip = async () => {
+    if (on) { disableAlerts(); setOn(false); setNote(''); return }
+    const r = await enableAlerts(top && { key: top.key, title: itemTitle(top, names[top.symbol]), body: `${itemLine(top)} ${crossedText(top, lines)}.` })
+    setOn(r === 'on')
+    setNote(r === 'denied' ? 'The browser said no. Allow notifications for this site in its settings.' : r === 'on' && top ? 'Sent the top item so you can see one.' : '')
+  }
+  const sub = note || (on ? 'On. New items arrive as notifications when FINN opens on a newer snapshot' : alertsBlocked() ? 'Blocked in this browser’s settings' : 'Off. Get what crosses your lines as phone notifications')
+  return (
+    <li><label className="row row-switch"><span>Alerts on this phone<span className="row-sub" aria-live="polite">{sub}</span></span>
+      <input type="checkbox" role="switch" checked={on} onChange={flip} /></label></li>
+  )
 }

@@ -76,6 +76,7 @@ export function Reader({ push, brief, done, setDone, lines, names, start, close,
           {page.kind === 'done' && <DonePage brief={brief} done={done} names={names} close={close} />}
         </article>
       </div>
+      {page.kind === 'item' && !done.cleared.length && !done.kept.length && <p className="small r-first">Keep it for later or clear it. Swiping works too.</p>}
       {page.kind !== 'done' && (
         <footer className="r-acts">
           {page.kind === 'item' && <button className="btn btn-line" onClick={() => advance('keep', 'right')}>Keep for later</button>}
