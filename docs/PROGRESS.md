@@ -1,4 +1,4 @@
-Next: 31 Oct, stage 4 (brief/STAGE4_SPEC.md). Build design/STAGE4_PLAN.md's checklist in order, starting with item 1 (tokens and shell) and 2 (Brief screen) in web/src. Deploy only to finn-ledger-next.
+Next: 31 Oct, stage 4. Brief, reader and Ask are on finn-ledger-next. Now STAGE4_PLAN item 6: restyle Book (web/src/Book.tsx) and Company (web/src/CompanyView.tsx, use Word.tsx BeforeAfter instead of Trail) to the new stylesheet. Deploy from ../next-deploy (git checkout --detach main; npx vercel deploy --prod --yes). Never touch finn-ledger-v2..v5.
 
 ## Stage 4 (31 Oct)
 - [x] docs/BRIEF_TRACE.md: both PDFs line by line
@@ -6,6 +6,10 @@ Next: 31 Oct, stage 4 (brief/STAGE4_SPEC.md). Build design/STAGE4_PLAN.md's chec
 - [x] Interaction models explored and scored (design/STAGE4_EXPLORE.md); point of view at the top of DECISIONS
 - [x] design/STAGE4_PLAN.md (why v4 reads cleaner, screens, motion, build checklist)
 - [ ] Build, screen by screen; deploy to finn-ledger-next
+  - [x] Shell, tokens, Brief, reader, done state, Ask (31 Oct ~01:40 IST, deployed to finn-ledger-next)
+  - [ ] Book and Company restyled
+  - [ ] Lines sheet, Listen, states, PWA check
+  - [ ] Tests, e2e, 390 and 320 sweeps
 - [ ] Section 7 comparison against v4 and v5; promote only if it wins
 
 Next: 29 Oct, stage 3. All four screens in Folio are deployed. Next is item 11 of design/UX_PLAN.md: retake README shots (web/scripts or the shot script in docs), rewrite DESIGN.md as Folio (tokens, type, components, motion, voice), sync the covering note and walkthrough, `git grep -i` each reference name finds nothing; then a cross-screen critic round
