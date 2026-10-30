@@ -8,7 +8,7 @@ export const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
 export const promiseLine = (p: Promise_) => `${cap(rupees(p.target))}${deadline(p) ? ` ${rupees(deadline(p))}` : ''}`
 
 // On a card there's room for one sentence of the quote: the one the promise came from
-function clip(parts: QuotePart[]): QuotePart[] {
+export function clip(parts: QuotePart[]): QuotePart[] {
   const text = parts.map(x => x.t).join('')
   if (text.length <= 200) return parts
   let at = 0, first = -1

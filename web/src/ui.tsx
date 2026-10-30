@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { pct, type Bar, type Status } from './lib'
 
@@ -54,12 +54,9 @@ export const STATUS_WORD: Record<Status, string> = {
 const STATUS_LABEL: Record<Status, string> = {
   kept: 'Kept', partly: 'Partly kept', missed: 'Missed', quiet: 'Gone quiet', pending: 'Not due', unclear: "Can't tell",
 }
-// Folio's status chip: rounded, sentence case, a small mark before the word. Blue wash for kept, red for missed, grey for the rest
-const CHIP_MARK: Record<Status, string> = {
-  kept: 'M2.5 6.2l2.3 2.3 4.7-5', partly: 'M2.5 6h7', missed: 'M3 3l6 6M9 3l-6 6', quiet: 'M6 2.6a3.4 3.4 0 1 0 0 6.8a3.4 3.4 0 1 0 0-6.8', pending: 'M6 1.9a4.1 4.1 0 1 0 0 8.2a4.1 4.1 0 1 0 0-8.2M6 4v2.2l1.5 1', unclear: 'M6 9.4v.1M4.4 4.3a1.7 1.7 0 1 1 2.4 1.6c-.5.3-.8.6-.8 1.3',
-}
+// A verdict is a word in its colour: blue for kept, dark red for missed, ink for the rest. No glyphs, no chips.
 export function StatusLabel({ status }: { status: Status }) {
-  return <span className={`fo-chip fo-chip-${status}`}><svg viewBox="0 0 12 12" aria-hidden><path d={CHIP_MARK[status]} /></svg>{STATUS_LABEL[status]}</span>
+  return <span className={`st st-${status}`}>{STATUS_LABEL[status]}</span>
 }
 // A neutral chip for a kind of thing: Results, Unusual day, People
 export function Chip({ children }: { children: ReactNode }) {
@@ -76,26 +73,12 @@ export function Mark({ label = 'FINN' }: { label?: string }) {
   )
 }
 
-// The menu opens from any screen's bar; App owns the sheet
-export const MenuCtx = createContext<() => void>(() => {})
-
-// The floating bar: the mark left, one small square Menu control right. Hides on the way down, back on the way up.
-export function Masthead(_: { warm?: boolean } = {}) {
-  const openMenu = useContext(MenuCtx)
-  const [hide, setHide] = useState(false)
-  useEffect(() => {
-    let y0 = scrollY
-    const on = () => { const y = scrollY; if (Math.abs(y - y0) < 6) return; setHide(y > y0 && y > 80); y0 = y }
-    addEventListener('scroll', on, { passive: true }); return () => removeEventListener('scroll', on)
-  }, [])
+// The top of a tab: the mark, and on the brief a Listen control
+export function Masthead({ right }: { right?: ReactNode } = {}) {
   return (
-    <header className={`fo-bar${hide ? ' hide' : ''}`}>
-      <div className="fo-bar-in">
-        <a className="fo-home" href="#/" aria-label="FINN, Today"><Mark label="" /></a>
-        <button className="fo-icon-btn" aria-label="Menu" aria-haspopup="dialog" onClick={openMenu}>
-          <svg viewBox="0 0 20 20" aria-hidden><path d="M3.5 7h13M3.5 13h13" /></svg>
-        </button>
-      </div>
+    <header className="top">
+      <a className="top-home" href="#/" aria-label="FINN, the brief"><Mark label="" /></a>
+      {right}
     </header>
   )
 }
@@ -145,11 +128,9 @@ export function Fold({ title, count, line, open, toggle, children }: { title: st
 // A company page's bar: the floating bar again, holding Back, and the name once the heading has scrolled away
 export function BackBar({ back, name }: { back: () => void; name?: string }) {
   return (
-    <header className="fo-bar co-bar">
-      <div className="fo-bar-in">
-        <button className="fo-back" onClick={back}><svg viewBox="0 0 16 16" aria-hidden><path d="M10 3.5L5.5 8l4.5 4.5" /></svg>Back</button>
-        {name && <span className="bar-name">{name}</span>}
-      </div>
+    <header className="top co-bar">
+      <button className="fo-back" onClick={back}><svg viewBox="0 0 16 16" aria-hidden><path d="M10 3.5L5.5 8l4.5 4.5" /></svg>Back</button>
+      {name && <span className="bar-name">{name}</span>}
     </header>
   )
 }

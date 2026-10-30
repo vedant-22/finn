@@ -3,8 +3,8 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import { DEFAULT_LINES } from '../src/lib.ts'
-import { buildBrief, act, remaining, notesKey, NO_DONE } from '../src/brief.ts'
-import { aliases, parse, matching, tally } from '../src/ask.ts'
+import { buildBrief, act, remaining, notesKey, NO_DONE } from '../src/queue.ts'
+import { aliases, parse, matching, tally } from '../src/question.ts'
 
 const push = JSON.parse(fs.readFileSync(new URL('../public/data/push.json', import.meta.url)))
 const names = JSON.parse(fs.readFileSync(new URL('../public/data/companies.json', import.meta.url)))
