@@ -2,7 +2,7 @@
 // A company FINN hasn't read yet is one tap from live research.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { aliases, matching, parse, tally, type Known, type Parsed } from './question'
-import { getCompany, shortName, type Company, type Promise_, type Push } from './lib'
+import { wordScore, getCompany, shortName, type Company, type Promise_, type Push } from './lib'
 import { promiseLine } from './Trail'
 import { StatusLabel } from './ui'
 import { BeforeAfter } from './Word'
@@ -122,7 +122,7 @@ function CompanyAnswer({ p, name, openCompany, inline }: { p: Parsed; name: stri
     <section className="answer" aria-live="polite">
       <h2 className="head">{name}{about}{fy}</h2>
       {xs.length
-        ? <p className="sub">{tally(xs)}, from the last {c.calls.filter(x => !x.error).length} earnings calls.</p>
+        ? <p className="sub">{xs.length === 1 ? 'One promise' : `${xs.length} promises`} on this: {tally(xs)}. {(s => s?.graded ? `Over their last ${c.calls.filter(x => !x.error).length} calls they’ve kept ${Math.floor(s.kept)} of ${s.graded} dated promises.` : `From their last ${c.calls.filter(x => !x.error).length} calls.`)(wordScore(c))}</p>
         : <p>Nothing{about}{fy} with a number and a date in {name}’s last {c.calls.filter(x => !x.error).length} calls. FINN only grades what management put a number or date on.</p>}
       {shown.map(x => <BeforeAfter key={x.id} p={x} compact={inline} lead />)}
       {!xs.length && <Others c={c} open={pid => openCompany(c.symbol, pid)} />}

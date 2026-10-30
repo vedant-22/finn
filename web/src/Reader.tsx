@@ -100,18 +100,11 @@ function ItemPage({ i, push, lines, names, openCompany, openLines }: { i: Item; 
   const bars = m?.series ?? (push.eod[i.symbol] || []).filter(b => b.d <= i.at.slice(0, 10)).slice(-30)
   const kind = i.kind === 'results' ? `Results, ${f?.results?.quarter}` : i.kind === 'people' ? 'Management change' : i.kind === 'move' ? 'Unusual day' : 'Filing'
   const others = i.story?.filings.filter(x => x !== f) || []
-  // On results, the line under the name is their word on this quarter; the table already says what profit did
-  const word = useWord(i.symbol), held = f?.results ? word[0] : undefined
   return <>
     <p className="small kicker">{kind}, {i.kind === 'move' ? shortDay(m!.d) : when(i.at, push.asof)}</p>
     <h1 className="title"><button className="title-link" onClick={() => openCompany(i.symbol)}>{name}</button></h1>
-    {held && held.status !== 'pending' && verdictText(held) ? <>
-        <p className="lede r-verdict"><StatusLabel status={held.status} /> {verdictText(held)}</p>
-        <p className="small r-promised">Their {said(held)} promise: {promiseLine(held).replace(/^./, c => c.toLowerCase())}.</p>
-      </>
-      : held ? <p className="lede r-verdict">Promised {said(held)}: {promiseLine(held).replace(/^./, c => c.toLowerCase())}. <StatusLabel status={held.status} /></p>
-      : i.kind !== 'move' && i.kind !== 'people' && <p className="lede">{itemLine(i)}</p>}
-    {/* Results lead with the four numbers and the promise they answer to; the day's move is context, one line under them */}
+    {/* Results open on the table: the numbers are the news. Their word follows it, the period named before the verdict */}
+    {!f?.results && i.kind !== 'move' && i.kind !== 'people' && <p className="lede">{itemLine(i)}</p>}
     {f?.results && <><ResultsBlock f={f} /><Held i={i} name={name} openCompany={openCompany} /></>}
     {m && (f?.results
       ? <p className="r-move-line"><b className={m.chg >= 0 ? 'up' : 'down'}>{m.chg >= 0 ? '+' : '−'}{Math.abs(m.chg).toFixed(1)}%</b> on the day, on {m.volX.toFixed(1)}× its 20-day volume. Closed at ₹{m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.</p>
@@ -126,7 +119,8 @@ function ItemPage({ i, push, lines, names, openCompany, openLines }: { i: Item; 
     <p className="crossed"><span>{crossedText(i, lines)}.</span> <button className="link-inline" onClick={openLines}>Change</button></p>
 
     {!f?.results && <Held i={i} name={name} openCompany={openCompany} />}
-    <AskHere push={push} symbol={i.symbol} name={name} openCompany={openCompany} />
+    {/* Ask's questions are about promises and numbers; beside a management change they'd be off topic */}
+    {i.kind !== 'people' && <AskHere push={push} symbol={i.symbol} name={name} openCompany={openCompany} />}
 
     <ul className="srcs small">
       {f?.results?.source?.xbrl && <li><Src href={f.results.source.xbrl}>Exchange XBRL</Src></li>}
@@ -150,6 +144,10 @@ function Held({ i, name, openCompany }: { i: Item; name: string; openCompany: (s
   return (
     <section className="r-sec" aria-label="Against their word">
       <h2 className="head">Against their word</h2>
+      {p && (p.status !== 'pending' && verdictText(p) ? <>
+        <p className="lede r-verdict">{verdictText(p).replace(/\.?$/, '.')} <StatusLabel status={p.status} /></p>
+        <p className="small r-promised">Their {said(p)} promise: {promiseLine(p).replace(/^./, c => c.toLowerCase())}.</p>
+      </> : <p className="lede r-verdict">Promised {said(p)}: {promiseLine(p).replace(/^./, c => c.toLowerCase())}. <StatusLabel status={p.status} /></p>)}
       {p ? <BeforeAfter p={p} compact bare /> : null}
       <p className="r-record">{record}</p>
       <button className="link" onClick={() => openCompany(i.symbol, p?.id)}>Their record<Arrow /></button>

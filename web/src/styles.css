@@ -127,13 +127,16 @@ table { border-collapse: collapse; }
 .notif-when { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 13px; color: var(--ink-2); }
 .notif-when > span { display: flex; gap: 8px; white-space: nowrap; }
 .notif-line { font-size: 13px; color: var(--ink-2); text-align: right; padding: 12px 0; margin: -12px 0; }
-.notif-main { display: grid; grid-template-columns: 1fr auto; column-gap: 16px; row-gap: 4px; width: 100%; padding-top: 6px; text-align: left; }
+.notif-main { display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto 1fr; column-gap: 16px; row-gap: 4px; width: 100%; padding-top: 6px; text-align: left; }
 .notif-main > * { grid-column: 1; }
 .notif-t { font: 500 21px/1.2 var(--serif); letter-spacing: -0.005em; }
-.notif-b { font-size: 15px; line-height: 1.4; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.notif-b { align-self: start; font-size: 15px; line-height: 1.4; color: var(--ink); }
 .notif-fig { grid-column: 2; grid-row: 1 / span 2; align-self: start; display: grid; justify-items: end; }
 .notif-v { font: 400 32px/1 var(--serif); letter-spacing: -0.01em; font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
 .notif-c { margin-top: 4px; font-size: 12px; color: var(--ink-2); white-space: nowrap; }
+.notif-spark { display: grid; justify-items: end; margin-top: 12px; }
+.notif-spark svg { width: 72px; height: 22px; animation: draw 600ms var(--ease) both; }
+.notif-spark path { fill: none; stroke: var(--blue); stroke-width: 1.4; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
 
 /* ---------- the reader ---------- */
 .reader { position: fixed; inset: 0; z-index: 30; background: var(--paper); display: flex; flex-direction: column; animation: r-up var(--mid) var(--ease); }
@@ -224,8 +227,9 @@ table { border-collapse: collapse; }
 .ba-promise { font-weight: 500; }
 .ba-verdict { margin-top: 4px; }
 .ba-verdict .st { font-size: 15px; font-weight: 600; margin-right: 2px; }
-.r-verdict .st { font-size: inherit; font-weight: 600; margin-right: 2px; }
+.r-verdict .st { font-size: inherit; font-weight: 600; }
 .r-promised { margin-top: 6px; }
+.r-sec .r-promised + .ba { margin-top: 16px; }
 .ba-ev { margin-top: 8px; }
 .answer .ba-verdict, .r-sec .ba-verdict { animation: land 200ms var(--ease) 150ms both; }
 
@@ -373,7 +377,7 @@ table { border-collapse: collapse; }
 .word .fold { margin-top: 12px; }
 .fo-row { display: grid; grid-template-columns: 1fr auto 16px; gap: 2px 12px; align-items: center; width: 100%; padding: 14px 0; min-height: 60px; }
 .fo-row:active { opacity: .55; }
-.fo-row-t { font-weight: 600; font-size: 17px; letter-spacing: -0.012em; }
+.fo-row-t { font: 500 20px/1.25 var(--serif); letter-spacing: -0.005em; }
 .fo-row-n { color: var(--ink-2); font-size: 15px; }
 .fo-row-arrow { width: 16px; height: 16px; fill: none; stroke: var(--ink-2); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform var(--mid) var(--ease); grid-column: 3; grid-row: 1; }
 .fold.is-open .fo-row-arrow { transform: rotate(90deg); }

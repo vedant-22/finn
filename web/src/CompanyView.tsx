@@ -103,7 +103,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back, ask }:
 
         {soft.length > 0
           ? <Fold title="Said without a number or date" count={soft.length} open={showSoft} toggle={() => setShowSoft(!showSoft)}
-              line={`Not graded${softTalk > soft.length ? `; ${softTalk - soft.length} vaguer ones are only counted` : ''}`}>
+              line={`Not graded${softTalk > soft.length ? `; ${softTalk - soft.length} vaguer remarks counted, not listed` : ''}`}>
               <ul className="soft-list">{soft.map(p => <SoftRow key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>
             </Fold>
           : softTalk > 0 && <p className="small soft-note">Plus {softTalk} {softTalk === 1 ? 'statement' : 'statements'} with no number or date. Not graded.</p>}

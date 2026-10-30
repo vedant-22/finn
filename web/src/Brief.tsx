@@ -144,31 +144,35 @@ export const closeWhen = (d: string, asof: string) => d === asof.slice(0, 10) ? 
 export const Arrow = () => <svg className="arrow" viewBox="0 0 16 16" aria-hidden><path d="M6 3.5l4.5 4.5L6 12.5" /></svg>
 
 // The figure an alert leads with, where one number carries it: profit on a year ago, the day's move, a deal's size.
-// A management change has none. With the number on the right, a move's headline is just the company.
+// The column holds numbers only, so a management change has none and keeps its headline ('Syngene: CFO leaves').
 function alertFig(i: Item, name: string): { v: string; c: string; body: string; t?: string } | null {
   const f = i.story?.lead, m = i.move
   // A move always shows the day's change, whichever line it crossed, so the column reads one way
   if (i.kind === 'move' && m && !f) return { v: `${m.chg >= 0 ? '+' : '−'}${pct1(m.chg)}`, c: 'on the day', t: name, body: `On ${m.volX.toFixed(1)}× its usual volume. ${moveWhy(m)}` }
-  // A management change shows who: the role, in the letters investors use
-  if (i.kind === 'people' && f?.people?.length) {
-    const p = sortPeople(f.people)[0], r = shortRole(p.role)
-    const v = /^(CFO|CEO|COO|MD)$/.test(r) ? r : /CEO/.test(r) && r.length <= 8 ? 'CEO' : /director/i.test(r) ? 'Board' : ''
-    const c = ({ appointed: 'joins', resigned: 'resigns', retired: 'retires', ceased: 'leaves', redesignated: 'new role', 're-appointed': 'stays' } as any)[p.action]
-    if (v && c && !reclass(p)) return { v, c, t: name, body: itemLine(i) }
-  }
   const pat = f?.results?.lines.find((l: any) => l.key === 'pat')
   if (i.kind === 'results' && pat?.yoy != null) {
     const r = f!.results!, rest = r.ebitda_margin != null ? `; EBITDA margin ${r.ebitda_margin}%${r.yago_margin != null ? ` against ${r.yago_margin}%` : ''}` : ''
-    return { v: `${pat.yoy >= 0 ? '+' : '−'}${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}%`, c: 'PAT YoY', t: name, body: `${r.quarter.replace(/ FY\d\d$/, '')} results: profit after tax ₹${cr(pat.value)} crore${rest}.` }
+    return { v: `${pat.yoy >= 0 ? '+' : '−'}${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}%`, c: 'PAT YoY', t: name, body: `${r.quarter.replace(/ FY\d\d$/, '')} profit ₹${cr(pat.value)} crore${rest}.${m ? ` Shares ${m.chg >= 0 ? 'up' : 'down'} ${pct1(m.chg)}.` : ''}` }
   }
   if (i.kind === 'filing' && f?.amount_cr != null && f.amount_cr >= 1 && f.pct_rev != null)
     return { t: name, v: `₹${cr(f.amount_cr)} cr`, c: `${f.pct_rev < 1 ? f.pct_rev.toFixed(1) : f.pct_rev.toFixed(0)}% of revenue`, body: (f.line || tidySubject(f.subject || '')).replace(/\.?$/, '.') }
   return null
 }
 
+// A month of closes under an alert's figure: what the price did, in a line that draws itself, its change written out
+function Spark({ bars }: { bars: { close: number }[] }) {
+  if (bars.length < 5) return null
+  const w = 72, h = 22, cl = bars.map(b => b.close), lo = Math.min(...cl), hi = Math.max(...cl)
+  const d = cl.map((c, k) => `${k ? 'L' : 'M'}${(k / (cl.length - 1) * w).toFixed(1)} ${(h - 2 - (c - lo) / (hi - lo || 1) * (h - 4)).toFixed(1)}`).join('')
+  const chg = (cl[cl.length - 1] / cl[0] - 1) * 100
+  return <span className="notif-spark"><svg viewBox={`0 0 ${w} ${h}`} aria-hidden><path d={d} /></svg>
+    <span className="notif-c">{chg >= 0 ? '+' : '−'}{Math.abs(chg).toFixed(1)}% {bars.length >= 20 ? 'in a month' : `in ${bars.length} sessions`}</span></span>
+}
+
 // An alert: when, what happened with its number, and the line it crossed. Flat rows, like the rest of the brief.
 function Notif({ i, fresh, name, push, lines, open, openLines }: { i: Item; fresh: boolean; name: string; push: Push; lines: Lines; open: () => void; openLines: () => void }) {
   const fig = alertFig(i, name)
+  const bars = fig && (i.kind === 'move' || i.kind === 'results') ? (push.eod[i.symbol] || []).filter(b => b.d <= (i.move?.d ?? i.at.slice(0, 10))).slice(-22) : []
   return (
     <article className="notif">
       <p className="notif-when">
@@ -178,7 +182,7 @@ function Notif({ i, fresh, name, push, lines, open, openLines }: { i: Item; fres
       <button className="notif-main" onClick={open}>
         <span className="notif-t">{fig?.t ?? itemTitle(i, name)}</span>
         <span className="notif-b">{fig ? fig.body : itemLine(i)}</span>
-        {fig && <span className="notif-fig"><span className="notif-v">{fig.v}</span><span className="notif-c">{fig.c}</span></span>}
+        {fig && <span className="notif-fig"><span className="notif-v">{fig.v}</span><span className="notif-c">{fig.c}</span><Spark bars={bars} /></span>}
       </button>
     </article>
   )
