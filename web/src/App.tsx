@@ -190,7 +190,7 @@ function CompanyRoute({ push, openCompany, sym, pid, sector, title, close, bars,
       {/* The same header the finished company page opens on, so one becomes the other */}
       <BackBar back={back} />
       <div className="co-top">
-        <p className="small kicker">{sector ? `${sector}, ` : ''}{sym}</p>
+        {(sector || title) && <p className="small kicker">{[sector, title && sym].filter(Boolean).join(', ')}</p>}
         <h1 className="title">{title || sym}</h1>
         {!failed && steps.length === 0 && slow && <p className="sub opening"><span className="dot-run" />Opening the ledger</p>}
         {!failed && steps.length > 0 && <p className="lede">Reading its last five earnings calls and filed results. About a minute.</p>}

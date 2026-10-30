@@ -289,6 +289,12 @@ export function deadline(p: { target: string; by_when: string; period?: string; 
     .replace(/^jan(?:uary)?[-– ]+mar(?:ch)? '?(?:20)?(\d\d)$/i, 'Q4 FY$1')
   const w = absolute(plain, p.period, p.status)
   if (stated(w)) return ''
+  // A rate is no deadline ('by annual basis'); a span reads 'within 2 to 3 months', not 'by next 9 months'
+  if (/^(?:on an? )?(?:annual|yearly|quarterly|monthly) basis$|^(?:annually|quarterly|per annum|(?:every|each) (?:year|quarter)|(?:consistently )?year[- ]over[- ]year)$/i.test(raw)) return ''
+  const n = '(?:\\d+|an?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|few|couple of)', unit = '(?:weeks?|months?|quarters?|years?)'
+  const span = raw.match(new RegExp(`^(?:the\\s+)?(?:over the next|over|next|within|in|coming)?\\s*(${n}(?:\\s+${unit})?(?:\\s*(?:to|-|–|,)\\s*${n})?\\s+${unit})$`, 'i'))
+  if (span) return `within ${/^(few|couple)/i.test(span[1]) ? 'a ' : ''}${span[1].replace(/\s*(?:[-–,]|\bto\b)\s*/, ' to ')}`
+  if (/^for the (?:full )?year$/i.test(raw)) return 'for the year'
   return stated(raw) ? `(${w})` : `by ${w}`
 }
 
