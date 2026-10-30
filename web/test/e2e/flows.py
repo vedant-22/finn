@@ -33,11 +33,11 @@ async def main():
         # Read the brief to the end
         await pg.get_by_role('button', name='Read the brief').click(); await pg.wait_for_timeout(900)
         check('reader opens at 1 of 2', await pg.locator('.r-count').inner_text() == '1 of 2')
-        check('results behind the move', await pg.locator('.figs tbody tr').count() == 4)
+        check('results behind the move', await pg.locator('.figs tbody tr:not(.figs-margin)').count() == 4)
         check('held against their word', await pg.locator('.r-sec .ba').count() >= 1)
         await pg.locator('.ask-chip').first.click(); await pg.wait_for_timeout(800)
         check('ask in place answers', await pg.locator('.r-sec .answer .head').count() == 1)
-        await pg.get_by_role('button', name='Clear', exact=True).click(); await pg.wait_for_timeout(600)
+        await pg.get_by_role('button', name='Done', exact=True).click(); await pg.wait_for_timeout(600)
         await pg.get_by_role('button', name='Keep for later').click(); await pg.wait_for_timeout(600)
         await pg.get_by_role('button', name='Mark all read').click(); await pg.wait_for_timeout(700)
         check('ends up to date', 'up to date' in (await pg.locator('.done-t').inner_text()).lower())

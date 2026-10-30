@@ -101,7 +101,7 @@ table { border-collapse: collapse; }
 /* ---------- the brief ---------- */
 .hero { padding: 12px 0 4px; }
 .hero-fig { display: flex; align-items: baseline; gap: 10px; margin: 10px 0 10px; }
-.fig-unit { font: 450 34px/1 var(--serif); letter-spacing: -0.012em; }
+.fig-unit { font: italic 400 40px/1 var(--serif); letter-spacing: -0.01em; }
 .fig-word { font-size: 48px; font-weight: 400; letter-spacing: -0.015em; }
 .hero-line { color: var(--ink-2); max-width: 34em; }
 .progress { display: flex; gap: 4px; margin: 18px 0 4px; }
@@ -116,7 +116,9 @@ table { border-collapse: collapse; }
 .sec { margin-top: 28px; }
 .sec > .head { margin-bottom: 12px; }
 .sec-quiet { margin-top: 36px; }
-.cta { margin-top: 20px; }
+.cta { margin-top: 22px; }
+/* the brief's one action: a pill that fits its words, not a slab across the screen */
+.cta .btn-wide { width: auto; min-height: 48px; padding: 0 30px; border-radius: 999px; }
 .cta:empty { display: none; }
 
 /* an alert: a flat row like the rest of the brief; the time, what happened, its figure on the right, the line it crossed */
@@ -222,7 +224,7 @@ table { border-collapse: collapse; }
 .ba-promise { font-weight: 500; }
 .ba-verdict { margin-top: 4px; }
 .ba-verdict .st { font-size: 15px; font-weight: 600; margin-right: 2px; }
-.r-verdict .st { font-size: inherit; font-weight: 600; margin-right: 2px; }
+.r-verdict .st { font-size: inherit; font-weight: 600; }
 .ba-ev { margin-top: 8px; }
 .answer .ba-verdict, .r-sec .ba-verdict { animation: land 200ms var(--ease) 150ms both; }
 

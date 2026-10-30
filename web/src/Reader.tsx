@@ -7,7 +7,7 @@ import { Answer, suggestions, useKnown } from './Ask'
 import { Arrow, NotesList, crossedText, itemLine, itemTitle } from './Brief'
 import { PeopleBlock, ResultsBlock, moveWhy, shortDay, tidySubject, useWord } from './items'
 import { Chart, Src, StatusLabel } from './ui'
-import { BeforeAfter } from './Word'
+import { BeforeAfter, said } from './Word'
 import { promiseLine } from './Trail'
 
 type Page = { kind: 'item'; item: Item } | { kind: 'notes' } | { kind: 'done' }
@@ -78,14 +78,14 @@ export function Reader({ push, brief, done, setDone, lines, names, start, close,
           {page.kind === 'done' && <DonePage brief={brief} done={done} names={names} close={close} />}
         </article>
       </div>
-      {page.kind === 'item' && !done.cleared.length && !done.kept.length && <p className="small r-first">Keep it for later or clear it. Swiping works too.</p>}
+      {page.kind === 'item' && !done.cleared.length && !done.kept.length && <p className="small r-first">Keep it for later, or mark it done. Swiping works too.</p>}
       {page.kind !== 'done' && (
         <footer className="r-acts">
           {page.kind === 'item' && <button className="btn btn-line" onClick={() => advance('keep', 'right')}>Keep for later</button>}
-          <button className="btn" onClick={() => advance('clear', 'left')}>{page.kind === 'notes' ? 'Mark all read' : 'Clear'}</button>
+          <button className="btn" onClick={() => advance('clear', 'left')}>{page.kind === 'notes' ? 'Mark all read' : 'Done'}</button>
         </footer>
       )}
-      {dx !== 0 && <p className={`r-hint ${dx < 0 ? 'l' : 'r'}`} aria-hidden>{dx < 0 ? 'Clear' : 'Keep'}</p>}
+      {dx !== 0 && <p className={`r-hint ${dx < 0 ? 'l' : 'r'}`} aria-hidden>{dx < 0 ? 'Done' : 'Keep'}</p>}
     </div>
   )
 }
@@ -105,7 +105,7 @@ function ItemPage({ i, push, lines, names, openCompany, openLines }: { i: Item; 
   return <>
     <p className="small kicker">{kind}, {i.kind === 'move' ? shortDay(m!.d) : when(i.at, push.asof)}</p>
     <h1 className="title"><button className="title-link" onClick={() => openCompany(i.symbol)}>{name}</button></h1>
-    {held ? <p className="lede r-verdict"><StatusLabel status={held.status} /> {promiseLine(held)}.</p>
+    {held ? <p className="lede r-verdict">Promised {said(held)}: {promiseLine(held).replace(/^./, c => c.toLowerCase())}. <StatusLabel status={held.status} /></p>
       : i.kind !== 'move' && i.kind !== 'people' && <p className="lede">{itemLine(i)}</p>}
     {/* Results lead with the four numbers and the promise they answer to; the day's move is context, one line under them */}
     {f?.results && <><ResultsBlock f={f} /><Held i={i} name={name} openCompany={openCompany} /></>}

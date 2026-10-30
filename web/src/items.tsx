@@ -74,17 +74,24 @@ export function ResultsBlock({ f }: { f: any }) {
               <Chg v={l.yoy} base={l.yago} now={l.value} />
             </tr>
           ))}
+          {/* The margin is often the quarter's story; its change is in percentage points, not percent */}
+          {r.ebitda_margin != null && <tr className="figs-margin">
+            <th scope="row">Margin</th>
+            <td className="num">{r.ebitda_margin}%</td>
+            <td className="num">{pp(r.ebitda_margin, r.prev_margin)}</td>
+            <td className="num">{pp(r.ebitda_margin, r.yago_margin)}</td>
+          </tr>}
         </tbody>
       </table>
       <p className="small figs-foot">
-        Against {r.compare.prev || 'the previous quarter'} and {r.compare.yago || 'a year ago'}.
-        {r.ebitda_margin != null && r.prev_margin != null && ` EBITDA margin ${r.ebitda_margin}%, from ${r.prev_margin}% last quarter${r.yago_margin != null ? ` and ${r.yago_margin}% a year ago` : ''}.`}
+        Against {r.compare.prev || 'the previous quarter'} and {r.compare.yago || 'a year ago'}.{r.ebitda_margin != null && ' Margin is EBITDA over revenue; its change is in percentage points.'}
         {r.one_offs?.length > 0 && ' ' + r.one_offs.map((o: any) => `${o.q === r.quarter ? "This quarter's" : o.q} profit includes ${[o.tax_credit && `a ₹${cr(o.tax_credit)} cr tax credit`, o.exceptional && `₹${cr(Math.abs(o.exceptional))} cr of exceptional items`].filter(Boolean).join(' and ')}.`).join(' ')}
       </p>
     </div>
   )
 }
 
+const pp = (a: number | null, b: number | null) => a == null || b == null ? '–' : `${a - b >= 0 ? '+' : '−'}${Math.abs(a - b).toFixed(1)} pp`
 // A percentage off a loss means nothing; a swing back to profit still deserves saying
 function Chg({ v, base, now }: { v: number | null; base: number | null; now: number | null }) {
   if (v == null && base != null && base < 0 && now != null && now >= 0) return <td className="num turn">from loss</td>

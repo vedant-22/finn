@@ -4,7 +4,7 @@ import { markQuote, tidyEvidence, type Promise_ } from './lib'
 import { clip, promiseLine, verdictText } from './Trail'
 import { Src, StatusLabel } from './ui'
 
-const said = (p: Promise_) => p.period.replace(/ 20(\d\d)$/, ' ’$1')
+export const said = (p: Promise_) => p.period.replace(/ 20(\d\d)$/, ' ’$1')
 
 // inRow: opened under its own row, which already names the promise
 // lead: the verdict before the quote, where the reader has ten seconds (a results item); else the quote first

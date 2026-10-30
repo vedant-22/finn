@@ -79,7 +79,7 @@ export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines
         </div>
         <p className="hero-line">
           {finished ? summary(brief, done, kept.length, cleared)
-            : n ? `${few(cos)}. ${brief.filings} ${brief.filings === 1 ? 'filing' : 'filings'} in the window, ${brief.routine} of them routine.`
+            : n ? `${few(cos)}. ${nNotes ? `${nNotes} more worth a line; ` : ''}${brief.routine} routine ${brief.routine === 1 ? 'filing' : 'filings'} set aside.`
               : `Nothing crossed your lines in the ${WINDOWS.find(w => w.h === lines.hours)?.label.toLowerCase() || 'window'}. ${nNotes} worth a line.`}
         </p>
         {!finished && <div className="cta"><button className="btn btn-wide" onClick={() => openReader()}>{filled ? 'Carry on reading' : 'Read the brief'}</button></div>}
@@ -171,7 +171,7 @@ function Notif({ i, fresh, name, push, lines, open, openLines }: { i: Item; fres
         <span className="notif-b">{fig ? fig.body : itemLine(i)}</span>
         {fig && <span className="notif-fig"><span className="notif-v">{fig.v}</span><span className="notif-c">{fig.c}</span></span>}
       </button>
-      <button className="notif-line" onClick={openLines}>{crossedText(i, lines)}. <span className="notif-change">Change</span></button>
+      <button className="notif-line" onClick={openLines} aria-label={`${crossedText(i, lines)}. Change`}>{crossedText(i, lines)}</button>
     </article>
   )
 }
