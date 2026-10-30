@@ -38,7 +38,8 @@ export function itemLine(i: Item): string {
 // The line that set it off, in the investor's own terms
 export function crossedText(i: Item, lines: Lines): string {
   const parts = i.crossed.map(c => c.line === 'price' ? `a ±${lines.movePct}% day` : c.line === 'volume' ? `${lines.volX}× volume` : (CATEGORY_LABEL[c.category!] || c.category!).toLowerCase())
-  return `Your ${parts.length > 1 ? 'lines' : 'line'}: ${[...new Set(parts)].join(' and ')}`
+  const u = [...new Set(parts)]
+  return `Your ${u.length > 1 ? 'lines' : 'line'}: ${u.length > 1 ? `${u.slice(0, -1).join(', ')} and ${u[u.length - 1]}` : u[0]}`
 }
 
 // ---------- the screen ----------

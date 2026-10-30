@@ -100,7 +100,7 @@ export function App() {
       </nav>}
 
       <Sheet open={linesOpen} onClose={() => setLinesOpen(false)} title="Your lines">
-        <LinesForm lines={lines} setLines={setLines} count={brief.items.length} />
+        <LinesForm lines={lines} setLines={setLines} count={brief.items.length + brief.spill.length} shown={brief.items.length} />
       </Sheet>
     </>
   )
@@ -117,11 +117,11 @@ function BootSkeleton() {
   )
 }
 
-function LinesForm({ lines, setLines, count }: { lines: Lines; setLines: (l: Lines) => void; count: number }) {
+function LinesForm({ lines, setLines, count, shown }: { lines: Lines; setLines: (l: Lines) => void; count: number; shown: number }) {
   const toggle = (c: string) => setLines({ ...lines, interrupt: lines.interrupt.includes(c) ? lines.interrupt.filter(x => x !== c) : [...lines.interrupt, c] })
   return (
     <div className="lines">
-      <p className="sub">FINN puts something in the brief only when it crosses one of these. With these lines, {count} {count === 1 ? 'item crosses' : 'items cross'} in this window.</p>
+      <p className="sub">FINN puts something in the brief only when it crosses one of these. With these lines, <b className="num">{count}</b> {count === 1 ? 'thing crosses' : 'things cross'} in this window{count > shown ? `; the brief leads with ${shown} and lists the rest under Worth a line` : ''}.</p>
       <Stepper label="Volume above its 20-day average" value={lines.volX} step={0.5} min={1.5} max={6} fmt={v => `${v}×`} set={v => setLines({ ...lines, volX: v })} />
       <Stepper label="Price move in a day" value={lines.movePct} step={1} min={1} max={15} fmt={v => `±${v}%`} set={v => setLines({ ...lines, movePct: v })} />
       <h3 className="lbl lbl-quiet">Filings that can interrupt</h3>

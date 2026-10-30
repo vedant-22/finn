@@ -252,8 +252,8 @@ table { border-collapse: collapse; }
 .sheet-intro { margin-bottom: 8px; }
 
 /* sheets */
-.sheet-wrap { position: fixed; inset: 0; z-index: 40; pointer-events: none; }
-.sheet-wrap.open { pointer-events: auto; }
+.sheet-wrap { position: fixed; inset: 0; z-index: 40; pointer-events: none; visibility: hidden; transition: visibility 0s 300ms; }
+.sheet-wrap.open { pointer-events: auto; visibility: visible; transition: visibility 0s; }
 .scrim { position: absolute; inset: 0; background: rgba(20, 20, 24, .32); opacity: 0; transition: opacity var(--mid) var(--ease); }
 .sheet-wrap.open .scrim { opacity: 1; }
 .sheet {
@@ -415,3 +415,9 @@ table { border-collapse: collapse; }
 .fail-msg { margin-bottom: 16px; }
 .fail-acts, .not-found { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
 .link-inline { min-height: 0; padding: 10px 0; margin: -10px 0; }
+@media (max-width: 359px) {
+  .fig-m { font-size: 46px; }
+  .r-acts .btn { padding: 0 10px; font-size: 15px; }
+  .title { font-size: 25px; }
+}
+.r-acts .btn { white-space: nowrap; }

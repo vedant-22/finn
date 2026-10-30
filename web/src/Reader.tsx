@@ -105,7 +105,7 @@ function ItemPage({ i, push, lines, names, openCompany, openLines }: { i: Item; 
       <span className={`fig fig-m ${m.chg >= 0 ? 'up' : 'down'}`}>{m.chg >= 0 ? '+' : '−'}{Math.abs(m.chg).toFixed(1)}<span className="fig-pc">%</span></span>
       <span className="small">{m.volX.toFixed(1)}× its 20-day volume<br />Closed at ₹{m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
     </div>}
-    {bars.length > 1 && <figure className="r-chart"><Chart series={bars} h={88} /><figcaption className="small">Last {bars.length} sessions</figcaption></figure>}
+    {bars.length > 1 && i.kind !== 'people' && <figure className="r-chart"><Chart series={bars} h={88} /><figcaption className="small">Last {bars.length} sessions</figcaption></figure>}
     {i.kind === 'move' && <p className="lede r-why">{moveWhy(m!)}</p>}
     {f?.results && <ResultsBlock f={f} />}
     {f?.people?.length ? <PeopleBlock f={f} /> : null}
