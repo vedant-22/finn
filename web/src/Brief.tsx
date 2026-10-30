@@ -14,6 +14,13 @@ const strip = (n: string) => n.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')
 // Headlines use the titles investors say: CFO, not Chief Financial Officer
 const shortRole = (r: string) => r.replace(/\bChief Financial Officer\b/i, 'CFO').replace(/\bChief Executive Officer\b/i, 'CEO')
   .replace(/\bChief Operating Officer\b/i, 'COO').replace(/\bManaging Director\b/i, 'MD').replace(/\bCompany Secretary\b/i, 'company secretary')
+// The management change riding with a results item, in one sentence: 'Its CFO, Deepak Jain, resigns.'
+export function withLine(s: NonNullable<Item['with']>) {
+  const p = sortPeople(s.lead.people || [])[0]
+  if (!p) return ''
+  const v = ({ appointed: 'joins', resigned: 'resigns', retired: 'retires', ceased: 'leaves', redesignated: 'takes a new role', 're-appointed': 'is re-appointed' } as any)[p.action] || p.action
+  return p.action === 'appointed' ? `A new ${shortRole(p.role)}, ${strip(p.name)}, joins.` : `Its ${shortRole(p.role)}, ${strip(p.name)}, ${v}.`
+}
 export function itemTitle(i: Item, name: string): string {
   const m = i.move, f = i.story?.lead
   if (i.kind === 'results' && f?.results) return `${name} reported ${f.results.quarter.replace(/ FY\d\d$/, '')}`
@@ -98,6 +105,8 @@ export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines
           <ul className="notifs">
             {left.items.map(i => <li key={i.key}><Notif i={i} fresh={fresh.has(i.key)} name={names[i.symbol]} push={push} lines={lines} open={() => openReader(i.key)} openLines={openLines} /></li>)}
           </ul>
+          {/* The list ends, and says so: knowing you've seen it all is the point */}
+          <p className="brief-end">That’s all that crossed your lines {({ 24: 'in the last 24 hours', 72: 'in the last 3 days', 168: 'this week', 720: 'this month' } as Record<number, string>)[lines.hours] || 'in the window'}.</p>
         </section>
       )}
 
@@ -145,14 +154,19 @@ export const Arrow = () => <svg className="arrow" viewBox="0 0 16 16" aria-hidde
 
 // The figure an alert leads with, where one number carries it: profit on a year ago, the day's move, a deal's size.
 // The column holds numbers only, so a management change has none and keeps its headline ('Syngene: CFO leaves').
-function alertFig(i: Item, name: string): { v: string; c: string; body: string; t?: string } | null {
+function alertFig(i: Item, name: string, push: Push): { v: string; c: string; body: string; t?: string } | null {
   const f = i.story?.lead, m = i.move
   // A move always shows the day's change, whichever line it crossed, so the column reads one way
-  if (i.kind === 'move' && m && !f) return { v: `${m.chg >= 0 ? '+' : '−'}${pct1(m.chg)}`, c: 'on the day', t: name, body: `On ${m.volX.toFixed(1)}× its usual volume. ${moveWhy(m)}` }
+  if (i.kind === 'move' && m && !f) {
+    // A move on results says what the results were, not just that they came out
+    const res = m.explainedBy?.category === 'results' ? push.filings.filter(x => x.symbol === i.symbol && x.results && x.at.slice(0, 10) <= m.d).sort((a, b) => b.at.localeCompare(a.at))[0]?.results : undefined
+    const pat = res?.lines.find((l: any) => l.key === 'pat')
+    return { v: `${m.chg >= 0 ? '+' : '−'}${pct1(m.chg)}`, c: 'on the day', t: name, body: res && pat?.yoy != null ? `On ${m.volX.toFixed(1)}× its usual volume, after ${res.quarter.replace(/ FY\d\d$/, '')} results: profit ${pat.yoy >= 0 ? 'up' : 'down'} ${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}% on a year ago.` : `On ${m.volX.toFixed(1)}× its usual volume. ${moveWhy(m)}` }
+  }
   const pat = f?.results?.lines.find((l: any) => l.key === 'pat')
   if (i.kind === 'results' && pat?.yoy != null) {
     const r = f!.results!, rest = r.ebitda_margin != null ? `; EBITDA margin ${r.ebitda_margin}%${r.yago_margin != null ? ` against ${r.yago_margin}%` : ''}` : ''
-    return { v: `${pat.yoy >= 0 ? '+' : '−'}${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}%`, c: 'PAT YoY', t: name, body: `${r.quarter.replace(/ FY\d\d$/, '')} profit ₹${cr(pat.value)} crore${rest}.${m ? ` Shares ${m.chg >= 0 ? 'up' : 'down'} ${pct1(m.chg)}.` : ''}` }
+    return { v: `${pat.yoy >= 0 ? '+' : '−'}${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}%`, c: 'PAT YoY', t: name, body: `${r.quarter.replace(/ FY\d\d$/, '')} profit ₹${cr(pat.value)} crore${rest}.${m ? ` Shares ${m.chg >= 0 ? 'up' : 'down'} ${pct1(m.chg)}.` : ''}${i.with ? ` ${withLine(i.with)}` : ''}` }
   }
   if (i.kind === 'filing' && f?.amount_cr != null && f.amount_cr >= 1 && f.pct_rev != null)
     return { t: name, v: `₹${cr(f.amount_cr)} cr`, c: `${f.pct_rev < 1 ? f.pct_rev.toFixed(1) : f.pct_rev.toFixed(0)}% of revenue`, body: (f.line || tidySubject(f.subject || '')).replace(/\.?$/, '.') }
@@ -166,18 +180,18 @@ function Spark({ bars }: { bars: { close: number }[] }) {
   const d = cl.map((c, k) => `${k ? 'L' : 'M'}${(k / (cl.length - 1) * w).toFixed(1)} ${(h - 2 - (c - lo) / (hi - lo || 1) * (h - 4)).toFixed(1)}`).join('')
   const chg = (cl[cl.length - 1] / cl[0] - 1) * 100
   return <span className="notif-spark"><svg viewBox={`0 0 ${w} ${h}`} aria-hidden><path d={d} /></svg>
-    <span className="notif-c">{chg >= 0 ? '+' : '−'}{Math.abs(chg).toFixed(1)}% {bars.length >= 20 ? 'in a month' : `in ${bars.length} sessions`}</span></span>
+    <span className="notif-c">{chg >= 0 ? '+' : '−'}{Math.abs(chg).toFixed(1)}% {bars.length >= 20 ? 'price, 1 month' : `price, ${bars.length} sessions`}</span></span>
 }
 
 // An alert: when, what happened with its number, and the line it crossed. Flat rows, like the rest of the brief.
 function Notif({ i, fresh, name, push, lines, open, openLines }: { i: Item; fresh: boolean; name: string; push: Push; lines: Lines; open: () => void; openLines: () => void }) {
-  const fig = alertFig(i, name)
+  const fig = alertFig(i, name, push)
   const bars = fig && (i.kind === 'move' || i.kind === 'results') ? (push.eod[i.symbol] || []).filter(b => b.d <= (i.move?.d ?? i.at.slice(0, 10))).slice(-22) : []
   return (
     <article className="notif">
       <p className="notif-when">
         <span>{i.kind === 'move' ? closeWhen(i.move!.d, push.asof) : when(i.at, push.asof)}{fresh && <span className="notif-new">New</span>}</span>
-        <button className="notif-line" onClick={openLines} aria-label={`${crossedText(i, lines)}. Change`}>{crossedText(i, lines).replace(/^Your lines?: /, '').replace(/^./, c => c.toUpperCase())}</button>
+        <button className="notif-line" onClick={openLines} aria-label={`${crossedText(i, lines)}. Change`}>{i.crossed.length > 2 ? `${new Set(i.crossed.map(c => c.line + (c.category || ''))).size} of your lines` : crossedText(i, lines).replace(/^Your lines?: /, '').replace(/^./, c => c.toUpperCase())}</button>
       </p>
       <button className="notif-main" onClick={open}>
         <span className="notif-t">{fig?.t ?? itemTitle(i, name)}</span>

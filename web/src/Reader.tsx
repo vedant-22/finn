@@ -105,7 +105,9 @@ function ItemPage({ i, push, lines, names, openCompany, openLines }: { i: Item; 
     <h1 className="title"><button className="title-link" onClick={() => openCompany(i.symbol)}>{name}</button></h1>
     {/* Results open on the table: the numbers are the news. Their word follows it, the period named before the verdict */}
     {!f?.results && i.kind !== 'move' && i.kind !== 'people' && <p className="lede">{itemLine(i)}</p>}
-    {f?.results && <><ResultsBlock f={f} /><Held i={i} name={name} openCompany={openCompany} /></>}
+    {f?.results && <><ResultsBlock f={f} />
+      {i.with?.lead.people?.length ? <section className="r-sec" aria-label="Management change"><h2 className="head">Also that day</h2><PeopleBlock f={i.with.lead} all={push.filings} /></section> : null}
+      <Held i={i} name={name} openCompany={openCompany} /></>}
     {m && (f?.results
       ? <p className="r-move-line"><b className={m.chg >= 0 ? 'up' : 'down'}>{m.chg >= 0 ? '+' : '−'}{Math.abs(m.chg).toFixed(1)}%</b> on the day, on {m.volX.toFixed(1)}× its 20-day volume. Closed at ₹{m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.</p>
       : <div className="r-move">
@@ -126,6 +128,7 @@ function ItemPage({ i, push, lines, names, openCompany, openLines }: { i: Item; 
       {f?.results?.source?.xbrl && <li><Src href={f.results.source.xbrl}>Exchange XBRL</Src></li>}
       {/\.pdf$/i.test(f?.results?.source?.pdf || '') && <li><Src href={f!.results!.source.pdf}>Results PDF</Src></li>}
       {f && <li><Src href={f.url}>The filing</Src></li>}
+      {i.with && <li><Src href={i.with.lead.url}>{tidySubject(i.with.lead.subject)}</Src></li>}
       {m?.explainedBy && m.explainedBy !== f && <li><Src href={m.explainedBy.url}>{tidySubject(m.explainedBy.subject)}</Src></li>}
       {others.slice(0, 4).map((o, k) => <li key={k}><Src href={o.url}>{tidySubject(o.subject)}</Src></li>)}
     </ul>

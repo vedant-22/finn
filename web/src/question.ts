@@ -82,6 +82,15 @@ export function matching(ledger: Promise_[], p: Pick<Parsed, 'topic' | 'intent' 
   return xs.sort((a, b) => ORDER.indexOf(a.status) - ORDER.indexOf(b.status) || month(b) - month(a))
 }
 
+// The answer in a word or two, for the headline: 'missed', 'kept', 'kept 2 of 3', 'not due yet'
+export function verdictHead(xs: Promise_[]): string {
+  const done = xs.filter(x => ['kept', 'partly', 'missed', 'quiet'].includes(x.status))
+  if (!done.length) return xs.some(x => x.status === 'pending') ? 'not due yet' : 'can’t tell yet'
+  const k = done.filter(x => x.status === 'kept').length
+  if (k === done.length) return done.length === 1 ? 'kept' : `kept all ${done.length}`
+  if (done.every(x => x.status === 'missed')) return done.length === 1 ? 'missed' : `missed all ${done.length}`
+  return `kept ${k} of ${done.length}`
+}
 // 'On revenue growth: 1 missed, 2 not due yet.'
 export function tally(xs: Promise_[]): string {
   const word: Record<string, string> = { missed: 'missed', partly: 'partly kept', quiet: 'gone quiet', kept: 'kept', pending: 'not due yet' }

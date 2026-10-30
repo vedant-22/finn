@@ -135,6 +135,7 @@ table { border-collapse: collapse; }
 .notif-v { font: 400 32px/1 var(--serif); letter-spacing: -0.01em; font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
 .notif-c { margin-top: 4px; font-size: 12px; color: var(--ink-2); white-space: nowrap; }
 .notif-spark { display: grid; justify-items: end; margin-top: 12px; }
+.brief-end { margin-top: 22px; font: italic 400 19px/1.35 var(--serif); color: var(--ink-2); }
 .notif-spark svg { width: 72px; height: 22px; animation: draw 600ms var(--ease) both; }
 .notif-spark path { fill: none; stroke: var(--blue); stroke-width: 1.4; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
 

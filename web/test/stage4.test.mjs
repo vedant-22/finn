@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import { DEFAULT_LINES } from '../src/lib.ts'
 import { buildBrief, act, remaining, notesKey, NO_DONE } from '../src/queue.ts'
-import { aliases, parse, matching, tally } from '../src/question.ts'
+import { aliases, parse, matching, tally, verdictHead } from '../src/question.ts'
 
 const push = JSON.parse(fs.readFileSync(new URL('../public/data/push.json', import.meta.url)))
 const names = JSON.parse(fs.readFileSync(new URL('../public/data/companies.json', import.meta.url)))
@@ -54,5 +54,9 @@ test('Ask answers from the ledger: L&T missed its FY26 revenue growth', () => {
   assert.ok(xs.length >= 1)
   assert.equal(xs[0].status, 'missed')
   assert.match(tally(xs), /^1 missed/)
+  const st = (...a) => a.map(status => ({ status }))
+  assert.equal(verdictHead(st('missed')), 'missed')
+  assert.equal(verdictHead(st('kept', 'missed', 'pending')), 'kept 1 of 2')
+  assert.equal(verdictHead(st('pending')), 'not due yet')
   assert.ok(xs.every(x => x.metric !== 'working_capital'), 'a working-capital promise is not a revenue answer')
 })

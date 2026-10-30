@@ -64,7 +64,7 @@ async def main():
         await pg.goto(base + '/#/ask'); await pg.wait_for_timeout(1200)
         await pg.locator('#ask').fill('Did L&T deliver on revenue growth?'); await pg.keyboard.press('Enter'); await pg.wait_for_timeout(1200)
         head = await pg.locator('.answer > .head').inner_text()
-        check('ask about L&T', 'Larsen & Toubro on revenue growth' in head, head)
+        check('ask about L&T', 'Larsen & Toubro on revenue growth: missed' in head, head)
         check('answer is promised against delivered', await pg.locator('.answer .ba .st-missed').count() >= 1)
         await pg.locator('#ask').fill('Who missed a promise?'); await pg.keyboard.press('Enter'); await pg.wait_for_timeout(2500)
         check('book question', 'missed' in await pg.locator('.answer > .head').inner_text())

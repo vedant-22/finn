@@ -27,7 +27,10 @@ async def next_build(pg, shot):
     await top(pg, '.notif'); await shot(2)
     await pg.evaluate('scrollTo(0,0)'); await pg.get_by_role('button', name='Read the brief').click(); await pg.wait_for_timeout(900)
     # Newest first: Home First's new CFO (the one change all three versions show) comes before L&T's results
-    await reader_to(pg, 'Home First', 'Management'); await shot(4)
+    # Home First's CFO change rides with its results the same day: the reader shows it under the table
+    await reader_to(pg, 'Home First', 'Results')
+    await pg.locator('.r-sec[aria-label="Management change"]').evaluate('e => e.scrollIntoView({block: "start"})'); await pg.wait_for_timeout(700)
+    await shot(4)
     await reader_to(pg, 'Larsen', 'Results'); await shot(3)
     await fresh(pg, NEXT + '/#/c/LT'); await pg.locator('.prow-head').first.click(); await pg.wait_for_timeout(600)
     await top(pg, '.prow.open'); await shot(5)

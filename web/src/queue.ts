@@ -6,6 +6,8 @@ export interface Item {
   key: string; symbol: string; at: string
   kind: 'results' | 'people' | 'move' | 'filing'
   story?: Story; move?: Move
+  // A management change filed the same day as the company's results travels with them: one story, not two rows
+  with?: Story
   crossed: { line: 'price' | 'volume' | 'filing'; category?: string }[]
 }
 
@@ -25,6 +27,12 @@ export function buildBrief(push: Push, lines: Lines) {
     const host = items.find(i => i.kind === 'results' && i.symbol === m.symbol && !i.move && m.explainedBy?.category === 'results')
     if (host) { host.move = m; host.crossed.push(...crossed); continue }
     items.push({ key: `move|${m.symbol}|${m.d}`, symbol: m.symbol, at: `${m.d}T15:30:00`, kind: 'move', move: m, crossed })
+  }
+  for (const p of items.filter(i => i.kind === 'people')) {
+    const host = items.find(i => i.kind === 'results' && i.symbol === p.symbol && !i.with && Math.abs(Date.parse(i.at) - Date.parse(p.at)) < 864e5)
+    if (!host) continue
+    host.with = p.story; host.crossed.push(...p.crossed)
+    items.splice(items.indexOf(p), 1)
   }
   // No one kind takes more than three places, so a week of results can't hide a CFO leaving
   const kind = (i: Item) => i.story?.category ?? 'move'
