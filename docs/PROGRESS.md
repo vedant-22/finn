@@ -1,10 +1,10 @@
-Next: 31 Oct, stage 4 (brief/STAGE4_SPEC.md). Explore five interaction models in design/STAGE4_EXPLORE.md, then compare v4 and v5 at 390x844 and write design/STAGE4_PLAN.md, then build in web/src. Deploy only to finn-ledger-next.
+Next: 31 Oct, stage 4 (brief/STAGE4_SPEC.md). Build design/STAGE4_PLAN.md's checklist in order, starting with item 1 (tokens and shell) and 2 (Brief screen) in web/src. Deploy only to finn-ledger-next.
 
 ## Stage 4 (31 Oct)
 - [x] docs/BRIEF_TRACE.md: both PDFs line by line
 - [x] docs/INVESTOR.md: four moments of the day
-- [ ] Interaction models explored and scored (design/STAGE4_EXPLORE.md); point of view at the top of DECISIONS
-- [ ] design/STAGE4_PLAN.md (why v4 reads cleaner, screens, motion, build checklist)
+- [x] Interaction models explored and scored (design/STAGE4_EXPLORE.md); point of view at the top of DECISIONS
+- [x] design/STAGE4_PLAN.md (why v4 reads cleaner, screens, motion, build checklist)
 - [ ] Build, screen by screen; deploy to finn-ledger-next
 - [ ] Section 7 comparison against v4 and v5; promote only if it wins
 
