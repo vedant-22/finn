@@ -216,7 +216,7 @@ function PromiseRow({ p, open, toggle }: { p: Promise_; open: boolean; toggle: (
         <span className="prow-meta"><StatusLabel status={p.status} /><span className="small">Said {p.period.replace(/ 20/, ' ’')}</span></span>
         <svg className="chev" viewBox="0 0 16 16" aria-hidden><path d="M3.5 6l4.5 4.5L12.5 6" /></svg>
       </button>
-      <Accordion open={open}><div className="prow-body"><BeforeAfter p={p} /></div></Accordion>
+      <Accordion open={open}><div className="prow-body"><BeforeAfter p={p} inRow /></div></Accordion>
     </li>
   )
 }

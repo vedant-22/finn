@@ -6,7 +6,8 @@ import { Src, StatusLabel } from './ui'
 
 const said = (p: Promise_) => p.period.replace(/ 20(\d\d)$/, ' ’$1')
 
-export function BeforeAfter({ p, compact }: { p: Promise_; compact?: boolean }) {
+// inRow: opened under its own row, which already names the promise
+export function BeforeAfter({ p, compact, inRow }: { p: Promise_; compact?: boolean; inRow?: boolean }) {
   const quote = compact ? clip(markQuote(p.quote, p.target, p.by_when).parts).map(x => x.t).join('') : p.quote
   const v = verdictText(p)
   return (
@@ -16,7 +17,7 @@ export function BeforeAfter({ p, compact }: { p: Promise_; compact?: boolean }) 
         <figcaption className="small">{compact ? 'Said on the' : `${p.speaker}, on the`} <Src href={`${p.url}#page=${p.page}`}>{said(p)} call, page {p.page}</Src></figcaption>
       </figure>
       <div className="ba-then">
-        <p className="ba-promise">{promiseLine(p)}</p>
+        {!inRow && <p className="ba-promise">{promiseLine(p)}</p>}
         <p className="ba-verdict"><StatusLabel status={p.status} />{v && <span> {v}</span>}</p>
         {!compact && p.evidence && (p.evidence_kind === 'quote'
           ? <p className="small ba-ev">On the latest call: “{p.evidence}” <Src href={p.evidence_url ? `${p.evidence_url}#page=${p.evidence_page}` : undefined}>page {p.evidence_page}</Src></p>
