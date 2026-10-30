@@ -27,7 +27,8 @@ export function Reader({ push, brief, done, setDone, lines, names, start, close,
   const [at, setAt] = useState(0)
   const [leaving, setLeaving] = useState<'' | 'left' | 'right'>('')
   const page = pages[at]
-  const segs = pages.length - 1
+  // Counted the way the brief counts them: the items to read, not the closing page of one-liners
+  const segs = pages.filter(x => x.kind === 'item').length
   const scroller = useRef<HTMLDivElement>(null)
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -66,7 +67,7 @@ export function Reader({ push, brief, done, setDone, lines, names, start, close,
       <header className="r-top">
         <button className="icon-btn" onClick={close} aria-label="Close the brief"><svg viewBox="0 0 20 20" aria-hidden><path d="M5 5l10 10M15 5L5 15" /></svg></button>
         {page.kind !== 'done' && <div className="progress r-progress" aria-hidden>{Array.from({ length: segs }, (_, k) => <span key={k} className={k < at ? 'on' : k === at ? 'now' : ''} />)}</div>}
-        <span className="small r-count" aria-live="polite">{page.kind === 'done' ? '' : `${at + 1} of ${segs}`}</span>
+        <span className="small r-count" aria-live="polite">{page.kind === 'item' ? `${at + 1} of ${segs}` : page.kind === 'notes' ? 'The rest' : ''}</span>
       </header>
       <div className="r-scroll" ref={scroller}>
         <article key={at} className={`r-page${leaving ? ` out-${leaving}` : ''}`} style={dx ? { transform: `translateX(${dx}px) rotate(${dx / 60}deg)`, transition: 'none' } : undefined}
@@ -101,19 +102,22 @@ function ItemPage({ i, push, lines, names, openCompany, openLines }: { i: Item; 
   return <>
     <p className="small kicker">{kind}, {i.kind === 'move' ? shortDay(m!.d) : when(i.at, push.asof)}</p>
     <h1 className="title"><button className="title-link" onClick={() => openCompany(i.symbol)}>{name}</button></h1>
-    {i.kind !== 'move' && <p className="lede">{itemLine(i)}</p>}
-    {m && <div className="r-move">
-      <span className={`fig fig-m ${m.chg >= 0 ? 'up' : 'down'}`}>{m.chg >= 0 ? '+' : '−'}{Math.abs(m.chg).toFixed(1)}<span className="fig-pc">%</span></span>
-      <span className="small">{m.volX.toFixed(1)}× its 20-day volume<br />Closed at ₹{m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-    </div>}
-    {bars.length > 1 && i.kind !== 'people' && <figure className="r-chart"><Chart series={bars} h={88} /><figcaption className="small">Last {bars.length} sessions</figcaption></figure>}
+    {i.kind !== 'move' && i.kind !== 'people' && <p className="lede">{itemLine(i)}</p>}
+    {/* Results lead with the four numbers and the promise they answer to; the day's move is context, one line under them */}
+    {f?.results && <><ResultsBlock f={f} /><Held i={i} name={name} openCompany={openCompany} /></>}
+    {m && (f?.results
+      ? <p className="r-move-line"><b className={m.chg >= 0 ? 'up' : 'down'}>{m.chg >= 0 ? '+' : '−'}{Math.abs(m.chg).toFixed(1)}%</b> on the day, on {m.volX.toFixed(1)}× its 20-day volume. Closed at ₹{m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.</p>
+      : <div className="r-move">
+        <span className={`fig fig-m ${m.chg >= 0 ? 'up' : 'down'}`}>{m.chg >= 0 ? '+' : '−'}{Math.abs(m.chg).toFixed(1)}<span className="fig-pc">%</span></span>
+        <span className="small">{m.volX.toFixed(1)}× its 20-day volume<br />Closed at ₹{m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+      </div>)}
+    {bars.length > 1 && i.kind !== 'people' && <figure className="r-chart"><Chart series={bars} h={f?.results ? 56 : 88} /><figcaption className="small">Last {bars.length} sessions</figcaption></figure>}
     {i.kind === 'move' && <p className="lede r-why">{moveWhy(m!)}</p>}
-    {f?.results && <ResultsBlock f={f} />}
     {f?.people?.length ? <PeopleBlock f={f} all={push.filings} /> : null}
     {f && !f.results && f.amount_cr != null && f.amount_cr >= 1 && <p className="r-size"><span className="fig fig-s">₹{cr(f.amount_cr)}<span className="fig-pc"> cr</span></span>{f.pct_rev != null && <span className="small">{f.pct_rev < 0.1 ? 'Under 0.1%' : `${f.pct_rev.toFixed(f.pct_rev < 1 ? 1 : 0)}%`} of a year’s revenue</span>}</p>}
     <p className="crossed"><span>{crossedText(i, lines)}.</span> <button className="link-inline" onClick={openLines}>Change</button></p>
 
-    <Held i={i} name={name} openCompany={openCompany} />
+    {!f?.results && <Held i={i} name={name} openCompany={openCompany} />}
     <AskHere push={push} symbol={i.symbol} name={name} openCompany={openCompany} />
 
     <ul className="srcs small">
@@ -138,7 +142,7 @@ function Held({ i, name, openCompany }: { i: Item; name: string; openCompany: (s
   return (
     <section className="r-sec" aria-label="Against their word">
       <h2 className="head">Against their word</h2>
-      {p ? <BeforeAfter p={p} compact /> : null}
+      {p ? <BeforeAfter p={p} compact lead /> : null}
       <p className="r-record">{record}</p>
       <button className="link" onClick={() => openCompany(i.symbol, p?.id)}>Their record<Arrow /></button>
     </section>

@@ -32,7 +32,8 @@ export function buildBrief(push: Push, lines: Lines) {
   for (const i of items) if (chosen.size < MAX_ITEMS && (per.get(kind(i)) ?? 0) < 3) { chosen.add(i); per.set(kind(i), (per.get(kind(i)) ?? 0) + 1) }
   for (const i of items) if (chosen.size < MAX_ITEMS) chosen.add(i)
   return {
-    items: items.filter(i => chosen.has(i)),
+    // Chosen by weight, then read newest first, so the list and the reader run in the order things happened
+    items: items.filter(i => chosen.has(i)).sort((a, b) => b.at.localeCompare(a.at)),
     spill: items.filter(i => !chosen.has(i)),
     notes: t.notes, folded: t.folded, filings: t.filings,
     routine: t.folded.reduce((n, s) => n + s.filings.length, 0),

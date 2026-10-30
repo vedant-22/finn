@@ -7,11 +7,12 @@ import { Src, StatusLabel } from './ui'
 const said = (p: Promise_) => p.period.replace(/ 20(\d\d)$/, ' ’$1')
 
 // inRow: opened under its own row, which already names the promise
-export function BeforeAfter({ p, compact, inRow }: { p: Promise_; compact?: boolean; inRow?: boolean }) {
+// lead: the verdict before the quote, where the reader has ten seconds (a results item); else the quote first
+export function BeforeAfter({ p, compact, inRow, lead }: { p: Promise_; compact?: boolean; inRow?: boolean; lead?: boolean }) {
   const quote = compact ? clip(markQuote(p.quote, p.target, p.by_when).parts).map(x => x.t).join('') : p.quote
   const v = verdictText(p)
   return (
-    <div className="ba">
+    <div className={`ba${lead ? ' ba-lead' : ''}`}>
       <figure className="ba-said">
         <blockquote className="quote">“{quote}”</blockquote>
         <figcaption className="small">{compact ? 'Said on the' : `${p.speaker}, on the`} <Src href={`${p.url}#page=${p.page}`}>{said(p)} call, page {p.page}</Src></figcaption>

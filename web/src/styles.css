@@ -1,9 +1,9 @@
-/* FINN, stage 4 (DESIGN.md). Flat white paper, ENAM's blue for what you can tap and for a kept promise.
+/* FINN, stage 4 (DESIGN.md). Flat white paper, ENAM's blue only for what you can tap; a kept promise is a quiet green, a missed one dark red.
    One sans does all of FINN's talking; the book serif is kept for management's own words, on the warm panel.
    Nothing has a border unless it is a control. Six type styles: figure, title, head, body, small, quote. */
 :root {
   --paper: #FFFFFF; --panel: #FBF8F2; --ink: #333333; --ink-2: #6A6970; --rule: #E7E7E9; --rule-2: #D9D9D9;
-  --blue: #005DA3; --blue-press: #004A82; --missed: #9E2B25;
+  --blue: #005DA3; --blue-press: #004A82; --missed: #9E2B25; --kept: #24704A;
   --wash: rgba(0, 93, 163, .07); --tint: #F3F5F8; --press: #F1F1F2;
   --sans: 'Inter Variable', 'Inter', 'Helvetica Neue', Arial, sans-serif;
   --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
@@ -79,7 +79,7 @@ table { border-collapse: collapse; }
 
 /* status: a word in its colour */
 .st { font-size: 13px; font-weight: 500; white-space: nowrap; color: var(--ink-2); }
-.st-kept { color: var(--blue); }
+.st-kept { color: var(--kept); }
 .st-missed { color: var(--missed); }
 .st-partly, .st-quiet { color: var(--ink); }
 
@@ -117,18 +117,18 @@ table { border-collapse: collapse; }
 .cta { margin-top: 20px; }
 .cta:empty { display: none; }
 
-/* a notification, as the phone shows one: who and when, what happened, and the line it crossed */
-.notifs { display: grid; gap: 10px; }
-.notif { background: var(--tint); border-radius: 18px; overflow: hidden; }
-.notif-main { display: grid; gap: 3px; width: 100%; padding: 14px 16px 6px; }
-.notif-main:active { background: rgba(0, 0, 0, .03); }
-.notif-from { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-2); }
-.notif-app { width: 18px; height: 18px; border-radius: 5px; background: var(--blue); position: relative; }
-.notif-app::after { content: ''; position: absolute; left: 6px; top: 6px; width: 6px; height: 6px; background: #fff; border-radius: 1px; }
-.notif-when { margin-left: auto; }
-.notif-t { font-weight: 600; font-size: 16px; line-height: 1.3; margin-top: 4px; }
+/* an alert: a flat row like the rest of the brief; the time, what happened, its figure on the right, the line it crossed */
+.notifs { display: grid; border-top: 1px solid var(--rule); }
+.notif { border-bottom: 1px solid var(--rule); }
+.notif-main { display: grid; grid-template-columns: 1fr auto; column-gap: 16px; row-gap: 3px; width: 100%; padding: 16px 0 4px; text-align: left; }
+.notif-main > * { grid-column: 1; }
+.notif-when { font-size: 13px; color: var(--ink-2); display: flex; gap: 8px; }
+.notif-t { font-weight: 600; font-size: 17px; line-height: 1.3; }
 .notif-b { font-size: 15px; line-height: 1.4; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.notif-line { display: block; width: 100%; padding: 6px 16px 12px; min-height: 36px; font-size: 13px; color: var(--blue); }
+.notif-fig { grid-column: 2; grid-row: 1 / span 3; align-self: start; display: grid; justify-items: end; padding-top: 18px; }
+.notif-v { font: 300 30px/1 var(--sans); letter-spacing: -0.03em; font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
+.notif-c { margin-top: 4px; font-size: 12px; color: var(--ink-2); white-space: nowrap; }
+.notif-line { display: block; width: 100%; padding: 4px 0 14px; min-height: 44px; font-size: 13px; color: var(--blue); text-align: left; }
 
 /* ---------- the reader ---------- */
 .reader { position: fixed; inset: 0; z-index: 30; background: var(--paper); display: flex; flex-direction: column; animation: r-up var(--mid) var(--ease); }
@@ -154,6 +154,8 @@ table { border-collapse: collapse; }
 .r-hint.l { right: 20px; } .r-hint.r { left: 20px; }
 .r-move { display: flex; align-items: flex-end; gap: 16px; margin: 14px 0 10px; }
 .r-why { margin-top: 14px; }
+.r-move-line { margin-top: 28px; font-size: 15px; color: var(--ink-2); }
+.r-move-line b { font-weight: 600; color: var(--ink); }
 .fig-m { font-size: 56px; }
 .fig-s { font-size: 40px; }
 .fig-pc { font-size: .45em; letter-spacing: 0; margin-left: 2px; }
@@ -199,7 +201,8 @@ table { border-collapse: collapse; }
 .people { margin-top: 20px; display: grid; gap: 18px; }
 .people .who b { display: block; font-weight: 600; }
 .people .role { display: block; color: var(--ink-2); font-size: 15px; }
-.people .bio { margin-top: 8px; }
+.people .bio { margin-top: 8px; font-size: 15px; line-height: 1.5; }
+.people .bio-none { color: var(--ink-2); }
 .people .prev { margin-top: 6px; font-size: 13px; color: var(--ink-2); }
 .people li.out .who b { font-weight: 500; }
 
@@ -209,6 +212,9 @@ table { border-collapse: collapse; }
 .ba-said { background: var(--panel); border-radius: 14px; padding: 16px 18px 14px; }
 .ba-said figcaption { margin-top: 10px; }
 .ba-then { padding: 14px 2px 0; }
+/* verdict first: the same two blocks, the answer above the words it answers */
+.ba-lead { display: flex; flex-direction: column-reverse; }
+.ba-lead .ba-then { padding: 0 2px 14px; }
 .ba-promise { font-weight: 500; }
 .ba-verdict { margin-top: 4px; }
 .ba-verdict .st { font-size: 15px; font-weight: 600; margin-right: 2px; }
@@ -292,7 +298,7 @@ table { border-collapse: collapse; }
 .skel-line { height: 14px; margin: 12px 0; }
 .skel-line.short { width: 55%; }
 .skel-fig { height: 64px; width: 40%; margin: 18px 0; }
-.skel-notif { height: 112px; border-radius: 18px; margin-bottom: 10px; }
+.skel-notif { height: 112px; border-radius: 4px; margin-bottom: 12px; }
 .skel-block { height: 120px; border-radius: 14px; margin-top: 16px; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -311,7 +317,7 @@ table { border-collapse: collapse; }
 .tally-n { font: 300 44px/1 var(--sans); letter-spacing: -0.04em; }
 .tally-w { font-weight: 500; margin-top: 6px; }
 .t-missed .tally-n, .t-missed .tally-w { color: var(--missed); }
-.t-kept .tally-n, .t-kept .tally-w { color: var(--blue); }
+.t-kept .tally-n, .t-kept .tally-w { color: var(--kept); }
 .tally-b[aria-pressed="true"] { background: var(--tint); }
 .tally-b:active { opacity: .6; }
 .tally-partly { margin-top: 4px; }
@@ -325,6 +331,7 @@ table { border-collapse: collapse; }
 .hold-line .st { margin-right: 4px; }
 
 /* ---------- company ---------- */
+.co-bar:has(.bar-name) { box-shadow: 0 1px 0 var(--rule); }
 .co-bar { position: sticky; top: 0; z-index: 10; background: var(--paper); margin: 0 calc(var(--g) * -1); padding: var(--safe-t) var(--g) 0; justify-content: flex-start; gap: 12px; }
 .fo-back { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: var(--blue); font-size: 16px; }
 .fo-back svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }

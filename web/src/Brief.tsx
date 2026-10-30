@@ -1,7 +1,7 @@
 // The brief: the few things that crossed the investor's lines, as notifications, and a way through them that ends.
 import { useEffect, useRef, useState } from 'react'
 import { isDone, remaining, type Brief, type Done, type Item } from './queue'
-import { CATEGORY_LABEL, when, type Lines, type Push } from './lib'
+import { CATEGORY_LABEL, cr, when, type Lines, type Push } from './lib'
 import { FoldSummary, NoteRow, Roll, few, moveWhy, reclass, resultLine, sizeWords, sortPeople, tidySubject } from './items'
 import { Masthead, Sheet } from './ui'
 import { alertsBlocked, alertsOn, canAlert, disableAlerts, enableAlerts } from './alerts'
@@ -51,8 +51,9 @@ export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines
   const left = remaining(brief, done)
   const [sheet, setSheet] = useState<'notes' | 'fold' | null>(null)
   const nNotes = brief.notes.length + brief.spill.length
-  const segs = brief.items.length + (nNotes ? 1 : 0)
-  const filled = segs - left.total
+  // One segment per item to read, matching the figure and the reader's 'k of n'
+  const segs = brief.items.length
+  const filled = segs - left.items.length
   const kept = brief.items.filter(i => done.kept.includes(i.key))
   const cleared = brief.items.filter(i => done.cleared.includes(i.key)).length
   const asof = new Date(push.asof)
@@ -138,14 +139,30 @@ export const closeWhen = (d: string, asof: string) => d === asof.slice(0, 10) ? 
 
 export const Arrow = () => <svg className="arrow" viewBox="0 0 16 16" aria-hidden><path d="M6 3.5l4.5 4.5L6 12.5" /></svg>
 
-// A notification as the phone would show it: who sent it and when, what happened, and the line it crossed
+// The figure an alert leads with, where one number carries it: profit on a year ago, or a deal's size.
+// A move already has its number in the headline; a management change has none.
+function alertFig(i: Item): { v: string; c: string; body: string } | null {
+  const f = i.story?.lead
+  const pat = f?.results?.lines.find((l: any) => l.key === 'pat')
+  if (i.kind === 'results' && pat?.yoy != null) {
+    const r = f!.results!, rest = r.ebitda_margin != null ? `; EBITDA margin ${r.ebitda_margin}%${r.yago_margin != null ? ` against ${r.yago_margin}%` : ''}` : ''
+    return { v: `${pat.yoy >= 0 ? '+' : '−'}${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}%`, c: 'PAT YoY', body: `Profit after tax ₹${cr(pat.value)} crore${rest}.` }
+  }
+  if (i.kind === 'filing' && f?.amount_cr != null && f.amount_cr >= 1 && f.pct_rev != null)
+    return { v: `₹${cr(f.amount_cr)} cr`, c: `${f.pct_rev < 1 ? f.pct_rev.toFixed(1) : f.pct_rev.toFixed(0)}% of revenue`, body: (f.line || tidySubject(f.subject || '')).replace(/\.?$/, '.') }
+  return null
+}
+
+// An alert: when, what happened with its number, and the line it crossed. Flat rows, like the rest of the brief.
 function Notif({ i, fresh, name, push, lines, open, openLines }: { i: Item; fresh: boolean; name: string; push: Push; lines: Lines; open: () => void; openLines: () => void }) {
+  const fig = alertFig(i)
   return (
     <article className="notif">
       <button className="notif-main" onClick={open}>
-        <span className="notif-from"><span className="notif-app" aria-hidden /> FINN{fresh && <span className="notif-new">New</span>}<span className="notif-when">{i.kind === 'move' ? closeWhen(i.move!.d, push.asof) : when(i.at, push.asof)}</span></span>
+        <span className="notif-when">{i.kind === 'move' ? closeWhen(i.move!.d, push.asof) : when(i.at, push.asof)}{fresh && <span className="notif-new">New</span>}</span>
         <span className="notif-t">{itemTitle(i, name)}</span>
-        <span className="notif-b">{itemLine(i)}</span>
+        <span className="notif-b">{fig ? fig.body : itemLine(i)}</span>
+        {fig && <span className="notif-fig"><span className="notif-v">{fig.v}</span><span className="notif-c">{fig.c}</span></span>}
       </button>
       <button className="notif-line" onClick={openLines}>{crossedText(i, lines)}</button>
     </article>

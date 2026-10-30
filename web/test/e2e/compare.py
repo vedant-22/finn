@@ -12,6 +12,12 @@ async def top(pg, sel):
     await pg.locator(sel).first.evaluate('''e => { const bar = document.querySelector('.co-bar, .fo-bar, header'); const h = bar && getComputedStyle(bar).position.match(/sticky|fixed/) ? bar.offsetHeight : 0
       scrollTo(0, e.getBoundingClientRect().top + scrollY - h - 16) }'''); await pg.wait_for_timeout(900)
 
+async def reader_to(pg, name, kind):
+    # Step through the reader (Keep, so nothing is lost) until the item for this company and kind is up
+    for _ in range(8):
+        if name in await pg.locator('.reader h1').first.inner_text() and (await pg.locator('.reader .kicker').first.inner_text()).startswith(kind): return
+        await pg.get_by_role('button', name='Keep for later').click(); await pg.wait_for_timeout(700)
+
 async def fresh(pg, url):
     await pg.goto(url); await pg.evaluate('localStorage.clear()'); await pg.reload(); await pg.wait_for_timeout(2500)
 
@@ -20,10 +26,9 @@ async def next_build(pg, shot):
     await pg.get_by_role('radio', name='Week', exact=True).click(); await pg.wait_for_timeout(700)
     await top(pg, '.notif'); await shot(2)
     await pg.evaluate('scrollTo(0,0)'); await pg.get_by_role('button', name='Read the brief').click(); await pg.wait_for_timeout(900)
-    for _ in range(2): await pg.get_by_role('button', name='Keep for later').click(); await pg.wait_for_timeout(700)
-    await shot(3)  # Larsen & Toubro's results
-    for _ in range(2): await pg.get_by_role('button', name='Keep for later').click(); await pg.wait_for_timeout(700)
-    await shot(4)  # Home First's new CFO, the one change all three versions show
+    # Newest first: Home First's new CFO (the one change all three versions show) comes before L&T's results
+    await reader_to(pg, 'Home First', 'Management'); await shot(4)
+    await reader_to(pg, 'Larsen', 'Results'); await shot(3)
     await fresh(pg, NEXT + '/#/c/LT'); await pg.locator('.prow-head').first.click(); await pg.wait_for_timeout(600)
     await top(pg, '.prow.open'); await shot(5)
     await fresh(pg, NEXT + '/#/ask'); await pg.locator('#ask').fill('Did L&T deliver on revenue growth?'); await pg.keyboard.press('Enter')

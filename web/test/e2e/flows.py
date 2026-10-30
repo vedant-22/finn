@@ -32,7 +32,7 @@ async def main():
         check('lines close', not await sheet.is_visible())
         # Read the brief to the end
         await pg.get_by_role('button', name='Read the brief').click(); await pg.wait_for_timeout(900)
-        check('reader opens at 1 of 3', await pg.locator('.r-count').inner_text() == '1 of 3')
+        check('reader opens at 1 of 2', await pg.locator('.r-count').inner_text() == '1 of 2')
         check('results behind the move', await pg.locator('.figs tbody tr').count() == 4)
         check('held against their word', await pg.locator('.r-sec .ba').count() >= 1)
         await pg.locator('.ask-chip').first.click(); await pg.wait_for_timeout(800)

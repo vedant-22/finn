@@ -134,7 +134,7 @@ export function PeopleBlock({ f, all }: { f: any; all?: any[] }) {
               <p className="bio">{e.background}</p>
               {e.previous.length > 0 && <p className="prev">{e.previous.join('; ')}</p>}
               <p className="prev">From the company’s <a href={e.url} target="_blank" rel="noreferrer">{+e.at.slice(8, 10)} {MON3[+e.at.slice(5, 7) - 1].replace(/^./, c => c.toUpperCase())} filing</a></p>
-            </> : <p className="prev">The filing gives no background.</p>)(earlierBio(p, f, all)))}
+            </> : <p className="bio bio-none">No background in this filing or an earlier one.</p>)(earlierBio(p, f, all)))}
             {!joining && !moved && p.reason && !/not stated|^leaving the company\.?$|no other material reason/i.test(p.reason) && <p className="bio">Reason given: {p.reason}</p>}
           </li>
         )
