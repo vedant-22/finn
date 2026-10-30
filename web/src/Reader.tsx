@@ -145,7 +145,7 @@ function Held({ i, name, openCompany }: { i: Item; name: string; openCompany: (s
 }
 
 // Ask, in place: the questions this company's ledger can answer, answered here
-function AskHere({ push, symbol, name, openCompany }: { push: Push; symbol: string; name: string; openCompany: (s: string, pid?: number) => void }) {
+export function AskHere({ push, symbol, name, openCompany, cls }: { push: Push; symbol: string; name: string; openCompany: (s: string, pid?: number) => void; cls?: string }) {
   const { known, names } = useKnown(push)
   const [c, setC] = useState<Company | null>(null)
   const [q, setQ] = useState('')
@@ -153,8 +153,8 @@ function AskHere({ push, symbol, name, openCompany }: { push: Push; symbol: stri
   const qs = useMemo(() => suggestions(c, name), [c, name])
   if (!qs.length) return null
   return (
-    <section className="r-sec" aria-label={`Ask about ${name}`}>
-      <h2 className="head">Ask</h2>
+    <section className={cls || 'r-sec'} aria-label={`Ask about ${name}`}>
+      <h2 className="head">Ask FINN</h2>
       <div className="asks">{qs.map(x => <button key={x} className={`ask-chip${q === x ? ' on' : ''}`} aria-pressed={q === x} onClick={() => setQ(q === x ? '' : x)}>{x}</button>)}</div>
       {q && <Answer q={q} known={known} names={names} openCompany={openCompany} inline />}
     </section>

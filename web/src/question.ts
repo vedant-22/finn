@@ -71,7 +71,8 @@ export function matching(ledger: Promise_[], p: Pick<Parsed, 'topic' | 'intent' 
   let xs = ledger.filter(x => x.hard && x.status !== 'unclear')
   if (p.topic) {
     const tw = p.topic.words
-    xs = xs.filter(x => p.topic!.metrics.includes(x.metric) || tw.test(`${x.topic} ${x.target}`.toLowerCase()))
+    // The grader's metric decides; the words only place promises it filed under 'other'
+    xs = xs.filter(x => p.topic!.metrics.includes(x.metric) || (x.metric === 'other' && tw.test(`${x.topic} ${x.target}`.toLowerCase())))
   }
   if (p.fy) xs = xs.filter(x => `${x.by_when} ${x.target}`.toUpperCase().replace(/\s/g, '').includes(p.fy!))
   if (p.intent === 'missed') xs = xs.filter(x => x.status === 'missed' || x.status === 'partly')

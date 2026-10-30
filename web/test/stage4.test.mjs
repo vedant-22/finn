@@ -54,4 +54,5 @@ test('Ask answers from the ledger: L&T missed its FY26 revenue growth', () => {
   assert.ok(xs.length >= 1)
   assert.equal(xs[0].status, 'missed')
   assert.match(tally(xs), /^1 missed/)
+  assert.ok(xs.every(x => x.metric !== 'working_capital'), 'a working-capital promise is not a revenue answer')
 })

@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { cr, crBig, deadline, minus, pct, rupees, shortName, tidyEvidence, type Bar, type Company, type Promise_, type Status } from './lib'
-import { Accordion, BackBar, Bars, Chip, Fold, fyLabel, Outcome, Src, STATUS_WORD, StatusLabel, Strip } from './ui'
-import { cap, promiseLine, Trail } from './Trail'
+import { Accordion, BackBar, Bars, Chart, Fold, fyLabel, Outcome, Src, STATUS_WORD, StatusLabel } from './ui'
+import { cap, promiseLine } from './Trail'
+import { BeforeAfter } from './Word'
 
 const SHOW: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
 
-export function CompanyView({ c, focus, sector, title, close, bars, back }: { c: Company; focus?: number; sector?: string; title?: string; close?: { d: string; close: number }; bars?: Bar[]; back: () => void }) {
+export function CompanyView({ c, focus, sector, title, close, bars, back, ask }: { c: Company; focus?: number; sector?: string; title?: string; close?: { d: string; close: number }; bars?: Bar[]; back: () => void; ask?: React.ReactNode }) {
   const [openId, setOpenId] = useState<number | null>(focus ?? null)
   // Opened from a promise elsewhere: bring that promise to the middle of the screen
   useEffect(() => {
@@ -16,6 +17,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
   }, [focus])
   const [showSoft, setShowSoft] = useState(() => focus != null && c.ledger.some(p => p.id === focus && !p.hard))
   const [showOpen, setShowOpen] = useState(false)
+  const [showRunning, setShowRunning] = useState(() => focus != null && c.ledger.some(p => p.id === focus && p.hard && ['pending', 'unclear'].includes(p.status)))
   const [fold, setFold] = useState<string | null>(null)
   const [readAll, setReadAll] = useState(false)
   const s = c.snapshot
@@ -61,61 +63,56 @@ export function CompanyView({ c, focus, sector, title, close, bars, back }: { c:
       : 'Nothing to grade yet.'
 
   const newHard = c.open.filter(p => p.hard)
+  // What's been settled leads; what's still running waits one tap away
+  const settledRows = hard.filter(p => !['pending', 'unclear'].includes(p.status))
+  const running = hard.filter(p => ['pending', 'unclear'].includes(p.status))
   const name = title || shortName(c.name)
 
   return (
     <main className="screen company">
       <BackBar back={back} name={past ? name : undefined} />
-      {/* The page opens as a card does: what it is, the name, the one thing to know, then the price and its picture */}
-      <div className="co-top">
-        <div className="card-lbl"><Chip>{sector || 'NSE'}</Chip><span className="card-when">{c.symbol}{c.live ? ', read just now' : ''}</span></div>
-        <h1 className="co-name" ref={nameRef}>{name}</h1>
-        <p className="co-rec">{standing}</p>
+      <header className="co-top">
+        <p className="small kicker">{sector ? `${sector}, ` : ''}{c.symbol}{c.live ? ', read just now' : ''}</p>
+        <h1 className="title" ref={nameRef}>{name}</h1>
+        <p className="lede co-rec">{standing}</p>
         {price != null && <div className="co-px">
-          <Outcome size="xs" pre="₹" value={price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)} />
-          <p className="card-cap">{close ? `At the ${new Date(close.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} close. ` : ''}{s.mcap != null && <>Worth ₹{crBig(s.mcap * k)}{s.pe ? `, ${(s.pe * k).toFixed(1)}× earnings` : ''}.</>}</p>
+          <span className="fig fig-s num">₹{price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)}</span>
+          <span className="small">{close ? `At the ${new Date(close.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} close.` : ''}{s.mcap != null && <><br />Worth ₹{crBig(s.mcap * k)}{s.pe ? `, ${(s.pe * k).toFixed(1)}× earnings` : ''}.</>}</span>
         </div>}
-        {bars && <Strip bars={bars.slice(-30)} />}
-      </div>
+        {bars && bars.length > 1 && <figure className="r-chart"><Chart series={bars.slice(-30)} h={88} /><figcaption className="small">Last {Math.min(30, bars.length)} sessions</figcaption></figure>}
+      </header>
 
-      <section className="word">
-        <h2 className="sec-head">Their word</h2>
+      <section className="sec word">
+        <h2 className="head">Their word</h2>
         {c.read && settled >= 3
-          ? <p className="read word-intro">{readAll ? rupees(c.read) : readFirst}{readFirst !== rupees(c.read) && <> <button className="see" onClick={() => setReadAll(!readAll)}>{readAll ? 'Read less' : 'Read more'}</button></>}</p>
+          ? <p className="read word-intro">{readAll ? rupees(c.read) : readFirst}{readFirst !== rupees(c.read) && <> <button className="link-inline" onClick={() => setReadAll(!readAll)}>{readAll ? 'Read less' : 'Read more'}</button></>}</p>
           : hard.length === 0 && <p className="read word-intro">{readable === 0
             ? `None of the ${c.calls.length} call transcripts linked from its exchange filings could be opened, so there is nothing to grade yet.`
             : 'No promise in these calls had both a number and a date.'}</p>}
-        {hard.length > 0 && (
-          <div className="fo-tally">
-            {nUnclear < hard.length && <ul className="fo-stats" aria-label="Promise record">
-              {SHOW.filter(st => st !== 'unclear' && hard.some(p => p.status === st)).map(st => (
-                <li key={st}><span className="fo-stat"><span className="fo-stat-n">{hard.filter(p => p.status === st).length}</span><span className="fo-stat-u">{STATUS_WORD[st].toLowerCase()}</span></span></li>
-              ))}
-            </ul>}
-            {/* Can't tell is a footnote, not a figure: it says nothing about their word */}
-            {(readable > 1 || nUnclear > 0) && <p className="fo-tally-note">
-              {readable > 1 && `Promises with a number and a date, from the ${readable - 1 === 1 ? 'call' : `${readable - 1} calls`} before the latest one.`}
-              {nUnclear > 0 && `${readable > 1 ? ' ' : ''}${nUnclear} can't be told from what they've reported.`}
-            </p>}
-          </div>
-        )}
+        {hard.length > 0 && <p className="small word-tally">{SHOW.filter(st => hard.some(p => p.status === st)).map(st => `${hard.filter(p => p.status === st).length} ${STATUS_WORD[st].toLowerCase()}`).join(', ')}{readable > 1 ? `. Promises with a number and a date, from the ${readable - 1 === 1 ? 'call' : `${readable - 1} calls`} before the latest one.` : '.'}</p>}
 
-        {hard.length > 0 && <h3 className="sec-head pgrid-head">Promise by promise</h3>}
-        {hard.length > 0 && <ul className="fo-plist">
-          {hard.map(p => <PromiseRow key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}
+        {settledRows.length > 0 && <ul className="rows plist">
+          {settledRows.map(p => <PromiseRow key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}
         </ul>}
+        {running.length > 0 && (settledRows.length
+          ? <Fold title="Still running" count={running.length} open={showRunning} toggle={() => setShowRunning(!showRunning)}
+              line={`Not due yet${nUnclear ? `, or can’t be told from what they’ve reported` : ''}`}>
+              <ul className="rows plist">{running.map(p => <PromiseRow key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>
+            </Fold>
+          : <ul className="rows plist">{running.map(p => <PromiseRow key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>)}
 
         {soft.length > 0
           ? <Fold title="Said without a number or date" count={soft.length} open={showSoft} toggle={() => setShowSoft(!showSoft)}
-              line={`Not graded. These touch margins, growth or capex${softTalk > soft.length ? `; ${softTalk - soft.length} vaguer ones are only counted` : ''}.`}>
+              line={`Not graded${softTalk > soft.length ? `; ${softTalk - soft.length} vaguer ones are only counted` : ''}`}>
               <ul className="soft-list">{soft.map(p => <SoftRow key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>
             </Fold>
-          : softTalk > 0 && <p className="sub soft-note">Plus {softTalk} {softTalk === 1 ? 'statement' : 'statements'} with no number or date. Not graded.</p>}
+          : softTalk > 0 && <p className="small soft-note">Plus {softTalk} {softTalk === 1 ? 'statement' : 'statements'} with no number or date. Not graded.</p>}
       </section>
 
+      {ask}
       {c.questions.length > 0 && (
-        <section className="ask lead">
-          <h2 className="sec-head ask-head">Ask on the next call</h2>
+        <section className="sec next-call">
+          <h2 className="head">Ask on the next call</h2>
           <ol>{c.questions.map((x, i) => <li key={i}>{rupees(x)}</li>)}</ol>
           <CopyQuestions name={title || shortName(c.name)} qs={c.questions.map(rupees)} />
         </section>
@@ -210,16 +207,16 @@ function Fig({ label, value, unit, sub }: { label: string; value: string; unit?:
   return <div className="fig og-item"><Outcome size={value.length > 9 ? 'xxs' : value.length > 5 ? 'xs' : 's'} value={value} unit={unit} /><span className="og-d1">{label}</span>{sub && <span className="og-d2">{sub}</span>}</div>
 }
 
-// One promise as a row: what they promised, its verdict chip and when it was said. It opens on the before-and-after
+// One promise as a row: what they promised, its verdict and when it was said. It opens on the before-and-after
 function PromiseRow({ p, open, toggle }: { p: Promise_; open: boolean; toggle: () => void }) {
   return (
-    <li className={`fo-prow${open ? ' open' : ''}`} data-pid={p.id}>
-      <button className="fo-prow-head" aria-expanded={open} onClick={toggle}>
-        <span className="fo-prow-t">{promiseLine(p)}.</span>
-        <span className="fo-round" aria-hidden><svg viewBox="0 0 16 16"><path d="M3.5 6l4.5 4.5L12.5 6" /></svg></span>
-        <span className="fo-prow-meta"><StatusLabel status={p.status} /><span>Said {p.period.replace(/ 20/, ' ’')}</span></span>
+    <li className={`prow${open ? ' open' : ''}`} data-pid={p.id}>
+      <button className="prow-head" aria-expanded={open} onClick={toggle}>
+        <span className="prow-t">{promiseLine(p)}</span>
+        <span className="prow-meta"><StatusLabel status={p.status} /><span className="small">Said {p.period.replace(/ 20/, ' ’')}</span></span>
+        <svg className="chev" viewBox="0 0 16 16" aria-hidden><path d="M3.5 6l4.5 4.5L12.5 6" /></svg>
       </button>
-      <Accordion open={open}><div className="fo-prow-body"><Trail p={p} /></div></Accordion>
+      <Accordion open={open}><div className="prow-body"><BeforeAfter p={p} /></div></Accordion>
     </li>
   )
 }
@@ -248,5 +245,5 @@ function CopyQuestions({ name, qs }: { name: string; qs: string[] }) {
   if (!navigator.clipboard) return null
   const copy = () => navigator.clipboard.writeText(`${name}: ask on the next call\n${qs.map((q, i) => `${i + 1}. ${q}`).join('\n')}`)
     .then(() => { setDone(true); setTimeout(() => setDone(false), 2000) }).catch(() => { /* clipboard refused: nothing to undo */ })
-  return <button className="btn-outline btn-sm copy" onClick={copy} aria-live="polite">{done ? 'Copied' : 'Copy the questions'}</button>
+  return <button className="btn btn-line copy" onClick={copy} aria-live="polite">{done ? 'Copied' : 'Copy the questions'}</button>
 }

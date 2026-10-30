@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { CompanyView } from './CompanyView'
 import { Book } from './Book'
 import { BriefScreen } from './Brief'
-import { Reader } from './Reader'
+import { AskHere, Reader } from './Reader'
 import { AskScreen } from './Ask'
 import { buildBrief, loadDone, saveDone, type Done } from './queue'
 import {
@@ -85,7 +85,7 @@ export function App() {
   return (
     <>
       {route.sym
-        ? <CompanyRoute sym={route.sym} pid={route.pid} sector={holding(route.sym)?.sector} title={holding(route.sym)?.short} close={push.eod[route.sym]?.[push.eod[route.sym].length - 1]} bars={push.eod[route.sym]} back={() => { location.hash = !prev || prev === location.hash ? '#/' : prev }} />
+        ? <CompanyRoute push={push} openCompany={openCompany} sym={route.sym} pid={route.pid} sector={holding(route.sym)?.sector} title={holding(route.sym)?.short} close={push.eod[route.sym]?.[push.eod[route.sym].length - 1]} bars={push.eod[route.sym]} back={() => { location.hash = !prev || prev === location.hash ? '#/' : prev }} />
         : route.tab === 'book' ? <Book push={push} openCompany={openCompany} />
           : route.tab === 'ask' ? <AskScreen push={push} q0={route.q} openCompany={openCompany} />
             : <BriefScreen push={push} brief={brief} done={done} setDone={setDone} lines={lines} setLines={setLines} names={names} openReader={openReader} openLines={() => setLinesOpen(true)} />}
@@ -150,7 +150,7 @@ function Stepper({ label, value, step, min, max, fmt, set }: { label: string; va
   )
 }
 
-function CompanyRoute({ sym, pid, sector, title, close, bars, back }: { sym: string; pid?: number; sector?: string; title?: string; close?: { d: string; close: number }; bars?: Bar[]; back: () => void }) {
+function CompanyRoute({ push, openCompany, sym, pid, sector, title, close, bars, back }: { push: Push; openCompany: (s: string, pid?: number) => void; sym: string; pid?: number; sector?: string; title?: string; close?: { d: string; close: number }; bars?: Bar[]; back: () => void }) {
   const [c, setC] = useState<Company | null | undefined>(undefined)
   const [steps, setSteps] = useState<Step[]>([])
   const [failed, setFailed] = useState('')
@@ -168,7 +168,8 @@ function CompanyRoute({ sym, pid, sector, title, close, bars, back }: { sym: str
     }).catch(e => live && setFailed(e.message))
     return () => { live = false }
   }, [sym, attempt])
-  if (c) return <CompanyView c={c} focus={pid} sector={sector} title={title} close={close} bars={bars} back={back} />
+  if (c) return <CompanyView c={c} focus={pid} sector={sector} title={title} close={close} bars={bars} back={back}
+    ask={<AskHere push={push} symbol={c.symbol} name={title || shortName(c.name)} openCompany={openCompany} cls="sec ask-here" />} />
   const notFound = /NotFound|404/.test(failed)
   return (
     <main className="screen building">
