@@ -146,7 +146,7 @@ export function PeopleBlock({ f, all }: { f: any; all?: any[] }) {
           <li key={i} className={joining || moved ? 'in' : 'out'}>
             <div className="who"><b>{p.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')}</b>
               <span className="role">{moved ? `Stays ${p.role}, off the senior management list` : `${verb(p.action)} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${effDate(p.effective, f.at)}` : ''}</span></div>
-            {joining && ((b: Bio | null) => b ? <BioText b={b} fold={p.seniority !== 'top'} /> : <p className="bio bio-none">Not disclosed in its filings.</p>)(
+            {joining && ((b: Bio | null) => b ? <BioText b={b} fold={p.seniority !== 'top'} /> : <p className="bio bio-none">Background: not in its filings.</p>)(
               hasBio(p.background) ? { background: p.background, previous: p.previous || [] } : earlierBio(p, f, all))}
             {!joining && !moved && p.reason && !/not stated|^leaving the company\.?$|no other material reason/i.test(p.reason) && <p className="bio">Reason given: {p.reason}</p>}
           </li>

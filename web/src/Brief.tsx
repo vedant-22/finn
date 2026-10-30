@@ -147,16 +147,22 @@ export const Arrow = () => <svg className="arrow" viewBox="0 0 16 16" aria-hidde
 // A management change has none. With the number on the right, a move's headline is just the company.
 function alertFig(i: Item, name: string): { v: string; c: string; body: string; t?: string } | null {
   const f = i.story?.lead, m = i.move
-  if (i.kind === 'move' && m && !f) return m.why.includes('price')
-    ? { v: `${m.chg >= 0 ? '+' : '−'}${pct1(m.chg)}`, c: 'on the day', t: name, body: `On ${m.volX.toFixed(1)}× its usual volume. ${moveWhy(m)}` }
-    : { v: `${m.volX.toFixed(1)}×`, c: 'usual volume', t: name, body: `${m.chg >= 0 ? 'Up' : 'Down'} ${pct1(m.chg)} on the day. ${moveWhy(m)}` }
+  // A move always shows the day's change, whichever line it crossed, so the column reads one way
+  if (i.kind === 'move' && m && !f) return { v: `${m.chg >= 0 ? '+' : '−'}${pct1(m.chg)}`, c: 'on the day', t: name, body: `On ${m.volX.toFixed(1)}× its usual volume. ${moveWhy(m)}` }
+  // A management change shows who: the role, in the letters investors use
+  if (i.kind === 'people' && f?.people?.length) {
+    const p = sortPeople(f.people)[0], r = shortRole(p.role)
+    const v = /^(CFO|CEO|COO|MD)$/.test(r) ? r : /CEO/.test(r) && r.length <= 8 ? 'CEO' : /director/i.test(r) ? 'Board' : ''
+    const c = ({ appointed: 'joins', resigned: 'resigns', retired: 'retires', ceased: 'leaves', redesignated: 'new role', 're-appointed': 'stays' } as any)[p.action]
+    if (v && c && !reclass(p)) return { v, c, t: name, body: itemLine(i) }
+  }
   const pat = f?.results?.lines.find((l: any) => l.key === 'pat')
   if (i.kind === 'results' && pat?.yoy != null) {
     const r = f!.results!, rest = r.ebitda_margin != null ? `; EBITDA margin ${r.ebitda_margin}%${r.yago_margin != null ? ` against ${r.yago_margin}%` : ''}` : ''
-    return { v: `${pat.yoy >= 0 ? '+' : '−'}${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}%`, c: 'PAT YoY', body: `Profit after tax ₹${cr(pat.value)} crore${rest}.` }
+    return { v: `${pat.yoy >= 0 ? '+' : '−'}${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}%`, c: 'PAT YoY', t: name, body: `${r.quarter.replace(/ FY\d\d$/, '')} results: profit after tax ₹${cr(pat.value)} crore${rest}.` }
   }
   if (i.kind === 'filing' && f?.amount_cr != null && f.amount_cr >= 1 && f.pct_rev != null)
-    return { v: `₹${cr(f.amount_cr)} cr`, c: `${f.pct_rev < 1 ? f.pct_rev.toFixed(1) : f.pct_rev.toFixed(0)}% of revenue`, body: (f.line || tidySubject(f.subject || '')).replace(/\.?$/, '.') }
+    return { t: name, v: `₹${cr(f.amount_cr)} cr`, c: `${f.pct_rev < 1 ? f.pct_rev.toFixed(1) : f.pct_rev.toFixed(0)}% of revenue`, body: (f.line || tidySubject(f.subject || '')).replace(/\.?$/, '.') }
   return null
 }
 
@@ -165,13 +171,15 @@ function Notif({ i, fresh, name, push, lines, open, openLines }: { i: Item; fres
   const fig = alertFig(i, name)
   return (
     <article className="notif">
+      <p className="notif-when">
+        <span>{i.kind === 'move' ? closeWhen(i.move!.d, push.asof) : when(i.at, push.asof)}{fresh && <span className="notif-new">New</span>}</span>
+        <button className="notif-line" onClick={openLines} aria-label={`${crossedText(i, lines)}. Change`}>{crossedText(i, lines).replace(/^Your lines?: /, '').replace(/^./, c => c.toUpperCase())}</button>
+      </p>
       <button className="notif-main" onClick={open}>
-        <span className="notif-when">{i.kind === 'move' ? closeWhen(i.move!.d, push.asof) : when(i.at, push.asof)}{fresh && <span className="notif-new">New</span>}</span>
         <span className="notif-t">{fig?.t ?? itemTitle(i, name)}</span>
         <span className="notif-b">{fig ? fig.body : itemLine(i)}</span>
         {fig && <span className="notif-fig"><span className="notif-v">{fig.v}</span><span className="notif-c">{fig.c}</span></span>}
       </button>
-      <button className="notif-line" onClick={openLines} aria-label={`${crossedText(i, lines)}. Change`}>{crossedText(i, lines)}</button>
     </article>
   )
 }

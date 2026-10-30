@@ -8,7 +8,7 @@ import { Arrow, NotesList, crossedText, itemLine, itemTitle } from './Brief'
 import { PeopleBlock, ResultsBlock, moveWhy, shortDay, tidySubject, useWord } from './items'
 import { Chart, Src, StatusLabel } from './ui'
 import { BeforeAfter, said } from './Word'
-import { promiseLine } from './Trail'
+import { promiseLine, verdictText } from './Trail'
 
 type Page = { kind: 'item'; item: Item } | { kind: 'notes' } | { kind: 'done' }
 
@@ -105,7 +105,11 @@ function ItemPage({ i, push, lines, names, openCompany, openLines }: { i: Item; 
   return <>
     <p className="small kicker">{kind}, {i.kind === 'move' ? shortDay(m!.d) : when(i.at, push.asof)}</p>
     <h1 className="title"><button className="title-link" onClick={() => openCompany(i.symbol)}>{name}</button></h1>
-    {held ? <p className="lede r-verdict">Promised {said(held)}: {promiseLine(held).replace(/^./, c => c.toLowerCase())}. <StatusLabel status={held.status} /></p>
+    {held && held.status !== 'pending' && verdictText(held) ? <>
+        <p className="lede r-verdict"><StatusLabel status={held.status} /> {verdictText(held)}</p>
+        <p className="small r-promised">Their {said(held)} promise: {promiseLine(held).replace(/^./, c => c.toLowerCase())}.</p>
+      </>
+      : held ? <p className="lede r-verdict">Promised {said(held)}: {promiseLine(held).replace(/^./, c => c.toLowerCase())}. <StatusLabel status={held.status} /></p>
       : i.kind !== 'move' && i.kind !== 'people' && <p className="lede">{itemLine(i)}</p>}
     {/* Results lead with the four numbers and the promise they answer to; the day's move is context, one line under them */}
     {f?.results && <><ResultsBlock f={f} /><Held i={i} name={name} openCompany={openCompany} /></>}
@@ -146,7 +150,7 @@ function Held({ i, name, openCompany }: { i: Item; name: string; openCompany: (s
   return (
     <section className="r-sec" aria-label="Against their word">
       <h2 className="head">Against their word</h2>
-      {p ? <BeforeAfter p={p} compact inRow /> : null}
+      {p ? <BeforeAfter p={p} compact bare /> : null}
       <p className="r-record">{record}</p>
       <button className="link" onClick={() => openCompany(i.symbol, p?.id)}>Their record<Arrow /></button>
     </section>
