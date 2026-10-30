@@ -11,12 +11,15 @@ export const WINDOWS = [{ h: 24, label: '24 hours' }, { h: 72, label: '3 days' }
 // ---------- how an item reads ----------
 const pct1 = (v: number) => `${Math.abs(v).toFixed(1)}%`
 const strip = (n: string) => n.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')
+// Headlines use the titles investors say: CFO, not Chief Financial Officer
+const shortRole = (r: string) => r.replace(/\bChief Financial Officer\b/i, 'CFO').replace(/\bChief Executive Officer\b/i, 'CEO')
+  .replace(/\bChief Operating Officer\b/i, 'COO').replace(/\bManaging Director\b/i, 'MD').replace(/\bCompany Secretary\b/i, 'company secretary')
 export function itemTitle(i: Item, name: string): string {
   const m = i.move, f = i.story?.lead
   if (i.kind === 'results' && f?.results) return `${name} reported ${f.results.quarter.replace(/ FY\d\d$/, '')}`
   if (i.kind === 'people' && f?.people?.length) {
     const p = sortPeople(f.people)[0]
-    const role = p.role.length > 26 ? 'a director' : p.role
+    const r = shortRole(p.role), role = r.length > 26 ? 'a director' : r
     return ['appointed', 're-appointed', 'redesignated'].includes(p.action) ? `${name} names a new ${role}` : `${name}: ${role} ${p.action === 'retired' ? 'retires' : 'leaves'}`
   }
   if (m) return m.why.includes('price') ? `${name} ${m.chg > 0 ? 'rose' : 'fell'} ${pct1(m.chg)}` : `${name} traded ${m.volX.toFixed(1)}× its usual volume`
@@ -80,7 +83,8 @@ export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines
               : `Nothing crossed your lines in the ${WINDOWS.find(w => w.h === lines.hours)?.label.toLowerCase() || 'window'}. ${nNotes} worth a line.`}
         </p>
         {!finished && <div className="cta"><button className="btn btn-wide" onClick={() => openReader()}>{filled ? 'Carry on reading' : 'Read the brief'}</button></div>}
-        {segs > 0 && <div className="progress" role="progressbar" aria-label="Read so far" aria-valuemin={0} aria-valuemax={segs} aria-valuenow={filled}>
+        {/* The rule appears once reading starts; empty, it looked like a loader */}
+        {segs > 0 && filled > 0 && <div className="progress" role="progressbar" aria-label="Read so far" aria-valuemin={0} aria-valuemax={segs} aria-valuenow={filled}>
           {Array.from({ length: segs }, (_, k) => <span key={k} className={k < filled ? 'on' : ''} />)}
         </div>}
         <div className="stops" role="radiogroup" aria-label="Window">
@@ -167,7 +171,7 @@ function Notif({ i, fresh, name, push, lines, open, openLines }: { i: Item; fres
         <span className="notif-b">{fig ? fig.body : itemLine(i)}</span>
         {fig && <span className="notif-fig"><span className="notif-v">{fig.v}</span><span className="notif-c">{fig.c}</span></span>}
       </button>
-      <button className="notif-line" onClick={openLines}>{crossedText(i, lines)}</button>
+      <button className="notif-line" onClick={openLines}>{crossedText(i, lines)}. <span className="notif-change">Change</span></button>
     </article>
   )
 }

@@ -31,10 +31,11 @@ table { border-collapse: collapse; }
 .num { font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
 
 /* ---------- the six type styles ---------- */
-.fig { font: 300 64px/1 var(--sans); letter-spacing: -0.045em; font-variant-numeric: tabular-nums lining-nums; }
-/* Titles are set in the book serif: names and the screen's one heading. FINN's own sentences and figures stay in the sans */
+.fig { font: 380 68px/1 var(--serif); letter-spacing: -0.02em; font-variant-numeric: tabular-nums lining-nums; font-optical-sizing: auto; }
+/* The book serif sets what you look at: titles, section heads, the big figures and management's words.
+   FINN's sentences, tables and controls are in the sans */
 .title, .t-h1, .co-name { font: 450 32px/1.1 var(--serif); letter-spacing: -0.012em; font-optical-sizing: auto; }
-.head, .sec-head { font: 600 17px/1.3 var(--sans); letter-spacing: -0.012em; }
+.head, .sec-head { font: 500 22px/1.2 var(--serif); letter-spacing: -0.008em; font-optical-sizing: auto; }
 .small, .sub, .card-cap, figcaption { font: 400 13px/1.4 var(--sans); color: var(--ink-2); letter-spacing: 0; }
 .quote, blockquote { font: 400 18px/1.45 var(--serif); letter-spacing: 0; color: var(--ink); }
 .lede, .read, .card-desc, .serif-line { font: 400 16px/1.5 var(--sans); }
@@ -100,8 +101,8 @@ table { border-collapse: collapse; }
 /* ---------- the brief ---------- */
 .hero { padding: 12px 0 4px; }
 .hero-fig { display: flex; align-items: baseline; gap: 10px; margin: 10px 0 10px; }
-.fig-unit { font: 500 28px/1 var(--sans); letter-spacing: -0.025em; }
-.fig-word { font-size: 48px; font-weight: 400; letter-spacing: -0.04em; }
+.fig-unit { font: 450 34px/1 var(--serif); letter-spacing: -0.012em; }
+.fig-word { font-size: 48px; font-weight: 400; letter-spacing: -0.015em; }
 .hero-line { color: var(--ink-2); max-width: 34em; }
 .progress { display: flex; gap: 4px; margin: 18px 0 4px; }
 .progress span { flex: 1; height: 3px; border-radius: 2px; background: var(--rule); position: relative; overflow: hidden; }
@@ -127,9 +128,10 @@ table { border-collapse: collapse; }
 .notif-t { font-weight: 600; font-size: 17px; line-height: 1.3; }
 .notif-b { font-size: 15px; line-height: 1.4; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .notif-fig { grid-column: 2; grid-row: 1 / span 3; align-self: start; display: grid; justify-items: end; padding-top: 18px; }
-.notif-v { font: 300 30px/1 var(--sans); letter-spacing: -0.03em; font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
+.notif-v { font: 400 32px/1 var(--serif); letter-spacing: -0.01em; font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
 .notif-c { margin-top: 4px; font-size: 12px; color: var(--ink-2); white-space: nowrap; }
-.notif-line { display: block; width: 100%; padding: 4px 0 14px; min-height: 44px; font-size: 13px; color: var(--blue); text-align: left; }
+.notif-line { display: block; width: 100%; padding: 4px 0 14px; min-height: 44px; font-size: 13px; color: var(--ink-2); text-align: left; }
+.notif-change { color: var(--blue); }
 
 /* ---------- the reader ---------- */
 .reader { position: fixed; inset: 0; z-index: 30; background: var(--paper); display: flex; flex-direction: column; animation: r-up var(--mid) var(--ease); }
@@ -204,6 +206,7 @@ table { border-collapse: collapse; }
 .people .role { display: block; color: var(--ink-2); font-size: 15px; }
 .people .bio { margin-top: 8px; font-size: 15px; line-height: 1.5; }
 .people .bio-none { color: var(--ink-2); }
+.people .bio-more { display: inline-block; min-height: 44px; margin-top: -4px; font-size: 15px; }
 .people .prev { margin-top: 6px; font-size: 13px; color: var(--ink-2); }
 .people li.out .who b { font-weight: 500; }
 
@@ -219,6 +222,7 @@ table { border-collapse: collapse; }
 .ba-promise { font-weight: 500; }
 .ba-verdict { margin-top: 4px; }
 .ba-verdict .st { font-size: 15px; font-weight: 600; margin-right: 2px; }
+.r-verdict .st { font-size: inherit; font-weight: 600; margin-right: 2px; }
 .ba-ev { margin-top: 8px; }
 .answer .ba-verdict, .r-sec .ba-verdict { animation: land 200ms var(--ease) 150ms both; }
 
@@ -237,7 +241,7 @@ table { border-collapse: collapse; }
 .ask-try { margin-top: 28px; }
 .ask-try .head { margin-bottom: 4px; }
 .answer { margin-top: 28px; }
-.answer > .head { font-size: 20px; margin-bottom: 4px; }
+.answer > .head { font-size: 24px; margin-bottom: 4px; }
 .answer > p { margin-bottom: 4px; }
 .answer .btn { margin-top: 16px; }
 .answer .link { margin-top: 10px; }

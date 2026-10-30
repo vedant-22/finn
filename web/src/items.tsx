@@ -116,6 +116,18 @@ export function earlierBio(p: any, f: any, all: any[] = []) {
   return null
 }
 
+type Bio = { background: string; previous: string[]; at?: string; url?: string }
+// The top role's background is printed; a director's or a business head's waits behind one tap
+function BioText({ b, fold }: { b: Bio; fold: boolean }) {
+  const [open, setOpen] = useState(!fold)
+  if (!open) return <button className="link-inline bio-more" onClick={() => setOpen(true)}>Background</button>
+  return <>
+    <p className="bio">{b.background}</p>
+    {b.previous.length > 0 && <p className="prev">{b.previous.join('; ')}</p>}
+    {b.url && b.at && <p className="prev">From the company’s <a href={b.url} target="_blank" rel="noreferrer">{+b.at.slice(8, 10)} {MON3[+b.at.slice(5, 7) - 1].replace(/^./, c => c.toUpperCase())} filing</a></p>}
+  </>
+}
+
 export function PeopleBlock({ f, all }: { f: any; all?: any[] }) {
   const ppl = sortPeople(f.people)
   return (
@@ -127,14 +139,8 @@ export function PeopleBlock({ f, all }: { f: any; all?: any[] }) {
           <li key={i} className={joining || moved ? 'in' : 'out'}>
             <div className="who"><b>{p.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')}</b>
               <span className="role">{moved ? `Stays ${p.role}, off the senior management list` : `${verb(p.action)} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${effDate(p.effective, f.at)}` : ''}</span></div>
-            {joining && (hasBio(p.background) ? <>
-              <p className="bio">{p.background}</p>
-              {p.previous?.length > 0 && <p className="prev">{p.previous.join('; ')}</p>}
-            </> : (e => e ? <>
-              <p className="bio">{e.background}</p>
-              {e.previous.length > 0 && <p className="prev">{e.previous.join('; ')}</p>}
-              <p className="prev">From the company’s <a href={e.url} target="_blank" rel="noreferrer">{+e.at.slice(8, 10)} {MON3[+e.at.slice(5, 7) - 1].replace(/^./, c => c.toUpperCase())} filing</a></p>
-            </> : <p className="bio bio-none">No background in this filing or an earlier one.</p>)(earlierBio(p, f, all)))}
+            {joining && ((b: Bio | null) => b ? <BioText b={b} fold={p.seniority !== 'top'} /> : <p className="bio bio-none">Not disclosed in its filings.</p>)(
+              hasBio(p.background) ? { background: p.background, previous: p.previous || [] } : earlierBio(p, f, all))}
             {!joining && !moved && p.reason && !/not stated|^leaving the company\.?$|no other material reason/i.test(p.reason) && <p className="bio">Reason given: {p.reason}</p>}
           </li>
         )
