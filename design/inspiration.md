@@ -1,18 +1,23 @@
-# What FINN takes from the reference
+# Where Folio's ideas come from
 
-Studied at 390×844 on its home and outcomes pages, and in its source, where the tokens and font mixins give the exact sizes, tracking and timings that the screenshots only suggest, so FINN copies numbers rather than impressions. None of its branding, photos or copy is used.
+Folio started from a base design's code and was then shaped by two more references, called B and C here. All three were studied at 390×844 and at desktop size: scrolled, clicked through, and read for their computed sizes, weights, radii and timings. FINN takes their interaction ideas and layout logic, never their branding, images or copy.
 
-1. **Warm panels on white.** Cards are #FBF8F2 blocks with square corners and 16px inside; the picture sits inset at the top. FINN's picture is the holding's price over 30 sessions.
-2. **Type does the design.** Inter at 450 with tight negative tracking for titles, PT Serif in grey for the one sentence under a title.
-3. **Outcome figures.** Big numbers at 500 with the unit set smaller on the baseline (72/36 and 48/24 on phones), then one dark line and one muted line. FINN uses this for every tally and every promise.
-4. **Small caps labels** (12px, 450, +0.24px) name the kind of thing above a title. FINN uses them for card kinds and for status words.
-5. **Section heads** are 26px, with no rule on phones.
-6. **One brand colour** for the wordmark, pills and links. FINN's is ENAM blue #005DA3.
-7. **Pill buttons**: one filled per screen, the rest outlined.
-8. **Accordions** carry the detail, with a plus that turns as they open.
-9. **A masthead** with the wordmark left and one outlined pill right, hiding on the way down.
-10. **Motion is opacity only**: a long expo-decelerate fade as blocks enter the view, stepped 120 ms.
-11. **Page headers on a warm panel** with a rounded foot: a caps label, then a title whose first words are grey and the rest ink. FINN's company page uses it for the name and the record; Book uses the warm top for its tally, as the outcomes page is warm.
-12. **News grid**: secondary items as two columns of warm cards. Book's holdings after the lead, and Look up's ready-to-open list.
-13. **Card foot**: "Read more" left, a caps label right, after a generous gap.
-14. **Few words**: a title and one sentence, with a link to the rest, because a card that tries to say everything ends up saying nothing a reader keeps.
+## Kept from the base design
+1. **The palette's roles.** White paper, ink #333333, grey #6A6970, hairlines #D9D9D9, ENAM blue kept rare, one warm panel colour (#FBF8F2), now used only for the before-and-after.
+2. **The spacing scale** (4 to 80), the 16 px gutter and a column that stops at 560 px.
+3. **One idea per block**, and few words: a title and one sentence, the rest one tap away.
+4. **The calm reveal.** Blocks fade in on an expo-decelerate curve as they enter the view, the first few stepped 120 ms apart.
+5. **The accordion's** grid-rows opening, the bottom sheet with its grab handle, and a page that ends on one ENAM-blue band.
+
+## Taken from reference B (investor calm)
+6. **Stat stacks.** A light serif figure, its word under it, one plain sentence, hairlines between. Book's tally and a company's record use them.
+7. **Index rows.** A serif title, a count and an arrow, one line under; they open a sheet or open in place. Today's folds, the menu, Book's holdings, a company's folds and Look up's list are all index rows.
+8. **Small square controls** (8 px radius) instead of pills, and an occasional pale tinted block.
+
+## Taken from reference C (warmth, and the before-and-after)
+9. **The visible before-and-after.** Raw words with the parts that matter marked, chips naming what was found, then the clean result. FINN applies it to a promise: the quote, the promise, and what the filings showed.
+10. **A floating rounded bar** inset from the edges.
+11. **Rounded media cards** (20 px) with the picture in a rounded inset.
+12. **A big serif headline with one italic phrase**, at most once a screen.
+13. **Rounded chips in sentence case** that arrive with a small spring.
+14. **Short, human micro-copy.**
