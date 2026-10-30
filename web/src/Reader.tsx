@@ -109,7 +109,7 @@ function ItemPage({ i, push, lines, names, openCompany, openLines }: { i: Item; 
     {bars.length > 1 && i.kind !== 'people' && <figure className="r-chart"><Chart series={bars} h={88} /><figcaption className="small">Last {bars.length} sessions</figcaption></figure>}
     {i.kind === 'move' && <p className="lede r-why">{moveWhy(m!)}</p>}
     {f?.results && <ResultsBlock f={f} />}
-    {f?.people?.length ? <PeopleBlock f={f} /> : null}
+    {f?.people?.length ? <PeopleBlock f={f} all={push.filings} /> : null}
     {f && !f.results && f.amount_cr != null && f.amount_cr >= 1 && <p className="r-size"><span className="fig fig-s">₹{cr(f.amount_cr)}<span className="fig-pc"> cr</span></span>{f.pct_rev != null && <span className="small">{f.pct_rev < 0.1 ? 'Under 0.1%' : `${f.pct_rev.toFixed(f.pct_rev < 1 ? 1 : 0)}%`} of a year’s revenue</span>}</p>}
     <p className="crossed"><span>{crossedText(i, lines)}.</span> <button className="link-inline" onClick={openLines}>Change</button></p>
 

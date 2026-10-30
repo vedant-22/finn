@@ -102,7 +102,21 @@ export function effDate(raw: string, filed: string) {
   return `${+d!} ${mon!.slice(0, 1).toUpperCase()}${MON3[m].slice(1)}${y === filed.slice(0, 4) ? '' : ` ${y}`}`
 }
 
-export function PeopleBlock({ f }: { f: any }) {
+// A background worth printing: not a placeholder, and not a restatement of the role ('has assumed charge as...')
+const hasBio = (b?: string) => !!b && !/not stated|not provided|^designated as|^.{0,60}\bhas (assumed|been appointed)/i.test(b)
+const personKey = (n: string) => n.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/i, '').replace(/[.\s]+/g, ' ').trim().toLowerCase()
+// When this filing gives no background, the company's own earlier filing on the same person often does
+// (an appointment is announced, then the profile follows, or the other way round).
+export function earlierBio(p: any, f: any, all: any[] = []) {
+  for (const g of all) {
+    if (g === f || g.symbol !== f.symbol) continue
+    const q = (g.people || []).find((x: any) => personKey(x.name) === personKey(p.name) && hasBio(x.background))
+    if (q) return { background: q.background as string, previous: (q.previous || []) as string[], at: g.at as string, url: g.url as string }
+  }
+  return null
+}
+
+export function PeopleBlock({ f, all }: { f: any; all?: any[] }) {
   const ppl = sortPeople(f.people)
   return (
     <ul className="people">
@@ -113,8 +127,14 @@ export function PeopleBlock({ f }: { f: any }) {
           <li key={i} className={joining || moved ? 'in' : 'out'}>
             <div className="who"><b>{p.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')}</b>
               <span className="role">{moved ? `Stays ${p.role}, off the senior management list` : `${verb(p.action)} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${effDate(p.effective, f.at)}` : ''}</span></div>
-            {joining && p.background && !/not stated|not provided|^$|^designated as|^.{0,60}\bhas (assumed|been appointed)/i.test(p.background) && <p className="bio">{p.background}</p>}
-            {joining && p.previous?.length > 0 && <p className="prev">{p.previous.join('; ')}</p>}
+            {joining && (hasBio(p.background) ? <>
+              <p className="bio">{p.background}</p>
+              {p.previous?.length > 0 && <p className="prev">{p.previous.join('; ')}</p>}
+            </> : (e => e ? <>
+              <p className="bio">{e.background}</p>
+              {e.previous.length > 0 && <p className="prev">{e.previous.join('; ')}</p>}
+              <p className="prev">From the company’s <a href={e.url} target="_blank" rel="noreferrer">{+e.at.slice(8, 10)} {MON3[+e.at.slice(5, 7) - 1].replace(/^./, c => c.toUpperCase())} filing</a></p>
+            </> : <p className="prev">The filing gives no background.</p>)(earlierBio(p, f, all)))}
             {!joining && !moved && p.reason && !/not stated|^leaving the company\.?$|no other material reason/i.test(p.reason) && <p className="bio">Reason given: {p.reason}</p>}
           </li>
         )

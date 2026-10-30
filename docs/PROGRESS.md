@@ -10,6 +10,7 @@ Next: 31 Oct, stage 4. Scans done (detect.mjs 0 findings, slop_scan on UI copy p
   - [x] Book and Company restyled
   - [x] Lines sheet from a notification, Listen, alerts with permission, New since last visit, first-run hint
   - [x] Tests: 18 unit, flows.py 27 checks, sweep 320/390 clean (31 Oct ~02:45 IST)
+  - [x] Tab bar and company bar are solid white (text showed through). A joiner whose filing has no background gets it from the company's earlier filing on the same person, credited and linked (HDFC Bank's new MD & CEO, Home First's new director); otherwise 'The filing gives no background.' (31 Oct ~04:20 IST)
   - [x] Scans: detect.mjs 0 findings, slop_scan on UI copy passes; live research on next works (KAJARIACER). Deadlines read 'within 2 to 3 months' (was 'by next 9 months', 'by annual basis'); building screen no longer shows the ticker twice (31 Oct ~04:00 IST)
 - [ ] Section 7 comparison against v4 and v5; promote only if it wins
 

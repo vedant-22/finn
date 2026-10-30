@@ -52,7 +52,7 @@ table { border-collapse: collapse; }
 
 .tabs {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; justify-content: center;
-  background: rgba(255, 255, 255, .97); border-top: 1px solid var(--rule); padding-bottom: var(--safe-b);
+  background: var(--paper); border-top: 1px solid var(--rule); padding-bottom: var(--safe-b);
 }
 .tabs button { flex: 1; max-width: 186px; height: var(--tabs); text-align: center; font-size: 15px; color: var(--ink-2); position: relative; }
 .tabs button.on { color: var(--ink); font-weight: 500; }
@@ -325,7 +325,7 @@ table { border-collapse: collapse; }
 .hold-line .st { margin-right: 4px; }
 
 /* ---------- company ---------- */
-.co-bar { position: sticky; top: 0; z-index: 10; background: rgba(255, 255, 255, .97); margin: 0 calc(var(--g) * -1); padding: var(--safe-t) var(--g) 0; justify-content: flex-start; gap: 12px; }
+.co-bar { position: sticky; top: 0; z-index: 10; background: var(--paper); margin: 0 calc(var(--g) * -1); padding: var(--safe-t) var(--g) 0; justify-content: flex-start; gap: 12px; }
 .fo-back { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: var(--blue); font-size: 16px; }
 .fo-back svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .bar-name { font-weight: 600; font-size: 15px; animation: fade var(--mid) var(--ease); }
