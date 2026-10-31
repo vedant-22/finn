@@ -173,16 +173,17 @@ table { border-collapse: collapse; }
 
 /* the band a page ends on: ENAM blue, edge to edge down to the tab bar */
 .today { padding-bottom: 0; }
-.end-band { margin: var(--s-3xl) calc(-1 * var(--g)) 0; padding: var(--s-3xl) var(--g) calc(env(safe-area-inset-bottom) + 57px + var(--s-3xl)); background: var(--brand); color: #fff; text-align: center; }
-.end-band h2 { max-width: 300px; margin: 0 auto; text-wrap: balance; }
-.end-qs { max-width: 420px; margin: var(--s-m) auto 0; text-align: left; }
-.end-qs .lbl { color: rgba(255, 255, 255, .82); }
+.end-band { margin: var(--s-3xl) calc(-1 * var(--g)) 0; padding: var(--s-3xl) var(--g) calc(env(safe-area-inset-bottom) + 57px + var(--s-3xl)); background: var(--brand); color: #fff; }
+.end-band h2 { max-width: 320px; text-wrap: balance; }
+.end-qs { max-width: 420px; margin-top: var(--s-m); }
+.end-qs .lbl { color: #fff; }
 .end-qs ol { counter-reset: q; margin-top: var(--s-3xs); }
 .end-qs li { counter-increment: q; display: grid; grid-template-columns: 28px 1fr; padding: var(--s-3xs) 0; border-top: 1px solid rgba(255, 255, 255, .26); font: 16px/140% var(--serif); color: #fff; }
-.end-qs li::before { content: counter(q); grid-row: span 2; font: 500 14px/160% var(--f); color: rgba(255, 255, 255, .82); }
-.end-co { display: block; font: 500 14px/140% var(--f); letter-spacing: -0.39px; color: rgba(255, 255, 255, .82); }
+.end-qs li::before { content: counter(q); grid-row: span 2; font: 500 14px/160% var(--f); color: #fff; }
+.end-co { display: block; font: 500 14px/140% var(--f); letter-spacing: -0.39px; color: #fff; }
 .end-copy { color: #fff; min-height: 44px; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(255, 255, 255, .7); }
-.end-band-btns { display: grid; justify-items: center; gap: var(--s-5xs); margin-top: var(--s-m); }
+.end-band-btns { display: flex; flex-wrap: wrap; gap: var(--s-5xs); margin-top: var(--s-m); }
+.end-band-btns :is(.btn-light, .btn-light-outline) { min-width: 0; }
 .btn-light, .btn-light-outline { display: inline-flex; align-items: center; justify-content: center; min-width: 180px; height: 44px; padding: 0 var(--s-s); border-radius: var(--r-pill); font: 400 16px/116% var(--f); letter-spacing: -0.42px; text-decoration: none; transition: background-color 100ms ease-in-out, color 100ms ease-in-out; }
 .btn-light { background: #fff; color: var(--brand); }
 .btn-light:active { background: rgba(255, 255, 255, .8); }
