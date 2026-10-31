@@ -56,7 +56,7 @@ One easing, cubic-bezier(.2, 0, 0, 1). UI motion 150 to 300 ms; data motion a li
 - `prefers-reduced-motion`: everything appears in place, skeletons stop shimmering.
 
 ## States
-Loading shows skeletons in the shape of the screen. An empty window reads "All quiet", says nothing crossed your lines in it, and counts what is worth a line. Errors are a plain sentence with Try again. Offline, the service worker serves the last snapshot, labelled with its time. When the model is out of quota, live research says so in one line and lists the companies that are ready; Ask on cached companies is unaffected. On first run, one line at the foot of the reader explains Keep and Done and says swiping works; it goes after the first item.
+Loading shows skeletons in the shape of the screen. An empty window reads "All quiet", says nothing crossed your lines in it, counts what is worth a line, and links to the nearest wider window that has something ("Last month: 1 to read"). Errors are a plain sentence with Try again. Offline, the service worker serves the last snapshot, labelled with its time. When the model is out of quota, live research says so in one line and lists the companies that are ready; Ask on cached companies is unaffected. On first run, one line at the foot of the reader explains Keep and Done and says swiping works; it goes after the first item.
 
 ## Words on screen
 Short, plain sentences to the investor, in sentence case, with numbers before adjectives. No emoji, no glyphs for status. When something isn't graded, say why.
