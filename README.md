@@ -6,7 +6,7 @@ FINN is a phone app for an investor who holds 15 to 20 stocks. Each morning it h
 
 <p>
 <img src="docs/img/brief.png" width="240" alt="The brief: 2 to read, and the two holdings that crossed your lines">
-<img src="docs/img/results.png" width="240" alt="Results in the reader: the four numbers QoQ and YoY, then the promise they settle">
+<img src="docs/img/results.png" width="240" alt="Results in the reader: the four numbers QoQ and YoY, then this year's guidance and last year's promise">
 <img src="docs/img/ask.png" width="240" alt="Ask: did L&T deliver on revenue growth, answered from the call with its page">
 </p>
 
@@ -19,7 +19,7 @@ FINN is a brief you finish. A feed never tells you that you've seen everything, 
 **Brief (push).** Every NSE filing across an 18-stock portfolio, for a window you pick: 24 hours by default, or 3 days, a week, a month. The top says how many things need you ("2 to read") and names them. Under it, **Crossed your lines** lists anything past a line you set (a ±% day, a volume multiple, a kind of filing), with the line printed on it. Tap the line to move it and the brief recounts behind the sheet. Below that come a few one-line notes, and the routine filings folded into a count.
 
 **The reader.** "Read the brief" opens one item per screen, with Done and Keep for later at the bottom where your thumb is. Each kind of item leads with what you'd want first:
-- *Results*: revenue, EBITDA, PBT and PAT against last quarter and a year ago, parsed from the exchange's XBRL, plus the margin. Then **Against their word**: the promise this quarter settles, what was delivered, and the verdict, with management's quote and its page. If a compared quarter carries a tax credit or large exceptional items, one line says so, so a −85% PAT isn't read as a collapse.
+- *Results*: revenue, EBITDA, PBT and PAT against last quarter and a year ago, parsed from the exchange's XBRL, plus the margin. Then **Against their word**: this year's guidance still running, next to this quarter's growth, and the last promise that fell due, with what was delivered, the verdict, and management's quote and its page. If a compared quarter carries a tax credit or large exceptional items, one line says so, so a −85% PAT isn't read as a collapse.
 - *Management changes*: who joins or leaves, and the incoming person's background from the profile the company files. If that filing has none, FINN takes it from the company's earlier filing on the same person and links it. A new CFO interrupts you. A new company secretary doesn't.
 - *Unusual days*: the move, the volume against usual, a month of closes, and the filing that explains it if there is one.
 - Deals, penalties and fund raises sized against the company's annual revenue. Under 0.5%, they drop to a one-line note.

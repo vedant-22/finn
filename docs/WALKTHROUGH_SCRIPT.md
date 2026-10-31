@@ -31,8 +31,9 @@ Tap "Read the brief". Syngene opens on its results table.
 > "Results come as the four numbers, against last quarter and last year. Straight from the exchange's own data file."
 Scroll to "Against their word": Kept.
 > "Then the part I care about. What did they promise, and did they do it."
-Swipe left (or tap Done). Larsen & Toubro opens. Scroll to "Against their word": FY26 revenue grew 11.8% against a 15% target. Missed.
-> "L&T said fifteen percent. They did under twelve. That's their own words, with the page."
+Swipe left (or tap Done). Larsen & Toubro opens. Scroll to "Against their word". First, this year's guidance: 10 to 12% revenue growth, with this quarter at 15.8%. Under it, last year's promise: 15%, and they did 11.8%. Missed.
+> "This year they've guided ten to twelve percent, and this quarter is ahead of it."
+> "Last year they said fifteen. They did under twelve. Their own words, with the page."
 Tap "Did Larsen & Toubro deliver on margins?" under Ask FINN. The answer appears in place.
 > "I can ask right here. The answer only comes from their calls and filings."
 Tap Done. The rest of the window is four one-liners. Tap "Mark all read". "You're up to date."
