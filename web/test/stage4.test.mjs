@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import { DEFAULT_LINES } from '../src/lib.ts'
 import { buildBrief, act, remaining, notesKey, NO_DONE, newsQuestion } from '../src/queue.ts'
-import { aliases, parse, matching, tally, verdictHead, pace, fyOf, runningGuide } from '../src/question.ts'
+import { aliases, parse, matching, tally, verdictHead, pace, fyOf, runningGuide, yearToDate } from '../src/question.ts'
 
 const push = JSON.parse(fs.readFileSync(new URL('../public/data/push.json', import.meta.url)))
 const names = JSON.parse(fs.readFileSync(new URL('../public/data/companies.json', import.meta.url)))
@@ -91,4 +91,11 @@ test('the next call asks about the news: a CFO leaving, then a margin that fell'
   const q = s => newsQuestion(b.items.find(i => i.symbol === s), push)
   assert.match(q('SYNGENE'), /^Why did the CFO, Deepak Jain, leave/)
   assert.match(q('LT'), /EBITDA margin fell 1\.3 points/)
+})
+
+test('a year’s guide reads against the year so far: L&T’s H1 revenue is on track for 10 to 12%', () => {
+  const lt = co('LT'), y = yearToDate(lt.quarters)
+  assert.equal(y.label, 'H1'); assert.equal(y.fy, 'FY27')
+  assert.ok(Math.abs(y.growth - 11.4) < 0.1, String(y.growth))
+  assert.equal(pace(runningGuide(lt.ledger, lt.quarters.at(-1).q).g, y.growth), 'on track')
 })

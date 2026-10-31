@@ -1,7 +1,7 @@
 // Ask: type or say a question about a company or the book. Answered from the ledgers FINN has built, with pages.
 // A company FINN hasn't read yet is one tap from live research.
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { aliases, matching, pace, parse, runningGuide, tally, verdictHead, type Known, type Parsed } from './question'
+import { aliases, matching, pace, parse, runningGuide, tally, verdictHead, yearToDate, type Known, type Parsed } from './question'
 import { wordScore, getCompany, rupees, shortName, type Company, type Promise_, type Push } from './lib'
 import { promiseLine } from './Trail'
 import { StatusLabel } from './ui'
@@ -100,7 +100,11 @@ function Mic({ onText }: { onText: (t: string) => void }) {
 
 // One answer. A company question shows that company's promises on the topic as before-and-afters;
 // a book question lists the promises across every holding; an unknown symbol offers to read it.
-export function Answer({ q, known, names, openCompany, inline }: { q: string; known: Known[]; names: Record<string, string>; openCompany: (s: string, pid?: number) => void; inline?: boolean }) {
+// The question stays in view above its answer: the field scrolls it out of sight
+export function Answer(props: { q: string; known: Known[]; names: Record<string, string>; openCompany: (s: string, pid?: number) => void; inline?: boolean }) {
+  return <>{!props.inline && <p className="small answer-q">{props.q}</p>}<Answered {...props} /></>
+}
+function Answered({ q, known, names, openCompany, inline }: { q: string; known: Known[]; names: Record<string, string>; openCompany: (s: string, pid?: number) => void; inline?: boolean }) {
   const p = useMemo(() => parse(q, known), [q, known])
   if (p.symbol) return <CompanyAnswer p={p} name={names[p.symbol] || p.symbol} openCompany={openCompany} inline={inline} />
   if (p.ticker) return (
@@ -133,12 +137,14 @@ function CompanyAnswer({ p, name, openCompany, inline }: { p: Parsed; name: stri
   const due = xs.length > 0 && xs.every(x => x.status !== 'pending')
   const last = c.quarters?.[c.quarters.length - 1]
   const run = p.intent !== 'due' && (!p.topic || p.topic.metrics.includes('revenue_growth')) ? runningGuide(c.ledger, last?.q) : undefined
-  const sofar = run && !xs.includes(run.g) ? pace(run.g, last?.rev_yoy) : null
-  const qtr = last ? `Q${[4, 4, 4, 1, 1, 1, 2, 2, 2, 3, 3, 3][['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'].indexOf(last.q.slice(0, 3).toLowerCase())]}` : ''
-  const runLine = run && sofar ? `Their ${run.fy} guide, ${rupees(run.g.target)}, is ${sofar} so far: ${last!.rev_yoy!.toFixed(1)}% in ${qtr}. ` : ''
+  // The running guide, read against revenue for the year so far
+  const ytd = yearToDate(c.quarters || [])
+  const sofar = run && ytd && ytd.fy === run.fy && !xs.includes(run.g) ? pace(run.g, ytd.growth) : null
+  const range = run ? rupees(run.g.target).match(/[\d.]+(?:–\u2060?[\d.]+)?%/)?.[0] : ''
+  const runLine = run && ytd && sofar ? `Revenue is ${sofar} so far for their ${run.fy} guide of ${range} growth: up ${ytd.growth.toFixed(1)}% in ${ytd.label}. ` : ''
   return (
     <section className="answer" aria-live="polite">
-      <h2 className="head">{name}{about}{fy}{xs.length ? `: ${verdictHead(xs)}` : ''}</h2>
+      <h2 className="head">{name}{about}{fy}{xs.length ? `: ${verdictHead(xs)}${sofar ? `; ${run!.fy} ${sofar} so far` : ''}` : ''}</h2>
       {xs.length
         ? <p className="sub">{due ? (xs.length === 1 ? 'One promise on this has come due' : `${xs.length} promises on this have come due`) : xs.length === 1 ? 'One promise on this' : `${xs.length} promises on this`}: {xs.length === 1 ? tally(xs).replace(/^1 /, '') : tally(xs)}. {runLine}{(s => s?.graded ? `Over their last ${calls} calls they’ve kept ${Math.floor(s.kept)} of ${s.graded} promises that came due.` : `From their last ${calls} calls.`)(wordScore(c))}</p>
         : <p>Nothing{about}{fy} with a number and a date in {name}’s last {c.calls.filter(x => !x.error).length} calls. FINN only grades what management put a number or date on.</p>}

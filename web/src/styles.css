@@ -269,6 +269,8 @@ table { border-collapse: collapse; }
 .fail-box .rows + .small { margin-top: 10px; }
 .ask-try .ask-out + .sub { margin-bottom: 4px; }
 .answer { margin-top: 28px; }
+.answer-q { margin-top: 26px; }
+.answer-q + .answer { margin-top: 4px; }
 .answer > .head { font-size: 24px; margin-bottom: 4px; }
 .answer > p { margin-bottom: 4px; }
 .answer .btn { margin-top: 16px; }

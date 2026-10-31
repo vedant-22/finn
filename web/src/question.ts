@@ -120,3 +120,15 @@ export function runningGuide(ledger: Promise_[], quarter: string | undefined) {
   const g = ledger.find(p => p.hard && p.status === 'pending' && (p.by_when || '').toUpperCase().replace(/\s/g, '').includes(fy) && pace(p, 0) !== null)
   return g && { g, fy }
 }
+
+// Revenue growth for the year so far, on the same quarters a year earlier: Q1, H1 or 9M. A guide for the year is
+// read against this, not against one quarter. Each quarter's year-ago figure comes from its own growth.
+export function yearToDate(quarters: { q: string; rev: number; rev_yoy: number | null }[]): { growth: number; label: string; fy: string } | null {
+  const last = quarters[quarters.length - 1]
+  if (!last) return null
+  const fy = fyOf(last.q)
+  const xs = quarters.filter(x => fyOf(x.q) === fy)
+  if (!xs.length || xs.some(x => x.rev_yoy == null || !x.rev)) return null
+  const now = xs.reduce((n, x) => n + x.rev, 0), then = xs.reduce((n, x) => n + x.rev / (1 + x.rev_yoy! / 100), 0)
+  return { growth: (now / then - 1) * 100, label: ['Q1', 'H1', '9M', 'FY'][xs.length - 1] || 'FY', fy }
+}

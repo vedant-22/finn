@@ -9,7 +9,7 @@ import { PeopleBlock, ResultsBlock, moveWhy, shortDay, tidySubject, useWord } fr
 import { Chart, Src, StatusLabel } from './ui'
 import { BeforeAfter, said } from './Word'
 import { promiseLine, verdictText } from './Trail'
-import { pace } from './question'
+import { pace, yearToDate } from './question'
 
 type Page = { kind: 'item'; item: Item } | { kind: 'notes' } | { kind: 'done' }
 
@@ -168,10 +168,11 @@ function Held({ i, name, res, openCompany }: { i: Item; name: string; res?: any;
   if (!c) return null
   const guide = guidance(c, res?.quarter)
   // Revenue guidance sits next to this quarter's revenue growth; a segment margin or a return doesn't map onto the table
-  const rev = res?.lines.find((l: any) => l.key === 'revenue')
-  const now = guide && guide.g.metric === 'revenue_growth' && /revenue/i.test(guide.g.target) && rev?.yoy != null
-    ? `This quarter, revenue ${rev.yoy >= 0 ? 'grew' : 'fell'} ${Math.abs(rev.yoy).toFixed(1)}% on a year ago. ` : ''
-  const sofar = guide && pace(guide.g, rev?.yoy)
+  // A year's guide is read against the year so far (Q1, H1, 9M), not one quarter
+  const ytd = yearToDate(c.quarters || [])
+  const now = guide && ytd && ytd.fy === guide.fy && guide.g.metric === 'revenue_growth' && /revenue/i.test(guide.g.target)
+    ? `${ytd.label} revenue ${ytd.growth >= 0 ? 'grew' : 'fell'} ${Math.abs(ytd.growth).toFixed(1)}% on a year ago. ` : ''
+  const sofar = guide && ytd && ytd.fy === guide.fy ? pace(guide.g, ytd.growth) : null
   const record = s?.graded ? `${name} has kept ${Math.floor(s.kept)} of ${s.graded} promises that came due.` : s?.hard ? `None of ${name}’s dated promises is due yet.` : `No promise from ${name} with a number and a date yet.`
   return (
     <section className="r-sec" aria-label="Against their word">
