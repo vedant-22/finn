@@ -70,3 +70,17 @@ Loading: skeleton blocks in the shape of the screen. Empty: "Nothing crossed you
 9. [ ] States: skeletons, empty, error, offline, quota, first run. PWA manifest and splash checked.
 10. [ ] Tests: unit for ask parsing and brief state; e2e flows updated; 390 and 320 sweeps.
 11. [ ] Section 7 comparison; promote only if it wins; then README, DESIGN.md, covering note, walkthrough, trace.
+
+## Colour (section 9, 31 Oct)
+
+v4 and the live build side by side at 390×844:
+- **Where colour made v4 rich.** Whole blocks sat on the warm #FBF8F2: the alert cards, the company's opening, Book's tally. The eye knew where a block began and ended without a single border. A full ENAM blue band closed the page. The masthead word was blue.
+- **Where white makes the live build empty.** Everything is one white plane. The count, the alerts, the routine rows and the tab bar have the same ground, so the opening has no weight and the alert rows read as a list in a settings page. Colour is only in small words (blue links, green and red status), so it reads as decoration, not structure.
+- **The base design's tokens.** Warm page #FBF8F2, a deep teal #004D47 as full-bleed bands, ink #333333, grey #707070, hairlines #D9D9D9. Its richness comes from two grounds and one deep band per page, not from many colours.
+
+What the colour system must give FINN: a page ground, raised surfaces for the things you act on, one or two full-colour moments per screen where the eye lands first (the brief's opening, the reader's verdict, the up-to-date end), and status colours that pass AA on every ground they sit on.
+
+Three directions, tried with `?look=` before choosing:
+- **A, warm paper.** Page #FBF8F2, white raised cards for alerts and promises, an ENAM blue #005DA3 band for the opening and the end.
+- **B, deep blue moments.** A navy built from ENAM blue for the opening, the verdict and the end, warm-white text on it; warm paper below, rows flat on it.
+- **C, ivory.** A cream base around #F6EEDD, ivory raised cards, ENAM blue figures and a restrained gold for what is new. Watch for the cream-and-serif tell.

@@ -1,4 +1,4 @@
-Next: 31 Oct, section 8. Round 3 fixes are on next: run panel round 4 (web/test/e2e/compare.py next, copy to shots/r4, three blind critics, same prompt as round 3 with r4 paths). Promote live with `npx vercel --prod --yes` from app/ only if no axis drops below round 3 (8 / 7.5 / 7.5 / 7.5 / 7.7 / 7.5), then flows.py on live. Docs to sync after: README Book line, WALKTHROUGH_SCRIPT, BRIEF_TRACE, DESIGN.md (the tally bar, amber).
+Next: 31 Oct, section 9 (colour). Build three looks behind ?look=a|b|c in web/src/styles.css (design/STAGE4_PLAN.md, Colour), shoot brief, reader, Book, Company for each, run three blind critics, keep the winner. Round 3 fixes are on next and not yet judged.
 
 ## Stage 4, section 8: the push to 10/10 (31 Oct)
 - [x] Live health (31 Oct): live and next serve HEAD's bundle; flows.py 33/33 on finn-ledger.vercel.app, no page errors; sweep.py 22 companies at 320 and 390, no sideways scroll, no NaN
