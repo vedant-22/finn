@@ -195,7 +195,8 @@ table { border-collapse: collapse; }
 .done-t { font-size: 40px; font-weight: 400; letter-spacing: -0.015em; margin-bottom: 14px; animation: land 300ms var(--ease) 100ms both; }
 @keyframes land { from { opacity: 0; transform: translateY(6px); } }
 .r-done .head { margin: 32px 0 6px; }
-.r-done .btn { margin-top: 36px; }
+.r-done .btn { margin-top: 28px; }
+.done-copy { margin-top: 4px; }
 
 /* source links: underlined, quiet, open in a new tab */
 .src { color: var(--blue); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; font-size: 13px; }

@@ -92,3 +92,20 @@ export function remaining(b: Brief, d: Done) {
 const SEEN = 'finn.seen'
 export function lastSeen(): string | null { return localStorage.getItem(SEEN) }
 export const markSeen = (iso: string) => localStorage.setItem(SEEN, iso)
+
+// A question for the company's next call, from what just happened: a CEO, CFO or MD leaving first, then a margin
+// that fell a point or more on a year ago, then profit down a fifth or more. Null when the news raises none.
+const ROLE = (r: string) => r.replace(/\bChief Financial Officer\b/i, 'CFO').replace(/\bChief Executive Officer\b/i, 'CEO').replace(/\bManaging Director\b/i, 'MD')
+export function newsQuestion(i: Item, push: Push): string | null {
+  const gone = [i.with?.lead, i.story?.lead].flatMap(f => f?.people || []).find(p => p.seniority === 'top' && ['resigned', 'ceased', 'retired'].includes(p.action))
+  if (gone) return `Why did the ${ROLE(gone.role)}, ${gone.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')}, leave, and who covers the role until a successor joins?`
+  const f = i.story?.lead?.results ? i.story.lead : i.move?.explainedBy?.category === 'results'
+    ? push.filings.filter(x => x.symbol === i.symbol && x.results && x.at.slice(0, 10) <= i.move!.d).sort((a, b) => b.at.localeCompare(a.at))[0] : undefined
+  const r = f?.results
+  if (!r) return null
+  const rev = r.lines.find(l => l.key === 'revenue'), pat = r.lines.find(l => l.key === 'pat')
+  const dm = r.ebitda_margin != null && r.yago_margin != null ? r.ebitda_margin - r.yago_margin : 0
+  if (dm <= -1 && rev?.yoy != null) return `Revenue ${rev.yoy >= 0 ? 'grew' : 'fell'} ${Math.abs(rev.yoy).toFixed(1)}% on a year ago while EBITDA margin fell ${Math.abs(dm).toFixed(1)} points. What drove costs, and does it last?`
+  if (pat?.yoy != null && pat.yoy <= -20) return `Profit fell ${Math.abs(pat.yoy).toFixed(0)}% on a year ago. How much of that is one-off?`
+  return null
+}

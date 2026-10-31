@@ -1,7 +1,7 @@
 // The reader: the brief one item at a time. Read it, then keep it for later or clear it, and the next slides in.
 // It ends on 'You're up to date'.
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { act, notesKey, remaining, type Brief, type Done, type Item } from './queue'
+import { act, newsQuestion, notesKey, remaining, type Brief, type Done, type Item } from './queue'
 import { cr, getCompany, rupees, wordScore, when, type Company, type Lines, type Push } from './lib'
 import { Answer, suggestions, useKnown } from './Ask'
 import { Arrow, NotesList, crossedText, itemLine, itemTitle, withLine } from './Brief'
@@ -84,7 +84,7 @@ export function Reader({ push, brief, done, setDone, lines, names, start, close,
           onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp}>
           {page.kind === 'item' && <ItemPage i={page.item} push={push} lines={lines} names={names} openCompany={openCompany} openLines={openLines} />}
           {page.kind === 'notes' && <><p className="small kicker">The rest of the window</p><h1 className="title">Worth a line</h1><p className="lede">{brief.spill.length ? `${brief.spill.length} more crossed your lines; the rest didn’t.` : 'None of it crossed your lines.'} One line each.</p><NotesList brief={brief} names={names} asof={push.asof} /></>}
-          {page.kind === 'done' && <DonePage brief={brief} done={done} names={names} close={close} openCompany={openCompany} />}
+          {page.kind === 'done' && <DonePage brief={brief} push={push} done={done} names={names} close={close} openCompany={openCompany} />}
         </article>
       </div>
       {page.kind === 'item' && !done.cleared.length && !done.kept.length && <p className="small r-first">Keep it for later, or mark it done. Swiping works too.</p>}
@@ -209,16 +209,19 @@ export function AskHere({ push, symbol, name, openCompany, cls }: { push: Push; 
 }
 
 // The end of the brief: the same tally the brief opened with, what was kept, and a question for each company's next call
-function DonePage({ brief, done, names, close, openCompany }: { brief: Brief; done: Done; names: Record<string, string>; close: () => void; openCompany: (s: string) => void }) {
+function DonePage({ brief, push, done, names, close, openCompany }: { brief: Brief; push: Push; done: Done; names: Record<string, string>; close: () => void; openCompany: (s: string) => void }) {
   const kept = brief.items.filter(i => done.kept.includes(i.key))
   const read = brief.items.filter(i => done.cleared.includes(i.key)).length
   const worth = brief.notes.length + brief.spill.length
   const [qs, setQs] = useState<{ symbol: string; q: string }[]>([])
+  // The news asks first (a CFO leaving, a margin that fell); the company's own question from its calls otherwise
   useEffect(() => {
-    const syms = [...new Set(brief.items.map(i => i.symbol))].slice(0, 3)
-    Promise.all(syms.map(s => getCompany(s).then(c => c?.questions?.[0] ? { symbol: s, q: rupees(c.questions[0]) } : null).catch(() => null)))
-      .then(xs => setQs(xs.filter((x): x is { symbol: string; q: string } => !!x)))
-  }, [brief])
+    const first = new Map<string, Item>(); brief.items.forEach(i => { if (!first.has(i.symbol)) first.set(i.symbol, i) })
+    Promise.all([...first.values()].slice(0, 3).map(i => {
+      const q = newsQuestion(i, push)
+      return q ? { symbol: i.symbol, q } : getCompany(i.symbol).then(c => c?.questions?.[0] ? { symbol: i.symbol, q: rupees(c.questions[0]) } : null).catch(() => null)
+    })).then(xs => setQs(xs.filter((x): x is { symbol: string; q: string } => !!x)))
+  }, [brief, push])
   const aside = [worth && `${worth} more worth a line`, brief.routine && `${brief.routine} routine ${brief.routine === 1 ? 'filing' : 'filings'} set aside`].filter(Boolean).join('; ')
   return (
     <div className="r-done">
@@ -232,8 +235,18 @@ function DonePage({ brief, done, names, close, openCompany }: { brief: Brief; do
         <h2 className="head">For the next call</h2>
         <ul className="rows done-qs">{qs.map(x => <li key={x.symbol}><button className="row" onClick={() => openCompany(x.symbol)}>
           <span><span className="done-co">{names[x.symbol]}</span>{x.q}</span><Arrow /></button></li>)}</ul>
+        <CopyQs qs={qs.map(x => `${names[x.symbol]}: ${x.q}`)} />
       </>}
       <button className="btn btn-wide" onClick={close}>Back to the brief</button>
     </div>
   )
+}
+
+// For the call-prep notes: the questions as plain numbered text
+function CopyQs({ qs }: { qs: string[] }) {
+  const [copied, setCopied] = useState(false)
+  if (!navigator.clipboard) return null
+  const copy = () => navigator.clipboard.writeText(`For the next calls\n${qs.map((q, i) => `${i + 1}. ${q}`).join('\n')}`)
+    .then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) }).catch(() => { /* clipboard refused: nothing to undo */ })
+  return <button className="text-btn done-copy" onClick={copy} aria-live="polite">{copied ? 'Copied' : 'Copy the questions'}</button>
 }

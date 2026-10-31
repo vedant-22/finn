@@ -3,7 +3,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import { DEFAULT_LINES } from '../src/lib.ts'
-import { buildBrief, act, remaining, notesKey, NO_DONE } from '../src/queue.ts'
+import { buildBrief, act, remaining, notesKey, NO_DONE, newsQuestion } from '../src/queue.ts'
 import { aliases, parse, matching, tally, verdictHead, pace, fyOf, runningGuide } from '../src/question.ts'
 
 const push = JSON.parse(fs.readFileSync(new URL('../public/data/push.json', import.meta.url)))
@@ -84,4 +84,11 @@ test('one settled promise is named by its own word in the headline', () => {
   assert.equal(verdictHead([{ status: 'quiet' }]), 'gone quiet')
   assert.equal(verdictHead([{ status: 'missed' }]), 'missed')
   assert.equal(verdictHead([{ status: 'kept' }, { status: 'missed' }]), 'kept 1 of 2')
+})
+
+test('the next call asks about the news: a CFO leaving, then a margin that fell', () => {
+  const b = buildBrief(push, DEFAULT_LINES)
+  const q = s => newsQuestion(b.items.find(i => i.symbol === s), push)
+  assert.match(q('SYNGENE'), /^Why did the CFO, Deepak Jain, leave/)
+  assert.match(q('LT'), /EBITDA margin fell 1\.3 points/)
 })
