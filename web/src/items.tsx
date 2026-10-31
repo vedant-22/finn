@@ -1,6 +1,6 @@
 // The pieces an item is made of: results tables, people, one-line notes, tidy filing titles.
 import { useEffect, useRef, useState } from 'react'
-import { cr, getCompany, when, type Company, type Move, type Story } from './lib'
+import { cr, getCompany, plainBio, when, type Company, type Move, type Story } from './lib'
 
 // 'L&T, Syngene and 2 more'
 export const few = (xs: string[]) => xs.length <= 3 ? xs.join(xs.length === 2 ? ' and ' : ', ').replace(/, ([^,]*)$/, ' and $1') : `${xs.slice(0, 2).join(', ')} and ${xs.length - 2} more`
@@ -137,7 +137,7 @@ function BioText({ b, fold }: { b: Bio; fold: boolean }) {
   return <>
     {/* Where they worked says more than the filing's paragraph about them: the career leads, the paragraph follows */}
     {b.previous.length > 0 && <p className="bio">Before this: {b.previous.join('; ').replace(/\.?$/, '.')}</p>}
-    <p className={b.previous.length ? 'prev' : 'bio'}>{b.background}</p>
+    <p className={b.previous.length ? 'prev' : 'bio'}>{b.previous.length ? plainBio(b.background) : b.background}</p>
     {b.url && b.at && <p className="prev">From the company’s <a href={b.url} target="_blank" rel="noreferrer">{+b.at.slice(8, 10)} {MON3[+b.at.slice(5, 7) - 1].replace(/^./, c => c.toUpperCase())} filing</a></p>}
   </>
 }

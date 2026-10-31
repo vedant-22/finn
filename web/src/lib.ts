@@ -331,6 +331,14 @@ export const numbersOnly = (ev: string, v: string) => {
   return kept.length ? kept.join(', ').replace(/\s*\((−?-?[\d.]+%)[^)]*\)$/, (m, x) => v.includes(x) ? '' : m) + '.' : ''
 }
 
+// A joiner's paragraph once their career is listed above it: the first sentence, without the press release's
+// list of fields or its praise. 'Chartered Accountant with over 25 years of experience in finance, treasury,
+// regulatory compliance, capital planning and financial controls.' -> 'Chartered Accountant with over 25 years of experience.'
+export const plainBio = (t: string) => (t.match(/^.+?[a-z\d]{2}\.(?=\s+[A-Z]|$)/)?.[0] || t)
+  .replace(/\s+(?:in|across|leading)\s+[^.]*?,[^.]*?\band\b[^.]*\.$/, '.')
+  .replace(/\b(?:(a|an)\s+)?(?:seasoned|distinguished|rich and diverse|leading)\s+(?=(\w))/gi, (_, art, next) => art ? `${art[0]}${/[aeiou]/i.test(next) ? 'n' : ''} ` : '')
+  .replace(/\byears\.$/, 'years of experience.')
+
 // Model-written text says 'INR1,450 crores'; the app writes '₹1,450 crore'. Never applied to quotes.
 export const rupees = (t: string) => t
   .replace(/\b(?:INR|Rs\.?)\s?(\d[\d,.]*)(\s?(?:to|-|–)\s?(?:(?:INR|Rs\.?)\s?)?(\d[\d,.]*))?\s?([Cc]r(?:ores?)?)\b/g, (_, a, r, b) => `₹${a}${r ? `–${b}` : ''} crore`)

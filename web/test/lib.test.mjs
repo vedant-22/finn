@@ -1,7 +1,7 @@
 // What the screen says, checked. Run: npm test (Node 22.6+ reads lib.ts directly)
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { cr, crBig as crBigNb, deadline, pct, rupees as rupeesWj, tidyEvidence as tidyWj, when, numbersOnly } from '../src/lib.ts'
+import { cr, crBig as crBigNb, deadline, pct, rupees as rupeesWj, tidyEvidence as tidyWj, when, numbersOnly, plainBio } from '../src/lib.ts'
 
 // The word joiner that keeps a range on one line is invisible; compare without it
 // and the no-break space that keeps an amount with its unit
@@ -143,4 +143,11 @@ test("the 'Reported' line gives only the figures the verdict doesn't", () => {
   assert.equal(numbersOnly('FY26 revenue ₹2,85,874 crore (11.8% growth).', v), '')
   assert.equal(numbersOnly('FY26 revenue ₹2,90,000 crore (11.8% growth).', v), 'FY26 revenue ₹2,90,000 crore.')
   assert.equal(numbersOnly('Q1 OPM 7%, Q2 OPM 9%', 'Margin reached 9% in Q2.'), 'Q1 OPM 7%.')
+})
+
+test('a joiner with a listed career gets one plain sentence, not the press release', () => {
+  assert.equal(plainBio('Chartered Accountant with over 25 years of experience in finance, treasury, regulatory compliance, capital planning and financial controls.'), 'Chartered Accountant with over 25 years of experience.')
+  assert.equal(plainBio('A seasoned financial services leader with over three decades of experience across banking, capital markets, wealth management and insurance.'), 'A financial services leader with over three decades of experience.')
+  assert.equal(plainBio('Mr. K. C. Jhanwar has been the Managing Director of UltraTech Cement Limited since 1st January, 2020. A Chartered Accountant by profession, he joined the Aditya Birla Group in 1981.'), 'Mr. K. C. Jhanwar has been the Managing Director of UltraTech Cement Limited since 1st January, 2020.')
+  assert.equal(plainBio('Founder & CEO of Samara Capital Group, a leading alternative asset manager with USD 2 billion+ invested since 2007 across various industry segments.'), 'Founder & CEO of Samara Capital Group, an alternative asset manager with USD 2 billion+ invested since 2007 across various industry segments.')
 })
