@@ -180,7 +180,7 @@ table { border-collapse: collapse; }
 .end-qs li { counter-increment: q; display: grid; grid-template-columns: 28px 1fr; padding: var(--s-3xs) 0; border-top: 1px solid rgba(255, 255, 255, .26); font: 16px/140% var(--serif); color: #fff; }
 .end-qs li::before { content: counter(q); grid-row: span 2; font: 500 14px/160% var(--f); color: rgba(255, 255, 255, .82); }
 .end-co { display: block; font: 500 14px/140% var(--f); letter-spacing: -0.39px; color: rgba(255, 255, 255, .82); }
-.end-copy { color: #fff; min-height: 44px; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(255, 255, 255, .5); }
+.end-copy { color: #fff; min-height: 44px; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(255, 255, 255, .7); }
 .end-band-btns { display: grid; justify-items: center; gap: var(--s-5xs); margin-top: var(--s-m); }
 .btn-light, .btn-light-outline { display: inline-flex; align-items: center; justify-content: center; min-width: 180px; height: 44px; padding: 0 var(--s-s); border-radius: var(--r-pill); font: 400 16px/116% var(--f); letter-spacing: -0.42px; text-decoration: none; transition: background-color 100ms ease-in-out, color 100ms ease-in-out; }
 .btn-light { background: #fff; color: var(--brand); }
@@ -366,7 +366,7 @@ table { border-collapse: collapse; }
 .ask ol { counter-reset: q; }
 .ask li { counter-increment: q; display: grid; grid-template-columns: 28px 1fr; padding: var(--s-3xs) 0; border-top: 1px solid var(--rule); font: 16px/140% var(--serif); letter-spacing: 0; color: #fff; }
 .ask li::before { content: counter(q); font: 500 14px/160% var(--f); color: var(--ink-2); }
-.ask .copy { color: #fff; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(255, 255, 255, .5); }
+.ask .copy { color: #fff; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(255, 255, 255, .7); }
 .company .fold { margin-top: 0; }
 .company > :not(.fold) + .fold { margin-top: var(--s-2xl); border-top: 1px solid var(--rule); }
 .fig-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--s-3xs); row-gap: var(--s-m); }
