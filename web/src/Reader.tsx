@@ -3,9 +3,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { type Brief, type Item } from './queue'
 import { cr, getCompany, rupees, wordScore, type Company, type Lines, type Push } from './lib'
 import { Answer, suggestions, useKnown } from './Ask'
-import { alertFig, crossedText, itemLine, kindLabel, withLine } from './Brief'
+import { PriceLine, alertFig, crossedText, figWhen, itemLine, kindLabel, withLine } from './Brief'
 import { PeopleBlock, ResultsBlock, moveWhy, shortDay, tidySubject, useWord } from './items'
-import { Chart, Outcome, Src, StatusLabel } from './ui'
+import { Outcome, Src, StatusLabel } from './ui'
 import { BeforeAfter, said } from './Word'
 import { promiseLine, verdictText } from './Trail'
 import { pace, yearToDate } from './question'
@@ -66,10 +66,10 @@ function ItemPage({ i, push, lines, name, openCompany, openLines }: { i: Item; p
   return <>
     {/* The card's own top, grown: the price line, what kind, the name, the day's move */}
     <div className="iv-top">
-      {bars.length > 4 && <div className="card-img"><Chart series={bars} /></div>}
-      <div className="card-lbl"><span className="lbl">{kindLabel(i, push)}</span><span className="lbl lbl-quiet">{shortDay(m ? m.d : i.at)}</span></div>
+      {bars.length > 4 && <PriceLine bars={bars} />}
+      <div className="card-lbl"><span className="lbl">{kindLabel(i, push)}</span>{!fig && <span className="lbl lbl-quiet">{shortDay(i.at)}</span>}</div>
       <h1 className="t-h1 iv-name"><button onClick={() => openCompany(i.symbol)}>{name}</button></h1>
-      {fig && <div className="card-fig"><Outcome size="m" value={fig.v.replace('%', '')} unit="%" /><span className="card-cap">{fig.c.charAt(0).toUpperCase() + fig.c.slice(1)}{m ? `, on ${m.volX.toFixed(1)}× its usual volume` : ''}</span></div>}
+      {fig && <div className="card-fig"><Outcome size="m" value={fig.v.replace('%', '')} unit="%" /><span className="card-cap">{figWhen(fig.d, i)}</span></div>}
       {f && !f.results && f.amount_cr != null && f.amount_cr >= 1 && <div className="card-fig"><Outcome size="m" value={`₹${cr(f.amount_cr)}`} unit="cr" />{f.pct_rev != null && <span className="card-cap">{f.pct_rev < 0.1 ? 'Under 0.1%' : `${f.pct_rev.toFixed(f.pct_rev < 1 ? 1 : 0)}%`} of a year’s revenue</span>}</div>}
       <p className="serif-line">{lede}</p>
       <p className="iv-line"><span>{crossedText(i, lines)}.</span> <button className="see" onClick={openLines}>Change</button></p>

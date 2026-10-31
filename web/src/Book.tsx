@@ -100,29 +100,22 @@ function BookTally({ cos, only, setOnly }: { cos: (Company | null | undefined)[]
   if (!all.length) return null
   const n = (st: Status) => all.filter(p => p.status === st).length
   const teams = (st: Status) => cos.filter(c => c?.ledger.some(p => p.hard && p.status === st)).length
-  const at = (st: Status) => `At ${teams(st)} ${teams(st) === 1 ? 'company' : 'companies'}`
-  // Four in the grid, as on an outcomes page; partly kept rides under kept, still tappable
-  const items: [Status, string, string][] = [
-    ['missed', 'Missed: the date passed without it.', at('missed')],
-    ['quiet', 'Gone quiet: due, and not mentioned.', at('quiet')],
-    ['kept', 'Kept: delivered, or on track.', at('kept')],
-    ['pending', 'Not due yet.', 'Still running'],
-  ]
+    // One row of four: the count in Inter, the status word under it in its colour. Partly kept rides under, still tappable
+  const items: [Status, string][] = [['missed', 'Missed'], ['quiet', 'Gone quiet'], ['kept', 'Kept'], ['pending', 'Not due']]
   return (
-    <section className="og-panel" aria-label="Promises across your book">
+    <section className="og-panel tally" aria-label="Promises across your book">
       <h2 className="lbl lbl-quiet">Promises across your book</h2>
-      <ul className="og book-og">
-        {items.map(([st, d1, d2]) => (
-          <li key={st} className="og-item">
-            <button className="og-item og-btn" aria-pressed={only === st} onClick={() => setOnly(only === st ? null : st)}>
-              <Outcome value={n(st)} />
-              <span className="og-d1">{d1}</span>
-              <span className="og-d2">{d2}</span>
+      <ul className="tally-row">
+        {items.map(([st, word]) => (
+          <li key={st}>
+            <button className="og-btn tally-b" aria-pressed={only === st} aria-label={`${n(st)} ${word.toLowerCase()}, at ${teams(st)} ${teams(st) === 1 ? 'company' : 'companies'}`} onClick={() => setOnly(only === st ? null : st)}>
+              <Outcome size="xs" value={n(st)} />
+              <span className={`lbl st-${st}`}>{word}</span>
             </button>
-            {st === 'kept' && n('partly') > 0 && <button className={`og-link${only === 'partly' ? ' on' : ''}`} aria-pressed={only === 'partly'} onClick={() => setOnly(only === 'partly' ? null : 'partly')}>And {n('partly')} partly kept</button>}
           </li>
         ))}
       </ul>
+      {n('partly') > 0 && <button className={`og-link${only === 'partly' ? ' on' : ''}`} aria-pressed={only === 'partly'} onClick={() => setOnly(only === 'partly' ? null : 'partly')}>And {n('partly')} partly kept</button>}
     </section>
   )
 }

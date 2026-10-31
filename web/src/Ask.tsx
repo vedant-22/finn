@@ -77,7 +77,7 @@ export function AskScreen({ push, q0, openCompany }: { push: Push; q0?: string; 
         <label htmlFor="sym" className="lbl lbl-quiet">NSE symbol, name or a question</label>
         <div className="look-row">
           <div className="look-field">
-            <input id="sym" ref={inRef} value={q} onChange={e => setQ(e.target.value)} placeholder={asked ? 'Ask another' : 'ASTRAL, or a name'} autoComplete="off" autoCorrect="off" spellCheck={false} enterKeyHint="search" className={isQ(q) ? 'is-q' : ''} />
+            <input id="sym" ref={inRef} value={q} onChange={e => setQ(e.target.value)} placeholder={asked ? 'Ask another' : 'ASTRAL, or a question'} autoComplete="off" autoCorrect="off" spellCheck={false} enterKeyHint="search" className={isQ(q) ? 'is-q' : ''} />
             <Mic onText={t => { setQ(t); submit(t) }} />
           </div>
           <button type="submit" className="btn-primary">{isQ(q) ? 'Ask' : 'Check their word'}</button>

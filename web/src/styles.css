@@ -99,10 +99,10 @@ table { border-collapse: collapse; }
 .hero-lbl { margin-bottom: var(--s-s); white-space: normal; }
 .hero-fig { display: flex; flex-wrap: wrap; align-items: flex-end; column-gap: 10px; }
 .hero-unit { font: 500 36px/112% var(--f); letter-spacing: -2.16px; padding-bottom: 2px; }
-.hero-2 { font-size: 17px; line-height: 140%; margin-top: var(--s-2xs); padding-left: var(--s-nano); }
-.hero-wider { margin-top: var(--s-5xs); padding-left: var(--s-nano); }
+.hero-2 { font-size: 17px; line-height: 140%; margin-top: var(--s-2xs); }
+.hero-wider { margin-top: var(--s-5xs); }
 .window-row { display: flex; justify-content: space-between; align-items: center; margin-top: var(--s-m); }
-.window { display: flex; gap: var(--s-s); }
+.window { display: flex; gap: var(--s-s); margin-top: var(--s-s); }
 /* windows are words, set as the tab bar is: ink and a short blue rule under the one that's on */
 .window button { height: 44px; position: relative; color: var(--ink-2); font-size: 16px; letter-spacing: -0.3px; transition: color 200ms; white-space: nowrap; }
 .window button.on { color: var(--ink); }
@@ -115,6 +115,9 @@ table { border-collapse: collapse; }
 /* a card: warm panel, square corners, the price line inset on top */
 .card { background: var(--panel); padding: var(--s-2xs) var(--s-2xs) var(--s-s); }
 .card-img { background: var(--paper); aspect-ratio: 390 / 230; overflow: hidden; }
+/* on a card the price line is context, not the point: a third of the card, its first and last session named */
+.price .card-img { aspect-ratio: 390 / 120; }
+.price-d { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; line-height: 116%; color: var(--ink-2); }
 .chart { display: block; width: 100%; height: 100%; }
 .chart .line { fill: none; stroke: var(--brand); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
 .chart .wash { fill: var(--wash); }
@@ -123,7 +126,7 @@ table { border-collapse: collapse; }
 .lbl-new { color: var(--brand); }
 .card-title { margin-top: var(--s-3xs); }
 .card-fig { display: flex; flex-direction: column; align-items: flex-start; margin-top: var(--s-xs); }
-.card-cap { font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink-2); margin-top: var(--s-nano); padding-left: var(--s-nano); }
+.card-cap { font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink-2); margin-top: var(--s-nano); }
 .card-desc { margin-top: var(--s-3xs); font-size: 16px; line-height: 140%; }
 .card-line { margin-top: var(--s-5xs); font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink-2); }
 .card-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: var(--s-s); }
@@ -158,10 +161,26 @@ table { border-collapse: collapse; }
 .folded li { padding: 10px 0; border-top: 1px solid var(--rule); font-size: 15px; line-height: 140%; display: grid; grid-template-columns: 36px 1fr; }
 .folded li .sub { grid-column: 2; font-size: 13px; }
 
+/* the quiet controls under the folds: Your lines, Listen */
+.tools { margin-top: var(--s-l); border-top: 1px solid var(--rule); }
+.tools li { border-bottom: 1px solid var(--rule); }
+.tool { display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; min-height: 64px; padding: var(--s-3xs) 0; font: 450 17px/124% var(--f); letter-spacing: -0.3px; }
+.tool .fold-l { font-weight: 400; }
+.tool-i { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.tool[aria-pressed="true"] .tool-i { stroke: var(--brand); }
+.tool:active > * { opacity: .5; }
+
 /* the band a page ends on: ENAM blue, edge to edge down to the tab bar */
 .today { padding-bottom: 0; }
 .end-band { margin: var(--s-3xl) calc(-1 * var(--g)) 0; padding: var(--s-3xl) var(--g) calc(env(safe-area-inset-bottom) + 57px + var(--s-3xl)); background: var(--brand); color: #fff; text-align: center; }
 .end-band h2 { max-width: 300px; margin: 0 auto; text-wrap: balance; }
+.end-qs { max-width: 420px; margin: var(--s-m) auto 0; text-align: left; }
+.end-qs .lbl { color: rgba(255, 255, 255, .82); }
+.end-qs ol { counter-reset: q; margin-top: var(--s-3xs); }
+.end-qs li { counter-increment: q; display: grid; grid-template-columns: 28px 1fr; padding: var(--s-3xs) 0; border-top: 1px solid rgba(255, 255, 255, .26); font: 16px/140% var(--serif); color: #fff; }
+.end-qs li::before { content: counter(q); grid-row: span 2; font: 500 14px/160% var(--f); color: rgba(255, 255, 255, .82); }
+.end-co { display: block; font: 500 14px/140% var(--f); letter-spacing: -0.39px; color: rgba(255, 255, 255, .82); }
+.end-copy { color: #fff; min-height: 44px; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(255, 255, 255, .5); }
 .end-band-btns { display: grid; justify-items: center; gap: var(--s-5xs); margin-top: var(--s-m); }
 .btn-light, .btn-light-outline { display: inline-flex; align-items: center; justify-content: center; min-width: 180px; height: 44px; padding: 0 var(--s-s); border-radius: var(--r-pill); font: 400 16px/116% var(--f); letter-spacing: -0.42px; text-decoration: none; transition: background-color 100ms ease-in-out, color 100ms ease-in-out; }
 .btn-light { background: #fff; color: var(--brand); }
@@ -181,8 +200,10 @@ table { border-collapse: collapse; }
 .iv-bar.past { background: var(--paper); }
 .iv-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; outline: none; }
 .iv-page { max-width: 560px; margin: 0 auto; padding: 0 var(--g) calc(env(safe-area-inset-bottom) + var(--s-2xl)); }
-.iv-top { background: var(--panel); margin: 0 calc(-1 * var(--g)); padding: var(--s-5xs) var(--g) var(--s-l); border-radius: 0 0 var(--r-12) var(--r-12); }
-.iv-top .card-img { margin-bottom: var(--s-xs); }
+.iv-top { background: var(--panel); margin: 0 calc(-1 * var(--g)); padding: var(--s-5xs) var(--g) var(--s-l); }
+/* the view's picture is the card's, already drawn: it doesn't draw again on opening */
+.iv-top .card-img .chart { animation: none; }
+.iv-top .price { margin-bottom: var(--s-xs); }
 .iv-name { margin-top: var(--s-3xs); }
 .iv-name button { font: inherit; letter-spacing: inherit; text-align: left; }
 .iv-line { margin-top: var(--s-3xs); font-size: 14px; line-height: 140%; color: var(--ink-2); }
@@ -257,12 +278,12 @@ table { border-collapse: collapse; }
 .row-co { font-weight: 500; }
 
 /* ---------- Book ---------- */
-.warm-top { background: var(--panel); margin: 0 calc(-1 * var(--g)); padding: 0 var(--g); border-radius: 0 0 var(--r-12) var(--r-12); }
+.warm-top { background: var(--panel); margin: 0 calc(-1 * var(--g)); padding: 0 var(--g); }
 .warm-top .page-top { padding-top: var(--s-xl); }
 .warm-top .og-panel { margin-top: var(--s-l); padding-bottom: var(--s-l); background: transparent; }
 .page-top .serif-line { margin-top: var(--s-3xs); }
 .book-filter { display: flex; align-items: center; justify-content: space-between; margin-top: var(--s-s); font-size: 14px; }
-.book-head2 { margin-top: var(--s-2xl); }
+.book-head2 { margin-top: var(--s-xl); }
 .book-list { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3xs); margin-top: var(--s-s); }
 .book-list > li { min-width: 0; display: flex; }
 .book-list > li.wide { grid-column: 1 / -1; }
@@ -276,7 +297,7 @@ table { border-collapse: collapse; }
 .book-head .card-title { margin: 0; }
 .book-rec { text-align: right; flex: none; }
 .book-px { margin-top: var(--s-3xs); font-size: 14px; color: var(--ink-2); }
-.book-card.lead .card-img { margin: calc(var(--s-2xs) - var(--s-xs)) 0 var(--s-xs); width: 100%; }
+.book-card.lead .card-img { margin: calc(var(--s-2xs) - var(--s-xs)) 0 var(--s-xs); width: 100%; aspect-ratio: 390 / 120; }
 
 /* outcomes grid: a figure, what it counts, and a grey line */
 .og { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--s-3xs); row-gap: var(--s-l); }
@@ -287,15 +308,20 @@ table { border-collapse: collapse; }
 .og-btn .og-d1 { text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px; text-decoration-thickness: 1px; transition: text-decoration-color 200ms; }
 .og-btn[aria-pressed='true'] .og-d1 { text-decoration-color: var(--brand); color: var(--brand); }
 .og-btn[aria-pressed='true'] .outcome { color: var(--brand); }
-.og-d1 { padding-left: var(--s-nano); margin-top: var(--s-nano); font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink); }
-.og-d2 { padding-left: var(--s-nano); margin-top: var(--s-macro); font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink-2); }
-.og-link { padding-left: var(--s-nano); margin-top: var(--s-5xs); font-size: 14px; color: var(--brand); text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+.og-d1 { margin-top: var(--s-nano); font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink); }
+.og-d2 { margin-top: var(--s-macro); font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink-2); }
+.og-link { margin-top: var(--s-5xs); font-size: 14px; color: var(--brand); text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
 .og-link.on { text-decoration: underline; text-underline-offset: 4px; }
-.book-og .og-d1 { min-height: 2.8em; }
+.tally-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-5xs); }
+.tally-b { gap: var(--s-nano); min-height: 44px; }
+.tally-b[aria-pressed='true'] .outcome { color: var(--brand); }
+.tally-b[aria-pressed='true'] .lbl { text-decoration: underline; text-underline-offset: 3px; }
+.warm-top .tally { margin-top: var(--s-m); padding-bottom: var(--s-s); }
+.tally .og-link { margin-top: var(--s-5xs); }
 
 /* ---------- Company ---------- */
 .co-bar { background: var(--paper); }
-.co-top { background: var(--panel); margin: 0 calc(-1 * var(--g)); padding: var(--s-xl) var(--g) var(--s-l); border-radius: 0 0 var(--r-12) var(--r-12); }
+.co-top { background: var(--panel); margin: 0 calc(-1 * var(--g)); padding: var(--s-xl) var(--g) var(--s-l); }
 .co-sector { white-space: normal; }
 .co-name { margin-top: var(--s-3xs); }
 .co-name-n { color: var(--ink-2); }
@@ -312,14 +338,14 @@ table { border-collapse: collapse; }
 .pgrid { margin-top: var(--s-m); }
 .fold .pgrid { margin-top: var(--s-5xs); }
 @media (min-width: 360px) { .pgrid { column-gap: var(--s-xs); } }
-.p-item .og-link { color: var(--ink-2); font-size: 15px; }
+.p-item .og-link { font-size: 15px; }
 .p-fig { display: flex; align-items: flex-end; min-height: 48px; max-width: 100%; }
 .p-item .outcome { max-width: 100%; flex-wrap: wrap; }
-.p-item > .lbl { margin: var(--s-5xs) 0 0 var(--s-nano); }
+.p-item > .lbl { margin: var(--s-5xs) 0 0; }
 .p-item .og-d1 { overflow-wrap: anywhere; }
 .p-item.open { grid-column: 1 / -1; }
 .p-item .acc { width: 100%; }
-.p-detail { padding: var(--s-3xs) 0 0 var(--s-nano); display: grid; gap: var(--s-3xs); }
+.p-detail { padding: var(--s-3xs) 0 0; display: grid; gap: var(--s-3xs); }
 .soft-list { margin-top: var(--s-5xs); padding-bottom: var(--s-2xs); }
 .soft-row { padding: var(--s-3xs) 0; border-top: 1px solid var(--rule); }
 .soft-row .og-btn { min-height: 44px; }
@@ -473,11 +499,14 @@ table { border-collapse: collapse; }
 .card-img .chart { animation: draw 700ms var(--decel) 120ms both; }
 @keyframes draw { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 /* a card grows into its full view, and shrinks back into the card */
-::view-transition-group(item) { animation-duration: 340ms; animation-timing-function: var(--std); }
-::view-transition-old(item), ::view-transition-new(item) { height: 100%; object-fit: cover; object-position: top; }
-/* the old face goes quickly and the new one comes in a beat later, so the two never read as one double image */
-::view-transition-old(item) { animation-duration: 150ms; }
-::view-transition-new(item) { animation-duration: 260ms; animation-delay: 60ms; }
+::view-transition-group(item) { animation-duration: 340ms; animation-timing-function: var(--std); background: var(--panel); }
+::view-transition-old(item), ::view-transition-new(item) { height: 100%; object-fit: cover; object-position: top; mix-blend-mode: normal; }
+/* the warm panel itself grows (the group carries its colour): the face it leaves fades first, the face it arrives at
+   fades in once the panel is nearly there, so the text is never seen twice */
+::view-transition-old(item) { animation: vt-out 100ms linear both; }
+::view-transition-new(item) { animation: vt-in 200ms var(--decel) 140ms both; }
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; } }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 240ms; }
 @media (prefers-reduced-motion: reduce) {
   .rv-on :is(.card, .book-card, .tile, .company > section, .company > .co-pic, .fold, .og-panel, .end-band-in, .ask.lead) { opacity: 1; transform: none; }

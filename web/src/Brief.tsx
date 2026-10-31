@@ -1,8 +1,8 @@
 // The brief: the few things that crossed the investor's lines, as notifications, and a way through them that ends.
 import { useEffect, useRef, useState } from 'react'
-import { buildBrief, type Brief, type Item } from './queue'
-import { CATEGORY_LABEL, cr, sessionWhen, when, type Lines, type Push } from './lib'
-import { FoldSummary, NoteRow, Roll, moveWhy, reclass, resultLine, shortDay, sizeWords, sortPeople, tidySubject } from './items'
+import { buildBrief, newsQuestion, type Brief, type Item } from './queue'
+import { CATEGORY_LABEL, cr, getCompany, rupees, sessionWhen, when, type Bar, type Lines, type Push } from './lib'
+import { FoldSummary, NoteRow, Roll, few, moveWhy, reclass, resultLine, shortDay, sizeWords, sortPeople, tidySubject } from './items'
 import { Chart, Fold, Masthead, Outcome, useKept } from './ui'
 import { alertsBlocked, alertsOn, canAlert, disableAlerts, enableAlerts } from './alerts'
 
@@ -95,7 +95,7 @@ export function BriefScreen({ push, brief, fresh, lines, setLines, names, openIt
 
   return (
     <main className="screen today">
-      <Masthead right={<button className="btn-outline btn-sm" onClick={openLines}>Your lines</button>} />
+      <Masthead />
       <section className="hero" aria-labelledby="brief-h">
         <p className="lbl lbl-quiet hero-lbl">{asof.toDateString() === new Date().toDateString()
           ? `Today, filings to ${time}`
@@ -107,14 +107,11 @@ export function BriefScreen({ push, brief, fresh, lines, setLines, names, openIt
           <span className="hero-unit">{n === 1 || !n ? 'needs you' : 'need you'}</span>
         </div>
         <p className="hero-2">{n
-          ? `Out of ${total} ${total === 1 ? 'filing and move' : 'filings and moves'} across ${push.portfolio.length} holdings.`
+          ? `${few([...new Set(brief.items.map(i => names[i.symbol]))])}, out of ${total} filings and moves across your ${push.portfolio.length} holdings.`
           : `Nothing crossed your lines ${span(lines.hours)}.${nNotes ? ` ${nNotes} worth a look below.` : ''}`}</p>
         {wider && <button className="see hero-wider" onClick={() => setLines({ ...lines, hours: wider.h })}>{`${span(wider.h).replace(/^in the l/, 'L')}: ${wider.n} ${wider.n === 1 ? 'needs' : 'need'} you`}</button>}
-        <div className="window-row">
-          <div className="window" role="radiogroup" aria-label="Window">
-            {WINDOWS.map(w => <button key={w.h} role="radio" aria-checked={lines.hours === w.h} className={lines.hours === w.h ? 'on' : ''} onClick={() => setLines({ ...lines, hours: w.h })}>{WIN_LABEL[w.h]}</button>)}
-          </div>
-          <Listen push={push} brief={brief} names={names} />
+        <div className="window" role="radiogroup" aria-label="Window">
+          {WINDOWS.map(w => <button key={w.h} role="radio" aria-checked={lines.hours === w.h} className={lines.hours === w.h ? 'on' : ''} onClick={() => setLines({ ...lines, hours: w.h })}>{WIN_LABEL[w.h]}</button>)}
         </div>
       </section>
 
@@ -129,10 +126,17 @@ export function BriefScreen({ push, brief, fresh, lines, setLines, names, openIt
         <FoldSummary stories={brief.folded} names={names} />
       </Fold>}
 
-      {/* The window ends on one blue band: it is done, and the two next moves */}
+      {/* Below the folds, the two quiet controls: the lines that decide what interrupts, and the brief read aloud */}
+      <ul className="tools">
+        <li><button className="tool" onClick={openLines}><span>Your lines<span className="fold-l">{`±${lines.movePct}% in a day, ${lines.volX}× volume, ${lines.interrupt.length} ${lines.interrupt.length === 1 ? 'kind' : 'kinds'} of filing`}</span></span><Chev /></button></li>
+        <Listen push={push} brief={brief} names={names} />
+      </ul>
+
+      {/* The window ends on one blue band: it is done, the questions it leaves for the next calls, and the two next moves */}
       <section className="end-band" aria-label="End of the window">
         <div className="end-band-in">
           <h2 className="t-h1">{END[lines.hours] ?? 'That’s everything.'}</h2>
+          <EndQuestions brief={brief} push={push} names={names} />
           <div className="end-band-btns">
             <a className="btn-light" href="#/book">Open your book</a>
             <button className="btn-light-outline" onClick={openLines}>Change your lines</button>
@@ -194,15 +198,43 @@ function resultsWords(r: any): string[] {
   return Math.abs(dm) >= 1 ? [profit, `EBITDA margin ${dm > 0 ? 'up' : 'down'} ${Math.abs(dm).toFixed(1)} pp.`] : [profit]
 }
 
+// What the window leaves to ask: the news first (a CFO leaving, a margin that fell), else the company's own question
+// from its calls. One for each company that needed you, to copy into the call notes
+function EndQuestions({ brief, push, names }: { brief: Brief; push: Push; names: Record<string, string> }) {
+  const [qs, setQs] = useState<{ symbol: string; q: string }[]>([])
+  const [copied, setCopied] = useState(false)
+  useEffect(() => {
+    let live = true
+    const first = new Map<string, Item>(); brief.items.forEach(i => { if (!first.has(i.symbol)) first.set(i.symbol, i) })
+    Promise.all([...first.values()].slice(0, 3).map(i => {
+      const q = newsQuestion(i, push)
+      return q ? { symbol: i.symbol, q } : getCompany(i.symbol).then(c => c?.questions?.[0] ? { symbol: i.symbol, q: rupees(c.questions[0]) } : null).catch(() => null)
+    })).then(xs => live && setQs(xs.filter((x): x is { symbol: string; q: string } => !!x)))
+    return () => { live = false }
+  }, [brief, push])
+  if (!qs.length) return null
+  const copy = () => navigator.clipboard?.writeText(`For the next calls\n${qs.map((x, k) => `${k + 1}. ${names[x.symbol]}: ${x.q}`).join('\n')}`)
+    .then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) }).catch(() => { /* clipboard refused: nothing to undo */ })
+  return (
+    <div className="end-qs">
+      <h3 className="lbl">For the next calls</h3>
+      <ol>{qs.map(x => <li key={x.symbol}><span className="end-co">{names[x.symbol]}</span>{x.q}</li>)}</ol>
+      {navigator.clipboard && <button className="end-copy" onClick={copy} aria-live="polite">{copied ? 'Copied' : 'Copy the questions'}</button>}
+    </div>
+  )
+}
+
 // What kind of thing a card is, in the label above its name
 export function kindLabel(i: Item, push: Push): string {
   const f = i.story?.lead
-  if (i.kind === 'results' && f?.results) return `Results, ${f.results.quarter.replace(/ FY\d\d$/, '')}`
+  // A results-day move and the results it rides with read alike in every window
+  const res = f?.results ?? (i.move?.explainedBy?.category === 'results' ? push.filings.filter(x => x.symbol === i.symbol && x.results && x.at.slice(0, 10) <= i.move!.d).sort((a, b) => b.at.localeCompare(a.at))[0]?.results : undefined)
+  if (res && (i.kind === 'results' || i.kind === 'move')) return `Results, ${res.quarter.replace(/ FY\d\d$/, '')}`
   if (i.kind === 'people' && f?.people?.length) {
     const p = sortPeople(f.people)[0], r = shortRole(p.role)
     return ['appointed', 're-appointed', 'redesignated'].includes(p.action) ? (r.length > 20 ? 'New director' : `New ${r}`) : 'Management change'
   }
-  if (i.kind === 'move') return i.move?.explainedBy?.category === 'results' ? 'Results day' : 'Unusual day'
+  if (i.kind === 'move') return 'Unusual day'
   return CATEGORY_LABEL[i.story!.category] || 'Filing'
 }
 
@@ -217,22 +249,29 @@ function ItemCard({ i, fresh, name, push, lines, open }: { i: Item; fresh: boole
   const [v, u] = fig ? [fig.v.replace('%', ''), '%'] : ['', '']
   return (
     <article className="card" ref={ref} data-key={i.key}>
-      {bars.length > 4 && <div className="card-img"><Chart series={bars} /></div>}
+      {bars.length > 4 && <PriceLine bars={bars} />}
       <div className="card-info">
-        <div className="card-lbl"><span className="lbl">{kindLabel(i, push)}</span>{fresh && <span className="lbl lbl-new">New</span>}</div>
+        <div className="card-lbl"><span className="lbl">{kindLabel(i, push)}</span>{fresh && <span className="lbl lbl-new">New since you last looked</span>}</div>
         <h2 className="card-title">{name}</h2>
-        {fig && <div className="card-fig"><Outcome value={v} unit={u} /><span className="card-cap">{cap(fig.c)}{i.move ? `, on ${i.move.volX.toFixed(1)}× its usual volume` : ''}</span></div>}
+        {fig && <div className="card-fig"><Outcome size="m" value={v} unit={u} /><span className="card-cap">{figWhen(fig.d, i)}</span></div>}
         <p className="card-desc">{body}</p>
         <p className="card-line">{rowTag(i, lines)}</p>
         <div className="card-foot">
           <button className="read-more" onClick={() => open(ref.current)} aria-label={`Read more about ${name}`}>Read more</button>
-          <span className="lbl lbl-quiet">{shortDay(i.kind === 'move' ? i.move!.d : i.at)}</span>
+          {!fig && <span className="lbl lbl-quiet">{shortDay(i.at)}</span>}
         </div>
       </div>
     </article>
   )
 }
-const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
+// The card's picture: the month's closes, short, with the first and last session named so the period is plain
+export function PriceLine({ bars }: { bars: Bar[] }) {
+  return <figure className="price"><div className="card-img"><Chart series={bars} /></div>
+    <figcaption className="price-d"><span>{shortDay(bars[0].d)}</span><span>{shortDay(bars[bars.length - 1].d)}</span></figcaption></figure>
+}
+
+// One date for a figure, the same in every window: the session it closed in, and the volume it closed on
+export const figWhen = (d: string, i: Item) => `At the ${shortDay(d)} close${i.move ? `, on ${i.move.volX.toFixed(1)}× its usual volume` : ''}`
 
 export function NotesList({ brief, names, asof }: { brief: Brief; names: Record<string, string>; asof: string }) {
   return (
@@ -261,16 +300,18 @@ function Listen({ push, brief, names }: { push: Push; brief: Brief; names: Recor
       const n = names[i.symbol], f = alertFig(i, n, push)
       return f ? `${n}, ${f.v} ${f.c}. ${f.body.join(' ')}` : `${itemTitle(i, n)}. ${itemLine(i)}`
     }
-    const text = left.length ? [`${left.length} to read.`, ...left.map(spoken), 'That’s the brief.'].join(' ') : 'Nothing left to read. You’re up to date.'
+    const text = left.length ? [`${left.length} ${left.length === 1 ? 'needs' : 'need'} you.`, ...left.map(spoken), 'That’s the brief.'].join(' ') : 'Nothing crossed your lines.'
     const u = new SpeechSynthesisUtterance(said(text)); u.lang = 'en-IN'; u.rate = 1.02
     u.onend = () => setOn(false); u.onerror = () => setOn(false)
     utter.current = u; speechSynthesis.cancel(); speechSynthesis.speak(u); setOn(true)
   }
-  return <button className="top-btn" onClick={say} aria-pressed={on}>
-    <svg viewBox="0 0 20 20" aria-hidden><path d="M3.5 7.5h3l4-3.5v12l-4-3.5h-3z" />{on ? <path d="M13.5 7.5v5M16 6v8" /> : <path d="M13.5 7.2a4 4 0 0 1 0 5.6M15.6 5.2a7 7 0 0 1 0 9.6" />}</svg>
-    {on ? 'Stop' : 'Listen'}
-  </button>
+  return <li><button className="tool" onClick={say} aria-pressed={on}>
+    <span>{on ? 'Stop reading' : 'Listen'}<span className="fold-l">{on ? 'Reading the brief aloud' : `The ${left.length ? `${left.length} that need you` : 'brief'}, read aloud`}</span></span>
+    <svg className="tool-i" viewBox="0 0 20 20" aria-hidden><path d="M3.5 7.5h3l4-3.5v12l-4-3.5h-3z" />{on ? <path d="M13.5 7.5v5M16 6v8" /> : <path d="M13.5 7.2a4 4 0 0 1 0 5.6M15.6 5.2a7 7 0 0 1 0 9.6" />}</svg>
+  </button></li>
 }
+
+const Chev = () => <svg className="tool-i" viewBox="0 0 16 16" aria-hidden><path d="M6 3.5l4.5 4.5L6 12.5" /></svg>
 
 // Alerts on this phone: asks the browser once; when on, the top item arrives as a real notification straight away
 export function AlertsRow({ top, names, lines }: { top?: Item; names: Record<string, string>; lines: Lines }) {
