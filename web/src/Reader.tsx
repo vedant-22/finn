@@ -71,7 +71,7 @@ export function Reader({ push, brief, done, setDone, lines, names, start, close,
   }
 
   return (
-    <div className="reader" role="dialog" aria-modal="true" aria-label="The brief">
+    <div className={`reader${page.kind === 'done' ? ' band' : ''}`} role="dialog" aria-modal="true" aria-label="The brief">
       <header className={`r-top${named ? ' r-top-named' : ''}`} style={named ? { '--read': (at + 1) / segs } as React.CSSProperties : undefined}>
         {/* At the end the one way out is the button under the words; a close mark beside it would say the same */}
         {page.kind !== 'done' && <button className="icon-btn" onClick={close} aria-label="Close the brief"><svg viewBox="0 0 20 20" aria-hidden><path d="M5 5l10 10M15 5L5 15" /></svg></button>}

@@ -70,8 +70,9 @@ export function CompanyView({ c, focus, sector, title, close, bars, back, ask }:
 
   return (
     <main className="screen company">
-      <BackBar back={back} name={past ? name : undefined} />
-      <header className="co-top">
+      {/* The company's opening is its full-colour moment: who it is, its standing, its price */}
+      <BackBar back={back} name={past ? name : undefined} band />
+      <header className="co-top band">
         <p className="small kicker">{sector ? `${sector}, ` : ''}{c.symbol}{c.live ? ', read just now' : ''}</p>
         <h1 className="title" ref={nameRef}>{name}</h1>
         <p className="lede co-rec">{standing}</p>

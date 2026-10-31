@@ -13,14 +13,14 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
     push.portfolio.forEach(p => getCompany(p.symbol).catch(() => null).then(c => setCos(prev => ({ ...prev, [p.symbol]: c }))))
     const t = setTimeout(() => setSlow(true), 400); return () => clearTimeout(t)
   }, [push])
-  const head = (tally?: ReactNode) => <>
+  const head = (tally?: ReactNode) => <div className="band band-top">
     <Masthead />
     <header className="page-head">
       <h1 className="title">Your book</h1>
       <p className="sub">{push.portfolio.length} holdings, most promises missed or gone quiet first.</p>
     </header>
     {tally}
-  </>
+  </div>
   // Order and tally only once every holding is in, so counts don't climb and rows don't reshuffle
   if (push.portfolio.some(p => cos[p.symbol] === undefined)) {
     return <main className="screen book" aria-busy="true">{head(slow ? <div className="skel skel-block" /> : null)}</main>

@@ -126,9 +126,9 @@ export function Fold({ title, count, line, open, toggle, children }: { title: st
 }
 
 // A company page's bar: the floating bar again, holding Back, and the name once the heading has scrolled away
-export function BackBar({ back, name }: { back: () => void; name?: string }) {
+export function BackBar({ back, name, band }: { back: () => void; name?: string; band?: boolean }) {
   return (
-    <header className="top co-bar">
+    <header className={`top co-bar${band ? ' band' : ''}`}>
       <button className="fo-back" onClick={back}><svg viewBox="0 0 16 16" aria-hidden><path d="M10 3.5L5.5 8l4.5 4.5" /></svg>Back</button>
       {name && <span className="bar-name">{name}</span>}
     </header>

@@ -94,31 +94,34 @@ export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines
 
   return (
     <main className="screen brief">
-      <Masthead right={<Listen push={push} brief={brief} done={done} lines={lines} names={names} />} />
-      <section className="hero" aria-labelledby="brief-h">
-        <p className="small">{stamp}</p>
-        {/* The window sits above the count it sets */}
-        <div className="stops" role="radiogroup" aria-label="Window">
-          {WINDOWS.map(w => <button key={w.h} role="radio" aria-checked={lines.hours === w.h} className={lines.hours === w.h ? 'on' : ''} onClick={() => setLines({ ...lines, hours: w.h })}>{w.label}</button>)}
-        </div>
-        <h1 id="brief-h" className="sr-only" aria-live="polite">{finished ? 'Up to date' : n ? `${n} to read` : 'Nothing crossed your lines'}</h1>
-        <div className="hero-fig" aria-hidden="true">
-          {finished ? <span className="fig fig-word">Up to date</span>
-            : n ? <><span className="fig"><Roll to={n} /></span><span className="fig-unit">to read</span></>
-              : <span className="fig fig-word">All quiet</span>}
-        </div>
-        <p className="hero-line">
-          {finished ? summary(brief, done, kept.length, cleared)
-            : n ? <>{/* The rows below name the companies; the line says what else the window held */}{nNotes > 0 && <><button className="link-inline" onClick={() => setSheet('notes')}>{nNotes} more worth a line</button>. </>}{brief.routine} routine {brief.routine === 1 ? 'filing' : 'filings'} set aside.</>
-              : `Nothing crossed your lines ${span(lines.hours)}.${nNotes ? ` ${nNotes} ${nNotes === 1 ? 'filing' : 'filings'} worth a line.` : ''}`}
-        </p>
-        {wider && <button className="link" onClick={() => setLines({ ...lines, hours: wider.h })}>{`${span(wider.h).replace(/^in the l/, 'L')}: ${wider.n} to read`}<Arrow /></button>}
-        {!finished && <div className="cta"><button className="btn btn-wide" onClick={() => openReader()}>{filled ? 'Carry on reading' : 'Read the brief'}</button></div>}
-        {/* The rule appears once reading starts; empty, it looked like a loader */}
-        {segs > 0 && filled > 0 && <div className="progress" role="progressbar" aria-label="Read so far" aria-valuemin={0} aria-valuemax={segs} aria-valuenow={filled}>
-          {Array.from({ length: segs }, (_, k) => <span key={k} className={k < filled ? 'on' : ''} />)}
-        </div>}
-      </section>
+      {/* The opening is the brief's one full-colour moment: the masthead, the window and the count on the band */}
+      <div className="band band-top">
+        <Masthead right={<Listen push={push} brief={brief} done={done} lines={lines} names={names} />} />
+        <section className="hero" aria-labelledby="brief-h">
+          <p className="small">{stamp}</p>
+          {/* The window sits above the count it sets */}
+          <div className="stops" role="radiogroup" aria-label="Window">
+            {WINDOWS.map(w => <button key={w.h} role="radio" aria-checked={lines.hours === w.h} className={lines.hours === w.h ? 'on' : ''} onClick={() => setLines({ ...lines, hours: w.h })}>{w.label}</button>)}
+          </div>
+          <h1 id="brief-h" className="sr-only" aria-live="polite">{finished ? 'Up to date' : n ? `${n} to read` : 'Nothing crossed your lines'}</h1>
+          <div className="hero-fig" aria-hidden="true">
+            {finished ? <span className="fig fig-word">Up to date</span>
+              : n ? <><span className="fig"><Roll to={n} /></span><span className="fig-unit">to read</span></>
+                : <span className="fig fig-word">All quiet</span>}
+          </div>
+          <p className="hero-line">
+            {finished ? summary(brief, done, kept.length, cleared)
+              : n ? <>{/* The rows below name the companies; the line says what else the window held */}{nNotes > 0 && <><button className="link-inline" onClick={() => setSheet('notes')}>{nNotes} more worth a line</button>. </>}{brief.routine} routine {brief.routine === 1 ? 'filing' : 'filings'} set aside.</>
+                : `Nothing crossed your lines ${span(lines.hours)}.${nNotes ? ` ${nNotes} ${nNotes === 1 ? 'filing' : 'filings'} worth a line.` : ''}`}
+          </p>
+          {wider && <button className="link" onClick={() => setLines({ ...lines, hours: wider.h })}>{`${span(wider.h).replace(/^in the l/, 'L')}: ${wider.n} to read`}<Arrow /></button>}
+          {!finished && <div className="cta"><button className="btn btn-wide" onClick={() => openReader()}>{filled ? 'Carry on reading' : 'Read the brief'}</button></div>}
+          {/* The rule appears once reading starts; empty, it looked like a loader */}
+          {segs > 0 && filled > 0 && <div className="progress" role="progressbar" aria-label="Read so far" aria-valuemin={0} aria-valuemax={segs} aria-valuenow={filled}>
+            {Array.from({ length: segs }, (_, k) => <span key={k} className={k < filled ? 'on' : ''} />)}
+          </div>}
+        </section>
+      </div>
 
       {left.items.length > 0 && (
         <section className="sec" aria-labelledby="crossed-h">

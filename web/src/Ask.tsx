@@ -50,16 +50,18 @@ export function AskScreen({ push, q0, openCompany }: { push: Push; q0?: string; 
   const outside = Object.keys(names).filter(s => !push.portfolio.some(p => p.symbol === s)).sort((a, b) => names[a].localeCompare(names[b]))
   return (
     <main className="screen ask-screen">
-      <header className="page-head">
-        <h1 className="title">Ask</h1>
-        <p className="sub">About a company or your whole book. Answers come from earnings calls and filed results, with the page.</p>
-      </header>
-      <form className="ask-form" onSubmit={e => { e.preventDefault(); submit(q) }}>
-        <label htmlFor="ask" className="sr-only">Your question</label>
-        <input id="ask" ref={inRef} value={q} onChange={e => setQ(e.target.value)} placeholder={asked ? 'Ask another question' : 'Did L&T deliver on margins?'} autoComplete="off" autoCorrect="off" spellCheck={false} enterKeyHint="search" />
-        <Mic onText={t => { setQ(t); submit(t) }} />
-        <button type="submit" className="ask-go" aria-label="Ask"><svg viewBox="0 0 16 16" aria-hidden><path d="M3 8h9.5M8.5 3.5L13 8l-4.5 4.5" /></svg></button>
-      </form>
+      <div className="band band-top">
+        <header className="page-head">
+          <h1 className="title">Ask</h1>
+          <p className="sub">About a company or your whole book. Answers come from earnings calls and filed results, with the page.</p>
+        </header>
+        <form className="ask-form" onSubmit={e => { e.preventDefault(); submit(q) }}>
+          <label htmlFor="ask" className="sr-only">Your question</label>
+          <input id="ask" ref={inRef} value={q} onChange={e => setQ(e.target.value)} placeholder={asked ? 'Ask another question' : 'Did L&T deliver on margins?'} autoComplete="off" autoCorrect="off" spellCheck={false} enterKeyHint="search" />
+          <Mic onText={t => { setQ(t); submit(t) }} />
+          <button type="submit" className="ask-go" aria-label="Ask"><svg viewBox="0 0 16 16" aria-hidden><path d="M3 8h9.5M8.5 3.5L13 8l-4.5 4.5" /></svg></button>
+        </form>
+      </div>
       {asked
         ? <Answer key={asked} q={asked} known={known} names={names} openCompany={openCompany} />
         : <section className="ask-try" aria-label="Try">
