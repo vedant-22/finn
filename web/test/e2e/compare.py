@@ -1,10 +1,11 @@
 # Matching 390x844 shots of the main moments from the stage 4 build and the two backups it has to beat.
-# usage: python3 compare.py [next-base]   writes shots/s7-{next,v4,v5}-{1..6}.png (shots/ is git-ignored)
+# usage: python3 compare.py [next-base] [versions, e.g. next or next,v4,v5]   writes shots/s7-{ver}-{1..6}.png (shots/ is git-ignored)
 import asyncio, sys, pathlib
 from playwright.async_api import async_playwright
 OUT = pathlib.Path(__file__).resolve().parents[3] / 'shots'
 NEXT = sys.argv[1] if len(sys.argv) > 1 else 'https://finn-ledger-next.vercel.app'
 BACKUPS = {'v4': 'https://finn-ledger-v4.vercel.app', 'v5': 'https://finn-ledger-v5.vercel.app'}
+VERSIONS = sys.argv[2].split(',') if len(sys.argv) > 2 else ['next', 'v4', 'v5']
 MOMENTS = ['brief', 'alert', 'results', 'people', 'company', 'ask']
 
 async def top(pg, sel):
@@ -50,7 +51,7 @@ async def backup(pg, base, shot, row):
 async def main():
     async with async_playwright() as p:
         b = await p.chromium.launch()
-        for ver in ['next', 'v4', 'v5']:
+        for ver in VERSIONS:
             pg = await b.new_page(viewport={'width': 390, 'height': 844}, device_scale_factor=2)
             async def shot(n, ver=ver, pg=pg):
                 await pg.screenshot(path=str(OUT / f's7-{ver}-{n}.png')); print(ver, n, MOMENTS[n - 1])
