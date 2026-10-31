@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { cr, crBig, deadline, minus, pct, rupees, shortName, tidyEvidence, type Bar, type Company, type Promise_, type Status } from './lib'
 import { Accordion, BackBar, Bars, Chart, Fold, fyLabel, Outcome, Src, STATUS_WORD, StatusLabel } from './ui'
-import { cap, promiseLine } from './Trail'
+import { cap, promiseLine, verdictText } from './Trail'
 import { BeforeAfter } from './Word'
 
 const SHOW: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
@@ -108,7 +108,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back, ask }:
 
         {/* What's been settled leads, figure by figure; what's still running waits one tap away */}
         {settledRows.length > 0 && <><h3 className="sec-head pgrid-head">Promise by promise</h3>
-          <ul className="og pgrid">{settledRows.map(p => <PromiseItem key={p.id} p={p} src={c.source} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul></>}
+          <ul className="og pgrid pgrid-one">{settledRows.map(p => <PromiseItem key={p.id} p={p} src={c.source} said open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul></>}
         {running.length > 0 && (settledRows.length
           ? <Fold title="Still running" count={running.length} open={showRunning} toggle={() => setShowRunning(!showRunning)}>
               <ul className="og pgrid fold-body">{running.map(p => <PromiseItem key={p.id} p={p} src={c.source} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>
@@ -246,7 +246,8 @@ function promised(t: string): [string, string] | null {
 const dueFig = (p: Promise_) => `${p.target} ${deadline(p)}`.match(/\b(Q\d\s)?FY\d\d\b|\b20\d\d\b/)?.[0]
 
 // One promise as an outcome, as v4 set it: the figure, what they said, the verdict word. Tap for the quote and what the filings showed
-function PromiseItem({ p, src, open, toggle }: { p: Promise_; src?: string; open: boolean; toggle: () => void }) {
+// said: a settled promise carries what the filings showed under its verdict word, so promised and delivered read together
+function PromiseItem({ p, src, open, toggle, said }: { p: Promise_; src?: string; open: boolean; toggle: () => void; said?: boolean }) {
   const fig = promised(p.target), due = fig ? undefined : dueFig(p)
   const len = (fig?.[0] || '').replace(/\u2060/g, '').length + (fig?.[1] || '').trim().length
   const size = !fig ? 'xs' : len <= 5 ? 's' : len <= 6 ? 'm' : len <= 9 ? 'xs' : 'xxs'
@@ -259,6 +260,7 @@ function PromiseItem({ p, src, open, toggle }: { p: Promise_; src?: string; open
         <span className="og-d2">Said {p.period.replace(/ 20/, ' ’')}</span>
       </button>
       <StatusLabel status={p.status} />
+      {said && !open && verdictText(p) && <p className="p-ev">{verdictText(p).replace(/\.?$/, '.')}</p>}
       <Accordion open={open}><div className="p-detail"><BeforeAfter p={p} inRow src={src} /></div></Accordion>
       {!open && <button className="og-link" onClick={toggle}>See what they said</button>}
     </li>

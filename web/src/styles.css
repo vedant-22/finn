@@ -344,6 +344,10 @@ table { border-collapse: collapse; }
 .p-item > .lbl { margin: var(--s-5xs) 0 0; }
 .p-item .og-d1 { overflow-wrap: anywhere; }
 .p-item.open { grid-column: 1 / -1; }
+/* settled promises in one column: the figure promised, the promise, the verdict word, and what the filings showed */
+.pgrid-one { grid-template-columns: 1fr; row-gap: var(--s-m); }
+.pgrid-one .p-item { border-top: 1px solid var(--rule); padding-top: var(--s-2xs); }
+.p-ev { margin-top: var(--s-macro); font-size: 15px; line-height: 140%; color: var(--ink); }
 .p-item .acc { width: 100%; }
 .p-detail { padding: var(--s-3xs) 0 0; display: grid; gap: var(--s-3xs); }
 .soft-list { margin-top: var(--s-5xs); padding-bottom: var(--s-2xs); }
