@@ -1,9 +1,9 @@
 // The brief: the few things that crossed the investor's lines, as notifications, and a way through them that ends.
 import { useEffect, useRef, useState } from 'react'
-import { buildBrief, isDone, remaining, type Brief, type Done, type Item } from './queue'
+import { buildBrief, type Brief, type Item } from './queue'
 import { CATEGORY_LABEL, cr, sessionWhen, when, type Lines, type Push } from './lib'
-import { FoldSummary, NoteRow, Roll, moveWhy, reclass, resultLine, sizeWords, sortPeople, tidySubject } from './items'
-import { Masthead, Sheet } from './ui'
+import { FoldSummary, NoteRow, Roll, moveWhy, reclass, resultLine, shortDay, sizeWords, sortPeople, tidySubject } from './items'
+import { Chart, Fold, Masthead, Outcome, useKept } from './ui'
 import { alertsBlocked, alertsOn, canAlert, disableAlerts, enableAlerts } from './alerts'
 
 export const WINDOWS = [{ h: 24, label: '24 hours' }, { h: 72, label: '3 days' }, { h: 168, label: 'Week' }, { h: 720, label: 'Month' }]
@@ -72,103 +72,75 @@ export function rowTag(i: Item, lines: Lines): string {
 }
 
 // ---------- the screen ----------
-export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines, names, openReader, openLines }: {
-  push: Push; brief: Brief; fresh: Set<string>; done: Done; setDone: (d: Done) => void; lines: Lines; setLines: (l: Lines) => void; names: Record<string, string>
-  openReader: (key?: string) => void; openLines: () => void
+const WIN_LABEL: Record<number, string> = { 24: '24h', 72: '3 days', 168: 'Week', 720: 'Month' }
+const END: Record<number, string> = { 24: 'That’s the last 24 hours.', 72: 'That’s the last 3 days.', 168: 'That’s the week.', 720: 'That’s the month.' }
+
+// Today, as v4 set it: the count of what needs you, one grey sentence, the window, a warm card for each thing,
+// the rest folded, and a blue band where the window ends. Each card opens into its full view.
+export function BriefScreen({ push, brief, fresh, lines, setLines, names, openItem, openLines }: {
+  push: Push; brief: Brief; fresh: Set<string>; lines: Lines; setLines: (l: Lines) => void; names: Record<string, string>
+  openItem: (key: string, el: HTMLElement | null) => void; openLines: () => void
 }) {
-  const left = remaining(brief, done)
-  const [sheet, setSheet] = useState<'notes' | 'fold' | null>(null)
-  const nNotes = brief.notes.length + brief.spill.length
-  // One segment per item to read, matching the figure and the reader's 'k of n'
-  const segs = brief.items.length
-  const filled = segs - left.items.length
-  const kept = brief.items.filter(i => done.kept.includes(i.key))
-  const cleared = brief.items.filter(i => done.cleared.includes(i.key)).length
+  const [showNotes, setShowNotes] = useKept('today.notes', false)
+  const [showFold, setShowFold] = useKept('today.fold', false)
+  const n = brief.items.length, nNotes = brief.notes.length + brief.spill.length
   const asof = new Date(push.asof)
-  const stamp = `Filings up to ${asof.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}, ${asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()}`
-  const finished = left.total === 0
-  // The figure: items to read. With none crossed, say so in words
-  const n = left.items.length
+  const time = asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()
+  // The sieve plays once a session: the count starts at every filing in the window and falls to what needs you
+  const sieve = useRef(!sessionStorage.getItem('finn-sieved'))
+  useEffect(() => { sessionStorage.setItem('finn-sieved', '1') }, [])
+  const total = n + nNotes + brief.routine
   // Nothing crossed: point to the nearest wider window that has something, with its count
-  const wider = n || finished ? undefined : WINDOWS.filter(w => w.h > lines.hours).map(w => ({ ...w, n: buildBrief(push, { ...lines, hours: w.h }).items.length })).find(w => w.n > 0)
+  const wider = n ? undefined : WINDOWS.filter(w => w.h > lines.hours).map(w => ({ ...w, n: buildBrief(push, { ...lines, hours: w.h }).items.length })).find(w => w.n > 0)
 
   return (
-    <main className="screen brief">
-      {/* The opening is the brief's one full-colour moment: the masthead, the window and the count on the band */}
-      <div className="band band-top">
-        <Masthead right={<Listen push={push} brief={brief} done={done} lines={lines} names={names} />} />
-        <section className="hero" aria-labelledby="brief-h">
-          <p className="small">{stamp}</p>
-          {/* The window sits above the count it sets */}
-          <div className="stops" role="radiogroup" aria-label="Window">
-            {WINDOWS.map(w => <button key={w.h} role="radio" aria-checked={lines.hours === w.h} className={lines.hours === w.h ? 'on' : ''} onClick={() => setLines({ ...lines, hours: w.h })}>{w.label}</button>)}
+    <main className="screen today">
+      <Masthead right={<button className="btn-outline btn-sm" onClick={openLines}>Your lines</button>} />
+      <section className="hero" aria-labelledby="brief-h">
+        <p className="lbl lbl-quiet hero-lbl">{asof.toDateString() === new Date().toDateString()
+          ? `Today, filings to ${time}`
+          : `Snapshot, ${asof.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}, ${time}`}</p>
+        {/* The roll is for the eye; a screen reader hears the settled count once */}
+        <h1 id="brief-h" className="sr-only" aria-live="polite">{n ? `${n} ${n === 1 ? 'needs' : 'need'} you` : 'Nothing needs you'}</h1>
+        <div className="hero-fig" aria-hidden="true">
+          {n ? <Outcome size="l" value={<Roll to={n} start={sieve.current && total > n ? total : undefined} />} /> : <Outcome size="l" value="Nothing" />}
+          <span className="hero-unit">{n === 1 || !n ? 'needs you' : 'need you'}</span>
+        </div>
+        <p className="hero-2">{n
+          ? `Out of ${total} ${total === 1 ? 'filing and move' : 'filings and moves'} across ${push.portfolio.length} holdings.`
+          : `Nothing crossed your lines ${span(lines.hours)}.${nNotes ? ` ${nNotes} worth a look below.` : ''}`}</p>
+        {wider && <button className="see hero-wider" onClick={() => setLines({ ...lines, hours: wider.h })}>{`${span(wider.h).replace(/^in the l/, 'L')}: ${wider.n} ${wider.n === 1 ? 'needs' : 'need'} you`}</button>}
+        <div className="window-row">
+          <div className="window" role="radiogroup" aria-label="Window">
+            {WINDOWS.map(w => <button key={w.h} role="radio" aria-checked={lines.hours === w.h} className={lines.hours === w.h ? 'on' : ''} onClick={() => setLines({ ...lines, hours: w.h })}>{WIN_LABEL[w.h]}</button>)}
           </div>
-          <h1 id="brief-h" className="sr-only" aria-live="polite">{finished ? 'Up to date' : n ? `${n} to read` : 'Nothing crossed your lines'}</h1>
-          <div className="hero-fig" aria-hidden="true">
-            {finished ? <span className="fig fig-word">Up to date</span>
-              : n ? <><span className="fig"><Roll to={n} /></span><span className="fig-unit">to read</span></>
-                : <span className="fig fig-word">All quiet</span>}
-          </div>
-          <p className="hero-line">
-            {finished ? summary(brief, done, kept.length, cleared)
-              : n ? <>{/* The rows below name the companies; the line says what else the window held */}{nNotes > 0 && <><button className="link-inline" onClick={() => setSheet('notes')}>{nNotes} more worth a line</button>. </>}{brief.routine} routine {brief.routine === 1 ? 'filing' : 'filings'} set aside.</>
-                : `Nothing crossed your lines ${span(lines.hours)}.${nNotes ? ` ${nNotes} ${nNotes === 1 ? 'filing' : 'filings'} worth a line.` : ''}`}
-          </p>
-          {wider && <button className="link" onClick={() => setLines({ ...lines, hours: wider.h })}>{`${span(wider.h).replace(/^in the l/, 'L')}: ${wider.n} to read`}<Arrow /></button>}
-          {!finished && <div className="cta"><button className="btn btn-wide" onClick={() => openReader()}>{filled ? 'Carry on reading' : 'Read the brief'}</button></div>}
-          {/* The rule appears once reading starts; empty, it looked like a loader */}
-          {segs > 0 && filled > 0 && <div className="progress" role="progressbar" aria-label="Read so far" aria-valuemin={0} aria-valuemax={segs} aria-valuenow={filled}>
-            {Array.from({ length: segs }, (_, k) => <span key={k} className={k < filled ? 'on' : ''} />)}
-          </div>}
-        </section>
-      </div>
-
-      {left.items.length > 0 && (
-        <section className="sec" aria-labelledby="crossed-h">
-          <h2 id="crossed-h" className="head">Crossed your lines</h2>
-          <ul className="notifs">
-            {left.items.map(i => <li key={i.key}><Notif i={i} fresh={fresh.has(i.key)} name={names[i.symbol]} push={push} lines={lines} open={() => openReader(i.key)} openLines={openLines} /></li>)}
-          </ul>
-          {/* The list ends, and says so: knowing you've seen it all is the point */}
-          <p className="brief-end">That’s all that crossed your lines {span(lines.hours)}.</p>
-        </section>
-      )}
-
-      {kept.length > 0 && (
-        <section className="sec" aria-labelledby="kept-h">
-          <h2 id="kept-h" className="head">Kept for later</h2>
-          <ul className="rows">{kept.map(i => <li key={i.key}><button className="row" onClick={() => openReader(i.key)}><span>{itemTitle(i, names[i.symbol])}</span><Arrow /></button></li>)}</ul>
-        </section>
-      )}
-
-      <section className="sec sec-quiet" aria-label="Set aside">
-        <ul className="rows">
-          {nNotes > 0 && <li><button className="row" onClick={() => setSheet('notes')}><span>Worth a line<span className="row-sub">The rest of the window, one line each{left.notesLeft ? '' : ', read'}</span></span><span className="row-n num">{nNotes}</span><Arrow /></button></li>}
-          {brief.routine > 0 && <li><button className="row" onClick={() => setSheet('fold')}><span>Routine filings<span className="row-sub">Notices, call papers, newspaper ads</span></span><span className="row-n num">{brief.routine}</span><Arrow /></button></li>}
-          <AlertsRow top={brief.items[0]} names={names} lines={lines} />
-          <li><button className="row" onClick={openLines}><span>Your lines<span className="row-sub">{`±${lines.movePct}% in a day, ${lines.volX}× volume, ${lines.interrupt.length ? `${lines.interrupt.length} ${lines.interrupt.length === 1 ? 'kind' : 'kinds'} of filing` : 'no filings'}`}</span></span><Arrow /></button></li>
-        </ul>
+          <Listen push={push} brief={brief} names={names} />
+        </div>
       </section>
 
-      {finished && (cleared + kept.length > 0 || done.notes.length > 0) && <button className="btn-quiet bring" onClick={() => setDone({ ...done, cleared: done.cleared.filter(k => !brief.items.some(i => i.key === k)), kept: done.kept.filter(k => !brief.items.some(i => i.key === k)), notes: [] })}>Bring back what you cleared</button>}
+      {n > 0 && <ol className="cards">
+        {brief.items.map(i => <li key={i.key}><ItemCard i={i} fresh={fresh.has(i.key)} name={names[i.symbol]} push={push} lines={lines} open={el => openItem(i.key, el)} /></li>)}
+      </ol>}
 
-      <Sheet open={sheet === 'notes'} onClose={() => setSheet(null)} title="Worth a line" full>
+      {nNotes > 0 && <Fold title="Worth a look" count={nNotes} open={showNotes} toggle={() => setShowNotes(!showNotes)}>
         <NotesList brief={brief} names={names} asof={push.asof} />
-      </Sheet>
-      <Sheet open={sheet === 'fold'} onClose={() => setSheet(null)} title="Routine filings" full>
-        <p className="sheet-intro sub">Notices, call papers and the like. Nothing here needs you.</p>
+      </Fold>}
+      {brief.routine > 0 && <Fold title="Routine filings" count={brief.routine} open={showFold} toggle={() => setShowFold(!showFold)}>
         <FoldSummary stories={brief.folded} names={names} />
-      </Sheet>
+      </Fold>}
+
+      {/* The window ends on one blue band: it is done, and the two next moves */}
+      <section className="end-band" aria-label="End of the window">
+        <div className="end-band-in">
+          <h2 className="t-h1">{END[lines.hours] ?? 'That’s everything.'}</h2>
+          <div className="end-band-btns">
+            <a className="btn-light" href="#/book">Open your book</a>
+            <button className="btn-light-outline" onClick={openLines}>Change your lines</button>
+          </div>
+        </div>
+      </section>
     </main>
   )
-}
-
-function summary(b: Brief, d: Done, kept: number, cleared: number) {
-  const read = cleared + kept
-  const parts = [read ? `${read} read${kept ? `, ${kept} kept for later` : ''}.` : '']
-  const aside = b.notes.length + b.spill.length + b.routine
-  if (aside) parts.push(`${aside} more ${aside === 1 ? 'filing' : 'filings'} set aside, each a tap away.`)
-  return parts.filter(Boolean).join(' ') || 'Nothing in this window.'
 }
 
 // A move is a day's close, dated the way filings are: 'At the close' on the snapshot's day, 'Yesterday at the close', else the date
@@ -190,7 +162,7 @@ const pctWords = (v: number) => `${v >= 0 ? 'up' : 'down'} ${String(+Math.abs(v)
 
 // The figure column means one thing on every alert: how the shares took it, the day's change. The event is in the words.
 // d is the session the figure and the month line end on.
-function alertFig(i: Item, name: string, push: Push): { v: string; c: string; body: string[]; t?: string; d: string } | null {
+export function alertFig(i: Item, name: string, push: Push): { v: string; c: string; body: string[]; t?: string; d: string } | null {
   const f = i.story?.lead, m = i.move
   // Anything that moved the shares leads with the day's change, whichever line it crossed. In a 24-hour window
   // results-day moves arrive as moves, in a wider one they ride with their results: same event, same figure, same words
@@ -222,36 +194,45 @@ function resultsWords(r: any): string[] {
   return Math.abs(dm) >= 1 ? [profit, `EBITDA margin ${dm > 0 ? 'up' : 'down'} ${Math.abs(dm).toFixed(1)} pp.`] : [profit]
 }
 
-// A month of closes under an alert's figure: what the price did, in a line that draws itself, its change written out
-function Spark({ bars }: { bars: { close: number }[] }) {
-  if (bars.length < 5) return null
-  const w = 72, h = 22, cl = bars.map(b => b.close), lo = Math.min(...cl), hi = Math.max(...cl)
-  const y = (c: number) => (h - 2 - (c - lo) / (hi - lo || 1) * (h - 4)).toFixed(1)
-  const d = cl.map((c, k) => `${k ? 'L' : 'M'}${(k / (cl.length - 1) * w).toFixed(1)} ${y(c)}`).join('')
-  const chg = (cl[cl.length - 1] / cl[0] - 1) * 100
-  // The month's first close marked and carried across as a hairline, so above or below it reads as up or down
-  return <span className="notif-spark"><svg viewBox={`0 0 ${w} ${h}`} aria-hidden><line className="spark-base" x1="0" x2={w} y1={y(cl[0])} y2={y(cl[0])} /><path d={d} /><circle className="spark-0" cx="0" cy={y(cl[0])} r="1.75" /></svg>
-    <span className="notif-c">{chg >= 0 ? '+' : '−'}{Math.abs(chg).toFixed(1)}% {bars.length >= 20 ? 'in a month' : `in ${bars.length} sessions`}</span></span>
+// What kind of thing a card is, in the label above its name
+export function kindLabel(i: Item, push: Push): string {
+  const f = i.story?.lead
+  if (i.kind === 'results' && f?.results) return `Results, ${f.results.quarter.replace(/ FY\d\d$/, '')}`
+  if (i.kind === 'people' && f?.people?.length) {
+    const p = sortPeople(f.people)[0], r = shortRole(p.role)
+    return ['appointed', 're-appointed', 'redesignated'].includes(p.action) ? (r.length > 20 ? 'New director' : `New ${r}`) : 'Management change'
+  }
+  if (i.kind === 'move') return i.move?.explainedBy?.category === 'results' ? 'Results day' : 'Unusual day'
+  return CATEGORY_LABEL[i.story!.category] || 'Filing'
 }
 
-// An alert: when, what happened with its number, and the line it crossed. Flat rows, like the rest of the brief.
-function Notif({ i, fresh, name, push, lines, open, openLines }: { i: Item; fresh: boolean; name: string; push: Push; lines: Lines; open: () => void; openLines: () => void }) {
+// A card, as v4 set them: the month's price line on top, what kind of thing, the company, the day's move with the
+// line it crossed, one grey sentence, and Read more. Everything else is in the full view it opens into.
+function ItemCard({ i, fresh, name, push, lines, open }: { i: Item; fresh: boolean; name: string; push: Push; lines: Lines; open: (el: HTMLElement | null) => void }) {
+  const ref = useRef<HTMLElement>(null)
   const fig = alertFig(i, name, push)
-  const bars = fig ? (push.eod[i.symbol] || []).filter(b => b.d <= fig.d).slice(-22) : []
+  const bars = (push.eod[i.symbol] || []).filter(b => b.d <= (fig?.d ?? i.at.slice(0, 10))).slice(-30)
+  // The sentence: the news in one or two facts. Volume and the line crossed are under the figure
+  const body = (fig ? fig.body : [itemLine(i)]).filter(l => !/^On [\d.]+× its usual volume/.test(l)).slice(0, 2).join(' ')
+  const [v, u] = fig ? [fig.v.replace('%', ''), '%'] : ['', '']
   return (
-    <article className="notif">
-      <p className="notif-when">
-        <span>{i.kind === 'move' ? closeWhen(i.move!.d, push.asof) : when(i.at, push.asof)}{fresh && <span className="notif-new">New</span>}</span>
-        <button className="notif-line" onClick={openLines} aria-label={`${crossedText(i, lines)}. Change`}>{rowTag(i, lines)}</button>
-      </p>
-      <button className="notif-main" onClick={open}>
-        <span className="notif-t">{fig?.t ?? itemTitle(i, name)}</span>
-        <span className="notif-b">{fig ? fig.body.map((l, k) => <span key={k} className="notif-l">{l}</span>) : itemLine(i)}</span>
-        {fig && <span className="notif-fig"><span className="notif-v">{/^[+−]/.test(fig.v) ? <><span className="sgn">{fig.v[0]}</span>{fig.v.slice(1)}</> : fig.v}</span><span className="notif-c">{fig.c}</span><Spark bars={bars} /></span>}
-      </button>
+    <article className="card" ref={ref} data-key={i.key}>
+      {bars.length > 4 && <div className="card-img"><Chart series={bars} /></div>}
+      <div className="card-info">
+        <div className="card-lbl"><span className="lbl">{kindLabel(i, push)}</span>{fresh && <span className="lbl lbl-new">New</span>}</div>
+        <h2 className="card-title">{name}</h2>
+        {fig && <div className="card-fig"><Outcome value={v} unit={u} /><span className="card-cap">{cap(fig.c)}{i.move ? `, on ${i.move.volX.toFixed(1)}× its usual volume` : ''}</span></div>}
+        <p className="card-desc">{body}</p>
+        <p className="card-line">{rowTag(i, lines)}</p>
+        <div className="card-foot">
+          <button className="read-more" onClick={() => open(ref.current)} aria-label={`Read more about ${name}`}>Read more</button>
+          <span className="lbl lbl-quiet">{shortDay(i.kind === 'move' ? i.move!.d : i.at)}</span>
+        </div>
+      </div>
     </article>
   )
 }
+const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
 
 export function NotesList({ brief, names, asof }: { brief: Brief; names: Record<string, string>; asof: string }) {
   return (
@@ -265,13 +246,13 @@ export function NotesList({ brief, names, asof }: { brief: Brief; names: Record<
 }
 
 // Listen: the brief read aloud by the browser's own voice. Free, and works offline.
-function Listen({ push, brief, done, lines, names }: { push: Push; brief: Brief; done: Done; lines: Lines; names: Record<string, string> }) {
+function Listen({ push, brief, names }: { push: Push; brief: Brief; names: Record<string, string> }) {
   const [on, setOn] = useState(false)
   const ok = typeof window !== 'undefined' && 'speechSynthesis' in window
   const utter = useRef<SpeechSynthesisUtterance | null>(null)
   useEffect(() => () => { if (ok) speechSynthesis.cancel() }, [ok])
   if (!ok) return null
-  const left = brief.items.filter(i => !isDone(done, i.key))
+  const left = brief.items
   const say = () => {
     if (on) { speechSynthesis.cancel(); setOn(false); return }
     const said = (t: string) => t.replace(/₹/g, 'rupees ').replace(/\bcr\b/g, 'crore').replace(/×/g, ' times').replace(/±/g, 'plus or minus ').replace(/−/g, 'minus ').replace(/\+(?=\d)/g, 'plus ').replace(/%/g, ' percent')
@@ -292,7 +273,7 @@ function Listen({ push, brief, done, lines, names }: { push: Push; brief: Brief;
 }
 
 // Alerts on this phone: asks the browser once; when on, the top item arrives as a real notification straight away
-function AlertsRow({ top, names, lines }: { top?: Item; names: Record<string, string>; lines: Lines }) {
+export function AlertsRow({ top, names, lines }: { top?: Item; names: Record<string, string>; lines: Lines }) {
   const [on, setOn] = useState(alertsOn)
   const [note, setNote] = useState('')
   if (!canAlert()) return null

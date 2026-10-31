@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { CompanyView } from './CompanyView'
 import { Book } from './Book'
 import { BriefScreen } from './Brief'
-import { AskHere, Reader } from './Reader'
+import { AskHere, ItemView } from './Reader'
 import { AskScreen, useKnown } from './Ask'
-import { buildBrief, lastSeen, loadDone, markSeen, saveDone, type Done } from './queue'
+import { buildBrief, lastSeen, markSeen } from './queue'
 import { raise } from './alerts'
-import { crossedText, itemLine, itemTitle } from './Brief'
+import { AlertsRow, crossedText, itemLine, itemTitle } from './Brief'
 import {
   buildLive, CATEGORY_LABEL, plainError, DEFAULT_LINES, forgetCompanies, getCompany, getPush, loadLines, saveLines, shortName,
   type Bar, type Company, type Lines, type Push, type Step,
@@ -14,25 +15,26 @@ import {
 import { BackBar, Mark, Sheet, useEdgeBack } from './ui'
 
 type Tab = 'brief' | 'book' | 'ask'
-type Route = { tab: Tab; sym?: string; pid?: number; read?: boolean; q?: string }
+type Route = { tab: Tab; sym?: string; pid?: number; item?: string; q?: string }
 const parse = (): Route => {
   const [path, query] = location.hash.replace(/^#\/?/, '').split('?')
   const h = path.split('/')
   if (h[0] === 'c' && h[1]) return { tab: 'brief', sym: h[1].toUpperCase(), pid: h[2] && /^\d+$/.test(h[2]) ? +h[2] : undefined }
-  if (h[0] === 'read') return { tab: 'brief', read: true }
+  if (h[0] === 'read') return { tab: 'brief', item: h[1] ? decodeURIComponent(h.slice(1).join('/')) : undefined }
   if (h[0] === 'book') return { tab: 'book' }
   if (h[0] === 'ask' || h[0] === 'look') return { tab: 'ask', q: new URLSearchParams(query || '').get('q') || undefined }
   return { tab: 'brief' }
 }
+
+// The shared-element morph runs where the browser has view transitions and motion is welcome
+const morph = () => 'startViewTransition' in document && !matchMedia('(prefers-reduced-motion: reduce)').matches
 
 export function App() {
   const [route, setRoute] = useState<Route>(parse)
   const [push, setPush] = useState<Push | null>(null)
   const [err, setErr] = useState('')
   const [lines, setLinesState] = useState<Lines>(loadLines)
-  const [done, setDoneState] = useState<Done>(loadDone)
   const [linesOpen, setLinesOpen] = useState(false)
-  const [readFrom, setReadFrom] = useState<string | undefined>()
   const [prev, setPrev] = useState<string>('')
   const scrolls = useRef(new Map<string, number>())
   const toY = useRef(0)
@@ -59,15 +61,19 @@ export function App() {
       const r = parse()
       if (r.sym && !from.startsWith('#/c/')) setPrev(from)
       const back = (from.startsWith('#/c/') && !r.sym) || from.startsWith('#/read')
-      toY.current = back ? scrolls.current.get(location.hash || '#/') ?? 0 : r.read ? window.scrollY : 0
+      toY.current = back ? scrolls.current.get(location.hash || '#/') ?? 0 : r.item ? window.scrollY : 0
       setLinesOpen(false)
-      setRoute(r)
+      // Closing an item shrinks its view back into the card it came from
+      const card = from.startsWith('#/read/') && !r.item ? document.querySelector<HTMLElement>(`.card[data-key="${CSS.escape(decodeURIComponent(from.slice(7)))}"]`) : null
+      if (card && morph()) {
+        document.startViewTransition(() => { flushSync(() => setRoute(r)); window.scrollTo(0, toY.current); card.style.viewTransitionName = 'item' })
+          .finished.finally(() => { card.style.viewTransitionName = '' })
+      } else setRoute(r)
     }
     window.addEventListener('hashchange', on); return () => window.removeEventListener('hashchange', on)
   }, [])
   useLayoutEffect(() => { window.scrollTo(0, toY.current) }, [route])
   const setLines = (l: Lines) => { setLinesState(l); saveLines(l) }
-  const setDone = (d: Done) => { setDoneState(d); saveDone(d) }
   const openCompany = useCallback((s: string, pid?: number) => { location.hash = `#/c/${s}${pid != null ? `/${pid}` : ''}` }, [])
   const go = (t: Tab) => {
     const h = t === 'brief' ? '#/' : `#/${t}`
@@ -93,8 +99,20 @@ export function App() {
   if (!push || !brief) return <BootSkeleton />
   const holding = (s?: string) => push.portfolio.find(p => p.symbol === s)
   const tab: Tab = !route.sym ? route.tab : prev.startsWith('#/book') ? 'book' : prev.startsWith('#/ask') ? 'ask' : prev ? 'brief' : holding(route.sym) ? 'book' : 'ask'
-  const openReader = (key?: string) => { setReadFrom(key); location.hash = '#/read' }
-  const closeReader = () => { if (history.length > 1 && route.read) history.back(); else location.hash = '#/' }
+  // A card grows into its full view (a shared-element transition where the browser has one)
+  const openItem = (key: string, el: HTMLElement | null) => {
+    const to = `#/read/${encodeURIComponent(key)}`
+    if (!el || !morph()) { location.hash = to; return }
+    const y = window.scrollY
+    el.style.viewTransitionName = 'item'
+    document.startViewTransition(() => {
+      scrolls.current.set(location.hash || '#/', y); toY.current = y
+      history.pushState(null, '', to)
+      flushSync(() => setRoute(parse()))
+      el.style.viewTransitionName = ''
+    })
+  }
+  const closeItem = () => { if (history.length > 1 && route.item) history.back(); else location.hash = '#/' }
 
   return (
     <>
@@ -102,19 +120,20 @@ export function App() {
         ? <CompanyRoute push={push} openCompany={openCompany} sym={route.sym} pid={route.pid} sector={holding(route.sym)?.sector} title={holding(route.sym)?.short} close={push.eod[route.sym]?.[push.eod[route.sym].length - 1]} bars={push.eod[route.sym]} back={() => { location.hash = !prev || prev === location.hash ? '#/' : prev }} />
         : route.tab === 'book' ? <Book push={push} openCompany={openCompany} />
           : route.tab === 'ask' ? <AskScreen push={push} q0={route.q} openCompany={openCompany} />
-            : <BriefScreen push={push} brief={brief} fresh={fresh} done={done} setDone={setDone} lines={lines} setLines={setLines} names={names} openReader={openReader} openLines={() => setLinesOpen(true)} />}
+            : <BriefScreen push={push} brief={brief} fresh={fresh} lines={lines} setLines={setLines} names={names} openItem={openItem} openLines={() => setLinesOpen(true)} />}
 
-      {route.read && <Reader push={push} brief={brief} done={done} setDone={setDone} lines={lines} names={names} start={readFrom}
-        close={closeReader} openCompany={openCompany} openLines={() => setLinesOpen(true)} />}
+      {route.item && <ItemView push={push} brief={brief} k={route.item} lines={lines} names={names}
+        close={closeItem} openCompany={openCompany} openLines={() => setLinesOpen(true)} />}
 
-      {!route.read && <nav className="tabs" aria-label="Sections">
-        {([['brief', 'Brief'], ['book', 'Book'], ['ask', 'Ask']] as [Tab, string][]).map(([t, label]) => (
+      {!route.item && <nav className="tabs" aria-label="Sections">
+        {([['brief', 'Today'], ['book', 'Book'], ['ask', 'Look up']] as [Tab, string][]).map(([t, label]) => (
           <button key={t} className={tab === t ? 'on' : ''} aria-current={tab === t ? 'page' : undefined} onClick={() => go(t)}>{label}</button>
         ))}
       </nav>}
 
       <Sheet open={linesOpen} onClose={() => setLinesOpen(false)} title="Your lines">
-        <LinesForm lines={lines} setLines={setLines} count={brief.items.length + brief.spill.length} shown={brief.items.length} />
+        <LinesForm lines={lines} setLines={setLines} count={brief.items.length + brief.spill.length} shown={brief.items.length}
+          alerts={<AlertsRow top={brief.items[0]} names={names} lines={lines} />} />
       </Sheet>
     </>
   )
@@ -134,11 +153,12 @@ function BootSkeleton() {
   )
 }
 
-function LinesForm({ lines, setLines, count, shown }: { lines: Lines; setLines: (l: Lines) => void; count: number; shown: number }) {
+function LinesForm({ lines, setLines, count, shown, alerts }: { lines: Lines; setLines: (l: Lines) => void; count: number; shown: number; alerts: React.ReactNode }) {
   const toggle = (c: string) => setLines({ ...lines, interrupt: lines.interrupt.includes(c) ? lines.interrupt.filter(x => x !== c) : [...lines.interrupt, c] })
   return (
     <div className="lines">
-      <p className="sub">FINN puts something in the brief only when it crosses one of these. With these lines, <b className="num">{count}</b> {count === 1 ? 'thing crosses' : 'things cross'} in this window{count > shown ? `; the brief leads with ${shown} and lists the rest under Worth a line` : ''}.</p>
+      <p className="serif-line">FINN puts something on Today only when it crosses one of these. With these lines, {count} {count === 1 ? 'thing crosses' : 'things cross'} in this window{count > shown ? `; Today leads with ${shown} and folds the rest under Worth a look` : ''}.</p>
+      <ul className="checks">{alerts}</ul>
       <Stepper label="Volume above its 20-day average" value={lines.volX} step={0.5} min={1.5} max={6} fmt={v => `${v}×`} set={v => setLines({ ...lines, volX: v })} />
       <Stepper label="Price move in a day" value={lines.movePct} step={1} min={1} max={15} fmt={v => `±${v}%`} set={v => setLines({ ...lines, movePct: v })} />
       <h3 className="lbl lbl-quiet">Filings that can interrupt</h3>

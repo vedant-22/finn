@@ -54,30 +54,29 @@ export const STATUS_WORD: Record<Status, string> = {
 const STATUS_LABEL: Record<Status, string> = {
   kept: 'Kept', partly: 'Partly kept', missed: 'Missed', quiet: 'Gone quiet', pending: 'Not due', unclear: "Can't tell",
 }
-// A verdict is a word in its colour: blue for kept, dark red for missed, ink for the rest. No glyphs, no chips.
+// A verdict is a small capital word in its colour, as v4 set it: red for missed, amber for gone quiet, green for kept
 export function StatusLabel({ status }: { status: Status }) {
-  return <span className={`st st-${status}`}>{STATUS_LABEL[status]}</span>
-}
-// A neutral chip for a kind of thing: Results, Unusual day, People
-export function Chip({ children }: { children: ReactNode }) {
-  return <span className="fo-chip">{children}</span>
+  return <span className={`lbl st st-${status}`}>{STATUS_LABEL[status]}</span>
 }
 
-// Folio's mark: a small solid ENAM-blue square standing on the x-height, then 'finn' in the book serif, lowercase
+// The wordmark, in ENAM blue
 export function Mark({ label = 'FINN' }: { label?: string }) {
-  return (
-    <span className="fo-mark" aria-label={label || undefined} role={label ? 'img' : undefined}>
-      <span className="fo-mark-sym" aria-hidden />
-      <span className="fo-mark-word" aria-hidden>finn</span>
-    </span>
-  )
+  return <span className="wordmark" aria-label={label || undefined} role={label ? 'img' : undefined}><span aria-hidden>FINN</span></span>
 }
 
-// The top of a tab: the mark, and on the brief a Listen control
-export function Masthead({ right }: { right?: ReactNode } = {}) {
+// The masthead: wordmark left, one outlined pill right. Hides on the way down, comes back on the way up.
+// Warm: the page opens on a warm block, so the masthead is warm while it sits over it.
+export function Masthead({ right, warm }: { right?: ReactNode; warm?: boolean }) {
+  const [hide, setHide] = useState(false)
+  const [top, setTop] = useState(true)
+  useEffect(() => {
+    let y0 = scrollY
+    const on = () => { const y = scrollY; setTop(y < 320); if (Math.abs(y - y0) < 6) return; setHide(y > y0 && y > 80); y0 = y }
+    addEventListener('scroll', on, { passive: true }); return () => removeEventListener('scroll', on)
+  }, [])
   return (
-    <header className="top">
-      <a className="top-home" href="#/" aria-label="FINN, the brief"><Mark label="" /></a>
+    <header className={`mast${hide ? ' hide' : ''}${warm && top ? ' warm' : ''}`}>
+      <a className="wordmark" href="#/" aria-label="FINN, Today">FINN</a>
       {right}
     </header>
   )
@@ -110,15 +109,12 @@ export function Accordion({ open, children, id }: { open: boolean; children: Rea
   )
 }
 
-// An index row that opens in place: serif title, a count, one line on what's inside; the arrow turns down when open
+// A section that folds: title and count on the left, a plus that turns into a minus on the right
 export function Fold({ title, count, line, open, toggle, children }: { title: string; count?: number; line?: ReactNode; open: boolean; toggle: () => void; children: ReactNode }) {
   return (
     <section className={`fold${open ? ' is-open' : ''}`}>
-      <button className="fo-row fold-head" aria-expanded={open} onClick={toggle}>
-        <span className="fo-row-t">{title}</span>
-        {count != null && <span className="fo-row-n num">{count}</span>}
-        <svg className="fo-row-arrow" viewBox="0 0 16 16" aria-hidden><path d="M6 3.5l4.5 4.5L6 12.5" /></svg>
-        {line && <span className="fo-row-l">{line}</span>}
+      <button className="fold-head" aria-expanded={open} onClick={toggle}>
+        <span>{title}{count != null && <span className="fold-n"> ({count})</span>}{line && <span className="fold-l">{line}</span>}</span><span className="plus" aria-hidden />
       </button>
       <Accordion open={open}>{children}</Accordion>
     </section>
@@ -128,8 +124,8 @@ export function Fold({ title, count, line, open, toggle, children }: { title: st
 // A company page's bar: the floating bar again, holding Back, and the name once the heading has scrolled away
 export function BackBar({ back, name, band }: { back: () => void; name?: string; band?: boolean }) {
   return (
-    <header className={`top co-bar${band ? ' band' : ''}`}>
-      <button className="fo-back" onClick={back}><svg viewBox="0 0 16 16" aria-hidden><path d="M10 3.5L5.5 8l4.5 4.5" /></svg>Back</button>
+    <header className={`bar co-bar${band ? ' warm' : ''}`}>
+      <button className="back" onClick={back}>Back</button>
       {name && <span className="bar-name">{name}</span>}
     </header>
   )

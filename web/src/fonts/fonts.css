@@ -16,40 +16,13 @@
   src: url(./inter-rupee-wght.woff2) format('woff2-variations');
   unicode-range: U+20B9;
 }
-/* PT Serif is gone: its ₹ was drawn like ₽ */
-/* Newsreader, Folio's book serif: headlines, big numbers, quotes, names. Latin cut to what FINN prints, the
-   weight axis held to 380-600 and optical size to 12-72 (so a 72 px figure gets the display cut); 104 KB.
-   Its ₹ is a proper rupee and lives in a 2 KB file of its own. The italic is one static cut at 400, for the one
-   italic phrase a screen may have. */
+/* PT Serif, plain roman only, for the one grey sentence under a title and for quotes. Its own ₹ (latin-ext) is drawn
+   like ₽, so this Latin cut leaves ₹ out and the serif stack falls through to Inter's for that one glyph. */
 @font-face {
-  font-family: 'Newsreader';
+  font-family: 'PT Serif';
   font-style: normal;
   font-display: swap;
-  font-weight: 380 600;
-  src: url(./newsreader-normal.woff2) format('woff2-variations');
-  unicode-range: U+0020-007E,U+00A0-00FF,U+2009-200A,U+2010-2027,U+202F-2030,U+2032-203A,U+2122,U+2190-2193,U+2212;
-}
-@font-face {
-  font-family: 'Newsreader';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 380 600;
-  src: url(./newsreader-rupee-normal.woff2) format('woff2-variations');
-  unicode-range: U+20B9;
-}
-@font-face {
-  font-family: 'Newsreader';
-  font-style: italic;
-  font-display: swap;
   font-weight: 400;
-  src: url(./newsreader-italic.woff2) format('woff2');
-  unicode-range: U+0020-007E,U+00A0-00FF,U+2009-200A,U+2010-2027,U+202F-2030,U+2032-203A,U+2122,U+2212;
-}
-@font-face {
-  font-family: 'Newsreader';
-  font-style: italic;
-  font-display: swap;
-  font-weight: 400;
-  src: url(./newsreader-rupee-italic.woff2) format('woff2');
-  unicode-range: U+20B9;
+  src: url(../../node_modules/@fontsource/pt-serif/files/pt-serif-latin-400-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }

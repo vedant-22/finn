@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { aliases, matching, pace, parse, runningGuide, tally, verdictHead, yearToDate, type Known, type Parsed } from './question'
 import { wordScore, getCompany, rupees, shortName, type Company, type Promise_, type Push } from './lib'
 import { promiseLine } from './Trail'
-import { StatusLabel } from './ui'
+import { Fold, Masthead, StatusLabel } from './ui'
 import { BeforeAfter } from './Word'
 
 // Every company FINN has a ledger for, with the names a question might use
@@ -37,50 +37,83 @@ export function suggestions(c: Company | null, name: string): string[] {
   return out.slice(0, 3)
 }
 
+// Look up, as v4 had it: one big field for a symbol or a name, and the companies ready to open as warm tiles.
+// A question typed in the same field is answered here, from the ledgers, with pages.
+const QUESTION = /\?\s*$|^(who|what|which|did|has|have|is|are|how|when|why|does|do)\b/i
 export function AskScreen({ push, q0, openCompany }: { push: Push; q0?: string; openCompany: (s: string, pid?: number) => void }) {
   const { known, names } = useKnown(push)
   const [q, setQ] = useState('')
   const [asked, setAsked] = useState(q0 || '')
+  const [more, setMore] = useState(false)
   const inRef = useRef<HTMLInputElement>(null)
   useEffect(() => { if (q0) { setQ(''); setAsked(q0) } }, [q0])
-  // Asked, the question moves out of the field to sit whole above its answer; the field is ready for the next one
-  const submit = (text: string) => { const t = text.trim(); if (!t) { inRef.current?.focus(); return } setQ(''); setAsked(t); inRef.current?.blur() }
+  const recent: string[] = JSON.parse(localStorage.getItem('finn.recent') || '[]')
+  const held = new Set(push.portfolio.map(p => p.symbol))
+  const all = Object.keys(names)
+  const others = all.filter(s => !held.has(s)).sort((a, b) => names[a].localeCompare(names[b]))
+  // Typing a name ('pidilite') finds the symbol FINN already knows (PIDILITIND); 'Ltd' and friends match nothing
+  const isQ = (t: string) => QUESTION.test(t.trim()) || t.trim().split(/\s+/).length >= 4
+  const want = q.trim().toUpperCase().replace(/\.(NS|BO)$/, '')
+  const fold = (x: string) => x.toUpperCase().replace(/[^A-Z0-9]/g, '')
+  const FILLER_WORDS = new Set(['LTD', 'LIMITED', 'THE', 'OF', 'AND', 'CO', 'PVT'])
+  const full = (s: string) => known.find(k => k.symbol === s)?.names.join(' ') || names[s] || ''
+  const matches = isQ(q) || fold(want).length < 2 ? [] : all.filter(s => s !== want && [s, fold(names[s] || ''), ...full(s).toUpperCase().split(/[^A-Z0-9]+/).filter(w => !FILLER_WORDS.has(w))].some(x => x.startsWith(fold(want))))
+  const submit = (text: string) => {
+    const t = text.trim()
+    if (!t) { inRef.current?.focus(); return }
+    if (isQ(t)) { setQ(''); setAsked(t); inRef.current?.blur(); return }
+    const sym = t.toUpperCase().replace(/\.(NS|BO)$/, '').replace(/\s+/g, '')
+    openCompany(!all.includes(sym) && matches.length === 1 && fold(sym).length >= 4 ? matches[0] : sym)
+  }
   const starters = ['Who missed a promise?', 'Who has gone quiet?', 'Did L&T deliver on revenue growth?', 'What has Syngene promised for FY27?']
-  // When an idea comes up: the companies FINN has read beyond the book, then one it hasn't, to show any symbol works
-  const outside = Object.keys(names).filter(s => !push.portfolio.some(p => p.symbol === s)).sort((a, b) => names[a].localeCompare(names[b]))
   return (
-    <main className="screen ask-screen">
-      <div className="band band-top">
-        <header className="page-head">
-          <h1 className="title">Ask</h1>
-          <p className="sub">About a company or your whole book. Answers come from earnings calls and filed results, with the page.</p>
-        </header>
-        <form className="ask-form" onSubmit={e => { e.preventDefault(); submit(q) }}>
-          <label htmlFor="ask" className="sr-only">Your question</label>
-          <input id="ask" ref={inRef} value={q} onChange={e => setQ(e.target.value)} placeholder={asked ? 'Ask another question' : 'Did L&T deliver on margins?'} autoComplete="off" autoCorrect="off" spellCheck={false} enterKeyHint="search" />
-          <Mic onText={t => { setQ(t); submit(t) }} />
-          <button type="submit" className="ask-go" aria-label="Ask"><svg viewBox="0 0 16 16" aria-hidden><path d="M3 8h9.5M8.5 3.5L13 8l-4.5 4.5" /></svg></button>
-        </form>
-      </div>
-      {asked
-        ? <Answer key={asked} q={asked} known={known} names={names} openCompany={openCompany} />
-        : <section className="ask-try" aria-label="Try">
-            <h2 className="head">Try</h2>
-            <ul className="rows">{starters.map(s => <li key={s}><button className="row" onClick={() => submit(s)}><span>{s}</span><Arrow /></button></li>)}</ul>
-            {outside.length > 0 && <>
-              <h2 className="head ask-out">Outside your book</h2>
-              <p className="sub">Any NSE symbol works. One FINN hasn’t read takes about a minute.</p>
-              <ul className="rows">
-                {outside.map(s => <li key={s}><button className="row" onClick={() => openCompany(s)}><span>{names[s]}</span><span className="small">{s}</span><Arrow /></button></li>)}
-                <li><button className="row" onClick={() => submit('ASTRAL')}><span>ASTRAL</span><span className="small">Not read yet</span><Arrow /></button></li>
-              </ul>
-            </>}
-          </section>}
+    <main className="screen look">
+      <Masthead />
+      <header className="banner">
+        <h1>Look up any NSE company</h1>
+        <p>FINN reads its last five earnings calls and filed results, and checks each promise against what happened.</p>
+      </header>
+      <form className="look-form" onSubmit={e => { e.preventDefault(); submit(q) }}>
+        <label htmlFor="sym" className="lbl lbl-quiet">NSE symbol, name or a question</label>
+        <div className="look-row">
+          <div className="look-field">
+            <input id="sym" ref={inRef} value={q} onChange={e => setQ(e.target.value)} placeholder={asked ? 'Ask another' : 'ASTRAL, or a name'} autoComplete="off" autoCorrect="off" spellCheck={false} enterKeyHint="search" className={isQ(q) ? 'is-q' : ''} />
+            <Mic onText={t => { setQ(t); submit(t) }} />
+          </div>
+          <button type="submit" className="btn-primary">{isQ(q) ? 'Ask' : 'Check their word'}</button>
+        </div>
+      </form>
+      {matches.length > 0 && <section className="chips-sec"><h2 className="lbl lbl-quiet">{matches.length === 1 && !all.includes(want) ? 'Did you mean' : 'Matches'}</h2>
+        <div className="chips">{matches.slice(0, 6).map(s => <button key={s} className="btn-outline" onClick={() => openCompany(s)}>{names[s] || s}</button>)}</div></section>}
+      {asked && <section className="look-answer"><Answer key={asked} q={asked} known={known} names={names} openCompany={openCompany} /></section>}
+      {!asked && recent.length > 0 && <Tiles title="Recent" syms={recent.slice(0, 4)} open={openCompany} names={names} />}
+      {!asked && others.length > 0 && <Tiles title="Ready to open" syms={others} open={openCompany} names={names} />}
+      {!asked && <Fold title="Ask about your book" open={more} toggle={() => setMore(!more)}>
+        <ul className="notes">{starters.map(x => <li key={x}><button className="note note-q" onClick={() => submit(x)}><span className="note-co">{x}</span></button></li>)}</ul>
+      </Fold>}
     </main>
   )
 }
 
-const Arrow = () => <svg className="arrow" viewBox="0 0 16 16" aria-hidden><path d="M6 3.5l4.5 4.5L6 12.5" /></svg>
+// A warm tile for each company FINN has read: its symbol, its name, and its word in one figure
+function Tiles({ title, syms, open, names }: { title: string; syms: string[]; open: (s: string) => void; names: Record<string, string> }) {
+  const [rec, setRec] = useState<Record<string, string>>({})
+  useEffect(() => {
+    let live = true
+    syms.forEach(s => getCompany(s).then(c => {
+      const w = wordScore(c ?? undefined)
+      if (!live || !w) return
+      setRec(r => ({ ...r, [s]: w.graded ? `${Math.floor(w.kept)} of ${w.graded} kept` : w.hard ? 'None due yet' : 'Nothing to grade' }))
+    }).catch(() => {}))
+    return () => { live = false }
+  }, [syms.join()])  // eslint-disable-line react-hooks/exhaustive-deps
+  return (
+    <section className="tiles-sec"><h2 className="sec-head">{title}</h2>
+      <ul className="tiles">{syms.map(s => <li key={s}><button className="tile" onClick={() => open(s)}><span className="lbl lbl-quiet">{s}</span><span className="tile-name">{names[s] || s}</span><span className="tile-rec">{rec[s] || '\u00a0'}</span></button></li>)}</ul>
+    </section>
+  )
+}
+
 
 // Speech in, where the browser has it (Chrome, Safari). Hidden where it doesn't.
 function Mic({ onText }: { onText: (t: string) => void }) {
@@ -112,9 +145,9 @@ function Answered({ q, known, names, openCompany, inline }: { q: string; known: 
   if (p.symbol) return <CompanyAnswer p={p} name={names[p.symbol] || p.symbol} openCompany={openCompany} inline={inline} />
   if (p.ticker) return (
     <section className="answer" aria-live="polite">
-      <h2 className="head">FINN hasn’t read {p.ticker} yet</h2>
+      <h2 className="t-b1">FINN hasn’t read {p.ticker} yet</h2>
       <p>Reading its last earnings calls and filed results takes about a minute. Every promise comes back graded, with its page.</p>
-      <button className="btn" onClick={() => openCompany(p.ticker!)}>Read {p.ticker}</button>
+      <button className="btn-primary" onClick={() => openCompany(p.ticker!)}>Read {p.ticker}</button>
     </section>
   )
   return <BookAnswer p={p} known={known} names={names} openCompany={openCompany} />
@@ -126,9 +159,9 @@ function CompanyAnswer({ p, name, openCompany, inline }: { p: Parsed; name: stri
   if (c === undefined) return <section className="answer"><div className="skel skel-line" /><div className="skel skel-block" /></section>
   if (c === null) return (
     <section className="answer" aria-live="polite">
-      <h2 className="head">{name}</h2>
+      <h2 className="t-b1">{name}</h2>
       <p>FINN hasn’t read {name}’s calls yet. It takes about a minute.</p>
-      <button className="btn" onClick={() => openCompany(p.symbol!)}>Read {name}</button>
+      <button className="btn-primary" onClick={() => openCompany(p.symbol!)}>Read {name}</button>
     </section>
   )
   const xs = matching(c.ledger, p)
@@ -147,13 +180,13 @@ function CompanyAnswer({ p, name, openCompany, inline }: { p: Parsed; name: stri
   const runLine = run && ytd && sofar ? `Revenue is ${sofar} so far for their ${run.fy} guide of ${range} growth: up ${ytd.growth.toFixed(1)}% in ${ytd.label}. ` : ''
   return (
     <section className="answer" aria-live="polite">
-      <h2 className="head">{name}{about}{fy}{xs.length ? `: ${verdictHead(xs)}${sofar ? `; ${run!.fy} ${sofar} so far` : ''}` : ''}</h2>
+      <h2 className="t-b1">{name}{about}{fy}{xs.length ? `: ${verdictHead(xs)}${sofar ? `; ${run!.fy} ${sofar} so far` : ''}` : ''}</h2>
       {xs.length
         ? <p className="sub">{due ? (xs.length === 1 ? 'One promise on this has come due' : `${xs.length} promises on this have come due`) : xs.length === 1 ? 'One promise on this' : `${xs.length} promises on this`}: {xs.length === 1 ? tally(xs).replace(/^1 /, '') : tally(xs)}. {runLine}{(s => s?.graded ? `Over their last ${calls} calls they’ve kept ${Math.floor(s.kept)} of ${s.graded} promises that came due.` : `From their last ${calls} calls.`)(wordScore(c))}</p>
         : <p>Nothing{about}{fy} with a number and a date in {name}’s last {c.calls.filter(x => !x.error).length} calls. FINN only grades what management put a number or date on.</p>}
       {shown.map(x => <BeforeAfter key={x.id} p={x} compact={inline} lead src={c.source} />)}
       {!xs.length && <Others c={c} open={pid => openCompany(c.symbol, pid)} />}
-      <button className="link" onClick={() => openCompany(c.symbol, shown[0]?.id)}>{xs.length > shown.length ? `All ${xs.length}, and the rest of their record` : `${name}’s full record`}<Arrow /></button>
+      <button className="see" onClick={() => openCompany(c.symbol, shown[0]?.id)}>{xs.length > shown.length ? `All ${xs.length}, and the rest of their record` : `${name}’s full record`}</button>
     </section>
   )
 }
@@ -163,7 +196,7 @@ function Others({ c, open }: { c: Company; open: (pid: number) => void }) {
   const xs = matching(c.ledger, { intent: null }).slice(0, 3)
   if (!xs.length) return null
   return <>
-    <h3 className="small kicker">What they did promise</h3>
+    <h3 className="lbl lbl-quiet ask-other">What they did promise</h3>
     <ul className="rows">{xs.map(x => <li key={x.id}><button className="row row-2" onClick={() => open(x.id)}><span>{promiseLine(x)}</span><StatusLabel status={x.status} /></button></li>)}</ul>
   </>
 }
@@ -194,11 +227,11 @@ function BookAnswer({ p, known, names, openCompany }: { p: Parsed; known: Known[
   )
   return (
     <section className="answer" aria-live="polite">
-      <h2 className="head">{mine.length ? `${mine.length} ${mine.length === 1 ? 'promise' : 'promises'} ${what}${on}` : `Nothing ${what}${on} in your book`}</h2>
+      <h2 className="t-b1">{mine.length ? `${mine.length} ${mine.length === 1 ? 'promise' : 'promises'} ${what}${on}` : `Nothing ${what}${on} in your book`}</h2>
       <p className="sub">{mine.length ? `At ${cos} of your ${held.size} holdings.` : `Across your ${held.size} holdings.`}</p>
       {mine.length > 0 && <ul className="rows">{mine.map(row)}</ul>}
       {other.length > 0 && <>
-        <h3 className="small kicker ask-other">Outside your book</h3>
+        <h3 className="lbl lbl-quiet ask-other">Outside your book</h3>
         <ul className="rows">{other.slice(0, 6).map(row)}</ul>
         {other.length > 6 && <p className="small">{other.length - 6} more at companies outside your book.</p>}
       </>}
