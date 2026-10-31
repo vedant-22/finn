@@ -71,7 +71,7 @@ export function Reader({ push, brief, done, setDone, lines, names, start, close,
 
   return (
     <div className="reader" role="dialog" aria-modal="true" aria-label="The brief">
-      <header className={`r-top${named ? ' r-top-named' : ''}`}>
+      <header className={`r-top${named ? ' r-top-named' : ''}`} style={named ? { '--read': (at + 1) / segs } as React.CSSProperties : undefined}>
         <button className="icon-btn" onClick={close} aria-label="Close the brief"><svg viewBox="0 0 20 20" aria-hidden><path d="M5 5l10 10M15 5L5 15" /></svg></button>
         {page.kind === 'item' && named ? <span className="r-name" aria-hidden>{names[page.item.symbol]}</span>
           : page.kind !== 'done' && <div className="progress r-progress" aria-hidden>{Array.from({ length: segs }, (_, k) => <span key={k} className={k < at ? 'on' : k === at ? 'now' : ''} />)}</div>}
