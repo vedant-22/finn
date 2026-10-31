@@ -28,7 +28,7 @@ After the last item the brief says you're up to date. Tomorrow starts where you 
 
 **Ask (pull).** On every item, and as its own tab. Type or say "Did L&T deliver on revenue growth?" and the answer comes back as promised against delivered: the verdict, the numbers, the quote and the page. Questions about the whole book work too ("Who missed a promise?"). Promise questions are answered from the cached ledgers with no model call, so Ask keeps working when Gemini is out of quota. Any other NSE symbol runs live research: FINN reads the company's last five earnings calls and its filed results and builds its ledger in about a minute.
 
-**Book.** Your holdings ordered by how many promises management has broken, most first. Each company's page lists every promise that had a number and a date, marked kept, partly kept, missed, gone quiet or not due yet, then the numbers, questions for the next call, and a short case for and against. Nothing comes from news, broker notes or the model's memory.
+**Book.** Your holdings, the most promises missed or gone quiet first, under one bar of every promise that has come due across the book. Each company's page lists every promise that had a number and a date, marked kept, partly kept, missed, gone quiet or not due yet, then the numbers, questions for the next call, and a short case for and against. Nothing comes from news, broker notes or the model's memory.
 
 **Listen** reads the brief aloud with the phone's own speech. With your permission, opening FINN raises a system notification for anything new past your lines.
 

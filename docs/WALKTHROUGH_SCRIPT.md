@@ -20,7 +20,7 @@ Tap "Week". The count rolls to 6. Tap "24 hours" to go back.
 *(silence, 1 second while it rolls back)*
 
 **2. My lines (0:20–0:35)**
-Point at Syngene: +12.2% on the day, on 43.5× its usual volume, after results. Top right of the row: "2× volume and a ±4% day".
+Point at Syngene: +12.2% today, on 43.5× its usual volume, the CFO gone and profit down 52% on a year ago. Top right of the row: "Past your ±4% and 2× lines".
 > "Each alert says which of my lines it crossed."
 Tap that line. The Your lines sheet comes up. Tap − next to "Price move in a day" twice; the count in the sheet goes up.
 > "And the lines are mine. Tighter lines, more alerts."
