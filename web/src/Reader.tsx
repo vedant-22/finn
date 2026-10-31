@@ -172,7 +172,7 @@ function Held({ i, name, res, openCompany }: { i: Item; name: string; res?: any;
     <section className="r-sec" aria-label="Against their word">
       <h2 className="head">Against their word</h2>
       {guide && <div className="r-guide">
-        <p className="lede">Guided for {guide.fy}: {rupees(guide.g.target)}. <StatusLabel status="pending" /></p>
+        <p className="lede">Guided for {guide.fy}: {rupees(guide.g.target).replace(new RegExp(`\\s+(in|by|for)\\s+${guide.fy}\\b`, 'i'), '')}. <StatusLabel status="pending" /></p>
         <p className="small">{now}Said on the {said(guide.g)} call.</p>
       </div>}
       {p && (p.status !== 'pending' && verdictText(p) ? <>
