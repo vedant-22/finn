@@ -37,8 +37,14 @@ FILING:
 {text}"""
 
 def from_filing(company, url):
-    pages = pdf.pages(url, max_pages=15)
-    out = llm.generate(PROMPT.format(company=company, text=pdf.paged_text(pages)[:40000]),
+    pages = pdf.pages(url)
+    # A board outcome merges the results with the change, and the profile sits in an annexure at the back
+    # (Home First's new CFO: page 23 of 23). Read the first 15 pages and any later page carrying a profile.
+    mark = lambda i: f"\n[[PAGE {i + 1}]]\n{pages[i].strip()}"
+    head = "\n".join(mark(i) for i in range(min(15, len(pages))))
+    tail = "\n".join(mark(i) for i in range(15, len(pages)) if "profile" in pages[i].lower())[:20000]
+    text = head[:40000 - len(tail)] + tail
+    out = llm.generate(PROMPT.format(company=company, text=text),
                        model=config.FAST, schema=SCHEMA, task="people", max_tokens=4000)
     people = []
     for p in out.get("people", []):
