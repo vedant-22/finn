@@ -44,7 +44,9 @@ export function AskScreen({ push, q0, openCompany }: { push: Push; q0?: string; 
   const inRef = useRef<HTMLInputElement>(null)
   useEffect(() => { if (q0) { setQ(q0); setAsked(q0) } }, [q0])
   const submit = (text: string) => { const t = text.trim(); if (!t) { inRef.current?.focus(); return } setQ(t); setAsked(t); inRef.current?.blur() }
-  const starters = ['Who missed a promise?', 'Who has gone quiet?', 'Did L&T deliver on revenue growth?', 'What has Syngene promised for FY27?', 'ASTRAL']
+  const starters = ['Who missed a promise?', 'Who has gone quiet?', 'Did L&T deliver on revenue growth?', 'What has Syngene promised for FY27?']
+  // When an idea comes up: the companies FINN has read beyond the book, then one it hasn't, to show any symbol works
+  const outside = Object.keys(names).filter(s => !push.portfolio.some(p => p.symbol === s)).sort((a, b) => names[a].localeCompare(names[b]))
   return (
     <main className="screen ask-screen">
       <header className="page-head">
@@ -61,7 +63,15 @@ export function AskScreen({ push, q0, openCompany }: { push: Push; q0?: string; 
         ? <Answer key={asked} q={asked} known={known} names={names} openCompany={openCompany} />
         : <section className="ask-try" aria-label="Try">
             <h2 className="head">Try</h2>
-            <ul className="rows">{starters.map(s => <li key={s}><button className="row" onClick={() => submit(s)}><span>{s === 'ASTRAL' ? 'ASTRAL, a company FINN hasn’t read' : s}</span><Arrow /></button></li>)}</ul>
+            <ul className="rows">{starters.map(s => <li key={s}><button className="row" onClick={() => submit(s)}><span>{s}</span><Arrow /></button></li>)}</ul>
+            {outside.length > 0 && <>
+              <h2 className="head ask-out">Outside your book</h2>
+              <p className="sub">Any NSE symbol works. One FINN hasn’t read takes about a minute.</p>
+              <ul className="rows">
+                {outside.map(s => <li key={s}><button className="row" onClick={() => openCompany(s)}><span>{names[s]}</span><span className="small">{s}</span><Arrow /></button></li>)}
+                <li><button className="row" onClick={() => submit('ASTRAL')}><span>ASTRAL</span><span className="small">Not read yet</span><Arrow /></button></li>
+              </ul>
+            </>}
           </section>}
     </main>
   )

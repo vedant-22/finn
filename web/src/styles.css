@@ -250,6 +250,8 @@ table { border-collapse: collapse; }
 .ask-mic.on { color: var(--missed); }
 .ask-try { margin-top: 28px; }
 .ask-try .head { margin-bottom: 4px; }
+.ask-try .ask-out { margin-top: 36px; }
+.ask-try .ask-out + .sub { margin-bottom: 4px; }
 .answer { margin-top: 28px; }
 .answer > .head { font-size: 24px; margin-bottom: 4px; }
 .answer > p { margin-bottom: 4px; }

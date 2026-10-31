@@ -65,6 +65,7 @@ async def main():
         check('back keeps the scroll', abs(await pg.evaluate('scrollY') - y0) < 40, (y0, await pg.evaluate('scrollY')))
         # Ask
         await pg.goto(base + '/#/ask'); await pg.wait_for_timeout(1200)
+        check('ask lists companies outside the book', await pg.locator('.ask-try .rows').nth(1).locator('li').count() == 5)
         await pg.locator('#ask').fill('Did L&T deliver on revenue growth?'); await pg.keyboard.press('Enter'); await pg.wait_for_timeout(1200)
         head = await pg.locator('.answer > .head').inner_text()
         check('ask about L&T', 'Larsen & Toubro on revenue growth: missed' in head, head)
