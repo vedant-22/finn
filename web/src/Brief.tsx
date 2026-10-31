@@ -86,6 +86,7 @@ export function BriefScreen({ push, brief, fresh, lines, setLines, names, openIt
   const n = brief.items.length, nNotes = brief.notes.length + brief.spill.length
   const asof = new Date(push.asof)
   const time = asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()
+  const stamp = asof.toDateString() === new Date().toDateString() ? time : `${time} on ${dayMon(asof)}`
   // The sieve plays once a session: the count starts at every filing in the window and falls to what needs you
   const sieve = useRef(!sessionStorage.getItem('finn-sieved'))
   useEffect(() => { sessionStorage.setItem('finn-sieved', '1') }, [])
@@ -97,18 +98,16 @@ export function BriefScreen({ push, brief, fresh, lines, setLines, names, openIt
     <main className="screen today">
       <Masthead />
       <section className="hero" aria-labelledby="brief-h">
-        <p className="lbl lbl-quiet hero-lbl">{asof.toDateString() === new Date().toDateString()
-          ? `Today, filings to ${time}`
-          : `Snapshot, ${asof.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}, ${time}`}</p>
         {/* The roll is for the eye; a screen reader hears the settled count once */}
         <h1 id="brief-h" className="sr-only" aria-live="polite">{n ? `${n} ${n === 1 ? 'needs' : 'need'} you` : 'Nothing needs you'}</h1>
         <div className="hero-fig" aria-hidden="true">
           {n ? <Outcome size="l" value={<Roll to={n} start={sieve.current && total > n ? total : undefined} />} /> : <Outcome size="l" value="Nothing" />}
           <span className="hero-unit">{n === 1 || !n ? 'needs you' : 'need you'}</span>
         </div>
+        {/* The sentence carries the time the filings run to, so the screen needs no dateline above the count */}
         <p className="hero-2">{n
-          ? `${few([...new Set(brief.items.map(i => names[i.symbol]))])}, out of ${total} filings and moves across your ${push.portfolio.length} holdings.`
-          : `Nothing crossed your lines ${span(lines.hours)}.${nNotes ? ` ${nNotes} worth a look below.` : ''}`}</p>
+          ? `${few([...new Set(brief.items.map(i => names[i.symbol]))])}, out of ${total} filings and moves across your ${push.portfolio.length} holdings to ${stamp}.`
+          : `Nothing crossed your lines ${span(lines.hours)}, to ${stamp}.${nNotes ? ` ${nNotes} worth a look below.` : ''}`}</p>
         {wider && <button className="see hero-wider" onClick={() => setLines({ ...lines, hours: wider.h })}>{`${span(wider.h).replace(/^in the l/, 'L')}: ${wider.n} ${wider.n === 1 ? 'needs' : 'need'} you`}</button>}
         <div className="window" role="radiogroup" aria-label="Window">
           {WINDOWS.map(w => <button key={w.h} role="radio" aria-checked={lines.hours === w.h} className={lines.hours === w.h ? 'on' : ''} onClick={() => setLines({ ...lines, hours: w.h })}>{WIN_LABEL[w.h]}</button>)}
@@ -229,7 +228,8 @@ export function kindLabel(i: Item, push: Push): string {
   const f = i.story?.lead
   // A results-day move and the results it rides with read alike in every window
   const res = f?.results ?? (i.move?.explainedBy?.category === 'results' ? push.filings.filter(x => x.symbol === i.symbol && x.results && x.at.slice(0, 10) <= i.move!.d).sort((a, b) => b.at.localeCompare(a.at))[0]?.results : undefined)
-  if (res && (i.kind === 'results' || i.kind === 'move')) return `Results, ${res.quarter.replace(/ FY\d\d$/, '')}`
+  // The figure under it is the share price's move once the results have traded, so the label says so
+  if (res && (i.kind === 'results' || i.kind === 'move')) return i.kind === 'move' || reaction(push, i.symbol, i.at) ? `Price move on ${res.quarter} results` : `${res.quarter} results`
   if (i.kind === 'people' && f?.people?.length) {
     const p = sortPeople(f.people)[0], r = shortRole(p.role)
     return ['appointed', 're-appointed', 'redesignated'].includes(p.action) ? (r.length > 20 ? 'New director' : `New ${r}`) : 'Management change'
@@ -257,7 +257,7 @@ function ItemCard({ i, fresh, name, push, lines, open }: { i: Item; fresh: boole
       <div className="card-info">
         <div className="card-lbl"><span className="lbl">{kindLabel(i, push)}</span>{fresh && <span className="lbl lbl-new">New since you last looked</span>}</div>
         <h2 className="card-title">{name}</h2>
-        {fig && <div className="card-fig"><Outcome size="m" value={v} unit={u} /><span className="card-cap">{figWhen(fig.d, i)}</span></div>}
+        {fig && <div className="card-fig"><Outcome size="xs" value={v} unit={u} /><span className="card-cap">{figWhen(fig.d, i)}</span></div>}
         <p className="card-desc">{body}</p>
         <p className="card-line">{rowTag(i, lines)}</p>
         <div className="card-foot">

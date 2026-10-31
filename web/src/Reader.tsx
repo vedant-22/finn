@@ -68,8 +68,8 @@ function ItemPage({ i, push, lines, name, openCompany, openLines }: { i: Item; p
       {bars.length > 4 && <PriceLine bars={bars} />}
       <div className="card-lbl"><span className="lbl">{kindLabel(i, push)}</span>{!fig && <span className="lbl lbl-quiet">{shortDay(i.at)}</span>}</div>
       <h1 className="t-h1 iv-name"><button onClick={() => openCompany(i.symbol)}>{name}</button></h1>
-      {fig && <div className="card-fig"><Outcome size="m" value={fig.v.replace('%', '')} unit="%" /><span className="card-cap">{figWhen(fig.d, i)}</span></div>}
-      {f && !f.results && f.amount_cr != null && f.amount_cr >= 1 && <div className="card-fig"><Outcome size="m" value={`₹${cr(f.amount_cr)}`} unit="cr" />{f.pct_rev != null && <span className="card-cap">{f.pct_rev < 0.1 ? 'Under 0.1%' : `${f.pct_rev.toFixed(f.pct_rev < 1 ? 1 : 0)}%`} of a year’s revenue</span>}</div>}
+      {fig && <div className="card-fig"><Outcome size="xs" value={fig.v.replace('%', '')} unit="%" /><span className="card-cap">{figWhen(fig.d, i)}</span></div>}
+      {f && !f.results && f.amount_cr != null && f.amount_cr >= 1 && <div className="card-fig"><Outcome size="xs" value={`₹${cr(f.amount_cr)}`} unit="cr" />{f.pct_rev != null && <span className="card-cap">{f.pct_rev < 0.1 ? 'Under 0.1%' : `${f.pct_rev.toFixed(f.pct_rev < 1 ? 1 : 0)}%`} of a year’s revenue</span>}</div>}
       <p className="serif-line">{lede}</p>
       <p className="iv-line"><span>{crossedText(i, lines)}.</span> <button className="see" onClick={openLines}>Change</button></p>
     </div>

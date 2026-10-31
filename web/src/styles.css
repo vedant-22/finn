@@ -10,7 +10,7 @@
   --s-m: 32px; --s-l: 40px; --s-xl: 48px; --s-2xl: 60px; --s-3xl: 80px;
   --g: 16px; --h-mast: 62px;
   --f: 'Inter Variable', 'Inter', 'Helvetica Neue', Arial, sans-serif;
-  --serif: 'PT Serif', 'Inter Variable', Georgia, serif;
+  --serif: 'FINN Figures', 'PT Serif', 'Inter Variable', Georgia, serif;
   --expo: cubic-bezier(.19, 1, .22, 1); --decel: cubic-bezier(0, 0, 0, 1); --std: cubic-bezier(.2, 0, 0, 1);
   color-scheme: light;
 }
@@ -96,7 +96,6 @@ table { border-collapse: collapse; }
 
 /* ---------- Today ---------- */
 .hero { padding: var(--s-xl) 0 var(--s-xl); }
-.hero-lbl { margin-bottom: var(--s-s); white-space: normal; }
 .hero-fig { display: flex; flex-wrap: wrap; align-items: flex-end; column-gap: 10px; }
 .hero-unit { font: 500 36px/112% var(--f); letter-spacing: -2.16px; padding-bottom: 2px; }
 .hero-2 { font-size: 17px; line-height: 140%; margin-top: var(--s-2xs); }
@@ -113,23 +112,25 @@ table { border-collapse: collapse; }
 
 .cards { display: grid; gap: var(--s-m); }
 /* a card: warm panel, square corners, the price line inset on top */
-.card { background: var(--panel); padding: var(--s-2xs) var(--s-2xs) var(--s-s); }
-.card-img { background: var(--paper); aspect-ratio: 390 / 230; overflow: hidden; }
+.card { background: var(--panel); padding: var(--s-2xs) var(--s-2xs) var(--s-3xs); }
+.card-img { aspect-ratio: 390 / 230; overflow: hidden; }
 /* on a card the price line is context, not the point: a third of the card, its first and last session named */
 .price .card-img { aspect-ratio: 390 / 120; }
 .price-d { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; line-height: 116%; color: var(--ink-2); }
 .chart { display: block; width: 100%; height: 100%; }
 .chart .line { fill: none; stroke: var(--brand); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
 .chart .wash { fill: var(--wash); }
+/* on a warm panel the blue wash turns grey: the line alone */
+:is(.card, .iv-top, .book-card) .chart .wash { fill: none; }
 .card-info { display: flex; flex-direction: column; padding: var(--s-xs) 0 0; }
 .card-lbl { display: flex; justify-content: space-between; gap: 12px; }
 .lbl-new { color: var(--brand); }
 .card-title { margin-top: var(--s-3xs); }
-.card-fig { display: flex; flex-direction: column; align-items: flex-start; margin-top: var(--s-xs); }
+.card-fig { display: flex; flex-direction: column; align-items: flex-start; margin-top: var(--s-3xs); }
 .card-cap { font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink-2); margin-top: var(--s-nano); }
 .card-desc { margin-top: var(--s-3xs); font-size: 16px; line-height: 140%; }
 .card-line { margin-top: var(--s-5xs); font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink-2); }
-.card-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: var(--s-s); }
+.card-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: var(--s-5xs); }
 .card-foot .read-more { align-self: center; }
 
 /* accordion: grid rows 0fr -> 1fr, 200ms decelerate in, 100ms out; the content fades up as it opens */
@@ -474,7 +475,7 @@ table { border-collapse: collapse; }
 .skel-fig { height: 72px; width: 60%; margin: 18px 0; }
 .skel-name { height: 24px; width: 45%; margin: 12px 0; }
 .skel-block { height: 120px; margin-top: 16px; }
-.skel-card .card-img { margin-bottom: 8px; }
+.skel-card .card-img { background: #EFEBE3; margin-bottom: 8px; }
 .skel-card .skel { background-color: #EFEBE3; }
 .skel-tiles { margin-top: var(--s-s); }
 .skel-tile { height: 160px; }
@@ -499,9 +500,8 @@ table { border-collapse: collapse; }
 .cards li:nth-child(2) .card, .book-list li:nth-child(2) .book-card, .tiles li:nth-child(2) .tile { transition-delay: 80ms; }
 .cards li:nth-child(3) .card, .book-list li:nth-child(3) .book-card, .tiles li:nth-child(3) .tile { transition-delay: 160ms; }
 .book-list li:nth-child(4) .book-card, .tiles li:nth-child(4) .tile { transition-delay: 240ms; }
-/* the price line draws itself, left to right */
-.card-img .chart { animation: draw 700ms var(--decel) 120ms both; }
-@keyframes draw { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+/* the price line comes up once with its card, by opacity alone */
+.card-img .chart { animation: fade-in 500ms var(--decel) 120ms both; }
 /* a card grows into its full view, and shrinks back into the card */
 ::view-transition-group(item) { animation-duration: 340ms; animation-timing-function: var(--std); background: var(--panel); }
 ::view-transition-old(item), ::view-transition-new(item) { height: 100%; object-fit: cover; object-position: top; mix-blend-mode: normal; }
