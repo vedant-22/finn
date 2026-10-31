@@ -322,6 +322,15 @@ export const tidyEvidence = (t: string) => rupees(t
   // Long numbers grouped, years left as they are
   .replace(/(?<![\d,.₹])(\d{4,})(?!\d|,\d)/g, (m, n) => +n >= 1990 && +n <= 2099 ? m : inr.format(+n))
 
+// The reported figures behind a verdict, less those the verdict already gives: under 'FY26 group revenue grew 11.8%
+// to ₹2,85,874 crore', 'FY25 revenue ₹2,55,734 crore, FY26 revenue ₹2,85,874 crore (11.8% growth)' keeps only FY25
+export const numbersOnly = (ev: string, v: string) => {
+  const nums = (t: string) => (t.replace(/\bFY\s?\d\d\b|\bQ[1-4]\b|\b(?:19|20)\d\d\b/g, '').match(/\d[\d,.]*\d|\d/g) || []).map(n => n.replace(/,/g, ''))
+  const given = new Set(nums(v))
+  const kept = ev.replace(/\.$/, '').split(/,\s(?=[A-Z])/).filter(x => !nums(x).length || nums(x).some(n => !given.has(n)))
+  return kept.length ? kept.join(', ').replace(/\s*\((−?-?[\d.]+%)[^)]*\)$/, (m, x) => v.includes(x) ? '' : m) + '.' : ''
+}
+
 // Model-written text says 'INR1,450 crores'; the app writes '₹1,450 crore'. Never applied to quotes.
 export const rupees = (t: string) => t
   .replace(/\b(?:INR|Rs\.?)\s?(\d[\d,.]*)(\s?(?:to|-|–)\s?(?:(?:INR|Rs\.?)\s?)?(\d[\d,.]*))?\s?([Cc]r(?:ores?)?)\b/g, (_, a, r, b) => `₹${a}${r ? `–${b}` : ''} crore`)

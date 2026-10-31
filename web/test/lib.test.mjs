@@ -1,7 +1,7 @@
 // What the screen says, checked. Run: npm test (Node 22.6+ reads lib.ts directly)
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { cr, crBig as crBigNb, deadline, pct, rupees as rupeesWj, tidyEvidence as tidyWj, when } from '../src/lib.ts'
+import { cr, crBig as crBigNb, deadline, pct, rupees as rupeesWj, tidyEvidence as tidyWj, when, numbersOnly } from '../src/lib.ts'
 
 // The word joiner that keeps a range on one line is invisible; compare without it
 // and the no-break space that keeps an amount with its unit
@@ -135,4 +135,12 @@ test('the before-and-after marks only what is in the quote', async () => {
     [['fig:Rs 5,600 crores', 'fig:5,800 crores', 'date:2025-26'], true, true])
   // a year inside the target is a date, not a figure; nothing found means no claim
   assert.deepEqual(marked('We will grow faster than the industry.', 'Revenue growth 20% by FY27', 'FY27'), [[], false, false])
+})
+
+test("the 'Reported' line gives only the figures the verdict doesn't", () => {
+  const v = 'FY26 group revenue grew 11.8% to ₹2,85,874 crore against the 15% growth target.'
+  assert.equal(numbersOnly('FY25 revenue ₹2,55,734 crore, FY26 revenue ₹2,85,874 crore (11.8% growth).', v), 'FY25 revenue ₹2,55,734 crore.')
+  assert.equal(numbersOnly('FY26 revenue ₹2,85,874 crore (11.8% growth).', v), '')
+  assert.equal(numbersOnly('FY26 revenue ₹2,90,000 crore (11.8% growth).', v), 'FY26 revenue ₹2,90,000 crore.')
+  assert.equal(numbersOnly('Q1 OPM 7%, Q2 OPM 9%', 'Margin reached 9% in Q2.'), 'Q1 OPM 7%.')
 })

@@ -92,14 +92,14 @@ export function CompanyView({ c, focus, sector, title, close, bars, back, ask }:
         {hard.length > 0 && <p className="small word-tally">{SHOW.filter(st => hard.some(p => p.status === st)).map(st => `${hard.filter(p => p.status === st).length} ${STATUS_WORD[st].toLowerCase()}`).join(', ')}{readable > 1 ? `. Promises with a number and a date, from the ${readable - 1 === 1 ? 'call' : `${readable - 1} calls`} before the latest one.` : '.'}</p>}
 
         {settledRows.length > 0 && <ul className="rows plist">
-          {settledRows.map(p => <PromiseRow key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}
+          {settledRows.map(p => <PromiseRow key={p.id} p={p} src={c.source} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}
         </ul>}
         {running.length > 0 && (settledRows.length
           ? <Fold title="Still running" count={running.length} open={showRunning} toggle={() => setShowRunning(!showRunning)}
               line={`Not due yet${nUnclear ? `, or can’t be told from what they’ve reported` : ''}`}>
-              <ul className="rows plist">{running.map(p => <PromiseRow key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>
+              <ul className="rows plist">{running.map(p => <PromiseRow key={p.id} p={p} src={c.source} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>
             </Fold>
-          : <ul className="rows plist">{running.map(p => <PromiseRow key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>)}
+          : <ul className="rows plist">{running.map(p => <PromiseRow key={p.id} p={p} src={c.source} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>)}
 
         {soft.length > 0
           ? <Fold title="Said without a number or date" count={soft.length} open={showSoft} toggle={() => setShowSoft(!showSoft)}
@@ -208,7 +208,7 @@ function Fig({ label, value, unit, sub }: { label: string; value: string; unit?:
 }
 
 // One promise as a row: what they promised, its verdict and when it was said. It opens on the before-and-after
-function PromiseRow({ p, open, toggle }: { p: Promise_; open: boolean; toggle: () => void }) {
+function PromiseRow({ p, src, open, toggle }: { p: Promise_; src?: string; open: boolean; toggle: () => void }) {
   return (
     <li className={`prow${open ? ' open' : ''}`} data-pid={p.id}>
       <button className="prow-head" aria-expanded={open} onClick={toggle}>
@@ -216,7 +216,7 @@ function PromiseRow({ p, open, toggle }: { p: Promise_; open: boolean; toggle: (
         <span className="prow-meta"><StatusLabel status={p.status} /><span className="small">Said {p.period.replace(/ 20/, ' ’')}</span></span>
         <svg className="chev" viewBox="0 0 16 16" aria-hidden><path d="M3.5 6l4.5 4.5L12.5 6" /></svg>
       </button>
-      <Accordion open={open}><div className="prow-body"><BeforeAfter p={p} inRow /></div></Accordion>
+      <Accordion open={open}><div className="prow-body"><BeforeAfter p={p} inRow src={src} /></div></Accordion>
     </li>
   )
 }
