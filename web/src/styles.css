@@ -343,7 +343,8 @@ table { border-collapse: collapse; }
 .tally li:nth-child(odd) { border-right: 1px solid var(--rule); }
 .tally-b { display: grid; width: 100%; padding: 16px 0 14px; min-height: 44px; }
 .tally li:nth-child(even) .tally-b { padding-left: 18px; }
-.tally-n { font: 300 44px/1 var(--sans); letter-spacing: -0.04em; }
+/* figures you look at are in the serif, like the brief's count and the alert figures */
+.tally-n { font: 380 48px/1 var(--serif); letter-spacing: -0.02em; font-variant-numeric: tabular-nums lining-nums; font-optical-sizing: auto; }
 .tally-w { font-weight: 500; margin-top: 6px; }
 .t-missed .tally-n, .t-missed .tally-w { color: var(--missed); }
 .t-kept .tally-n, .t-kept .tally-w { color: var(--kept); }
