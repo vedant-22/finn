@@ -47,7 +47,7 @@ The "where" and status columns describe the live app (stage 4, promoted 31 Oct a
 | 37 | "Balance sheet — debt, leverage, working-capital cycle, funding structure." | Debt to equity, borrowings, cash conversion cycle | Company: "The numbers" | done | |
 | 38 | "Cash quality — cash-flow trend and cash conversion" | Cash conversion over five years, one-line read | Company: "The numbers" | done | |
 | 39 | "Narrative vs. numbers — where management's story and the actual financials agree or diverge." | Promise ledger: quote, page, verdict, evidence | Company: "Their word" | done | Becomes the centre of company research and of Ask |
-| 40 | "Guidance — what management has explicitly guided on headline numbers (growth, margins, capex)." | Open promises with a number and a date | Company: promises "Still running" | done | |
+| 40 | "Guidance — what management has explicitly guided on headline numbers (growth, margins, capex)." | Open promises with a number and a date; a results item opens its word on this year's guidance, next to the quarter's growth | Reader: "Against their word" ("Guided for FY27"); Company: "Still running" | done | Guidance for the current year leads the results item |
 | 41 | "Bull vs. bear — a tight case each way." | Two or three lines each, from the filings | Company: For and Against | done | |
 | 42 | "take the last four quarters and, against management's own headline guidance ... tell me what was promised vs. what was actually delivered." | Last four calls read; each promise graded kept, partly, missed, gone quiet, not due | Company: "Their word", Book | done | |
 | 43 | "This is the difference between summarising management and analysing them — and it's the kind of thing we value most." | The word ranks the book; Ask answers book-wide questions | Book: weakest word first; Ask: "Who missed a promise?" | done | v5: only reachable as a list. A book-wide "who keeps their word" view in the daily flow; Ask answers in before-and-after form |
@@ -90,4 +90,4 @@ The "where" and status columns describe the live app (stage 4, promoted 31 Oct a
 | R10 | D/E, working-capital cycle, cash conversion, FCF, ROCE | All shown | Company numbers | done | |
 | R11 | Contingent liabilities, RPTs, auditor's qualification | Not read | | missing (by choice) | Left out: annual-report parsing is where we'd go next |
 | R12 | "Material announcement — A disclosure significant enough to potentially move the stock" | The act tier | Brief | done | |
-| R13 | "Guidance — Management's own stated forward expectations" | Promises with a number and a date | Company ledger | done | |
+| R13 | "Guidance — Management's own stated forward expectations" | Promises with a number and a date | Reader: "Guided for FY27"; Company ledger | done | Shown in the results item |
