@@ -3,7 +3,7 @@ import { cachedCompany, deadline, getCompany, rupees, shortName, wordScore, type
 import { Roll } from './items'
 import { Masthead, StatusLabel, useKept } from './ui'
 
-// The whole book, ordered by how far management's word has held. Weakest first: that's where to look.
+// The whole book, ordered by how far management's word has held. Most broken first: that's where to look.
 export function Book({ push, openCompany }: { push: Push; openCompany: (s: string) => void }) {
   // undefined: still loading; null: no file
   const [cos, setCos] = useState<Record<string, Company | null | undefined>>(() => Object.fromEntries(push.portfolio.map(p => [p.symbol, cachedCompany(p.symbol) ?? undefined])))
@@ -17,7 +17,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
     <Masthead />
     <header className="page-head">
       <h1 className="title">Your book</h1>
-      <p className="sub">{push.portfolio.length} holdings, weakest record first: the lowest share of promises kept.</p>
+      <p className="sub">{push.portfolio.length} holdings, most promises broken first.</p>
     </header>
     {tally}
   </>
@@ -28,10 +28,11 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
 
   const rows = push.portfolio.map(p => ({ p, c: cos[p.symbol], score: wordScore(cos[p.symbol] || undefined) }))
   const missed = (c?: Company | null) => c ? c.ledger.filter(x => x.hard && x.status === 'missed').length : 0
-  // The share kept, as the row prints it, so the order can be read off the screen: 0 of 1 before 1 of 7.
-  // Ties go to the longer record, then to more misses; nothing due yet comes last
+  // Most promises broken first (missed or gone quiet; partly kept counts half): Home First's 1 of 7 before Havells' 0 of 1.
+  // Ties go to the lower share kept, then to more misses; nothing due yet comes last
+  const broken = (s: ReturnType<typeof wordScore>) => s?.graded ? s.graded - s.kept : -1
   const share = (s: ReturnType<typeof wordScore>) => s?.graded ? s.kept / s.graded : 2
-  rows.sort((a, b) => share(a.score) - share(b.score) || (b.score?.graded ?? 0) - (a.score?.graded ?? 0) || missed(b.c) - missed(a.c))
+  rows.sort((a, b) => broken(b.score) - broken(a.score) || share(a.score) - share(b.score) || missed(b.c) - missed(a.c))
   const shown = only ? rows.filter(r => r.c?.ledger.some(x => x.hard && x.status === only)) : rows
 
   return (

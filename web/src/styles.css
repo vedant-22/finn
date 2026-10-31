@@ -3,7 +3,7 @@
    Nothing has a border unless it is a control. Six type styles: figure, title, head, body, small, quote. */
 :root {
   --paper: #FFFFFF; --panel: #FBF8F2; --ink: #333333; --ink-2: #6A6970; --rule: #E7E7E9; --rule-2: #D9D9D9;
-  --blue: #005DA3; --blue-press: #004A82; --missed: #9E2B25; --kept: #24704A;
+  --blue: #005DA3; --blue-press: #004A82; --missed: #9E2B25; --kept: #24704A; --quiet: #94600A;
   --wash: rgba(0, 93, 163, .07); --tint: #F3F5F8; --press: #F1F1F2;
   --sans: 'Inter Variable', 'Inter', 'Helvetica Neue', Arial, sans-serif;
   --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
@@ -79,10 +79,11 @@ table { border-collapse: collapse; }
 .icon-btn:active { background: var(--press); }
 
 /* status: a word in its colour */
-.st { font-size: 13px; font-weight: 500; white-space: nowrap; color: var(--ink-2); }
+.st { font-size: 13px; font-weight: 600; white-space: nowrap; color: var(--ink-2); }
 .st-kept { color: var(--kept); }
 .st-missed { color: var(--missed); }
-.st-partly, .st-quiet { color: var(--ink); }
+.st-partly { color: var(--ink); }
+.st-quiet { color: var(--quiet); }
 .st-pace { color: var(--ink); }
 
 /* rows: one line, a quiet second line, a count, an arrow. Hairlines between, nothing around */
@@ -358,6 +359,7 @@ table { border-collapse: collapse; }
 .tally-w { font-size: 13px; color: var(--ink-2); margin-top: 6px; white-space: nowrap; }
 .t-missed .tally-n, .t-missed .tally-w { color: var(--missed); }
 .t-kept .tally-n, .t-kept .tally-w { color: var(--kept); }
+.t-quiet .tally-n, .t-quiet .tally-w { color: var(--quiet); }
 .tally-b[aria-pressed="true"] { background: var(--tint); }
 .tally-b:active { opacity: .6; }
 .tally-partly { margin-top: 4px; }

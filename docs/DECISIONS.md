@@ -39,7 +39,7 @@ Passed on: a feed with summaries (what MarketPing, Stox AI and Alpha Tribe alrea
 
 **Promises need a number or a concrete deliverable and a time frame to be graded.** Everything else ("we remain confident of strong growth") is counted as talk and shown as a number, never graded. This came from the fresh critic's pre-mortem: a ledger full of vague items would be either empty or wrong.
 
-**The book is sorted weakest word first.** It is the view a PM would want before a review: which management teams are drifting from what they said. The sort uses the kept share with one kept and one not-kept added, so a company with one quiet promise does not outrank one with six.
+**The book is sorted weakest word first.** It is the view a PM would want before a review: which management teams are drifting from what they said. Since 31 Oct the sort counts promises broken (missed or gone quiet; partly kept counts half), then the share kept: Home First, 1 of 7 kept, comes before Havells, 0 of 1. Two of three panel critics read a lone quiet promise at the top as noise, and the count is what a PM would act on.
 
 ## Grounding and trust
 
