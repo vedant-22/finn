@@ -4,9 +4,9 @@ import asyncio, sys, pathlib
 from playwright.async_api import async_playwright
 OUT = pathlib.Path(__file__).resolve().parents[3] / 'shots'
 NEXT = sys.argv[1] if len(sys.argv) > 1 else 'https://finn-ledger-next.vercel.app'
-BACKUPS = {'v4': 'https://finn-ledger-v4.vercel.app', 'v5': 'https://finn-ledger-v5.vercel.app'}
+BACKUPS = {'v4': 'https://finn-ledger-v4.vercel.app', 'v5': 'https://finn-ledger-v5.vercel.app', 'live': 'https://finn-ledger.vercel.app'}
 VERSIONS = sys.argv[2].split(',') if len(sys.argv) > 2 else ['next', 'v4', 'v5']
-MOMENTS = ['brief', 'alert', 'results', 'people', 'company', 'ask', 'book', 'done']
+MOMENTS = ['today', 'alert', 'results', 'people', 'company', 'look up', 'book', 'end']
 
 async def top(pg, sel):
     # Put the element at the top of the screen, under any sticky header
@@ -22,29 +22,23 @@ async def reader_to(pg, name, kind):
 async def fresh(pg, url):
     await pg.goto(url); await pg.evaluate('localStorage.clear()'); await pg.reload(); await pg.wait_for_timeout(2500)
 
-async def next_build(pg, shot):
-    await fresh(pg, NEXT + '/#/'); await shot(1)
-    await pg.get_by_role('radio', name='Week', exact=True).click(); await pg.wait_for_timeout(700)
-    await top(pg, '.notif'); await shot(2)
-    await pg.evaluate('scrollTo(0,0)'); await pg.get_by_role('button', name='Read the brief').click(); await pg.wait_for_timeout(900)
-    # Newest first: Home First's new CFO (the one change all three versions show) comes before L&T's results
-    # Home First's CFO change rides with its results the same day: the reader shows it under the table
-    await reader_to(pg, 'Home First', 'Results')
-    await pg.locator('.r-sec[aria-label="Management change"]').evaluate('e => e.scrollIntoView({block: "start"})'); await pg.wait_for_timeout(700)
-    await shot(4)
-    await reader_to(pg, 'Larsen', 'Results'); await shot(3)
-    await fresh(pg, NEXT + '/#/c/LT'); await pg.locator('.prow-head').first.click(); await pg.wait_for_timeout(600)
-    await top(pg, '.prow.open'); await shot(5)
-    await fresh(pg, NEXT + '/#/ask'); await pg.locator('#ask').fill('Did L&T deliver on revenue growth?'); await pg.keyboard.press('Enter')
-    await pg.wait_for_timeout(1500); await shot(6)
-    if 'next' not in VERSIONS or len(VERSIONS) > 1: return  # the backups have no matching 7 and 8
-    await fresh(pg, NEXT + '/#/book'); await shot(7)
-    await fresh(pg, NEXT + '/#/'); await pg.get_by_role('button', name='Read the brief').click(); await pg.wait_for_timeout(900)
-    for _ in range(8):
-        if await pg.locator('.done-t').count(): break
-        last = pg.get_by_role('button', name='Mark all read')  # the one-liners page closes the brief
-        await (last if await last.count() else pg.get_by_role('button', name='Done', exact=True)).click(); await pg.wait_for_timeout(800)
-    await pg.wait_for_timeout(900); await shot(8)
+async def next_build(pg, shot, base=None):
+    base = base or NEXT
+    await fresh(pg, base + '/#/'); await shot(1)
+    # 2: an alert, its card in the week; 3 and 4: a card opened into its full view (L&T's results, Syngene's CFO)
+    await pg.get_by_role('radio', name='Week', exact=True).click(); await pg.wait_for_timeout(900)
+    await top(pg, '.card'); await shot(2)
+    await pg.get_by_role('radio', name='24h', exact=True).click(); await pg.wait_for_timeout(700)
+    await pg.locator('.card', has_text='Larsen').locator('.read-more').click(); await pg.wait_for_timeout(1200)
+    await pg.locator('.item-view .figs').evaluate('e => e.scrollIntoView({block: "center"})'); await pg.wait_for_timeout(600); await shot(3)
+    await pg.locator('.item-view').get_by_role('button', name='Back').click(); await pg.wait_for_timeout(900)
+    await pg.locator('.card', has_text='Syngene').locator('.read-more').click(); await pg.wait_for_timeout(1200)
+    await pg.locator('.item-view section[aria-label="Management change"]').evaluate('e => e.scrollIntoView({block: "start"})'); await pg.wait_for_timeout(600); await shot(4)
+    await fresh(pg, base + '/#/c/LT'); await pg.locator('.p-item .og-btn').first.click(); await pg.wait_for_timeout(700)
+    await top(pg, '.p-item.open'); await shot(5)
+    await fresh(pg, base + '/#/look'); await shot(6)
+    await fresh(pg, base + '/#/book'); await shot(7)
+    await fresh(pg, base + '/#/'); await pg.evaluate('scrollTo(0, document.body.scrollHeight)'); await pg.wait_for_timeout(1500); await shot(8)
 
 async def backup(pg, base, shot, row):
     await fresh(pg, base + '/#/'); await shot(1)
@@ -55,6 +49,8 @@ async def backup(pg, base, shot, row):
     await fresh(pg, base + '/#/c/LT'); await pg.locator(row).first.click(); await pg.wait_for_timeout(600)
     await top(pg, row); await shot(5)
     await fresh(pg, base + '/#/look'); await shot(6)
+    await fresh(pg, base + '/#/book'); await shot(7)
+    await fresh(pg, base + '/#/'); await pg.evaluate('scrollTo(0, document.body.scrollHeight)'); await pg.wait_for_timeout(1500); await shot(8)
 
 async def main():
     async with async_playwright() as p:

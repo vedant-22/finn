@@ -474,7 +474,10 @@ table { border-collapse: collapse; }
 @keyframes draw { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 /* a card grows into its full view, and shrinks back into the card */
 ::view-transition-group(item) { animation-duration: 340ms; animation-timing-function: var(--std); }
-::view-transition-old(item), ::view-transition-new(item) { animation-duration: 240ms; height: 100%; object-fit: cover; object-position: top; }
+::view-transition-old(item), ::view-transition-new(item) { height: 100%; object-fit: cover; object-position: top; }
+/* the old face goes quickly and the new one comes in a beat later, so the two never read as one double image */
+::view-transition-old(item) { animation-duration: 150ms; }
+::view-transition-new(item) { animation-duration: 260ms; animation-delay: 60ms; }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 240ms; }
 @media (prefers-reduced-motion: reduce) {
   .rv-on :is(.card, .book-card, .tile, .company > section, .company > .co-pic, .fold, .og-panel, .end-band-in, .ask.lead) { opacity: 1; transform: none; }
