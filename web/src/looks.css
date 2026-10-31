@@ -1,0 +1,64 @@
+/* Section 9 colour trial: three looks behind ?look=a|b|c. The winner moves into styles.css and this file goes. */
+
+/* ---------- shared: the grounds and the band ---------- */
+:root[data-look] body, :root[data-look] .tabs, :root[data-look] .reader, :root[data-look] .r-acts,
+:root[data-look] .co-bar, :root[data-look] .sheet, :root[data-look] .sheet-head { background: var(--paper); }
+:root[data-look] .ask-form, :root[data-look] .btn-line { background: var(--raise); }
+
+/* A band runs edge to edge whatever its box: a shadow the size of the screen, clipped to the sides */
+:is(:root[data-look="a"] :is(.brief .top, .brief .hero, .company .co-bar, .co-top, .book .top, .book .page-head, .book .tally, .reader:has(.r-done)), :root[data-look="b"] :is(.brief .top, .brief .hero, .company .co-bar, .co-top, .book .top, .book .page-head, .book .tally, .reader:has(.r-done), .r-sec[aria-label="Against their word"]), :root[data-look="c"] :is(.reader:has(.r-done))) {
+  --ink: var(--on-band); --ink-2: var(--on-band-2); --blue: var(--on-band); --rule: var(--band-rule); --rule-2: var(--band-rule);
+  --kept: var(--kept-b); --missed: var(--missed-b); --quiet: var(--quiet-b); --wash: rgba(255, 255, 255, .08); --panel: rgba(255, 255, 255, .08);
+  background: var(--band); color: var(--ink); box-shadow: 0 0 0 100vmax var(--band); clip-path: inset(-1px -100vmax);
+}
+:is(:root[data-look="a"] :is(.brief .top, .brief .hero, .company .co-bar, .co-top, .book .top, .book .page-head, .book .tally, .reader:has(.r-done)), :root[data-look="b"] :is(.brief .top, .brief .hero, .company .co-bar, .co-top, .book .top, .book .page-head, .book .tally, .reader:has(.r-done), .r-sec[aria-label="Against their word"]), :root[data-look="c"] :is(.reader:has(.r-done))) .btn { background: var(--on-band); color: var(--band); }
+:is(:root[data-look="a"] :is(.brief .top, .brief .hero, .company .co-bar, .co-top, .book .top, .book .page-head, .book .tally, .reader:has(.r-done)), :root[data-look="b"] :is(.brief .top, .brief .hero, .company .co-bar, .co-top, .book .top, .book .page-head, .book .tally, .reader:has(.r-done), .r-sec[aria-label="Against their word"]), :root[data-look="c"] :is(.reader:has(.r-done))) .btn:active { background: var(--on-band-2); }
+:is(:root[data-look="a"] :is(.brief .top, .brief .hero, .company .co-bar, .co-top, .book .top, .book .page-head, .book .tally, .reader:has(.r-done)), :root[data-look="b"] :is(.brief .top, .brief .hero, .company .co-bar, .co-top, .book .top, .book .page-head, .book .tally, .reader:has(.r-done), .r-sec[aria-label="Against their word"]), :root[data-look="c"] :is(.reader:has(.r-done))) .link-inline { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+:is(:root[data-look="a"] :is(.brief .top, .brief .hero, .company .co-bar, .co-top, .book .top, .book .page-head, .book .tally, .reader:has(.r-done)), :root[data-look="b"] :is(.brief .top, .brief .hero, .company .co-bar, .co-top, .book .top, .book .page-head, .book .tally, .reader:has(.r-done), .r-sec[aria-label="Against their word"]), :root[data-look="c"] :is(.reader:has(.r-done))) .progress span.on::after { background: var(--on-band); }
+:is(:root[data-look="a"] :is(.brief .top, .brief .hero, .company .co-bar, .co-top, .book .top, .book .page-head, .book .tally, .reader:has(.r-done)), :root[data-look="b"] :is(.brief .top, .brief .hero, .company .co-bar, .co-top, .book .top, .book .page-head, .book .tally, .reader:has(.r-done), .r-sec[aria-label="Against their word"]), :root[data-look="c"] :is(.reader:has(.r-done))) .tally-bar .t-partly { background: var(--partly-b); }
+:is(:root[data-look="a"] :is(.brief .top, .brief .hero, .company .co-bar, .co-top, .book .top, .book .page-head, .book .tally, .reader:has(.r-done)), :root[data-look="b"] :is(.brief .top, .brief .hero, .company .co-bar, .co-top, .book .top, .book .page-head, .book .tally, .reader:has(.r-done), .r-sec[aria-label="Against their word"]), :root[data-look="c"] :is(.reader:has(.r-done))) :focus-visible { outline-color: var(--on-band); }
+
+:is(:root[data-look="a"] :is(.brief .top, .brief .hero, .company .co-bar, .co-top, .book .top, .book .page-head, .book .tally, .reader:has(.r-done)), :root[data-look="b"] :is(.brief .top, .brief .hero, .company .co-bar, .co-top, .book .top, .book .page-head, .book .tally, .reader:has(.r-done), .r-sec[aria-label="Against their word"]), :root[data-look="c"] :is(.reader:has(.r-done))):is(.top) { clip-path: inset(-100vmax -100vmax 0); }
+:root[data-look] .brief .hero { padding-bottom: 30px; }
+/* A band is one block: margins inside it become padding, so no stripe of page shows between its parts */
+:root[data-look] .book .tally { margin-top: 0; padding: 18px 0 20px; }
+:root[data-look] .co-top { padding-bottom: 20px; }
+:root[data-look] .co-top .r-chart figcaption { padding-bottom: 0; }
+:root[data-look="b"] .r-sec[aria-label="Against their word"] { padding: 26px 0 28px; }
+
+/* ---------- A: warm paper, white cards, ENAM blue for the opening and the end ---------- */
+:root[data-look="a"] {
+  --paper: #FBF8F2; --raise: #FFFFFF; --panel: #F4EFE6; --rule: #E6E0D6; --rule-2: #D9D3C8; --ink-2: #66656B;
+  --band: #005DA3; --on-band: #FFFFFF; --on-band-2: rgba(255, 255, 255, .82); --band-rule: rgba(255, 255, 255, .28);
+  --kept-b: #B8F0CF; --missed-b: #FFD0C9; --quiet-b: #FFE0A3; --partly-b: #DDF5E7;
+}
+:root[data-look="a"] .notifs { border: 0; gap: 10px; }
+:root[data-look="a"] .notif { background: var(--raise); border: 0; border-radius: 16px; padding: 14px 16px; }
+:root[data-look="a"] .sec-quiet .rows, :root[data-look="a"] .book .rows, :root[data-look="a"] .plist {
+  background: var(--raise); border-radius: 16px; padding: 0 16px;
+}
+:root[data-look="a"] .results, :root[data-look="a"] .r-sec[aria-label="Against their word"] { background: var(--raise); border-radius: 16px; padding: 16px; }
+:root[data-look="a"] .r-sec[aria-label="Against their word"] .ba-said { background: var(--panel); }
+
+/* ---------- B: deep blue moments on warm paper, rows flat ---------- */
+:root[data-look="b"] {
+  --paper: #FBF8F2; --raise: #FFFFFF; --panel: #F2ECE1; --rule: #E6E0D6; --rule-2: #D9D3C8; --ink-2: #66656B;
+  --band: #0B3157; --on-band: #FBF8F2; --on-band-2: rgba(251, 248, 242, .78); --band-rule: rgba(251, 248, 242, .22);
+  --kept-b: #8ED9AF; --missed-b: #FFAA9E; --quiet-b: #F2C46E; --partly-b: #C4E6D2;
+}
+
+/* ---------- C: ivory, blue figures, a little gold ---------- */
+:root[data-look="c"] {
+  --paper: #F7F1E4; --raise: #FFFCF6; --panel: #EFE5D0; --rule: #E5DCC9; --rule-2: #D6CCB7; --ink-2: #635F57; --gold: #B08431;
+  --band: #005DA3; --on-band: #FFFFFF; --on-band-2: rgba(255, 255, 255, .82); --band-rule: rgba(255, 255, 255, .28);
+  --kept-b: #B8F0CF; --missed-b: #FFD0C9; --quiet-b: #FFE0A3; --partly-b: #DDF5E7;
+}
+:root[data-look="c"] .hero .fig { color: var(--blue); }
+:root[data-look="c"] .progress span.on::after, :root[data-look="c"] .r-top-named::after { background: var(--gold); }
+:root[data-look="c"] .notifs { border: 0; gap: 10px; }
+:root[data-look="c"] .notif { background: var(--raise); border: 0; border-radius: 14px; padding: 14px 16px; box-shadow: 0 0 0 1px var(--rule); }
+:root[data-look="c"] .notif-new { color: #8A6418; }
+:root[data-look="c"] .company .co-bar, :root[data-look="c"] .co-top, :root[data-look="c"] .book .top, :root[data-look="c"] .book .page-head, :root[data-look="c"] .book .tally {
+  background: var(--panel); box-shadow: 0 0 0 100vmax var(--panel); clip-path: inset(-1px -100vmax);
+}
+:root[data-look="c"] .book .rows, :root[data-look="c"] .plist { background: var(--raise); border-radius: 14px; padding: 0 16px; box-shadow: 0 0 0 1px var(--rule); }
