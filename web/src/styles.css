@@ -222,10 +222,11 @@ table { border-collapse: collapse; }
 .word-item .ba { margin-top: var(--s-5xs); }
 .word-record { padding-top: var(--s-3xs); border-top: 1px solid var(--rule); font-size: 15px; line-height: 140%; color: var(--ink-2); }
 .srcs { display: grid; margin-top: var(--s-5xs); }
-.srcs li { padding-block: 7px; font-size: 14px; }
-.src { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
-.src:hover { color: var(--ink); }
-.sub .src, .small .src { color: inherit; }
+.srcs li { font-size: 14px; }
+.srcs .src { display: inline-flex; align-items: center; min-height: 44px; }
+/* a source is something you can tap, so it is blue like every other link */
+.src { color: var(--brand); text-decoration: underline; text-decoration-color: rgba(0, 93, 163, .35); text-underline-offset: 3px; }
+.src:hover { color: var(--brand-pressed); }
 
 /* results: four lines, QoQ and YoY */
 .figs { width: 100%; }
@@ -316,7 +317,7 @@ table { border-collapse: collapse; }
 .og-d2 { margin-top: var(--s-macro); font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink-2); }
 .og-link { margin-top: var(--s-5xs); font-size: 14px; color: var(--brand); text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
 .og-link.on { text-decoration: underline; text-underline-offset: 4px; }
-.tally-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-5xs); }
+.tally-row { display: grid; grid-template-columns: repeat(4, auto); justify-content: space-between; gap: var(--s-5xs); }
 .tally-b { gap: var(--s-nano); min-height: 44px; }
 .tally-b[aria-pressed='true'] .outcome { color: var(--brand); }
 .tally-b[aria-pressed='true'] .lbl { text-decoration: underline; text-underline-offset: 3px; }
@@ -423,7 +424,7 @@ table { border-collapse: collapse; }
 .look-field { position: relative; }
 .look-row input { display: block; width: 100%; font: 450 30px/112% var(--f); letter-spacing: -1.04px; color: var(--ink); background: none; border: 0; border-bottom: 1px solid var(--ink); border-radius: 0; padding: 10px 44px 10px 0; text-transform: uppercase; }
 .look-row input.is-q { text-transform: none; font-size: 21px; line-height: 160%; letter-spacing: -0.36px; }
-.look-row input::placeholder { text-transform: none; color: var(--ink-2); }
+.look-row input::placeholder { text-transform: none; color: var(--ink-2); font-size: 21px; letter-spacing: -0.36px; }
 .look-row input:focus { outline: none; border-bottom-color: var(--brand); }
 .look-row .btn-primary { margin-top: var(--s-s); }
 .ask-mic { position: absolute; right: 0; bottom: 4px; width: 44px; height: 44px; display: grid; place-items: center; color: var(--ink-2); }
