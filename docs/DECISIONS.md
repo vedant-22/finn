@@ -12,6 +12,8 @@ Each entry: what I chose, what I passed on, and why.
 
 **Pull lives inside every item, as Ask.** Each item can be asked about in place ("Did they deliver on margins?"), and the answer comes back as promised against delivered, quoted with its page. Questions about promises are answered from the 22 cached ledgers with no model call, so Ask works when Gemini is out of quota. A company outside the cache runs the existing live research.
 
+**An alert's figure belongs to the event, not the window.** A move on results day arrives as a move in the 24-hour window and rides with its results in a wider one. It used to lead with the day's move in one and PAT YoY in the other, so the same Syngene day read +12.2% or −52% depending on the window. Now anything that moved the shares leads with the day's change everywhere (it is what crossed the line), the profit goes in the sentence, and results with no move lead with PAT YoY. The reader still opens results on the table.
+
 **Passed on:** chat as the home screen (typing is the slowest way to ask a phone anything, and a blank box hands the filtering back to the investor); a dashboard of tiles (aggregation, which the brief says isn't the scarce skill); voice as the main mode (fine on a commute, useless in a meeting). Voice stays as a Listen control that reads the brief aloud with the browser's own speech.
 
 ## Product
