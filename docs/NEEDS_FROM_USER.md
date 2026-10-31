@@ -1,7 +1,10 @@
 # Needs from you
 
+## Before you submit (31 Oct)
+- **The GitHub repo is private.** `gh repo view vedant-22/finn` reports PRIVATE on 31 Oct, though it was published as public on 28 Oct. The brief asks for the repository, so make it public again (Settings, General, Danger zone, Change visibility) or add ENAM's reviewers before sending the email. I haven't changed it, in case you made it private on purpose.
+
 ## Done
-- GitHub repo published (public): https://github.com/vedant-22/finn. Pushing new commits to `origin main` is fine.
+- GitHub repo published (public on 28 Oct; private as of 31 Oct, see above): https://github.com/vedant-22/finn. Pushing new commits to `origin main` is fine.
 
 ## Optional
 - **Old finn-ledger-next deployments (31 Oct).** The spec keeps only the 2 newest deployments on `finn-ledger-next`. After the round 7 fixes it has 4; deleting the older two was blocked by the session's permission check, so please remove them in the Vercel dashboard (project finn-ledger-next only; never the v2 to v5 projects).

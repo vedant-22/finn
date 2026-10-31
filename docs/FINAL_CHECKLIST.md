@@ -17,3 +17,16 @@ From the build guidelines (section 10):
 | README: two-line summary, screenshots, architecture, model routing and cost, run locally, evals, what was left out | README.md | ok; screenshots to refresh after regrade || ok: screenshots retaken from live; grade eval row added |
 | Walkthrough script, about 2 minutes | docs/WALKTHROUGH_SCRIPT.md | ok || ok: beats still match the data (12 today, Cyient has a miss) |
 | `.env`, `brief/`, secrets ignored | .gitignore | ok || ok: only .env.example tracked |
+
+## Stage 4 passes (31 Oct, after promoting)
+
+| Brief asks for | Pass 3 | Pass 4 |
+|---|---|---|
+| Mobile-first prototype, easy to try on a phone | ok: live serves stage 4; `/`, push.json, company files, manifest, service worker and icon return 200 | ok: flows.py 32/32 on the live link; sweep.py clean on all 22 company pages at 320 and 390 |
+| The GitHub repository | **blocked: the repo is private** (`gh repo view` says PRIVATE; the link 404s logged out). Flagged at the top of NEEDS_FROM_USER | same: 404 logged out. Code is pushed and main matches origin |
+| AI build history | yours to do | yours to do |
+| Short writeup in the covering email | ok: leads with the point of view, then what the investor does, decisions, left out, next; grade eval 17/20; slop scan passes | ok: its app link returns 200; the repo link waits on the visibility change |
+| Email to assessment@enam.com, subject "ENAM - IIT screening - 2027" | yours to do | yours to do |
+| README (summary, shots, architecture, routing and cost, run locally, evals, left out) | ok: all sections; shots retaken from live on 31 Oct | ok: the three images it links are tracked |
+| Walkthrough, about 2 minutes | ok: rewritten for the brief, about 2:15 | ok: taps match the live app (ASTRAL under Outside your book, FY27 guidance line) |
+| Secrets and private folders out of git | ok: no .env, brief/, design-reference/, design/references/ or shots/ tracked | ok: no tracked file names the base design |
