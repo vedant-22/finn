@@ -251,6 +251,7 @@ table { border-collapse: collapse; }
 .r-promised { margin-top: 6px; }
 .r-sec .r-promised + .ba { margin-top: 16px; }
 .ba-ev { margin-top: 8px; }
+.ba-ev .src { white-space: nowrap; }
 .answer .ba-verdict, .r-sec .ba-verdict { animation: land 200ms var(--ease) 150ms both; }
 
 /* ask */
