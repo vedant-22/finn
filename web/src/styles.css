@@ -315,7 +315,12 @@ table { border-collapse: collapse; }
 .skel-line { height: 14px; margin: 12px 0; }
 .skel-line.short { width: 55%; }
 .skel-fig { height: 64px; width: 40%; margin: 18px 0; }
-.skel-notif { height: 112px; border-radius: 4px; margin-bottom: 12px; }
+.skel-pill { height: 48px; width: 170px; border-radius: 999px; margin-top: 22px; }
+.skel-head { height: 24px; width: 45%; margin-bottom: 14px; }
+.skel-row { display: grid; grid-template-columns: 1fr 72px; gap: 16px; }
+.skel-name { height: 22px; width: 55%; margin: 6px 0 12px; }
+.skel-row .skel-line { margin: 8px 0; }
+.skel-num { height: 32px; margin-top: 6px; }
 .skel-block { height: 120px; border-radius: 14px; margin-top: 16px; }
 
 @media (prefers-reduced-motion: reduce) {

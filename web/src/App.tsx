@@ -125,8 +125,11 @@ function BootSkeleton() {
   return (
     <main className="screen brief" aria-busy="true" aria-label="Loading the brief">
       <header className="top"><Mark label="FINN, loading" /></header>
-      <section className="hero"><div className="skel skel-line short" /><div className="skel skel-fig" /><div className="skel skel-line" /><div className="skel skel-line short" /></section>
-      <section className="sec"><div className="skel skel-notif" /><div className="skel skel-notif" /></section>
+      <section className="hero"><div className="skel skel-line short" /><div className="skel skel-fig" /><div className="skel skel-line" /><div className="skel skel-line short" /><div className="skel skel-pill" /></section>
+      <section className="sec">
+        <div className="skel skel-head" />
+        <ul className="notifs">{[0, 1].map(k => <li key={k} className="notif skel-row"><div><div className="skel skel-name" /><div className="skel skel-line" /><div className="skel skel-line short" /></div><div className="skel skel-num" /></li>)}</ul>
+      </section>
     </main>
   )
 }
