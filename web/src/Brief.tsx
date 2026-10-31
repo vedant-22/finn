@@ -1,7 +1,7 @@
 // The brief: the few things that crossed the investor's lines, as notifications, and a way through them that ends.
 import { useEffect, useRef, useState } from 'react'
 import { buildBrief, newsQuestion, type Brief, type Item } from './queue'
-import { CATEGORY_LABEL, cr, getCompany, rupees, sessionWhen, when, type Bar, type Lines, type Push } from './lib'
+import { CATEGORY_LABEL, cr, dayMon, getCompany, rupees, sessionWhen, when, type Bar, type Lines, type Push } from './lib'
 import { FoldSummary, NoteRow, Roll, few, moveWhy, reclass, resultLine, shortDay, sizeWords, sortPeople, tidySubject } from './items'
 import { Chart, Fold, Masthead, Outcome, useKept } from './ui'
 import { alertsBlocked, alertsOn, canAlert, disableAlerts, enableAlerts } from './alerts'
@@ -150,7 +150,7 @@ export function BriefScreen({ push, brief, fresh, lines, setLines, names, openIt
 // A move is a day's close, dated the way filings are: 'At the close' on the snapshot's day, 'Yesterday at the close', else the date
 export const closeWhen = (d: string, asof: string) => {
   const days = Math.round((Date.parse(asof.slice(0, 10)) - Date.parse(d)) / 864e5)
-  return days === 0 ? 'At the close' : days === 1 ? 'Yesterday at the close' : new Date(d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+  return days === 0 ? 'At the close' : days === 1 ? 'Yesterday at the close' : dayMon(new Date(d + 'T12:00:00'))
 }
 
 export const Arrow = () => <svg className="arrow" viewBox="0 0 16 16" aria-hidden><path d="M6 3.5l4.5 4.5L6 12.5" /></svg>

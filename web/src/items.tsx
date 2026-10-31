@@ -1,10 +1,11 @@
 // The pieces an item is made of: results tables, people, one-line notes, tidy filing titles.
 import { useEffect, useRef, useState } from 'react'
-import { cr, getCompany, plainBio, when, type Company, type Move, type Story } from './lib'
+import { cr, dayMon, getCompany, plainBio, when, type Company, type Move, type Story } from './lib'
+import { Src } from './ui'
 
 // 'L&T, Syngene and 2 more'
 export const few = (xs: string[]) => xs.length <= 3 ? xs.join(xs.length === 2 ? ' and ' : ', ').replace(/, ([^,]*)$/, ' and $1') : `${xs.slice(0, 2).join(', ')} and ${xs.length - 2} more`
-export const shortDay = (iso: string) => new Date(iso.length > 10 ? iso : iso + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+export const shortDay = (iso: string) => dayMon(new Date(iso.length > 10 ? iso : iso + 'T12:00:00'))
 
 
 // Promises about the headline numbers, to set the quarter against: the latest one already settled (their record),
@@ -154,10 +155,13 @@ export function PeopleBlock({ f, all }: { f: any; all?: any[] }) {
         return (
           <li key={i} className={joining || moved ? 'in' : 'out'}>
             <div className="who"><b>{p.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')}</b>
-              <span className="role">{moved ? `Stays ${p.role}, off the senior management list` : `${verb(p.action)} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${effDate(p.effective, f.at)}` : ''}</span></div>
+              <span className="role">{moved ? `Stays ${p.role}; no longer listed as senior management` : `${verb(p.action)} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${effDate(p.effective, f.at)}` : ''}</span></div>
             {joining && ((b: Bio | null) => b ? <BioText b={b} fold={ppl.length > 3 && p.seniority !== 'top'} /> : <p className="bio bio-none">Background: not in its filings. Worth asking on the next call.</p>)(
               hasBio(p.background) ? { background: p.background, previous: p.previous || [] } : earlierBio(p, f, all))}
-            {!joining && !moved && p.reason && !/not stated|^leaving the company\.?$|no other material reason/i.test(p.reason) && <p className="bio">Reason given: {p.reason}</p>}
+            {/* Why they leave, when the filing says: in its own words with its page; the paraphrase only when no quote was checked */}
+            {!joining && !moved && p.reason && !/not stated|^leaving the company\.?$|no other material reason/i.test(p.reason) && (p.verified && p.quote
+              ? <blockquote className="bio">“{p.quote}” <Src href={`${f.url}#page=${p.page || 1}`}>Filing, page {p.page || 1}</Src></blockquote>
+              : <p className="bio">Reason given: {p.reason}</p>)}
           </li>
         )
       })}

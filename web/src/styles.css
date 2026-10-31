@@ -239,7 +239,7 @@ table { border-collapse: collapse; }
 .people { display: grid; gap: var(--s-2xs); margin-top: var(--s-5xs); }
 .people li { display: grid; gap: 2px; }
 .who b { font-weight: 500; display: block; font-size: 17px; }
-.role { color: var(--ink-2); font-size: 14px; }
+.role { display: block; color: var(--ink-2); font-size: 14px; line-height: 140%; }
 .bio { font-size: 15px; line-height: 140%; margin-top: var(--s-5xs); }
 .bio-none { color: var(--ink-2); }
 .bio-more { color: var(--brand); min-height: 44px; font-size: 15px; justify-self: start; }

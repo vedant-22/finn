@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { cr, crBig, deadline, minus, pct, rupees, shortName, tidyEvidence, type Bar, type Company, type Promise_, type Status } from './lib'
+import { cr, crBig, dayMon, deadline, minus, pct, rupees, shortName, tidyEvidence, type Bar, type Company, type Promise_, type Status } from './lib'
 import { Accordion, BackBar, Bars, Chart, Fold, fyLabel, Outcome, Src, STATUS_WORD, StatusLabel } from './ui'
 import { cap, promiseLine, verdictText } from './Trail'
 import { BeforeAfter } from './Word'
@@ -77,7 +77,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back, ask }:
         {/* v4's two-tone title, chosen: avoid-ai-design-ignore: SD5 */}
         <h1 className="co-name" ref={nameRef}><span className="co-name-n">{name}.</span> {standing}</h1>
         <p className="co-meta">
-          {price != null && <>₹{price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)}{close && ` at the ${new Date(close.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} close`}. </>}
+          {price != null && <>₹{price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)}{close && ` at the ${dayMon(new Date(close.d + 'T12:00:00'))} close`}. </>}
           {s.mcap != null && <>Worth ₹{crBig(s.mcap * k)}{s.pe ? `, ${(s.pe * k).toFixed(1)}× earnings` : ''}.</>}
         </p>
       </div>

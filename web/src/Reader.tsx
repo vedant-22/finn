@@ -56,6 +56,9 @@ function ItemPage({ i, push, lines, name, openCompany, openLines }: { i: Item; p
   const fig = alertFig(i, name, push)
   const bars = (push.eod[i.symbol] || []).filter(b => b.d <= (fig?.d ?? i.at.slice(0, 10))).slice(-30)
   const others = i.story?.filings.filter(x => x !== f) || []
+  const top = !!i.with?.lead.people?.some(p => p.seniority === 'top')
+  const withPeople = i.with?.lead.people?.length
+    ? <section className="iv-sec" aria-label="Management change"><h2 className="t-b1">{top ? 'Management change' : 'Also that day'}</h2><PeopleBlock f={i.with.lead} all={push.filings} /></section> : null
   // The sentence under the name is the card's, then where it closed; the figures it would repeat are in the table
   const closed = m ? ` Closed at ₹${m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.` : ''
   const lede = cardSentence(i, fig) + closed
@@ -71,8 +74,10 @@ function ItemPage({ i, push, lines, name, openCompany, openLines }: { i: Item; p
       <p className="iv-line"><span>{crossedText(i, lines)}.</span> <button className="see" onClick={openLines}>Change</button></p>
     </div>
 
+    {/* A CEO, CFO or MD leaving with the results leads the card, so it leads the view too; anyone else follows the table */}
+    {f?.results && top && withPeople}
     {f?.results && <section className="iv-sec" aria-label="Results"><ResultsBlock f={f} /></section>}
-    {f?.results && i.with?.lead.people?.length ? <section className="iv-sec" aria-label="Management change"><h2 className="t-b1">Also that day</h2><PeopleBlock f={i.with.lead} all={push.filings} /></section> : null}
+    {f?.results && !top && withPeople}
     {f?.people?.length ? <section className="iv-sec" aria-label="Management change"><PeopleBlock f={f} all={push.filings} /></section> : null}
     <Held i={i} name={name} res={f?.results} openCompany={openCompany} />
     {/* Ask's questions are about promises and numbers; beside a management change they'd be off topic */}

@@ -54,6 +54,10 @@ export const tone = (v: number | null | undefined) => (v == null || Math.abs(v) 
 export const shortName = (n: string) =>
   n.replace(/\s*\(India\)/i, '').replace(/\s+(Ltd|Limited)\.?$/i, '').replace(/\s+(India|Industries|International|Company|Finance Company India|Corporation of India|Express)$/i, '').replace(/\s+(India|Industries)$/i, '')
 
+// '15 Sep', '28 Oct': the browser's en-IN writes 'Sept', which sits oddly beside three-letter months
+const MONS = 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' ')
+export const dayMon = (d: Date) => `${d.getDate()} ${MONS[d.getMonth()]}`
+
 export function when(iso: string, asof: string) {
   const d = new Date(iso), now = new Date(asof)
   const hrs = (now.getTime() - d.getTime()) / 36e5
@@ -63,14 +67,14 @@ export function when(iso: string, asof: string) {
   const days = Math.round((day(now) - day(d)) / 864e5)
   if (days === 0 && hrs >= 0) return time
   if (days === 1) return `Yesterday ${time}`
-  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+  return dayMon(d)
 }
 
 // The session a price figure belongs to, in the words the row's time uses: 'today', 'yesterday', else 'on 26 Oct'.
 // One event reads the same in every window, whether its row is timed by the filing or by the close
 export function sessionWhen(d: string, asof: string) {
   const days = Math.round((Date.parse(asof.slice(0, 10)) - Date.parse(d.slice(0, 10))) / 864e5)
-  return days === 0 ? 'today' : days === 1 ? 'yesterday' : `on ${new Date(d.slice(0, 10) + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`
+  return days === 0 ? 'today' : days === 1 ? 'yesterday' : `on ${dayMon(new Date(d.slice(0, 10) + 'T12:00:00'))}`
 }
 
 // ---------- settings: the investor decides what "unusual" means ----------

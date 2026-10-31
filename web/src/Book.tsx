@@ -1,5 +1,5 @@
 import { type ReactNode, useEffect, useState } from 'react'
-import { cachedCompany, deadline, getCompany, pct, rupees, shortName, wordScore, type Company, type Promise_, type Push, type Status } from './lib'
+import { cachedCompany, dayMon, deadline, getCompany, pct, rupees, shortName, wordScore, type Company, type Promise_, type Push, type Status } from './lib'
 import { Chart, Masthead, Outcome, StatusLabel, useKept } from './ui'
 
 // The whole book, as v4 set it: a warm tally, then a tile for each holding, the most promises broken first
@@ -14,7 +14,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
   }, [push])
   // Prices are the last exchange close in the snapshot, often the day before it; say which
   const closeDay = Object.values(push.eod).reduce((m, bars: any) => { const d = bars?.[bars.length - 1]?.d; return d && d > m ? d : m }, '')
-  const closeLabel = closeDay ? new Date(closeDay + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : ''
+  const closeLabel = closeDay ? dayMon(new Date(closeDay + 'T12:00:00')) : ''
   // The top of the page is warm edge to edge, as the reference's outcomes page: title, line, tally
   const head = (tally?: ReactNode) => <>
     <Masthead warm />
