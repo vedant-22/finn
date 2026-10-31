@@ -28,11 +28,20 @@ export function buildBrief(push: Push, lines: Lines) {
     if (host) { host.move = m; host.crossed.push(...crossed); continue }
     items.push({ key: `move|${m.symbol}|${m.d}`, symbol: m.symbol, at: `${m.d}T15:30:00`, kind: 'move', move: m, crossed })
   }
+  // The results an item stands on: its own filing, or the results that explain a move
+  const resultsAt = (i: Item) => i.kind === 'results' ? i.at : i.kind === 'move' && i.move?.explainedBy?.category === 'results' ? i.move.explainedBy.at : null
+  const near = (a: string | null, b: string) => a != null && Math.abs(Date.parse(a) - Date.parse(b)) < 864e5
   for (const p of items.filter(i => i.kind === 'people')) {
-    const host = items.find(i => i.kind === 'results' && i.symbol === p.symbol && !i.with && Math.abs(Date.parse(i.at) - Date.parse(p.at)) < 864e5)
+    const host = items.find(i => i.symbol === p.symbol && !i.with && near(resultsAt(i), p.at))
     if (!host) continue
     host.with = p.story; host.crossed.push(...p.crossed)
     items.splice(items.indexOf(p), 1)
+  }
+  // A results-day move whose results came with a management change says so, even when that filing is outside the window
+  for (const i of items.filter(i => i.kind === 'move' && !i.with)) {
+    const f = push.filings.filter(x => x.symbol === i.symbol && x.people?.length && near(resultsAt(i), x.at))
+      .sort((a, b) => +!!b.people!.some(p => p.seniority === 'top') - +!!a.people!.some(p => p.seniority === 'top') || b.at.localeCompare(a.at))[0]
+    if (f) i.with = { key: f.id, symbol: f.symbol, category: f.category, tier: f.tier, at: f.at, lead: f, filings: [f] }
   }
   // No one kind takes more than three places, so a week of results can't hide a CFO leaving
   const kind = (i: Item) => i.story?.category ?? 'move'

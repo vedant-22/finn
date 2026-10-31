@@ -17,6 +17,13 @@ test('the 24-hour brief holds the two unusual days', () => {
   assert.ok(b.items.every(i => i.kind === 'move'))
 })
 
+test('a results-day move carries the management change filed with its results, even from outside the window', () => {
+  const b = buildBrief(push, DEFAULT_LINES)
+  const syn = b.items.find(i => i.symbol === 'SYNGENE')
+  assert.equal(syn.kind, 'move')
+  assert.ok(syn.with?.lead.people?.some(p => /Chief Financial Officer|CFO/.test(p.role)), 'the CFO change rides with the move, before a lower role')
+})
+
 test('a results-day move joins its results item, and a busy window stays short', () => {
   const b = buildBrief(push, { ...DEFAULT_LINES, hours: 72 })
   assert.ok(b.items.length <= 6)

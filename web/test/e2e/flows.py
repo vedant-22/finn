@@ -81,7 +81,7 @@ async def main():
         # A kind of filing switched off leaves the brief: the week's new MD & CEO goes when management changes are off
         await pg.goto(base + '/#/'); await pg.evaluate('localStorage.clear()'); await pg.reload(wait_until='domcontentloaded'); await pg.wait_for_timeout(1500)
         await pg.get_by_role('radio', name='Week', exact=True).click(); await pg.wait_for_timeout(500)
-        ceo = lambda: pg.locator('.notif', has_text='new MD & CEO').count()
+        ceo = lambda: pg.locator('.notif', has_text='joins as MD & CEO').count()
         had = await ceo()
         await pg.locator('.notif-line').first.click(); await pg.wait_for_timeout(500)
         await pg.get_by_role('switch', name='Management change').click(); await pg.keyboard.press('Escape'); await pg.wait_for_timeout(500)

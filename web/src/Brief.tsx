@@ -55,7 +55,8 @@ export function itemLine(i: Item): string {
 }
 // The line that set it off, in the investor's own terms
 export function crossedText(i: Item, lines: Lines): string {
-  const parts = i.crossed.map(c => c.line === 'price' ? `a ±${lines.movePct}% day` : c.line === 'volume' ? `${lines.volX}× volume` : (CATEGORY_LABEL[c.category!] || c.category!).toLowerCase())
+  const rank = { filing: 0, volume: 1, price: 2 }
+  const parts = [...i.crossed].sort((a, b) => rank[a.line] - rank[b.line]).map(c => c.line === 'price' ? `a ±${lines.movePct}% day` : c.line === 'volume' ? `${lines.volX}× volume` : (CATEGORY_LABEL[c.category!] || c.category!).toLowerCase())
   const u = [...new Set(parts)]
   return `Your ${u.length > 1 ? 'lines' : 'line'}: ${u.length > 1 ? `${u.slice(0, -1).join(', ')} and ${u[u.length - 1]}` : u[0]}`
 }
@@ -162,9 +163,23 @@ export const closeWhen = (d: string, asof: string) => d === asof.slice(0, 10) ? 
 
 export const Arrow = () => <svg className="arrow" viewBox="0 0 16 16" aria-hidden><path d="M6 3.5l4.5 4.5L6 12.5" /></svg>
 
-// The figure an alert leads with, where one number carries it: profit on a year ago, the day's move, a deal's size.
-// The column holds numbers only, so a management change has none and keeps its headline ('Syngene: CFO leaves').
-function alertFig(i: Item, name: string, push: Push): { v: string; c: string; body: string; t?: string } | null {
+// The session that first traded on a filing: the same day if it came before the 3:30 pm close, else the next one
+function reaction(push: Push, symbol: string, at: string) {
+  const d = at.slice(0, 10), after = at.slice(11, 16) >= '15:30'
+  const b = (push.eod[symbol] || []).find(x => after ? x.d > d : x.d >= d)
+  return b ? { b, next: b.d !== d } : null
+}
+const signed = (v: number) => `${v >= 0 ? '+' : '−'}${pct1(v)}`
+const pctWords = (v: number) => `${v >= 0 ? 'up' : 'down'} ${String(+Math.abs(v).toFixed(Math.abs(v) < 10 ? 1 : 0))}%`
+// Profit in words, the turn from a loss first: it often explains a rise on a weak year-on-year number
+function profitWords(pat: any) {
+  const yoy = pat.yoy != null ? `${pctWords(pat.yoy)} on a year ago` : ''
+  return pat.prev != null && pat.prev < 0 && pat.value >= 0 ? `back to a profit after last quarter’s loss${yoy ? `, ${yoy}` : ''}` : `profit ${yoy}`
+}
+
+// The figure column means one thing on every alert: how the shares took it, the day's change. The event is in the words.
+// d is the session the figure and the month line end on.
+function alertFig(i: Item, name: string, push: Push): { v: string; c: string; body: string; t?: string; d: string } | null {
   const f = i.story?.lead, m = i.move
   // Anything that moved the shares leads with the day's change, whichever line it crossed. In a 24-hour window
   // results-day moves arrive as moves, in a wider one they ride with their results: same event, same figure, same words
@@ -172,17 +187,21 @@ function alertFig(i: Item, name: string, push: Push): { v: string; c: string; bo
     // A move on results says what the results were, not just that they came out
     const res = f?.results ?? (m.explainedBy?.category === 'results' ? push.filings.filter(x => x.symbol === i.symbol && x.results && x.at.slice(0, 10) <= m.d).sort((a, b) => b.at.localeCompare(a.at))[0]?.results : undefined)
     const pat = res?.lines.find((l: any) => l.key === 'pat')
-    const body = res && pat?.yoy != null ? `On ${m.volX.toFixed(1)}× its usual volume, after ${res.quarter.replace(/ FY\d\d$/, '')} results: profit ${pat.yoy >= 0 ? 'up' : 'down'} ${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}% on a year ago.` : `On ${m.volX.toFixed(1)}× its usual volume. ${moveWhy(m)}`
-    return { v: `${m.chg >= 0 ? '+' : '−'}${pct1(m.chg)}`, c: 'on the day', t: name, body: withFirst(i, body) }
+    const body = res && pat?.value != null ? `On ${m.volX.toFixed(1)}× its usual volume, after ${res.quarter.replace(/ FY\d\d$/, '')} results: ${profitWords(pat)}.` : `On ${m.volX.toFixed(1)}× its usual volume. ${moveWhy(m)}`
+    return { v: signed(m.chg), c: 'on the day', t: name, body: withFirst(i, body), d: m.d }
   }
+  // Anything else: the session that first traded on the filing; before it has traded, the row keeps its headline
+  const r = reaction(push, i.symbol, i.at)
+  if (!r) return null
+  const fig = (body: string) => ({ v: signed(r.b.chg), c: r.next ? 'next day' : 'on the day', t: name, body, d: r.b.d })
   const pat = f?.results?.lines.find((l: any) => l.key === 'pat')
-  if (i.kind === 'results' && pat?.yoy != null) {
-    const r = f!.results!, rest = r.ebitda_margin != null ? `; EBITDA margin ${r.ebitda_margin}%${r.yago_margin != null ? ` against ${r.yago_margin}%` : ''}` : ''
-    return { v: `${pat.yoy >= 0 ? '+' : '−'}${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}%`, c: 'PAT YoY', t: name, body: withFirst(i, `${r.quarter.replace(/ FY\d\d$/, '')} profit ₹${cr(pat.value)} crore${rest}.`) }
+  if (i.kind === 'results' && pat?.value != null) {
+    const q = f!.results!.quarter.replace(/ FY\d\d$/, '')
+    return fig(withFirst(i, `${q} profit ₹${cr(pat.value)} crore${pat.yoy != null ? `, ${pctWords(pat.yoy)} on a year ago` : ''}.`))
   }
   if (i.kind === 'filing' && f?.amount_cr != null && f.amount_cr >= 1 && f.pct_rev != null)
-    return { t: name, v: `₹${cr(f.amount_cr)} cr`, c: `${f.pct_rev < 1 ? f.pct_rev.toFixed(1) : f.pct_rev.toFixed(0)}% of revenue`, body: (f.line || tidySubject(f.subject || '')).replace(/\.?$/, '.') }
-  return null
+    return fig(`${(f.line || tidySubject(f.subject || '')).replace(/\.?$/, '.')} ${sizeWords(f)}`)
+  return fig(itemLine(i))
 }
 
 // A month of closes under an alert's figure: what the price did, in a line that draws itself, its change written out
@@ -198,12 +217,12 @@ function Spark({ bars }: { bars: { close: number }[] }) {
 // An alert: when, what happened with its number, and the line it crossed. Flat rows, like the rest of the brief.
 function Notif({ i, fresh, name, push, lines, open, openLines }: { i: Item; fresh: boolean; name: string; push: Push; lines: Lines; open: () => void; openLines: () => void }) {
   const fig = alertFig(i, name, push)
-  const bars = fig && (i.kind === 'move' || i.kind === 'results') ? (push.eod[i.symbol] || []).filter(b => b.d <= (i.move?.d ?? i.at.slice(0, 10))).slice(-22) : []
+  const bars = fig ? (push.eod[i.symbol] || []).filter(b => b.d <= fig.d).slice(-22) : []
   return (
     <article className="notif">
       <p className="notif-when">
         <span>{i.kind === 'move' ? closeWhen(i.move!.d, push.asof) : when(i.at, push.asof)}{fresh && <span className="notif-new">New</span>}</span>
-        <button className="notif-line" onClick={openLines} aria-label={`${crossedText(i, lines)}. Change`}>{i.crossed.length > 2 ? `${new Set(i.crossed.map(c => c.line + (c.category || ''))).size} of your lines` : crossedText(i, lines).replace(/^Your lines?: /, '').replace(/^./, c => c.toUpperCase())}</button>
+        <button className="notif-line" onClick={openLines} aria-label={`${crossedText(i, lines)}. Change`}>{crossedText(i, lines).replace(/^Your lines?: /, '').replace(/^./, c => c.toUpperCase())}</button>
       </p>
       <button className="notif-main" onClick={open}>
         <span className="notif-t">{fig?.t ?? itemTitle(i, name)}</span>

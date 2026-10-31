@@ -167,7 +167,7 @@ table { border-collapse: collapse; }
 .r-hint.l { right: 20px; } .r-hint.r { left: 20px; }
 .r-move { display: flex; align-items: flex-end; gap: 16px; margin: 14px 0 10px; }
 .r-why { margin-top: 14px; }
-.r-move-line { margin-top: 28px; font-size: 15px; color: var(--ink-2); }
+.r-move-line { font: 400 16px/1.5 var(--sans); color: var(--ink-2); }
 .r-move-line b { font-weight: 600; color: var(--ink); }
 .fig-m { font-size: 56px; }
 .fig-s { font-size: 40px; }

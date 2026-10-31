@@ -1,6 +1,6 @@
 // The pieces an item is made of: results tables, people, one-line notes, tidy filing titles.
 import { useEffect, useRef, useState } from 'react'
-import { cr, getCompany, pct, when, type Company, type Move, type Story } from './lib'
+import { cr, getCompany, when, type Company, type Move, type Story } from './lib'
 
 // 'L&T, Syngene and 2 more'
 export const few = (xs: string[]) => xs.length <= 3 ? xs.join(xs.length === 2 ? ' and ' : ', ').replace(/, ([^,]*)$/, ' and $1') : `${xs.slice(0, 2).join(', ')} and ${xs.length - 2} more`
@@ -71,19 +71,16 @@ export function ResultsBlock({ f }: { f: any }) {
         <caption>{r.quarter}, {r.basis}, ₹ crore</caption>
         <thead><tr><th /><th>Quarter</th><th>QoQ</th><th>YoY</th></tr></thead>
         <tbody>
-          {r.lines.map((l: any) => {
-            // Two changes that round alike ('+16%', '+16%') read like one base used twice: show the decimal
-            const fine = l.qoq != null && l.yoy != null && pct(l.qoq) === pct(l.yoy) && l.qoq !== l.yoy
-            return <tr key={l.key}>
-              <th scope="row">{l.label}</th>
-              <td className="num">{cr(l.value)}</td>
-              <Chg v={l.qoq} base={l.prev} now={l.value} fine={fine} />
-              <Chg v={l.yoy} base={l.yago} now={l.value} fine={fine} />
-            </tr>
-          })}
+          {/* Every change to one decimal, so a column reads as one set of figures */}
+          {r.lines.map((l: any) => <tr key={l.key}>
+            <th scope="row">{l.label}</th>
+            <td className="num">{cr(l.value)}</td>
+            <Chg v={l.qoq} base={l.prev} now={l.value} />
+            <Chg v={l.yoy} base={l.yago} now={l.value} />
+          </tr>)}
           {/* The margin is often the quarter's story; its change is in percentage points, not percent */}
           {r.ebitda_margin != null && <tr className="figs-margin">
-            <th scope="row">Margin</th>
+            <th scope="row">EBITDA margin</th>
             <td className="num">{r.ebitda_margin}%</td>
             <td className="num">{pp(r.ebitda_margin, r.prev_margin)}</td>
             <td className="num">{pp(r.ebitda_margin, r.yago_margin)}</td>
@@ -91,7 +88,7 @@ export function ResultsBlock({ f }: { f: any }) {
         </tbody>
       </table>
       <p className="small figs-foot">
-        Against {r.compare.prev || 'the previous quarter'} and {r.compare.yago || 'a year ago'}.{r.ebitda_margin != null && ' Margin is EBITDA over revenue; its change is in percentage points.'}
+        Against {r.compare.prev || 'the previous quarter'} and {r.compare.yago || 'a year ago'}.
         {r.one_offs?.length > 0 && ' ' + r.one_offs.map((o: any) => `${o.q === r.quarter ? 'This quarter’s' : o.q} profit includes ${[o.tax_credit && `a ₹${cr(o.tax_credit)} cr tax credit`, o.exceptional && `₹${cr(Math.abs(o.exceptional))} cr of exceptional items`].filter(Boolean).join(' and ')}.`).join(' ')}
         {above}
         {f.url && <> From the <a className="link-inline" href={f.url} target="_blank" rel="noreferrer">results filed with NSE</a>{filed && `, ${filed}`}.</>}
@@ -102,9 +99,9 @@ export function ResultsBlock({ f }: { f: any }) {
 
 const pp = (a: number | null, b: number | null) => a == null || b == null ? '–' : `${a - b >= 0 ? '+' : '−'}${Math.abs(a - b).toFixed(1)} pp`
 // A percentage off a loss means nothing; a swing back to profit still deserves saying
-function Chg({ v, base, now, fine }: { v: number | null; base: number | null; now: number | null; fine?: boolean }) {
+function Chg({ v, base, now }: { v: number | null; base: number | null; now: number | null }) {
   if (v == null && base != null && base < 0 && now != null && now >= 0) return <td className="num turn">from loss</td>
-  return <td className="num">{fine && v != null ? `${v > 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}%` : pct(v)}</td>
+  return <td className="num">{v == null ? '–' : +Math.abs(v).toFixed(1) === 0 ? '0.0%' : `${v > 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}%`}</td>
 }
 
 // Filings write 'October 30, 2026', '30th September 2026' or 'close of business hours of 30 September 2026'. Say '30 Oct'.

@@ -105,23 +105,25 @@ function ItemPage({ i, push, lines, names, openCompany, openLines }: { i: Item; 
     ? push.filings.filter(x => x.symbol === i.symbol && x.results && x.at.slice(0, 10) <= m.d).sort((a, b) => b.at.localeCompare(a.at))[0] ?? m.explainedBy
     : undefined)
   const bars = m?.series ?? (push.eod[i.symbol] || []).filter(b => b.d <= i.at.slice(0, 10)).slice(-30)
-  const kind = i.kind === 'results' ? `Results, ${f?.results?.quarter}` : i.kind === 'people' ? 'Management change' : i.kind === 'move' ? 'Unusual day' : 'Filing'
+  // The quarter is in the table's caption; the kicker says only what and when
+  const kind = i.kind === 'results' ? 'Results' : i.kind === 'people' ? 'Management change' : i.kind === 'move' ? 'Unusual day' : 'Filing'
   const others = i.story?.filings.filter(x => x !== f) || []
   return <>
-    <p className="small kicker">{kind}, {i.kind === 'move' ? shortDay(m!.d) : when(i.at, push.asof)}</p>
+    <p className="small kicker">{kind}, {i.kind === 'move' ? shortDay(m!.d) : when(i.at, push.asof).replace(/^Yesterday/, 'yesterday')}</p>
     <h1 className="title"><button className="title-link" onClick={() => openCompany(i.symbol)}>{name}</button></h1>
     {/* Results open on the table: the numbers are the news. Their word follows it, the period named before the verdict */}
     {!f?.results && i.kind !== 'move' && i.kind !== 'people' && <p className="lede">{itemLine(i)}</p>}
+    {/* A move on results day is here for the move: it opens the item, then the numbers behind it */}
+    {m && f?.results && <p className="r-move-line"><b className={m.chg >= 0 ? 'up' : 'down'}>{m.chg >= 0 ? '+' : '−'}{Math.abs(m.chg).toFixed(1)}%</b> on the day, on {m.volX.toFixed(1)}× its 20‑day volume. Closed at ₹{m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.</p>}
     {/* A CEO, CFO or MD change on results day is said before the numbers; its detail follows them */}
     {f?.results && i.with?.lead.people?.some(p => p.seniority === 'top') && <p className="lede r-with">{withLine(i.with)}</p>}
     {f?.results && <><ResultsBlock f={f} />
       {i.with?.lead.people?.length ? <section className="r-sec" aria-label="Management change"><h2 className="head">Also that day</h2><PeopleBlock f={i.with.lead} all={push.filings} /></section> : null}
       <Held i={i} name={name} res={f.results} openCompany={openCompany} /></>}
-    {m && (f?.results
-      ? <p className="r-move-line"><b className={m.chg >= 0 ? 'up' : 'down'}>{m.chg >= 0 ? '+' : '−'}{Math.abs(m.chg).toFixed(1)}%</b> on the day, on {m.volX.toFixed(1)}× its 20-day volume. Closed at ₹{m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.</p>
-      : <div className="r-move">
+    {m && !f?.results && (
+      <div className="r-move">
         <span className={`fig fig-m ${m.chg >= 0 ? 'up' : 'down'}`}>{m.chg >= 0 ? '+' : '−'}{Math.abs(m.chg).toFixed(1)}<span className="fig-pc">%</span></span>
-        <span className="small">{m.volX.toFixed(1)}× its 20-day volume<br />Closed at ₹{m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+        <span className="small">{m.volX.toFixed(1)}× its 20‑day volume<br />Closed at ₹{m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
       </div>)}
     {bars.length > 1 && i.kind !== 'people' && <figure className="r-chart"><Chart series={bars} h={f?.results ? 56 : 88} /><figcaption className="small">Last {bars.length} sessions</figcaption></figure>}
     {i.kind === 'move' && <p className="lede r-why">{moveWhy(m!)}</p>}
