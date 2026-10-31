@@ -3,7 +3,7 @@
 FINN shows the few things that need you today, and whether management kept its word. The first screen asks almost nothing of you: a count, the companies, the window. Everything else waits behind Read more or a fold. The look is v4's, the version the user called the cleanest: white paper, warm panels, ENAM blue for what you tap and for one band a screen. Tokens live at the top of `web/src/styles.css`.
 
 ## Idea
-- **Calm on entry.** The first screen holds the wordmark, one count ("2 need you"), one grey sentence naming the companies, the window, and the top of the first card. No buttons to press, no settings.
+- **Calm on entry.** The first screen holds the wordmark, one count ("2 need you"), one grey sentence naming the companies and the time the filings run to, the window, and the top of the first card. No buttons to press, no settings.
 - **Progressive disclosure.** A card says what happened in one line; Read more grows it into its full view. The rest of the window sits in two folds below the cards: Worth a look; Routine filings.
 - **One family for the interface.** Inter sets every title and figure; it also sets labels and controls. PT Serif in roman grey sets only the sentence under a title, and quotes. No italics, no serif figures.
 - **A status is a small capital word in its colour.** Missed, Gone quiet, Kept, Partly kept, Not due. No glyphs.
@@ -25,10 +25,10 @@ On the blue band, text is white (6.8:1) or white at 82% (5.1:1). `web/scripts/co
 
 ## Type
 v4's scale, all Inter except where noted:
-- Count 72/100% at 500 with a 36 px unit ("2 need you"). Card figures 40 px with a 20 px unit; promise figures 48 to 24 px by length; Book's counts 30 px.
+- Count 72/100% at 500 with a 36 px unit ("2 need you"). Card figures 30 px with a 16 px unit, well under the count; promise figures 48 to 24 px by length, and a settled one shows what was delivered ('11.8% against 15%'); Book's counts 30 px.
 - Title 30/112% at 450 (Look up's banner, a company's name, an item's name, the end band). Section head 26/116% at 450. Card title and fold title 21/124% at 500 and 450.
 - Body 16/140%; captions 14/140% grey; labels 12 px capitals at 450 with 0.24 px tracking.
-- PT Serif 16 to 17 px roman grey: the sentence under a title, a card's sentence, the next-call questions, quotes. Its ₹ falls through to Inter's.
+- PT Serif 16 to 17 px roman grey: the sentence under a title, a card's sentence, the next-call questions, quotes. Its ₹ falls through to Inter's, and so do its digits, sign, per cent and ×, through a unicode-range face, so a figure in a sentence matches the figures in the tables.
 
 ## Space and shape
 Gutter 16 px; the column stops at 560 px. v4's spacing scale (4 to 80). Square panels; pill buttons; sheets 12 px at the top. No shadows. Every tap target is at least 44 px.
@@ -49,16 +49,19 @@ Gutter 16 px; the column stops at 560 px. v4's spacing scale (4 to 80). Square p
 One family of curves: expo out for reveals, decelerate for folds and sheets, standard for the morph. Transform and opacity only. Everything respects `prefers-reduced-motion` (it all appears in place).
 
 Kept, because each one explains something:
-- **A card grows into its full view** (a shared-element view transition, 340 ms). The warm panel itself grows; the card's face fades in the first 100 ms and the view's face after 140 ms, so text is never doubled. Back shrinks it into the same card at the same scroll. It says where the view came from and where it goes back to.
+- **A card grows into its full view** (a shared-element view transition, 340 ms). The warm panel grows while the price line, the company's name and the figure travel to their places in the view, so what you were reading stays in sight the whole way; the rest of the card's face fades in the first 100 ms and the view's after 140 ms. Back shrinks it into the same card at the same scroll. It says where the view came from and where it goes back to.
 - **Blocks rise 12 px and settle** as they scroll into view (700 ms, expo out), the first three in an 80 ms stagger. It tells you the list goes on.
 - **The count falls** from every filing in the window to what needs you, once a session (the sieve), and rolls when the window changes.
-- **Price lines draw** left to right on a card, once; the full view shows the line already drawn.
-- **Folds open** on a grid-rows transition with their content fading up 6 px.
+- **Price lines fade up** with their card, once (opacity only).
+- **Folds open** at once and their rows fade up 6 px; no height is animated, so nothing below is dragged.
 - **Sheets slide up** in 260 ms and can be dragged down.
 
 Removed, because each one got in the investor’s way:
 - The first morph cross-faded the card and the view on top of each other: text read twice in the middle frames (all three critics in round s11-1). Replaced by the growing panel.
 - The price line drawing again when a card opened: the same picture twice.
+- The price line drawing itself left to right (a clip-path wipe): all three critics in round s11-2 read it as a wipe, and it isn't transform or opacity. It fades up instead.
+- The panel growing with nothing on it for a moment (round s11-2, all three): the shared parts fixed it.
+- Folds growing in height: the last row was clipped mid-way and the content below was dragged.
 - The step bar and the swipe-to-clear reader: it made the first action a button press and a progress count.
 - The card under the thumb lit and the others dimmed while scrolling: tried as a scroll-driven fade; at two cards a screen it greyed out the text you were about to read, so it went.
 
