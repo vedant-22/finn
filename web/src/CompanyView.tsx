@@ -70,57 +70,71 @@ export function CompanyView({ c, focus, sector, title, close, bars, back, ask }:
 
   return (
     <main className="screen company">
-      {/* The company's opening is its full-colour moment: who it is, its standing, its price */}
-      <BackBar back={back} name={past ? name : undefined} band />
-      <header className="co-top band">
-        <p className="small kicker">{sector ? `${sector}, ` : ''}{c.symbol}{c.live ? ', read just now' : ''}</p>
-        <h1 className="title" ref={nameRef}>{name}</h1>
-        <p className="lede co-rec">{standing}</p>
-        {price != null && <div className="co-px">
-          <span className="fig fig-s num">₹{price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)}</span>
-          <span className="small">{close ? `At the ${new Date(close.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} close.` : ''}{s.mcap != null && <><br />Worth ₹{crBig(s.mcap * k)}{s.pe ? `, ${(s.pe * k).toFixed(1)}× earnings` : ''}.</>}</span>
-        </div>}
-        {bars && bars.length > 1 && <figure className="r-chart"><Chart series={bars.slice(-30)} h={88} /><figcaption className="small">Last {Math.min(30, bars.length)} sessions</figcaption></figure>}
-      </header>
+      {/* The page opens warm, as v4's did: the sector, the name in grey running into the one thing to know, the price */}
+      <BackBar back={back} name={past ? name : undefined} band={!past} />
+      <div className="co-top">
+        <p className="lbl lbl-quiet co-sector">{sector || 'NSE'}, {c.symbol}{c.live ? ', read just now' : ''}</p>
+        {/* v4's two-tone title, chosen: avoid-ai-design-ignore: SD5 */}
+        <h1 className="co-name" ref={nameRef}><span className="co-name-n">{name}.</span> {standing}</h1>
+        <p className="co-meta">
+          {price != null && <>₹{price.toLocaleString('en-IN', close ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : undefined)}{close && ` at the ${new Date(close.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} close`}. </>}
+          {s.mcap != null && <>Worth ₹{crBig(s.mcap * k)}{s.pe ? `, ${(s.pe * k).toFixed(1)}× earnings` : ''}.</>}
+        </p>
+      </div>
+      {bars && bars.length > 1 && <div className="co-pic"><div className="card-img"><Chart series={bars.slice(-30)} /></div><p className="lbl lbl-quiet">Last {Math.min(30, bars.length)} sessions, {pct((bars[bars.length - 1].close / bars[Math.max(0, bars.length - 30)].close - 1) * 100)}</p></div>}
 
-      <section className="sec word">
-        <h2 className="head">Their word</h2>
+      <section className="word">
+        <h2 className="sec-head">Their word</h2>
         {c.read && settled >= 3
-          ? <p className="read word-intro">{readAll ? rupees(c.read) : readFirst}{readFirst !== rupees(c.read) && <> <button className="link-inline" onClick={() => setReadAll(!readAll)}>{readAll ? 'Read less' : 'Read more'}</button></>}</p>
+          ? <p className="read word-intro">{readAll ? rupees(c.read) : readFirst}{readFirst !== rupees(c.read) && <> <button className="see" onClick={() => setReadAll(!readAll)}>{readAll ? 'Read less' : 'Read more'}</button></>}</p>
           : hard.length === 0 && <p className="read word-intro">{readable === 0
             ? `None of the ${c.calls.length} call transcripts linked from its exchange filings could be opened, so there is nothing to grade yet.`
             : 'No promise in these calls had both a number and a date.'}</p>}
-        {hard.length > 0 && <p className="small word-tally">{SHOW.filter(st => hard.some(p => p.status === st)).map(st => `${hard.filter(p => p.status === st).length} ${STATUS_WORD[st].toLowerCase()}`).join(', ')}{readable > 1 ? `. Promises with a number and a date, from the ${readable - 1 === 1 ? 'call' : `${readable - 1} calls`} before the latest one.` : '.'}</p>}
+        {hard.length > 0 && (
+          <div className="og-panel">
+            {nUnclear < hard.length && <ul className="og" aria-label="Promise record">
+              {SHOW.filter(st => st !== 'unclear').map(st => {
+                const n = hard.filter(p => p.status === st).length
+                return n ? <li key={st} className="og-item"><Outcome value={n} /><span className="og-d1">{STATUS_WORD[st]}</span></li> : null
+              })}
+            </ul>}
+            {/* Can't tell is a footnote, not a figure: it says nothing about their word */}
+            {(readable > 1 || nUnclear > 0) && <p className="sub tally-note">
+              {readable > 1 && `Promises with a number and a date, from the ${readable - 1 === 1 ? 'call' : `${readable - 1} calls`} before the latest one.`}
+              {nUnclear > 0 && `${readable > 1 ? ' ' : ''}${nUnclear} can’t be told from what they’ve reported.`}
+            </p>}
+          </div>
+        )}
 
-        {settledRows.length > 0 && <ul className="rows plist">
-          {settledRows.map(p => <PromiseRow key={p.id} p={p} src={c.source} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}
-        </ul>}
+        {/* What's been settled leads, figure by figure; what's still running waits one tap away */}
+        {settledRows.length > 0 && <><h3 className="sec-head pgrid-head">Promise by promise</h3>
+          <ul className="og pgrid">{settledRows.map(p => <PromiseItem key={p.id} p={p} src={c.source} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul></>}
         {running.length > 0 && (settledRows.length
-          ? <Fold title="Still running" count={running.length} open={showRunning} toggle={() => setShowRunning(!showRunning)}
-              line={`Not due yet${nUnclear ? `, or can’t be told from what they’ve reported` : ''}`}>
-              <ul className="rows plist">{running.map(p => <PromiseRow key={p.id} p={p} src={c.source} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>
+          ? <Fold title="Still running" count={running.length} open={showRunning} toggle={() => setShowRunning(!showRunning)}>
+              <ul className="og pgrid fold-body">{running.map(p => <PromiseItem key={p.id} p={p} src={c.source} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>
             </Fold>
-          : <ul className="rows plist">{running.map(p => <PromiseRow key={p.id} p={p} src={c.source} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>)}
+          : <><h3 className="sec-head pgrid-head">Promise by promise</h3><ul className="og pgrid">{running.map(p => <PromiseItem key={p.id} p={p} src={c.source} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul></>)}
 
         {soft.length > 0
-          ? <Fold title="Said without a number or date" count={soft.length} open={showSoft} toggle={() => setShowSoft(!showSoft)}
-              line="Not graded: nothing to hold them to">
+          ? <Fold title="Said without a number or date" count={soft.length} open={showSoft} toggle={() => setShowSoft(!showSoft)}>
               <ul className="soft-list">{soft.map(p => <SoftRow key={p.id} p={p} open={openId === p.id} toggle={() => setOpenId(openId === p.id ? null : p.id)} />)}</ul>
             </Fold>
-          : softTalk > 0 && <p className="small soft-note">Plus {softTalk} {softTalk === 1 ? 'statement' : 'statements'} with no number or date. Not graded.</p>}
+          : softTalk > 0 && <p className="sub soft-note">Plus {softTalk} {softTalk === 1 ? 'statement' : 'statements'} with no number or date. Not graded.</p>}
       </section>
 
-      {ask}
+      {/* The page's one blue block: what to ask them next */}
       {c.questions.length > 0 && (
-        <section className="sec next-call">
-          <h2 className="head">Ask on the next call</h2>
+        <section className="ask lead">
+          <h2 className="sec-head ask-head">Ask on the next call</h2>
           <ol>{c.questions.map((x, i) => <li key={i}>{rupees(x)}</li>)}</ol>
-          <CopyQuestions name={title || shortName(c.name)} qs={c.questions.map(rupees)} />
+          <CopyQuestions name={name} qs={c.questions.map(rupees)} />
         </section>
       )}
 
+      {ask && <Fold title={`Ask about ${name}`} open={fold === 'ask'} toggle={() => toggle('ask')}><div className="fold-body">{ask}</div></Fold>}
+
       {newHard.length > 0 && (
-        <Fold title="New on the latest call" count={newHard.length} line={`From the ${newHard[0]?.period} call; too new to check against results`} open={showOpen} toggle={() => setShowOpen(!showOpen)}>
+        <Fold title="New on the latest call" count={newHard.length} open={showOpen} toggle={() => setShowOpen(!showOpen)}>
           <ul className="open-list fold-body">
             {newHard.map((p, i) => (
               <li key={i}>
@@ -132,7 +146,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back, ask }:
         </Fold>
       )}
 
-      <Fold title="The numbers" line={lastQ ? `The ${lastQ.q} quarter, ${s.years.length} years of revenue and profit${s.financial ? '' : ', cash and debt'}` : `${s.years.length} years of revenue and profit`} open={fold === 'num'} toggle={() => toggle('num')}>
+      <Fold title="The numbers" open={fold === 'num'} toggle={() => toggle('num')}>
         <div className="fold-body">
           {lastQ && (
             <div className="fig-grid">
@@ -169,7 +183,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back, ask }:
       </Fold>
 
       {(c.bull.length > 0 || c.bear.length > 0) && (
-        <Fold title="For and against" line={`${c.bull.length} ${c.bull.length === 1 ? 'point' : 'points'} for, ${c.bear.length} against`} open={fold === 'case'} toggle={() => toggle('case')}>
+        <Fold title="For and against" open={fold === 'case'} toggle={() => toggle('case')}>
           <div className="case fold-body">
             <div><h3 className="lbl lbl-quiet">For</h3><ul>{c.bull.map((x, i) => <li key={i}>{rupees(x)}</li>)}</ul></div>
             <div><h3 className="lbl lbl-quiet">Against</h3><ul>{c.bear.map((x, i) => <li key={i}>{rupees(x)}</li>)}</ul></div>
@@ -177,7 +191,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back, ask }:
         </Fold>
       )}
 
-      <Fold title="Read for this page" line={`${readable} earnings ${readable === 1 ? 'call' : 'calls'}${pages ? `, ${pages} pages` : ''}, and the filed results`} open={fold === 'src'} toggle={() => toggle('src')}>
+      <Fold title="Read for this page" open={fold === 'src'} toggle={() => toggle('src')}>
         <div className="sources fold-body">
           <ul>
             {c.calls.map(x => {
@@ -208,16 +222,45 @@ function Fig({ label, value, unit, sub }: { label: string; value: string; unit?:
   return <div className="fig og-item"><Outcome size={value.length > 9 ? 'xxs' : value.length > 5 ? 'xs' : 's'} value={value} unit={unit} /><span className="og-d1">{label}</span>{sub && <span className="og-d2">{sub}</span>}</div>
 }
 
-// One promise as a row: what they promised, its verdict and when it was said. It opens on the before-and-after
-function PromiseRow({ p, src, open, toggle }: { p: Promise_; src?: string; open: boolean; toggle: () => void }) {
+// The figure they promised, pulled from the promise itself: '15%', '₹5,600–5,800 cr', '0.8–0.9×'.
+// A number glued to letters ('FY26', 'Q3', 'Lakshya 31' is fine) is a date or a name, not the figure; so is a bare year.
+const FIG = /(₹\s?|\$)?(\d[\d,]*(?:\.\d+)?)(?:\u2060?[–-]\u2060?(\d[\d,]*(?:\.\d+)?))?\s?(%|x\b|×|bps|lakh\scrore|crore|cr\b|GW|MW|MVA|days|months|years|million tons?|million|billion|trillion|lakh|KTPA|MTPA)?s?(?![a-z])/gi
+function promised(t: string): [string, string] | null {
+  // '12 to 15 percent', '23% to 24%' -> '12–15%', '23–24%'
+  const txt = rupees(t).replace(/\bpercent\b/gi, '%').replace(/\s+%/g, '%')
+    .replace(/(\d+(?:\.\d+)?)\s(billion|million|crore) to (\d+(?:\.\d+)?)\s\2/g, '$1–$3 $2')
+    .replace(/(\d+(?:\.\d+)?)%?[\s\u2060]*(?:to|[-–])[\s\u2060]*(\d+(?:\.\d+)?)(?=\s?%)/g, '$1–$2').replace(/(\d+(?:\.\d+)?)\s+to\s+(\d+(?:\.\d+)?)/g, '$1–$2')
+  for (const m of txt.matchAll(FIG)) {
+    if (/[A-Za-z]$/.test(txt.slice(0, m.index))) continue
+    // A bare number ('plant 2', 'August 25', 'mid-20s') says nothing on its own; only a unit or a currency makes it the figure
+    if (!m[1] && !m[4]) continue
+    const u = m[4] || '', unit = /^x$/i.test(u) ? '×' : /^crore$/i.test(u) ? 'cr' : /^lakh\scrore$/i.test(u) ? 'lakh cr' : /^(mva|gw|mw|ktpa|mtpa|bps)$/i.test(u) ? (u.toLowerCase() === 'bps' ? 'bps' : u.toUpperCase()) : u.toLowerCase()
+    return [`${m[1] ? m[1].trim() : ''}${m[2]}${m[3] ? `–${m[3]}` : ''}`, unit === '%' || unit === '×' ? unit : unit ? ` ${unit}` : '']
+  }
+  // A count of things: 'Add 6 new branches', '50 new branches', '100–200 trucks'
+  const n = txt.match(/(?<![\w.])(\d[\d,]*(?:–\d[\d,]*)?)\s+(?:new\s+|more\s+|additional\s+)?(branches|clients|stores|trucks|rooftops|ships|rakes|products|plants|tires|outlets|customers)\b/i)
+  if (n) return [n[1], ` ${n[2].toLowerCase()}`]
+  return null
+}
+// No figure in the promise: the year it's due, as they named it ('FY26'), else when it was said
+const dueFig = (p: Promise_) => `${p.target} ${deadline(p)}`.match(/\b(Q\d\s)?FY\d\d\b|\b20\d\d\b/)?.[0]
+
+// One promise as an outcome, as v4 set it: the figure, what they said, the verdict word. Tap for the quote and what the filings showed
+function PromiseItem({ p, src, open, toggle }: { p: Promise_; src?: string; open: boolean; toggle: () => void }) {
+  const fig = promised(p.target), due = fig ? undefined : dueFig(p)
+  const len = (fig?.[0] || '').replace(/\u2060/g, '').length + (fig?.[1] || '').trim().length
+  const size = !fig ? 'xs' : len <= 5 ? 's' : len <= 6 ? 'm' : len <= 9 ? 'xs' : 'xxs'
   return (
-    <li className={`prow${open ? ' open' : ''}`} data-pid={p.id}>
-      <button className="prow-head" aria-expanded={open} onClick={toggle}>
-        <span className="prow-t">{promiseLine(p)}</span>
-        <span className="prow-meta"><StatusLabel status={p.status} /><span className="small">Said {p.period.replace(/ 20/, ' ’')}</span></span>
-        <svg className="chev" viewBox="0 0 16 16" aria-hidden><path d="M3.5 6l4.5 4.5L12.5 6" /></svg>
+    <li className={`og-item p-item st-${p.status}${open ? ' open' : ''}`} data-pid={p.id}>
+      <button className="og-btn" aria-expanded={open} onClick={toggle}>
+        {/* Figures sit in one 48 px band, so the sentences under them start level across the row */}
+        <span className="p-fig">{fig ? <Outcome size={size} value={fig[0]} unit={fig[1]} /> : due ? (/^FY\d\d$/.test(due) ? <Outcome size="s" pre="FY" value={due.slice(2)} /> : <Outcome size={due.length > 5 ? 'xs' : 's'} value={due} />) : null}</span>
+        <span className="og-d1">{promiseLine(p)}.</span>
+        <span className="og-d2">Said {p.period.replace(/ 20/, ' ’')}</span>
       </button>
-      <Accordion open={open}><div className="prow-body"><BeforeAfter p={p} inRow src={src} /></div></Accordion>
+      <StatusLabel status={p.status} />
+      <Accordion open={open}><div className="p-detail"><BeforeAfter p={p} inRow src={src} /></div></Accordion>
+      {!open && <button className="og-link" onClick={toggle}>See what they said</button>}
     </li>
   )
 }
@@ -246,5 +289,5 @@ function CopyQuestions({ name, qs }: { name: string; qs: string[] }) {
   if (!navigator.clipboard) return null
   const copy = () => navigator.clipboard.writeText(`${name}: ask on the next call\n${qs.map((q, i) => `${i + 1}. ${q}`).join('\n')}`)
     .then(() => { setDone(true); setTimeout(() => setDone(false), 2000) }).catch(() => { /* clipboard refused: nothing to undo */ })
-  return <button className="btn btn-line copy" onClick={copy} aria-live="polite">{done ? 'Copied' : 'Copy the questions'}</button>
+  return <button className="text-btn copy" onClick={copy} aria-live="polite">{done ? 'Copied' : 'Copy the questions'}</button>
 }

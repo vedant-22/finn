@@ -95,7 +95,7 @@ export function App() {
     markSeen(push.asof)
   }, [push?.asof])  // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (err) return <div className="boot"><Mark /><p>Couldn’t load your filings. {plainError(err)}</p><button className="btn" onClick={() => location.reload()}>Try again</button></div>
+  if (err) return <div className="boot"><Mark /><p className="serif-line">Couldn’t load your filings. {plainError(err)}</p><button className="btn-primary" onClick={() => location.reload()}>Try again</button></div>
   if (!push || !brief) return <BootSkeleton />
   const holding = (s?: string) => push.portfolio.find(p => p.symbol === s)
   const tab: Tab = !route.sym ? route.tab : prev.startsWith('#/book') ? 'book' : prev.startsWith('#/ask') ? 'ask' : prev ? 'brief' : holding(route.sym) ? 'book' : 'ask'
@@ -139,16 +139,13 @@ export function App() {
   )
 }
 
-// The first paint, before the snapshot arrives: the brief's shape in grey
+// The first paint, before the snapshot arrives: Today's shape in grey, a warm card where the first one will be
 function BootSkeleton() {
   return (
-    <main className="screen brief" aria-busy="true" aria-label="Loading the brief">
-      <header className="top"><Mark label="FINN, loading" /></header>
-      <section className="hero"><div className="skel skel-line short" /><div className="skel skel-fig" /><div className="skel skel-line" /><div className="skel skel-line short" /><div className="skel skel-pill" /></section>
-      <section className="sec">
-        <div className="skel skel-head" />
-        <ul className="notifs">{[0, 1].map(k => <li key={k} className="notif skel-row"><div><div className="skel skel-name" /><div className="skel skel-line" /><div className="skel skel-line short" /></div><div className="skel skel-num" /></li>)}</ul>
-      </section>
+    <main className="screen today" aria-busy="true" aria-label="Loading">
+      <header className="mast"><Mark label="FINN, loading" /></header>
+      <section className="hero"><div className="skel skel-line short" /><div className="skel skel-fig" /><div className="skel skel-line" /><div className="skel skel-line short" /></section>
+      <div className="card skel-card"><div className="card-img" /><div className="skel skel-line short" /><div className="skel skel-name" /><div className="skel skel-line" /></div>
     </main>
   )
 }
@@ -207,21 +204,21 @@ function CompanyRoute({ push, openCompany, sym, pid, sector, title, close, bars,
     return () => { live = false }
   }, [sym, attempt])
   if (c) return <CompanyView c={c} focus={pid} sector={sector} title={title} close={close} bars={bars} back={back}
-    ask={<AskHere push={push} symbol={c.symbol} name={title || shortName(c.name)} openCompany={openCompany} cls="sec ask-here" />} />
+    ask={<AskHere push={push} symbol={c.symbol} name={title || shortName(c.name)} openCompany={openCompany} bare />} />
   const notFound = /NotFound|404/.test(failed)
   return (
     <main className="screen building">
       {/* The same header the finished company page opens on, so one becomes the other */}
       <BackBar back={back} />
       <div className="co-top">
-        {(sector || title) && <p className="small kicker">{[sector, title && sym].filter(Boolean).join(', ')}</p>}
-        <h1 className="title">{title || sym}</h1>
-        {!failed && steps.length === 0 && slow && <p className="sub opening"><span className="dot-run" />Opening the ledger</p>}
-        {!failed && steps.length > 0 && <p className="lede">Reading its last five earnings calls and filed results. About a minute.</p>}
-        {notFound && <p className="lede">There’s no NSE company with the symbol {sym}. Check the spelling, or type part of the name.</p>}
+        <p className="lbl lbl-quiet co-sector">{[sector || 'NSE', sym].join(', ')}</p>
+        <h1 className="co-name">{title || sym}</h1>
+        {!failed && steps.length === 0 && slow && <p className="co-meta opening"><span className="dot-run" />Opening the ledger</p>}
+        {!failed && steps.length > 0 && <p className="co-meta">Reading its last five earnings calls and filed results. About a minute.</p>}
+        {notFound && <p className="co-meta">There’s no NSE company with the symbol {sym}. Check the spelling, or type part of the name.</p>}
       </div>
       {notFound ? <div className="not-found">
-        <a className="btn btn-line" href="#/ask">Ask about another</a>
+        <a className="btn-outline" href="#/look">Look up another</a>
       </div> : <>
       <ul className="steps">
         {steps.map((s, i) => (
@@ -235,15 +232,15 @@ function CompanyRoute({ push, openCompany, sym, pid, sector, title, close, bars,
       {failed && <div className="fail-box">
         <p className="fail-msg">{plainError(failed)}</p>
         <div className="fail-acts">
-          <button className="btn" onClick={() => setAttempt(a => a + 1)}>Try again</button>
-          <a className="btn btn-line" href="#/ask">Pick another</a>
+          <button className="btn-primary" onClick={() => setAttempt(a => a + 1)}>Try again</button>
+          <a className="btn-outline" href="#/look">Pick another</a>
         </div>
         {/* Out of quota, the companies FINN has already read still open: list them rather than send the investor looking */}
         {/429|RESOURCE_EXHAUSTED|quota/i.test(failed) && <>
-          <h2 className="small kicker ready-h">Ready now, outside your book</h2>
-          <ul className="rows">{Object.keys(names).filter(s => !push.portfolio.some(p => p.symbol === s)).sort((a, b) => names[a].localeCompare(names[b])).map(s =>
-            <li key={s}><button className="row" onClick={() => openCompany(s)}><span>{names[s]}</span><span className="small">{s}</span></button></li>)}</ul>
-          <p className="small">Your {push.portfolio.length} holdings are in <a className="link-inline" href="#/book">Book</a>.</p>
+          <h2 className="lbl lbl-quiet ready-h">Ready now, outside your book</h2>
+          <ul className="chips">{Object.keys(names).filter(s => !push.portfolio.some(p => p.symbol === s)).sort((a, b) => names[a].localeCompare(names[b])).map(s =>
+            <li key={s}><button className="btn-outline" onClick={() => openCompany(s)}>{names[s]}</button></li>)}</ul>
+          <p className="sub ready-note">Your {push.portfolio.length} holdings are in <a className="see" href="#/book">Book</a>.</p>
         </>}
       </div>}</>}
     </main>

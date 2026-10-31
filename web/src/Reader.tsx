@@ -58,9 +58,10 @@ function ItemPage({ i, push, lines, name, openCompany, openLines }: { i: Item; p
   const others = i.story?.filings.filter(x => x !== f) || []
   const top = i.with?.lead.people?.some(p => p.seniority === 'top')
   // The sentence under the name: what happened, in plain words. The figures it would repeat are in the table
-  const lede = m && f?.results ? `${top && i.with ? withLine(i.with) + ' ' : ''}${m.chg >= 0 ? 'Up' : 'Down'} on its results, on ${m.volX.toFixed(1)}× its usual volume. Closed at ₹${m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.`
+  const closed = m ? `Closed at ₹${m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.` : ''
+  const lede = m && f?.results ? `${top && i.with ? withLine(i.with) + ' ' : ''}${m.chg >= 0 ? 'Up' : 'Down'} on its ${f.results.quarter} results. ${closed}`
     : f?.results ? `${top && i.with ? withLine(i.with) + ' ' : ''}${f.results.quarter} results, filed ${shortDay(i.at)}.`
-      : m ? `On ${m.volX.toFixed(1)}× its usual volume. Closed at ₹${m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}. ${moveWhy(m)}`
+      : m ? `${closed} ${moveWhy(m)}`
         : itemLine(i)
   return <>
     {/* The card's own top, grown: the price line, what kind, the name, the day's move */}
@@ -68,7 +69,7 @@ function ItemPage({ i, push, lines, name, openCompany, openLines }: { i: Item; p
       {bars.length > 4 && <div className="card-img"><Chart series={bars} /></div>}
       <div className="card-lbl"><span className="lbl">{kindLabel(i, push)}</span><span className="lbl lbl-quiet">{shortDay(m ? m.d : i.at)}</span></div>
       <h1 className="t-h1 iv-name"><button onClick={() => openCompany(i.symbol)}>{name}</button></h1>
-      {fig && <div className="card-fig"><Outcome size="m" value={fig.v.replace('%', '')} unit="%" /><span className="card-cap">{fig.c.charAt(0).toUpperCase() + fig.c.slice(1)}, last {bars.length} sessions shown</span></div>}
+      {fig && <div className="card-fig"><Outcome size="m" value={fig.v.replace('%', '')} unit="%" /><span className="card-cap">{fig.c.charAt(0).toUpperCase() + fig.c.slice(1)}{m ? `, on ${m.volX.toFixed(1)}× its usual volume` : ''}</span></div>}
       {f && !f.results && f.amount_cr != null && f.amount_cr >= 1 && <div className="card-fig"><Outcome size="m" value={`₹${cr(f.amount_cr)}`} unit="cr" />{f.pct_rev != null && <span className="card-cap">{f.pct_rev < 0.1 ? 'Under 0.1%' : `${f.pct_rev.toFixed(f.pct_rev < 1 ? 1 : 0)}%`} of a year’s revenue</span>}</div>}
       <p className="serif-line">{lede}</p>
       <p className="iv-line"><span>{crossedText(i, lines)}.</span> <button className="see" onClick={openLines}>Change</button></p>
@@ -143,7 +144,7 @@ function Held({ i, name, res, openCompany }: { i: Item; name: string; res?: any;
 }
 
 // Ask, in place: the questions this company's ledger can answer, answered here
-export function AskHere({ push, symbol, name, openCompany, cls }: { push: Push; symbol: string; name: string; openCompany: (s: string, pid?: number) => void; cls?: string }) {
+export function AskHere({ push, symbol, name, openCompany, bare }: { push: Push; symbol: string; name: string; openCompany: (s: string, pid?: number) => void; bare?: boolean }) {
   const { known, names } = useKnown(push)
   const [c, setC] = useState<Company | null>(null)
   const [q, setQ] = useState('')
@@ -151,8 +152,8 @@ export function AskHere({ push, symbol, name, openCompany, cls }: { push: Push; 
   const qs = useMemo(() => suggestions(c, name), [c, name])
   if (!qs.length) return null
   return (
-    <section className={cls || 'iv-sec'} aria-label={`Ask about ${name}`}>
-      <h2 className="t-b1">Ask FINN</h2>
+    <section className={bare ? 'ask-here' : 'iv-sec ask-here'} aria-label={`Ask about ${name}`}>
+      {!bare && <h2 className="t-b1">Ask FINN</h2>}
       <div className="asks">{qs.map(x => <button key={x} className={`ask-chip${q === x ? ' on' : ''}`} aria-pressed={q === x} onClick={() => setQ(q === x ? '' : x)}>{x}</button>)}</div>
       {q && <Answer q={q} known={known} names={names} openCompany={openCompany} inline />}
     </section>
