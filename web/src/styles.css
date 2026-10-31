@@ -136,8 +136,10 @@ table { border-collapse: collapse; }
 .card-foot .read-more { align-self: center; }
 
 /* accordion: grid rows 0fr -> 1fr, 200ms decelerate in, 100ms out; the content fades up as it opens */
-.acc { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 100ms var(--std); }
-.acc.open { grid-template-rows: 1fr; transition-duration: 240ms; transition-timing-function: var(--decel); }
+/* a fold makes its room at once and its content rises into it by transform and opacity: no height is animated,
+   so nothing below is dragged and no row is clipped mid-way */
+.acc { display: grid; grid-template-rows: 0fr; }
+.acc.open { grid-template-rows: 1fr; }
 .acc-in { overflow: hidden; min-height: 0; }
 .acc-in > * { opacity: 0; transform: translateY(6px); transition: opacity 120ms, transform 120ms; }
 .acc.open .acc-in > * { opacity: 1; transform: none; transition: opacity 300ms var(--decel) 60ms, transform 300ms var(--decel) 60ms; }
