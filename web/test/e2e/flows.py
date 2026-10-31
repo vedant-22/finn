@@ -78,6 +78,14 @@ async def main():
         check('book answer is about the holdings', 'of your 18 holdings' in await pg.locator('.answer > .sub').inner_text())
         await pg.locator('#ask').fill('ASTRAL'); await pg.keyboard.press('Enter'); await pg.wait_for_timeout(600)
         check('unknown company offers research', await pg.get_by_role('button', name='Read ASTRAL').count() == 1)
+        # A kind of filing switched off leaves the brief: the week's new MD & CEO goes when management changes are off
+        await pg.goto(base + '/#/'); await pg.evaluate('localStorage.clear()'); await pg.reload(wait_until='domcontentloaded'); await pg.wait_for_timeout(1500)
+        await pg.get_by_role('radio', name='Week', exact=True).click(); await pg.wait_for_timeout(500)
+        ceo = lambda: pg.locator('.notif', has_text='new MD & CEO').count()
+        had = await ceo()
+        await pg.locator('.notif-line').first.click(); await pg.wait_for_timeout(500)
+        await pg.get_by_role('switch', name='Management change').click(); await pg.keyboard.press('Escape'); await pg.wait_for_timeout(500)
+        check('a filing kind switched off leaves the brief', had == 1 and await ceo() == 0, (had, await ceo()))
         # All quiet: strict lines, and the brief offers the nearest wider window that has something
         await pg.goto(base + '/#/'); await pg.evaluate('localStorage.clear(); localStorage.setItem("finn.lines", JSON.stringify({hours: 24, volX: 50, movePct: 15, interrupt: []}))'); await pg.reload(wait_until='domcontentloaded'); await pg.wait_for_timeout(1500)
         wide = pg.locator('.hero .link')
