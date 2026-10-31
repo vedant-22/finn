@@ -18,6 +18,8 @@ Each entry: what I chose, what I passed on, and why.
 
 **Ask shows what's ready outside the book.** When an idea comes up, the investor's first question is whether FINN can talk about that company yet. Ask's empty state lists the four companies FINN has read beyond the portfolio, then one it hasn't (ASTRAL, "Not read yet"), so it's clear any symbol works and what that costs (about a minute).
 
+**Against their word starts with this year's guidance.** A results item used to show only the last promise that fell due, which for L&T was a FY26 miss everyone already knew about. This quarter counts toward FY27, so the section now opens on the guidance still running for this financial year, with this quarter's revenue growth beside it when both are about revenue ("Guided for FY27: revenue growth 10–12%. This quarter, revenue grew 15.8% on a year ago."). There's no verdict on it: one quarter isn't the year. Segment margins and returns aren't put next to the consolidated table, because they measure something else.
+
 **Passed on:** chat as the home screen (typing is the slowest way to ask a phone anything, and a blank box hands the filtering back to the investor); a dashboard of tiles (aggregation, which the brief says isn't the scarce skill); voice as the main mode (fine on a commute, useless in a meeting). Voice stays as a Listen control that reads the brief aloud with the browser's own speech.
 
 ## Product
