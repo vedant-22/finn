@@ -176,14 +176,26 @@ export async function getPush(fresh = false): Promise<Push> {
 }
 export const forgetCompanies = () => cache.clear()
 export const cachedCompany = (sym: string) => cache.get(sym.toUpperCase()) ?? null
+// One request per company at a time: the reader's item, its word and its Ask chips all ask for the same file
+const inflight = new Map<string, Promise<Company | null>>()
 export async function getCompany(sym: string): Promise<Company | null> {
   sym = sym.toUpperCase()
   if (cache.has(sym)) return cache.get(sym)!
   const local = localStorage.getItem(`finn.c.${sym}`)
   if (local) { const c = JSON.parse(local); cache.set(sym, c); return c }
-  const r = await fetch(`/data/companies/${sym}.json`)
-  if (!r.ok || !(r.headers.get('content-type') || '').includes('json')) return null
-  const c = await r.json(); cache.set(sym, c); return c
+  if (!inflight.has(sym)) inflight.set(sym, loadCompany(sym).finally(() => inflight.delete(sym)))
+  return inflight.get(sym)!
+}
+// A dropped connection gets one more try, so a blip doesn't leave an item without its word
+async function loadCompany(sym: string, tries = 2): Promise<Company | null> {
+  try {
+    const r = await fetch(`/data/companies/${sym}.json`)
+    if (!r.ok || !(r.headers.get('content-type') || '').includes('json')) return null
+    const c = await r.json(); cache.set(sym, c); return c
+  } catch (e) {
+    if (tries < 2) throw e
+    await new Promise(res => setTimeout(res, 600)); return loadCompany(sym, tries - 1)
+  }
 }
 export function remember(c: Company) {
   cache.set(c.symbol, c)
