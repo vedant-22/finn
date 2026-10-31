@@ -78,3 +78,10 @@ test('this year’s revenue guide reads against the quarter: ahead, on track or 
   // order inflows are not revenue
   assert.equal(pace(lt.ledger.find(p => /order inflows/.test(p.target)), 20), null)
 })
+
+test('one settled promise is named by its own word in the headline', () => {
+  assert.equal(verdictHead([{ status: 'partly' }]), 'partly kept')
+  assert.equal(verdictHead([{ status: 'quiet' }]), 'gone quiet')
+  assert.equal(verdictHead([{ status: 'missed' }]), 'missed')
+  assert.equal(verdictHead([{ status: 'kept' }, { status: 'missed' }]), 'kept 1 of 2')
+})
