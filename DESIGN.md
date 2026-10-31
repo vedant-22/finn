@@ -4,8 +4,8 @@ FINN shows the few things that need you today, and whether management kept its w
 
 ## Idea
 - **Calm on entry.** The first screen holds the wordmark, one count ("2 need you"), one grey sentence naming the companies, the window, and the top of the first card. No buttons to press, no settings.
-- **Progressive disclosure.** A card says what happened in one line; Read more grows it into its full view. The rest of the window sits in two folds, Worth a look and Routine filings.
-- **One family for the interface.** Inter sets every title and figure, and every label and control. PT Serif in roman grey sets only for the sentence under a title and for quotes. No italics, no serif figures.
+- **Progressive disclosure.** A card says what happened in one line; Read more grows it into its full view. The rest of the window sits in two folds below the cards: Worth a look; Routine filings.
+- **One family for the interface.** Inter sets every title and figure; it also sets labels and controls. PT Serif in roman grey sets only the sentence under a title, and quotes. No italics, no serif figures.
 - **A status is a small capital word in its colour.** Missed, Gone quiet, Kept, Partly kept, Not due. No glyphs.
 
 ## Colour
