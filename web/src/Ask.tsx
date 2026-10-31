@@ -56,7 +56,7 @@ export function AskScreen({ push, q0, openCompany }: { push: Push; q0?: string; 
       </header>
       <form className="ask-form" onSubmit={e => { e.preventDefault(); submit(q) }}>
         <label htmlFor="ask" className="sr-only">Your question</label>
-        <input id="ask" ref={inRef} value={q} onChange={e => setQ(e.target.value)} placeholder="Did L&T deliver on margins?" autoComplete="off" autoCorrect="off" spellCheck={false} enterKeyHint="search" />
+        <input id="ask" ref={inRef} value={q} onChange={e => setQ(e.target.value)} placeholder={asked ? 'Ask another question' : 'Did L&T deliver on margins?'} autoComplete="off" autoCorrect="off" spellCheck={false} enterKeyHint="search" />
         <Mic onText={t => { setQ(t); submit(t) }} />
         <button type="submit" className="ask-go" aria-label="Ask"><svg viewBox="0 0 16 16" aria-hidden><path d="M3 8h9.5M8.5 3.5L13 8l-4.5 4.5" /></svg></button>
       </form>
