@@ -343,15 +343,14 @@ table { border-collapse: collapse; }
 .bring { margin-top: 20px; }
 
 /* ---------- book ---------- */
-.tally { margin-top: 24px; }
-.tally ul { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--rule); }
-.tally li { border-bottom: 1px solid var(--rule); }
-.tally li:nth-child(odd) { border-right: 1px solid var(--rule); }
-.tally-b { display: grid; width: 100%; padding: 16px 0 14px; min-height: 44px; }
-.tally li:nth-child(even) .tally-b { padding-left: 18px; }
-/* figures you look at are in the serif, like the brief's count and the alert figures */
-.tally-n { font: 380 48px/1 var(--serif); letter-spacing: -0.02em; font-variant-numeric: tabular-nums lining-nums; font-optical-sizing: auto; }
-.tally-w { font-weight: 500; margin-top: 6px; }
+.tally { margin-top: 20px; }
+/* One row of four counts, each a filter: the holdings start on the first screen */
+.tally ul { display: grid; grid-template-columns: repeat(4, minmax(min-content, 1fr)); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.tally li + li { border-left: 1px solid var(--rule); }
+.tally-b { display: grid; justify-items: start; width: 100%; padding: 12px 8px 10px 12px; min-height: 44px; text-align: left; }
+.tally li:first-child .tally-b { padding-left: 0; }
+.tally-n { font: 400 28px/1 var(--serif); letter-spacing: -0.01em; font-variant-numeric: tabular-nums lining-nums; }
+.tally-w { font-size: 13px; color: var(--ink-2); margin-top: 6px; white-space: nowrap; }
 .t-missed .tally-n, .t-missed .tally-w { color: var(--missed); }
 .t-kept .tally-n, .t-kept .tally-w { color: var(--kept); }
 .tally-b[aria-pressed="true"] { background: var(--tint); }

@@ -56,9 +56,9 @@ async def main():
         check('bring back', (await fig()).replace('\n', ' ') == '2 to read')
         # Book: filter, open a company, Back keeps the scroll
         await pg.goto(base + '/#/book'); await pg.wait_for_timeout(2500)
-        await pg.locator('.tally-b').first.click(); await pg.wait_for_timeout(400)
+        await pg.locator('.tally-b.t-missed').click(); await pg.wait_for_timeout(400)
         check('book filter', 'with a promise missed' in await pg.locator('.book .sec .head').inner_text())
-        await pg.locator('.tally-b').first.click(); await pg.wait_for_timeout(300)
+        await pg.locator('.tally-b.t-missed').click(); await pg.wait_for_timeout(300)
         await pg.evaluate('scrollTo(0,900)'); await pg.wait_for_timeout(400); y0 = await pg.evaluate('scrollY')
         await pg.locator('.hold').nth(6).click(); await pg.wait_for_timeout(1500)
         check('company opens', await pg.locator('.co-top .title').count() == 1)

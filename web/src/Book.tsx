@@ -17,7 +17,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
     <Masthead />
     <header className="page-head">
       <h1 className="title">Your book</h1>
-      <p className="sub">{push.portfolio.length} holdings, weakest word first. Promises from each company’s last earnings calls, checked against filed results.</p>
+      <p className="sub">{push.portfolio.length} holdings, weakest record first: the lowest share of promises kept.</p>
     </header>
     {tally}
   </>
@@ -28,9 +28,10 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
 
   const rows = push.portfolio.map(p => ({ p, c: cos[p.symbol], score: wordScore(cos[p.symbol] || undefined) }))
   const missed = (c?: Company | null) => c ? c.ledger.filter(x => x.hard && x.status === 'missed').length : 0
-  // Kept share with one kept and one not added, so 0 of 1 doesn't outrank 1 of 7
-  const share = (s: ReturnType<typeof wordScore>) => s?.graded ? (s.kept + 1) / (s.graded + 2) : 2
-  rows.sort((a, b) => share(a.score) - share(b.score) || missed(b.c) - missed(a.c) || (b.score?.graded ?? 0) - (a.score?.graded ?? 0))
+  // The share kept, as the row prints it, so the order can be read off the screen: 0 of 1 before 1 of 7.
+  // Ties go to the longer record, then to more misses; nothing due yet comes last
+  const share = (s: ReturnType<typeof wordScore>) => s?.graded ? s.kept / s.graded : 2
+  rows.sort((a, b) => share(a.score) - share(b.score) || (b.score?.graded ?? 0) - (a.score?.graded ?? 0) || missed(b.c) - missed(a.c))
   const shown = only ? rows.filter(r => r.c?.ledger.some(x => x.hard && x.status === only)) : rows
 
   return (
@@ -76,16 +77,15 @@ function BookTally({ cos, only, setOnly }: { cos: (Company | null | undefined)[]
   if (!all.length) return null
   const n = (st: Status) => all.filter(p => p.status === st).length
   const teams = (st: Status) => cos.filter(c => c?.ledger.some(p => p.hard && p.status === st)).length
-  const items: [Status, string][] = [['missed', 'missed'], ['quiet', 'gone quiet'], ['kept', 'kept'], ['pending', 'not due yet']]
+  const items: [Status, string][] = [['kept', 'kept'], ['missed', 'missed'], ['quiet', 'gone quiet'], ['pending', 'not due']]
   return (
     <section className="tally" aria-label="Promises across your book">
       <ul>
         {items.map(([st, word]) => (
           <li key={st}>
-            <button className={`tally-b t-${st}`} aria-pressed={only === st} onClick={() => setOnly(only === st ? null : st)}>
+            <button className={`tally-b t-${st}`} aria-pressed={only === st} aria-label={`${n(st)} ${word}, at ${teams(st)} ${teams(st) === 1 ? 'company' : 'companies'}`} onClick={() => setOnly(only === st ? null : st)}>
               <span className="tally-n num"><Roll to={n(st)} /></span>
               <span className="tally-w">{word}</span>
-              <span className="small">at {teams(st)} {teams(st) === 1 ? 'company' : 'companies'}</span>
             </button>
           </li>
         ))}

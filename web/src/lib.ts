@@ -284,7 +284,9 @@ function absolute(w: string, period?: string, status?: string) {
   let label: string, ends: Date
   if (/calendar/i.test(r[3])) { label = `end of ${year + next}`; ends = new Date(year + next, 11, 31) }
   else {
-    if (month >= 3 && month <= 5) return w
+    // An April to June call is the year-end call: its 'this year' is the year just starting (guidance looks forward),
+    // but its 'next year' could be that one or the one after, so it keeps its words
+    if (month >= 3 && month <= 5 && next) return w
     const fy = (month >= 3 ? year + 1 : year) + next
     label = `${r[1] ? 'end of ' : ''}FY${String(fy % 100).padStart(2, '0')}`; ends = new Date(fy, 2, 31)
   }

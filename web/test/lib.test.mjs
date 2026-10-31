@@ -88,8 +88,8 @@ test('deadlines name the fiscal year from the call month', () => {
 })
 
 test('deadlines keep the words when the year is ambiguous or the grade has not caught up', () => {
-  // April to June calls: 'this year' may mean the year just closed
-  assert.equal(deadline(p('this year', 'May 2025')), 'by this year')
+  // April to June calls are year-end calls: 'this year' is the year just starting
+  assert.equal(deadline(p('this year', 'May 2025', 'quiet')), 'by FY26')
   // FY26 is over but the promise is still graded not due: don't print a contradiction
   assert.equal(deadline(p('this financial year', 'Nov 2025', 'pending')), 'by this financial year')
 })
