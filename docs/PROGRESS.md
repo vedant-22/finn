@@ -1,4 +1,4 @@
-Next: 1 Nov, panel round s11-2 on next (compare.py next,v4 + shots/r3 for live; shuffle letters; /tmp/finn/panel scheme in PROGRESS s11-1), then act on what two agree on. Open from s11-1: lead promises with what was delivered on the company grid; DESIGN.md Motion section (kept/removed).
+Next: 1 Nov, panel round s11-2 is out (three blind critics, /tmp/finn/panel3, key.json maps letters: c1 A=next, c2 B=next, c3 C=next; live = shots/r3). Record the scores under section 11, then fix what two agree on, ship to next, and run s11-3.
 
 ## Stage 4, section 8: the push to 10/10 (31 Oct)
 - [x] Live health (31 Oct): live and next serve HEAD's bundle; flows.py 33/33 on finn-ledger.vercel.app, no page errors; sweep.py 22 companies at 320 and 390, no sideways scroll, no NaN
