@@ -74,6 +74,12 @@ async def main():
         check('book question', 'missed' in await pg.locator('.answer > .head').inner_text())
         await pg.locator('#ask').fill('ASTRAL'); await pg.keyboard.press('Enter'); await pg.wait_for_timeout(600)
         check('unknown company offers research', await pg.get_by_role('button', name='Read ASTRAL').count() == 1)
+        # All quiet: strict lines, and the brief offers the nearest wider window that has something
+        await pg.goto(base + '/#/'); await pg.evaluate('localStorage.clear(); localStorage.setItem("finn.lines", JSON.stringify({hours: 24, volX: 50, movePct: 15, interrupt: []}))'); await pg.reload(); await pg.wait_for_timeout(1500)
+        wide = pg.locator('.hero .link')
+        check('all quiet offers a wider window', await wide.count() == 1 and 'to read' in await wide.inner_text())
+        await wide.click(); await pg.wait_for_timeout(600)
+        check('the wider window opens with its items', await pg.locator('.stops .on').inner_text() == 'Month' and await pg.locator('.notif').count() >= 1)
         check('no page errors', not errs, errs)
         await b.close()
 asyncio.run(main())

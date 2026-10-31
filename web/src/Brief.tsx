@@ -1,12 +1,14 @@
 // The brief: the few things that crossed the investor's lines, as notifications, and a way through them that ends.
 import { useEffect, useRef, useState } from 'react'
-import { isDone, remaining, type Brief, type Done, type Item } from './queue'
+import { buildBrief, isDone, remaining, type Brief, type Done, type Item } from './queue'
 import { CATEGORY_LABEL, cr, when, type Lines, type Push } from './lib'
 import { FoldSummary, NoteRow, Roll, few, moveWhy, reclass, resultLine, sizeWords, sortPeople, tidySubject } from './items'
 import { Masthead, Sheet } from './ui'
 import { alertsBlocked, alertsOn, canAlert, disableAlerts, enableAlerts } from './alerts'
 
 export const WINDOWS = [{ h: 24, label: '24 hours' }, { h: 72, label: '3 days' }, { h: 168, label: 'Week' }, { h: 720, label: 'Month' }]
+const SPAN: Record<number, string> = { 24: 'in the last 24 hours', 72: 'in the last 3 days', 168: 'in the last week', 720: 'in the last month' }
+const span = (h: number) => SPAN[h] || 'in the window'
 
 // ---------- how an item reads ----------
 const pct1 = (v: number) => `${Math.abs(v).toFixed(1)}%`
@@ -72,6 +74,8 @@ export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines
   const finished = left.total === 0
   // The figure: items to read. With none crossed, say so in words
   const n = left.items.length
+  // Nothing crossed: point to the nearest wider window that has something, with its count
+  const wider = n || finished ? undefined : WINDOWS.filter(w => w.h > lines.hours).map(w => ({ ...w, n: buildBrief(push, { ...lines, hours: w.h }).items.length })).find(w => w.n > 0)
 
   return (
     <main className="screen brief">
@@ -87,8 +91,9 @@ export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines
         <p className="hero-line">
           {finished ? summary(brief, done, kept.length, cleared)
             : n ? `${few(cos)}. ${nNotes ? `${nNotes} more worth a line; ` : ''}${brief.routine} routine ${brief.routine === 1 ? 'filing' : 'filings'} set aside.`
-              : `Nothing crossed your lines in the ${WINDOWS.find(w => w.h === lines.hours)?.label.toLowerCase() || 'window'}. ${nNotes} worth a line.`}
+              : `Nothing crossed your lines ${span(lines.hours)}.${nNotes ? ` ${nNotes} ${nNotes === 1 ? 'filing' : 'filings'} worth a line.` : ''}`}
         </p>
+        {wider && <button className="link" onClick={() => setLines({ ...lines, hours: wider.h })}>{`${span(wider.h).replace(/^in the l/, 'L')}: ${wider.n} to read`}<Arrow /></button>}
         {!finished && <div className="cta"><button className="btn btn-wide" onClick={() => openReader()}>{filled ? 'Carry on reading' : 'Read the brief'}</button></div>}
         {/* The rule appears once reading starts; empty, it looked like a loader */}
         {segs > 0 && filled > 0 && <div className="progress" role="progressbar" aria-label="Read so far" aria-valuemin={0} aria-valuemax={segs} aria-valuenow={filled}>
@@ -106,7 +111,7 @@ export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines
             {left.items.map(i => <li key={i.key}><Notif i={i} fresh={fresh.has(i.key)} name={names[i.symbol]} push={push} lines={lines} open={() => openReader(i.key)} openLines={openLines} /></li>)}
           </ul>
           {/* The list ends, and says so: knowing you've seen it all is the point */}
-          <p className="brief-end">That’s all that crossed your lines {({ 24: 'in the last 24 hours', 72: 'in the last 3 days', 168: 'this week', 720: 'this month' } as Record<number, string>)[lines.hours] || 'in the window'}.</p>
+          <p className="brief-end">That’s all that crossed your lines {span(lines.hours)}.</p>
         </section>
       )}
 
@@ -122,7 +127,7 @@ export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines
           {nNotes > 0 && <li><button className="row" onClick={() => setSheet('notes')}><span>Worth a line<span className="row-sub">The rest of the window, one line each{left.notesLeft ? '' : ', read'}</span></span><span className="row-n num">{nNotes}</span><Arrow /></button></li>}
           {brief.routine > 0 && <li><button className="row" onClick={() => setSheet('fold')}><span>Routine filings<span className="row-sub">Notices, call papers, newspaper ads</span></span><span className="row-n num">{brief.routine}</span><Arrow /></button></li>}
           <AlertsRow top={brief.items[0]} names={names} lines={lines} />
-          <li><button className="row" onClick={openLines}><span>Your lines<span className="row-sub">{`±${lines.movePct}% in a day, ${lines.volX}× volume, ${lines.interrupt.length} kinds of filing`}</span></span><Arrow /></button></li>
+          <li><button className="row" onClick={openLines}><span>Your lines<span className="row-sub">{`±${lines.movePct}% in a day, ${lines.volX}× volume, ${lines.interrupt.length ? `${lines.interrupt.length} ${lines.interrupt.length === 1 ? 'kind' : 'kinds'} of filing` : 'no filings'}`}</span></span><Arrow /></button></li>
         </ul>
       </section>
 
