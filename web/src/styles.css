@@ -214,7 +214,7 @@ table { border-collapse: collapse; }
 .iv-name button { font: inherit; letter-spacing: inherit; text-align: left; }
 .iv-line { margin-top: var(--s-3xs); font-size: 14px; line-height: 140%; color: var(--ink-2); }
 .iv-line .see { font-size: 14px; min-height: 0; padding: 12px 0; margin: -12px 0; display: inline; }
-.iv-sec { margin-top: var(--s-xl); }
+.iv-sec { margin-top: var(--s-l); }
 .iv-sec > h2 { margin-bottom: var(--s-3xs); }
 .iv-gone { padding-top: var(--s-xl); }
 .word-item { display: grid; gap: var(--s-macro); padding: var(--s-3xs) 0; border-top: 1px solid var(--rule); }

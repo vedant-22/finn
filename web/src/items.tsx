@@ -94,7 +94,7 @@ export function ResultsBlock({ f }: { f: any }) {
         Against {r.compare.prev || 'the previous quarter'} and {r.compare.yago || 'a year ago'}.
         {r.one_offs?.length > 0 && ' ' + r.one_offs.map((o: any) => `${o.q === r.quarter ? 'This quarter’s' : o.q} profit includes ${[o.tax_credit && `a ₹${cr(o.tax_credit)} cr tax credit`, o.exceptional && `₹${cr(Math.abs(o.exceptional))} cr of exceptional items`].filter(Boolean).join(' and ')}.`).join(' ')}
         {above}
-        {f.url && <> From the <a className="link-inline" href={f.url} target="_blank" rel="noreferrer">results filed with NSE</a>{filed && `, ${filed}`}.</>}
+        {f.url && <> From the <a className="src" href={f.url} target="_blank" rel="noreferrer">results filed with NSE</a>{filed && `, ${filed}`}.</>}
       </p>
     </div>
   )
@@ -141,7 +141,7 @@ function BioText({ b, fold }: { b: Bio; fold: boolean }) {
     {/* Where they worked says more than the filing's paragraph about them: the career leads, the paragraph follows */}
     {b.previous.length > 0 && <p className="bio">Before this: {b.previous.join('; ').replace(/\.?$/, '.')}</p>}
     <p className={b.previous.length ? 'prev' : 'bio'}>{b.previous.length ? plainBio(b.background) : b.background}</p>
-    {b.url && b.at && <p className="prev">From the company’s <a href={b.url} target="_blank" rel="noreferrer">{+b.at.slice(8, 10)} {MON3[+b.at.slice(5, 7) - 1].replace(/^./, c => c.toUpperCase())} filing</a></p>}
+    {b.url && b.at && <p className="prev">From the company’s <a className="src" href={b.url} target="_blank" rel="noreferrer">{+b.at.slice(8, 10)} {MON3[+b.at.slice(5, 7) - 1].replace(/^./, c => c.toUpperCase())} filing</a></p>}
   </>
 }
 

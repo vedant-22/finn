@@ -30,6 +30,8 @@ async def next_build(pg, shot, base=None):
     await top(pg, '.card'); await shot(2)
     await pg.get_by_role('radio', name='24h', exact=True).click(); await pg.wait_for_timeout(700)
     await pg.locator('.card', has_text='Larsen').locator('.read-more').click(); await pg.wait_for_timeout(1200)
+    # the company's word arrives with its file; shoot once it's in, as an investor would see it a moment after opening
+    await pg.locator('.item-view section[aria-label="Against their word"]').wait_for(timeout=8000)
     await pg.locator('.item-view .figs').evaluate('e => e.scrollIntoView({block: "center"})'); await pg.wait_for_timeout(600); await shot(3)
     await pg.locator('.item-view').get_by_role('button', name='Back').click(); await pg.wait_for_timeout(900)
     await pg.locator('.card', has_text='Syngene').locator('.read-more').click(); await pg.wait_for_timeout(1200)
