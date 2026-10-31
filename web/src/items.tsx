@@ -71,14 +71,16 @@ export function ResultsBlock({ f }: { f: any }) {
         <caption>{r.quarter}, {r.basis}, ₹ crore</caption>
         <thead><tr><th /><th>Quarter</th><th>QoQ</th><th>YoY</th></tr></thead>
         <tbody>
-          {r.lines.map((l: any) => (
-            <tr key={l.key}>
+          {r.lines.map((l: any) => {
+            // Two changes that round alike ('+16%', '+16%') read like one base used twice: show the decimal
+            const fine = l.qoq != null && l.yoy != null && pct(l.qoq) === pct(l.yoy) && l.qoq !== l.yoy
+            return <tr key={l.key}>
               <th scope="row">{l.label}</th>
               <td className="num">{cr(l.value)}</td>
-              <Chg v={l.qoq} base={l.prev} now={l.value} />
-              <Chg v={l.yoy} base={l.yago} now={l.value} />
+              <Chg v={l.qoq} base={l.prev} now={l.value} fine={fine} />
+              <Chg v={l.yoy} base={l.yago} now={l.value} fine={fine} />
             </tr>
-          ))}
+          })}
           {/* The margin is often the quarter's story; its change is in percentage points, not percent */}
           {r.ebitda_margin != null && <tr className="figs-margin">
             <th scope="row">Margin</th>
@@ -100,9 +102,9 @@ export function ResultsBlock({ f }: { f: any }) {
 
 const pp = (a: number | null, b: number | null) => a == null || b == null ? '–' : `${a - b >= 0 ? '+' : '−'}${Math.abs(a - b).toFixed(1)} pp`
 // A percentage off a loss means nothing; a swing back to profit still deserves saying
-function Chg({ v, base, now }: { v: number | null; base: number | null; now: number | null }) {
+function Chg({ v, base, now, fine }: { v: number | null; base: number | null; now: number | null; fine?: boolean }) {
   if (v == null && base != null && base < 0 && now != null && now >= 0) return <td className="num turn">from loss</td>
-  return <td className="num">{pct(v)}</td>
+  return <td className="num">{fine && v != null ? `${v > 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}%` : pct(v)}</td>
 }
 
 // Filings write 'October 30, 2026', '30th September 2026' or 'close of business hours of 30 September 2026'. Say '30 Oct'.
