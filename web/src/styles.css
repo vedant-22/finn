@@ -125,7 +125,7 @@ table { border-collapse: collapse; }
 /* on a warm panel the blue wash turns grey: the line alone */
 :is(.card, .iv-top, .book-card) .chart .wash { fill: none; }
 .card-info { display: flex; flex-direction: column; padding: var(--s-xs) 0 0; }
-.card-lbl { display: flex; justify-content: space-between; gap: 12px; }
+.card-lbl { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; min-width: 0; }
 .lbl-new { color: var(--brand); }
 .card-title { margin-top: var(--s-3xs); }
 .card-fig { display: flex; flex-direction: column; align-items: flex-start; margin-top: var(--s-3xs); }

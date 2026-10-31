@@ -255,7 +255,7 @@ function ItemCard({ i, fresh, name, push, lines, open }: { i: Item; fresh: boole
     <article className="card" ref={ref} data-key={i.key}>
       {bars.length > 4 && <PriceLine bars={bars} />}
       <div className="card-info">
-        <div className="card-lbl"><span className="lbl">{kindLabel(i, push)}</span>{fresh && <span className="lbl lbl-new">New since you last looked</span>}</div>
+        <div className="card-lbl"><span className="lbl">{kindLabel(i, push)}</span>{fresh && <span className="lbl lbl-new" title="New since you last looked">New</span>}</div>
         <h2 className="card-title">{name}</h2>
         {fig && <div className="card-fig"><Outcome size="xs" value={v} unit={u} /><span className="card-cap">{figWhen(fig.d, i)}</span></div>}
         <p className="card-desc">{body}</p>

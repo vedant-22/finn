@@ -103,6 +103,10 @@ async def main():
         check('all quiet offers a wider window', await wide.count() == 1 and 'need' in await wide.inner_text())
         await wide.click(); await pg.wait_for_timeout(600)
         check('the wider window opens with its cards', await pg.locator('.window .on').inner_text() == 'Month' and await pg.locator('.cards .card').count() >= 1)
+        # A returning investor: what arrived since the last visit is marked, and the page stays one screen wide
+        await pg.goto(base + '/#/'); await pg.evaluate('localStorage.clear(); localStorage.setItem("finn.seen", "2026-10-28T09:00:00+05:30")'); await pg.reload(wait_until='domcontentloaded'); await pg.wait_for_timeout(1500)
+        check('new since the last visit is marked', await pg.locator('.card .lbl-new').count() >= 1)
+        check('no sideways scroll for a returning investor', await pg.evaluate('document.documentElement.scrollWidth') <= 390)
         check('no page errors', not errs, errs)
         await b.close()
 asyncio.run(main())
