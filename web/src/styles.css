@@ -461,6 +461,9 @@ table { border-collapse: collapse; }
   .fig-m { font-size: 46px; }
   .r-acts .btn { padding: 0 10px; font-size: 15px; }
   .title { font-size: 25px; }
+  /* One decimal on every change widens the columns: give the row names the room back */
+  .figs { font-size: 14px; }
+  .figs td, .figs thead th + th { padding-left: 10px; }
 }
 .r-acts .btn { white-space: nowrap; }
 
