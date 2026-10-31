@@ -23,10 +23,10 @@ export function withLine(s: NonNullable<Item['with']>) {
   const v = ({ appointed: 'joins', resigned: 'resigns', retired: 'retires', ceased: 'leaves', redesignated: 'takes a new role', 're-appointed': 'is re-appointed' } as any)[p.action] || p.action
   return p.action === 'appointed' ? `A new ${shortRole(p.role)}, ${strip(p.name)}, joins.` : `Its ${shortRole(p.role)}, ${strip(p.name)}, ${v}.`
 }
-// A management change riding with results: a CEO, CFO or MD change leads the sentence, anyone else follows it
-function withFirst(i: Item, body: string) {
+// A management change riding with results: a CEO, CFO or MD change leads, anyone else follows. One fact to a line
+function withLines(i: Item, body: string[]) {
   if (!i.with) return body
-  return i.with.lead.people?.some(p => p.seniority === 'top') ? `${withLine(i.with)} ${body}` : `${body} ${withLine(i.with)}`
+  return i.with.lead.people?.some(p => p.seniority === 'top') ? [withLine(i.with), ...body] : [...body, withLine(i.with)]
 }
 export function itemTitle(i: Item, name: string): string {
   const m = i.move, f = i.story?.lead
@@ -61,6 +61,16 @@ export function crossedText(i: Item, lines: Lines): string {
   return `Your ${u.length > 1 ? 'lines' : 'line'}: ${u.length > 1 ? `${u.slice(0, -1).join(', ')} and ${u[u.length - 1]}` : u[0]}`
 }
 
+// The tag on an alert row: the thresholds the shares went past ('Past your ±4% and 2× lines'), else the kinds of filing.
+// The reader's foot lists every line crossed
+export function rowTag(i: Item, lines: Lines): string {
+  const mk = [...new Set(i.crossed.filter(c => c.line !== 'filing').map(c => c.line))].sort((a, b) => a === 'price' ? -1 : b === 'price' ? 1 : 0)
+  if (mk.length > 1) return `Past your ±${lines.movePct}% and ${lines.volX}× lines`
+  if (mk.length) return `Past your ${mk[0] === 'price' ? `±${lines.movePct}%` : `${lines.volX}× volume`} line`
+  const kinds = [...new Set(i.crossed.map(c => (CATEGORY_LABEL[c.category!] || c.category!).toLowerCase()))]
+  return (kinds.length > 1 ? `${kinds.slice(0, -1).join(', ')} and ${kinds[kinds.length - 1]}` : kinds[0]).replace(/^./, c => c.toUpperCase())
+}
+
 // ---------- the screen ----------
 export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines, names, openReader, openLines }: {
   push: Push; brief: Brief; fresh: Set<string>; done: Done; setDone: (d: Done) => void; lines: Lines; setLines: (l: Lines) => void; names: Record<string, string>
@@ -75,7 +85,7 @@ export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines
   const kept = brief.items.filter(i => done.kept.includes(i.key))
   const cleared = brief.items.filter(i => done.cleared.includes(i.key)).length
   const asof = new Date(push.asof)
-  const stamp = `Filings up to ${asof.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}, ${asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()}`
+  const stamp = `Filings up to ${asof.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}, ${asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()}`
   const cos = [...new Set(left.items.map(i => names[i.symbol]))]
   const finished = left.total === 0
   // The figure: items to read. With none crossed, say so in words
@@ -88,6 +98,10 @@ export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines
       <Masthead right={<Listen push={push} brief={brief} done={done} lines={lines} names={names} />} />
       <section className="hero" aria-labelledby="brief-h">
         <p className="small">{stamp}</p>
+        {/* The window sits above the count it sets */}
+        <div className="stops" role="radiogroup" aria-label="Window">
+          {WINDOWS.map(w => <button key={w.h} role="radio" aria-checked={lines.hours === w.h} className={lines.hours === w.h ? 'on' : ''} onClick={() => setLines({ ...lines, hours: w.h })}>{w.label}</button>)}
+        </div>
         <h1 id="brief-h" className="sr-only" aria-live="polite">{finished ? 'Up to date' : n ? `${n} to read` : 'Nothing crossed your lines'}</h1>
         <div className="hero-fig" aria-hidden="true">
           {finished ? <span className="fig fig-word">Up to date</span>
@@ -96,7 +110,7 @@ export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines
         </div>
         <p className="hero-line">
           {finished ? summary(brief, done, kept.length, cleared)
-            : n ? `${few(cos)}. ${nNotes ? `${nNotes} more worth a line; ` : ''}${brief.routine} routine ${brief.routine === 1 ? 'filing' : 'filings'} set aside.`
+            : n ? <>{few(cos)}. {nNotes > 0 && <><button className="link-inline" onClick={() => setSheet('notes')}>{nNotes} more worth a line</button>; </>}{brief.routine} routine {brief.routine === 1 ? 'filing' : 'filings'} set aside.</>
               : `Nothing crossed your lines ${span(lines.hours)}.${nNotes ? ` ${nNotes} ${nNotes === 1 ? 'filing' : 'filings'} worth a line.` : ''}`}
         </p>
         {wider && <button className="link" onClick={() => setLines({ ...lines, hours: wider.h })}>{`${span(wider.h).replace(/^in the l/, 'L')}: ${wider.n} to read`}<Arrow /></button>}
@@ -105,9 +119,6 @@ export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines
         {segs > 0 && filled > 0 && <div className="progress" role="progressbar" aria-label="Read so far" aria-valuemin={0} aria-valuemax={segs} aria-valuenow={filled}>
           {Array.from({ length: segs }, (_, k) => <span key={k} className={k < filled ? 'on' : ''} />)}
         </div>}
-        <div className="stops" role="radiogroup" aria-label="Window">
-          {WINDOWS.map(w => <button key={w.h} role="radio" aria-checked={lines.hours === w.h} className={lines.hours === w.h ? 'on' : ''} onClick={() => setLines({ ...lines, hours: w.h })}>{w.label}</button>)}
-        </div>
       </section>
 
       {left.items.length > 0 && (
@@ -174,37 +185,38 @@ function reaction(push: Push, symbol: string, at: string) {
 }
 const signed = (v: number) => `${v >= 0 ? '+' : '−'}${pct1(v)}`
 const pctWords = (v: number) => `${v >= 0 ? 'up' : 'down'} ${String(+Math.abs(v).toFixed(Math.abs(v) < 10 ? 1 : 0))}%`
-// Profit in words, the turn from a loss first: it often explains a rise on a weak year-on-year number
-function profitWords(pat: any) {
-  const yoy = pat.yoy != null ? `${pctWords(pat.yoy)} on a year ago` : ''
-  return pat.prev != null && pat.prev < 0 && pat.value >= 0 ? `back to a profit after last quarter’s loss${yoy ? `, ${yoy}` : ''}` : `profit ${yoy}`
-}
 
 // The figure column means one thing on every alert: how the shares took it, the day's change. The event is in the words.
 // d is the session the figure and the month line end on.
-function alertFig(i: Item, name: string, push: Push): { v: string; c: string; body: string; t?: string; d: string } | null {
+function alertFig(i: Item, name: string, push: Push): { v: string; c: string; body: string[]; t?: string; d: string } | null {
   const f = i.story?.lead, m = i.move
   // Anything that moved the shares leads with the day's change, whichever line it crossed. In a 24-hour window
   // results-day moves arrive as moves, in a wider one they ride with their results: same event, same figure, same words
   if (m && (i.kind === 'move' || (i.kind === 'results' && f?.results))) {
     // A move on results says what the results were, not just that they came out
     const res = f?.results ?? (m.explainedBy?.category === 'results' ? push.filings.filter(x => x.symbol === i.symbol && x.results && x.at.slice(0, 10) <= m.d).sort((a, b) => b.at.localeCompare(a.at))[0]?.results : undefined)
-    const pat = res?.lines.find((l: any) => l.key === 'pat')
-    const body = res && pat?.value != null ? `On ${m.volX.toFixed(1)}× its usual volume, after ${res.quarter.replace(/ FY\d\d$/, '')} results: ${profitWords(pat)}.` : `On ${m.volX.toFixed(1)}× its usual volume. ${moveWhy(m)}`
-    return { v: signed(m.chg), c: 'on the day', t: name, body: withFirst(i, body), d: m.d }
+    const vol = `On ${m.volX.toFixed(1)}× its usual volume.`
+    const body = res ? [resultsWords(res), vol] : [vol, moveWhy(m)]
+    // The caption counts from the time on the row's left: a results row shows its filing time, so a move the session after is the next day
+    return { v: signed(m.chg), c: i.kind === 'results' && m.d !== i.at.slice(0, 10) ? 'next day' : 'on the day', t: name, body: withLines(i, body), d: m.d }
   }
   // Anything else: the session that first traded on the filing; before it has traded, the row keeps its headline
   const r = reaction(push, i.symbol, i.at)
   if (!r) return null
-  const fig = (body: string) => ({ v: signed(r.b.chg), c: r.next ? 'next day' : 'on the day', t: name, body, d: r.b.d })
-  const pat = f?.results?.lines.find((l: any) => l.key === 'pat')
-  if (i.kind === 'results' && pat?.value != null) {
-    const q = f!.results!.quarter.replace(/ FY\d\d$/, '')
-    return fig(withFirst(i, `${q} profit ₹${cr(pat.value)} crore${pat.yoy != null ? `, ${pctWords(pat.yoy)} on a year ago` : ''}.`))
-  }
+  const fig = (body: string[]) => ({ v: signed(r.b.chg), c: r.next ? 'next day' : 'on the day', t: name, body, d: r.b.d })
+  if (i.kind === 'results' && f?.results) return fig(withLines(i, [resultsWords(f.results)]))
   if (i.kind === 'filing' && f?.amount_cr != null && f.amount_cr >= 1 && f.pct_rev != null)
-    return fig(`${(f.line || tidySubject(f.subject || '')).replace(/\.?$/, '.')} ${sizeWords(f)}`)
-  return fig(itemLine(i))
+    return fig([(f.line || tidySubject(f.subject || '')).replace(/\.?$/, '.'), sizeWords(f)])
+  return fig(itemLine(i).split(/(?<=\.) (?=[A-Z0-9])/))
+}
+// A quarter in one line: profit first (the turn from a loss before the year-on-year), the margin when it moved a point or more
+function resultsWords(r: any) {
+  const pat = r.lines.find((l: any) => l.key === 'pat'), q = r.quarter.replace(/ FY\d\d$/, '')
+  const turn = pat?.prev != null && pat.prev < 0 && pat.value >= 0
+  const yoy = pat?.yoy != null ? `${pctWords(pat.yoy)} on a year ago` : ''
+  const profit = pat?.value == null ? `${q} results out` : turn ? `${q} profit back from a loss${yoy ? `, ${yoy}` : ''}` : `${q} profit ₹${cr(pat.value)} crore${yoy ? `, ${yoy}` : ''}`
+  const dm = r.ebitda_margin != null && r.yago_margin != null ? r.ebitda_margin - r.yago_margin : 0
+  return `${profit}${Math.abs(dm) >= 1 ? `; EBITDA margin ${dm > 0 ? 'up' : 'down'} ${Math.abs(dm).toFixed(1)} pp` : ''}.`
 }
 
 // A month of closes under an alert's figure: what the price did, in a line that draws itself, its change written out
@@ -214,7 +226,7 @@ function Spark({ bars }: { bars: { close: number }[] }) {
   const d = cl.map((c, k) => `${k ? 'L' : 'M'}${(k / (cl.length - 1) * w).toFixed(1)} ${(h - 2 - (c - lo) / (hi - lo || 1) * (h - 4)).toFixed(1)}`).join('')
   const chg = (cl[cl.length - 1] / cl[0] - 1) * 100
   return <span className="notif-spark"><svg viewBox={`0 0 ${w} ${h}`} aria-hidden><path d={d} /></svg>
-    <span className="notif-c">{chg >= 0 ? '+' : '−'}{Math.abs(chg).toFixed(1)}% {bars.length >= 20 ? 'price, 1 month' : `price, ${bars.length} sessions`}</span></span>
+    <span className="notif-c">{chg >= 0 ? '+' : '−'}{Math.abs(chg).toFixed(1)}% {bars.length >= 20 ? 'in a month' : `in ${bars.length} sessions`}</span></span>
 }
 
 // An alert: when, what happened with its number, and the line it crossed. Flat rows, like the rest of the brief.
@@ -225,11 +237,11 @@ function Notif({ i, fresh, name, push, lines, open, openLines }: { i: Item; fres
     <article className="notif">
       <p className="notif-when">
         <span>{i.kind === 'move' ? closeWhen(i.move!.d, push.asof) : when(i.at, push.asof)}{fresh && <span className="notif-new">New</span>}</span>
-        <button className="notif-line" onClick={openLines} aria-label={`${crossedText(i, lines)}. Change`}>{crossedText(i, lines).replace(/^Your lines?: /, '').replace(/^./, c => c.toUpperCase())}</button>
+        <button className="notif-line" onClick={openLines} aria-label={`${crossedText(i, lines)}. Change`}>{rowTag(i, lines)}</button>
       </p>
       <button className="notif-main" onClick={open}>
         <span className="notif-t">{fig?.t ?? itemTitle(i, name)}</span>
-        <span className="notif-b">{fig ? fig.body : itemLine(i)}</span>
+        <span className="notif-b">{fig ? fig.body.map((l, k) => <span key={k} className="notif-l">{l}</span>) : itemLine(i)}</span>
         {fig && <span className="notif-fig"><span className="notif-v">{fig.v}</span><span className="notif-c">{fig.c}</span><Spark bars={bars} /></span>}
       </button>
     </article>
@@ -261,7 +273,7 @@ function Listen({ push, brief, done, lines, names }: { push: Push; brief: Brief;
     // Each item as its alert row reads: the name, its figure, the sentence. The lines it crossed are on screen
     const spoken = (i: Item) => {
       const n = names[i.symbol], f = alertFig(i, n, push)
-      return f ? `${n}, ${f.v} ${f.c.replace('PAT YoY', 'profit on a year ago')}. ${f.body}` : `${itemTitle(i, n)}. ${itemLine(i)}`
+      return f ? `${n}, ${f.v} ${f.c}. ${f.body.join(' ')}` : `${itemTitle(i, n)}. ${itemLine(i)}`
     }
     const text = left.length ? [`${left.length} to read.`, ...left.map(spoken), 'That’s the brief.'].join(' ') : 'Nothing left to read. You’re up to date.'
     const u = new SpeechSynthesisUtterance(said(text)); u.lang = 'en-IN'; u.rate = 1.02
