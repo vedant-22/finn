@@ -1,5 +1,5 @@
 /* FINN, stage 4 (DESIGN.md). Flat white paper, ENAM's blue only for what you can tap; a kept promise is a quiet green, a missed one dark red.
-   One sans does all of FINN's talking; the book serif is kept for management's own words, on the warm panel.
+   The book serif sets what you look at (titles, heads, big figures, management's quotes); the sans says what FINN found.
    Nothing has a border unless it is a control. Six type styles: figure, title, head, body, small, quote. */
 :root {
   --paper: #FFFFFF; --panel: #FBF8F2; --ink: #333333; --ink-2: #6A6970; --rule: #E7E7E9; --rule-2: #D9D9D9;
