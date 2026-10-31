@@ -156,17 +156,19 @@ export const Arrow = () => <svg className="arrow" viewBox="0 0 16 16" aria-hidde
 // The column holds numbers only, so a management change has none and keeps its headline ('Syngene: CFO leaves').
 function alertFig(i: Item, name: string, push: Push): { v: string; c: string; body: string; t?: string } | null {
   const f = i.story?.lead, m = i.move
-  // A move always shows the day's change, whichever line it crossed, so the column reads one way
-  if (i.kind === 'move' && m && !f) {
+  // Anything that moved the shares leads with the day's change, whichever line it crossed. In a 24-hour window
+  // results-day moves arrive as moves, in a wider one they ride with their results: same event, same figure, same words
+  if (m && (i.kind === 'move' || (i.kind === 'results' && f?.results))) {
     // A move on results says what the results were, not just that they came out
-    const res = m.explainedBy?.category === 'results' ? push.filings.filter(x => x.symbol === i.symbol && x.results && x.at.slice(0, 10) <= m.d).sort((a, b) => b.at.localeCompare(a.at))[0]?.results : undefined
+    const res = f?.results ?? (m.explainedBy?.category === 'results' ? push.filings.filter(x => x.symbol === i.symbol && x.results && x.at.slice(0, 10) <= m.d).sort((a, b) => b.at.localeCompare(a.at))[0]?.results : undefined)
     const pat = res?.lines.find((l: any) => l.key === 'pat')
-    return { v: `${m.chg >= 0 ? '+' : '−'}${pct1(m.chg)}`, c: 'on the day', t: name, body: res && pat?.yoy != null ? `On ${m.volX.toFixed(1)}× its usual volume, after ${res.quarter.replace(/ FY\d\d$/, '')} results: profit ${pat.yoy >= 0 ? 'up' : 'down'} ${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}% on a year ago.` : `On ${m.volX.toFixed(1)}× its usual volume. ${moveWhy(m)}` }
+    const body = res && pat?.yoy != null ? `On ${m.volX.toFixed(1)}× its usual volume, after ${res.quarter.replace(/ FY\d\d$/, '')} results: profit ${pat.yoy >= 0 ? 'up' : 'down'} ${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}% on a year ago.` : `On ${m.volX.toFixed(1)}× its usual volume. ${moveWhy(m)}`
+    return { v: `${m.chg >= 0 ? '+' : '−'}${pct1(m.chg)}`, c: 'on the day', t: name, body: body + (i.with ? ` ${withLine(i.with)}` : '') }
   }
   const pat = f?.results?.lines.find((l: any) => l.key === 'pat')
   if (i.kind === 'results' && pat?.yoy != null) {
     const r = f!.results!, rest = r.ebitda_margin != null ? `; EBITDA margin ${r.ebitda_margin}%${r.yago_margin != null ? ` against ${r.yago_margin}%` : ''}` : ''
-    return { v: `${pat.yoy >= 0 ? '+' : '−'}${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}%`, c: 'PAT YoY', t: name, body: `${r.quarter.replace(/ FY\d\d$/, '')} profit ₹${cr(pat.value)} crore${rest}.${m ? ` Shares ${m.chg >= 0 ? 'up' : 'down'} ${pct1(m.chg)}.` : ''}${i.with ? ` ${withLine(i.with)}` : ''}` }
+    return { v: `${pat.yoy >= 0 ? '+' : '−'}${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}%`, c: 'PAT YoY', t: name, body: `${r.quarter.replace(/ FY\d\d$/, '')} profit ₹${cr(pat.value)} crore${rest}.${i.with ? ` ${withLine(i.with)}` : ''}` }
   }
   if (i.kind === 'filing' && f?.amount_cr != null && f.amount_cr >= 1 && f.pct_rev != null)
     return { t: name, v: `₹${cr(f.amount_cr)} cr`, c: `${f.pct_rev < 1 ? f.pct_rev.toFixed(1) : f.pct_rev.toFixed(0)}% of revenue`, body: (f.line || tidySubject(f.subject || '')).replace(/\.?$/, '.') }

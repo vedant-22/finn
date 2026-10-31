@@ -16,9 +16,12 @@ async def main():
         fig = lambda: pg.locator('.hero-fig').inner_text()
         check('brief opens on 2 to read', (await fig()).replace('\n', ' ') == '2 to read', await fig())
         check('two notifications', await pg.locator('.notif').count() == 2)
+        syn = lambda: pg.locator('.notif', has_text='Syngene').first.locator('.notif-v').inner_text()
+        syn24 = await syn()
         for w, want in [('3 days', 6), ('Week', 6), ('Month', 6), ('24 hours', 2)]:
             await pg.get_by_role('radio', name=w, exact=True).click(); await pg.wait_for_timeout(500)
             check(f'window {w}', await pg.locator('.notif').count() == want, await pg.locator('.notif').count())
+            if w == 'Week': check('one event, one figure in every window', await syn() == syn24, f'{syn24} / {await syn()}')
         # Your lines from a notification's line; a tighter move line adds to the count
         await pg.locator('.notif-line').first.click(); await pg.wait_for_timeout(500)
         sheet = pg.locator('.sheet[aria-label="Your lines"]')
