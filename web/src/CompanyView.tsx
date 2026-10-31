@@ -190,7 +190,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back, ask }:
             })}
             <li><Src href={c.source}>Financial tables</Src><span className="sub">screener.in, {c.basis}, compiled from filed results</span></li>
           </ul>
-          {pages > 0 && <p className="sub">Read {pages} pages. Every quote above was matched to its page in the PDF{dropped ? `; ${dropped} that didn't match ${dropped === 1 ? 'was' : 'were'} thrown out` : ''}. Nothing here comes from news, brokers or the model's own memory.</p>}
+          {pages > 0 && <p className="sub">Read {pages} pages. Every quote above was matched to its page in the PDF{dropped ? `; ${dropped} that didn’t match ${dropped === 1 ? 'was' : 'were'} thrown out` : ''}. Nothing here comes from news, brokers or the model’s own memory.</p>}
           {c.usage?.calls > 0 && <p className="sub">{c.usage.calls} model calls, {Math.round((c.usage.tokens_in + c.usage.tokens_out) / 1000)}k tokens, about ${c.usage.usd_if_billed.toFixed(2)} if billed. {grader(c.usage.by_model)}</p>}
         </div>
       </Fold>

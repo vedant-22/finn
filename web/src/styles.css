@@ -230,10 +230,10 @@ table { border-collapse: collapse; }
 .ba + .ba { margin-top: 28px; }
 .ba-said { background: var(--panel); border-radius: 14px; padding: 16px 18px 14px; }
 .ba-said figcaption { margin-top: 10px; }
-.ba-then { padding: 14px 2px 0; }
+.ba-then { padding: 14px 0 0; }
 /* verdict first: the same two blocks, the answer above the words it answers */
 .ba-lead { display: flex; flex-direction: column-reverse; }
-.ba-lead .ba-then { padding: 0 2px 14px; }
+.ba-lead .ba-then { padding: 0 0 14px; }
 .ba-promise { font-weight: 500; }
 .ba-verdict { margin-top: 4px; }
 .ba-verdict .st { font-size: 15px; font-weight: 600; margin-right: 2px; }

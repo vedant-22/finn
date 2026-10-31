@@ -198,7 +198,7 @@ function CompanyRoute({ push, openCompany, sym, pid, sector, title, close, bars,
         <h1 className="title">{title || sym}</h1>
         {!failed && steps.length === 0 && slow && <p className="sub opening"><span className="dot-run" />Opening the ledger</p>}
         {!failed && steps.length > 0 && <p className="lede">Reading its last five earnings calls and filed results. About a minute.</p>}
-        {notFound && <p className="lede">There's no NSE company with the symbol {sym}. Check the spelling, or type part of the name.</p>}
+        {notFound && <p className="lede">There’s no NSE company with the symbol {sym}. Check the spelling, or type part of the name.</p>}
       </div>
       {notFound ? <div className="not-found">
         <a className="btn btn-line" href="#/ask">Ask about another</a>

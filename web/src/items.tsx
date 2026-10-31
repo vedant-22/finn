@@ -39,7 +39,7 @@ export function sizeWords(f: { amount_cr?: number; pct_rev?: number; line?: stri
   // The line already names the amount ('buyback of ₹150 crore'): just the share of revenue
   const a = f.amount_cr
   const said = [...(f.line || '').matchAll(/₹([\d,]+(?:\.\d+)?)(?:–[\d,.\u2060]+)?\scrore/g)].some(m => Math.abs(+m[1].replace(/,/g, '') - a) <= Math.max(0.5, a * 0.01))
-  return said ? `${p.charAt(0).toUpperCase()}${p.slice(1)} of a year's revenue.` : `₹${cr(a)} cr, ${p} of a year's revenue.`
+  return said ? `${p.charAt(0).toUpperCase()}${p.slice(1)} of a year’s revenue.` : `₹${cr(a)} cr, ${p} of a year’s revenue.`
 }
 
 // NSE's own labels for the routine call papers, in sentence case
@@ -92,7 +92,7 @@ export function ResultsBlock({ f }: { f: any }) {
       </table>
       <p className="small figs-foot">
         Against {r.compare.prev || 'the previous quarter'} and {r.compare.yago || 'a year ago'}.{r.ebitda_margin != null && ' Margin is EBITDA over revenue; its change is in percentage points.'}
-        {r.one_offs?.length > 0 && ' ' + r.one_offs.map((o: any) => `${o.q === r.quarter ? "This quarter's" : o.q} profit includes ${[o.tax_credit && `a ₹${cr(o.tax_credit)} cr tax credit`, o.exceptional && `₹${cr(Math.abs(o.exceptional))} cr of exceptional items`].filter(Boolean).join(' and ')}.`).join(' ')}
+        {r.one_offs?.length > 0 && ' ' + r.one_offs.map((o: any) => `${o.q === r.quarter ? 'This quarter’s' : o.q} profit includes ${[o.tax_credit && `a ₹${cr(o.tax_credit)} cr tax credit`, o.exceptional && `₹${cr(Math.abs(o.exceptional))} cr of exceptional items`].filter(Boolean).join(' and ')}.`).join(' ')}
         {above}
         {f.url && <> From the <a className="link-inline" href={f.url} target="_blank" rel="noreferrer">results filed with NSE</a>{filed && `, ${filed}`}.</>}
       </p>
