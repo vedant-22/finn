@@ -6,7 +6,7 @@ OUT = pathlib.Path(__file__).resolve().parents[3] / 'shots'
 NEXT = sys.argv[1] if len(sys.argv) > 1 else 'https://finn-ledger-next.vercel.app'
 BACKUPS = {'v4': 'https://finn-ledger-v4.vercel.app', 'v5': 'https://finn-ledger-v5.vercel.app'}
 VERSIONS = sys.argv[2].split(',') if len(sys.argv) > 2 else ['next', 'v4', 'v5']
-MOMENTS = ['brief', 'alert', 'results', 'people', 'company', 'ask']
+MOMENTS = ['brief', 'alert', 'results', 'people', 'company', 'ask', 'book', 'done']
 
 async def top(pg, sel):
     # Put the element at the top of the screen, under any sticky header
@@ -37,6 +37,14 @@ async def next_build(pg, shot):
     await top(pg, '.prow.open'); await shot(5)
     await fresh(pg, NEXT + '/#/ask'); await pg.locator('#ask').fill('Did L&T deliver on revenue growth?'); await pg.keyboard.press('Enter')
     await pg.wait_for_timeout(1500); await shot(6)
+    if 'next' not in VERSIONS or len(VERSIONS) > 1: return  # the backups have no matching 7 and 8
+    await fresh(pg, NEXT + '/#/book'); await shot(7)
+    await fresh(pg, NEXT + '/#/'); await pg.get_by_role('button', name='Read the brief').click(); await pg.wait_for_timeout(900)
+    for _ in range(8):
+        if await pg.locator('.done-t').count(): break
+        last = pg.get_by_role('button', name='Mark all read')  # the one-liners page closes the brief
+        await (last if await last.count() else pg.get_by_role('button', name='Done', exact=True)).click(); await pg.wait_for_timeout(800)
+    await pg.wait_for_timeout(900); await shot(8)
 
 async def backup(pg, base, shot, row):
     await fresh(pg, base + '/#/'); await shot(1)
