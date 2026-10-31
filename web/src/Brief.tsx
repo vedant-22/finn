@@ -75,7 +75,7 @@ export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines
   const kept = brief.items.filter(i => done.kept.includes(i.key))
   const cleared = brief.items.filter(i => done.cleared.includes(i.key)).length
   const asof = new Date(push.asof)
-  const stamp = `Filings to ${asof.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}, ${asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()}`
+  const stamp = `Filings up to ${asof.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}, ${asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()}`
   const cos = [...new Set(left.items.map(i => names[i.symbol]))]
   const finished = left.total === 0
   // The figure: items to read. With none crossed, say so in words
@@ -158,8 +158,11 @@ function summary(b: Brief, d: Done, kept: number, cleared: number) {
   return parts.filter(Boolean).join(' ') || 'Nothing in this window.'
 }
 
-// A move is a day's close: 'At the close' on the snapshot's day, else the date
-export const closeWhen = (d: string, asof: string) => d === asof.slice(0, 10) ? 'At the close' : new Date(d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+// A move is a day's close, dated the way filings are: 'At the close' on the snapshot's day, 'Yesterday at the close', else the date
+export const closeWhen = (d: string, asof: string) => {
+  const days = Math.round((Date.parse(asof.slice(0, 10)) - Date.parse(d)) / 864e5)
+  return days === 0 ? 'At the close' : days === 1 ? 'Yesterday at the close' : new Date(d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+}
 
 export const Arrow = () => <svg className="arrow" viewBox="0 0 16 16" aria-hidden><path d="M6 3.5l4.5 4.5L6 12.5" /></svg>
 

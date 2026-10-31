@@ -5,7 +5,9 @@ import { Src, STATUS_WORD, StatusLabel } from './ui'
 const FILLER = /\b(remains|is) (still )?(pending|ongoing)\b|\bnot yet due\b/i
 export const verdictText = (p: Promise_) => p.status === 'pending' && FILLER.test(p.verdict || '') ? '' : p.verdict ? rupees(p.verdict) : STATUS_WORD[p.status]
 export const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
-export const promiseLine = (p: Promise_) => `${cap(rupees(p.target))}${deadline(p) ? ` ${rupees(deadline(p))}` : ''}`
+// Abbreviations a call uses and a reader shouldn't have to decode: 'NWC-to-Revenue' is net working capital to revenue
+const plainTerms = (t: string) => t.replace(/\bNWC[- ]to[- ]revenue\b/i, 'net working capital to revenue')
+export const promiseLine = (p: Promise_) => `${cap(plainTerms(rupees(p.target)))}${deadline(p) ? ` ${rupees(deadline(p))}` : ''}`
 
 // On a card there's room for one sentence of the quote: the one the promise came from
 export function clip(parts: QuotePart[]): QuotePart[] {
