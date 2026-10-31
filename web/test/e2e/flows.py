@@ -37,6 +37,9 @@ async def main():
         await pg.get_by_role('button', name='Read the brief').click(); await pg.wait_for_timeout(900)
         check('reader opens at 1 of 2', await pg.locator('.r-count').inner_text() == '1 of 2')
         check('results behind the move', await pg.locator('.figs tbody tr:not(.figs-margin)').count() == 4)
+        # Their word comes from the company's file, fetched as the item opens: wait for it rather than a fixed time
+        try: await pg.locator('.r-sec .ba').first.wait_for(timeout=10000)
+        except Exception: pass
         check('held against their word', await pg.locator('.r-sec .ba').count() >= 1)
         await pg.locator('.ask-chip').first.click(); await pg.wait_for_timeout(800)
         check('ask in place answers', await pg.locator('.r-sec .answer .head').count() == 1)
