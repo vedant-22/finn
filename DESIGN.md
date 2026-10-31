@@ -23,7 +23,7 @@ FINN is a brief you finish. The design follows from that. There is one short lis
 Moves are ink with a sign and a true minus. There is no green or red for up and down.
 
 ## Type
-- **Newsreader**, a variable book serif with optical sizes and its own ₹. Big figure 68 px at 380 ("2" in "2 *to read*", with the unit in italic at 40 px). Title 32/110% at 450: screen titles, company names, "You're up to date". Head 22/120% at 500: section heads ("Crossed your lines", "Against their word"). Alert names 21 px, promise rows 19 px, alert figures 32 px at 400. Quotes 18/145%.
+- **Newsreader**, a variable book serif with optical sizes and its own ₹. Big figure 68 px at 380 ("2" in "2 *to read*", with the unit in italic at 40 px). Title 32/110% at 450: screen titles, company names, "You're up to date". Head 22/120% at 500: section heads ("Crossed your lines", "Against their word"). Alert names 21 px, promise rows 19 px, alert figures 32 px at 400, the Book's tally 48 px at 380. Quotes 18/145%.
 - **Inter** (variable) at 400 and 500 for everything FINN says: body 16/150%, alert sentences and tables 15 px, small 13/140% in grey.
 - Six styles in all: figure, title, head, body, small, quote. One italic per screen at most. No caps labels. Headings wrap balanced and paragraphs avoid orphans. Tables and counts use tabular figures.
 
