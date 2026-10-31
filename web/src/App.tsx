@@ -3,7 +3,7 @@ import { CompanyView } from './CompanyView'
 import { Book } from './Book'
 import { BriefScreen } from './Brief'
 import { AskHere, Reader } from './Reader'
-import { AskScreen } from './Ask'
+import { AskScreen, useKnown } from './Ask'
 import { buildBrief, lastSeen, loadDone, markSeen, saveDone, type Done } from './queue'
 import { raise } from './alerts'
 import { crossedText, itemLine, itemTitle } from './Brief'
@@ -173,6 +173,7 @@ function CompanyRoute({ push, openCompany, sym, pid, sector, title, close, bars,
   const [failed, setFailed] = useState('')
   const [attempt, setAttempt] = useState(0)
   const [slow, setSlow] = useState(false)
+  const { names } = useKnown(push)
   useEdgeBack(back)
   useEffect(() => { setSlow(false); const t = setTimeout(() => setSlow(true), 400); return () => clearTimeout(t) }, [sym, attempt])
   useEffect(() => {
@@ -217,6 +218,13 @@ function CompanyRoute({ push, openCompany, sym, pid, sector, title, close, bars,
           <button className="btn" onClick={() => setAttempt(a => a + 1)}>Try again</button>
           <a className="btn btn-line" href="#/ask">Pick another</a>
         </div>
+        {/* Out of quota, the companies FINN has already read still open: list them rather than send the investor looking */}
+        {/429|RESOURCE_EXHAUSTED|quota/i.test(failed) && <>
+          <h2 className="small kicker ready-h">Ready now, outside your book</h2>
+          <ul className="rows">{Object.keys(names).filter(s => !push.portfolio.some(p => p.symbol === s)).sort((a, b) => names[a].localeCompare(names[b])).map(s =>
+            <li key={s}><button className="row" onClick={() => openCompany(s)}><span>{names[s]}</span><span className="small">{s}</span></button></li>)}</ul>
+          <p className="small">Your {push.portfolio.length} holdings are in <a className="link-inline" href="#/book">Book</a>.</p>
+        </>}
       </div>}</>}
     </main>
   )
