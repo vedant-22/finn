@@ -1,8 +1,8 @@
 // Ask: type or say a question about a company or the book. Answered from the ledgers FINN has built, with pages.
 // A company FINN hasn't read yet is one tap from live research.
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { aliases, matching, parse, tally, verdictHead, type Known, type Parsed } from './question'
-import { wordScore, getCompany, shortName, type Company, type Promise_, type Push } from './lib'
+import { aliases, matching, pace, parse, runningGuide, tally, verdictHead, type Known, type Parsed } from './question'
+import { wordScore, getCompany, rupees, shortName, type Company, type Promise_, type Push } from './lib'
 import { promiseLine } from './Trail'
 import { StatusLabel } from './ui'
 import { BeforeAfter } from './Word'
@@ -128,11 +128,19 @@ function CompanyAnswer({ p, name, openCompany, inline }: { p: Parsed; name: stri
   const about = p.topic ? ` on ${p.topic.label}` : ''
   const fy = p.fy ? ` for ${p.fy}` : ''
   const shown = xs.slice(0, inline ? 2 : 4)
+  const calls = c.calls.filter(x => !x.error).length
+  // Settled promises answer 'did they deliver'; this year's revenue guide says how the running one is going
+  const due = xs.length > 0 && xs.every(x => x.status !== 'pending')
+  const last = c.quarters?.[c.quarters.length - 1]
+  const run = p.intent !== 'due' && (!p.topic || p.topic.metrics.includes('revenue_growth')) ? runningGuide(c.ledger, last?.q) : undefined
+  const sofar = run && !xs.includes(run.g) ? pace(run.g, last?.rev_yoy) : null
+  const qtr = last ? `Q${[4, 4, 4, 1, 1, 1, 2, 2, 2, 3, 3, 3][['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'].indexOf(last.q.slice(0, 3).toLowerCase())]}` : ''
+  const runLine = run && sofar ? `Their ${run.fy} guide, ${rupees(run.g.target)}, is ${sofar} so far: ${last!.rev_yoy!.toFixed(1)}% in ${qtr}. ` : ''
   return (
     <section className="answer" aria-live="polite">
       <h2 className="head">{name}{about}{fy}{xs.length ? `: ${verdictHead(xs)}` : ''}</h2>
       {xs.length
-        ? <p className="sub">{xs.length === 1 ? 'One promise' : `${xs.length} promises`} on this: {tally(xs)}. {(s => s?.graded ? `Over their last ${c.calls.filter(x => !x.error).length} calls they’ve kept ${Math.floor(s.kept)} of ${s.graded} dated promises.` : `From their last ${c.calls.filter(x => !x.error).length} calls.`)(wordScore(c))}</p>
+        ? <p className="sub">{due ? (xs.length === 1 ? 'One promise on this has come due' : `${xs.length} promises on this have come due`) : xs.length === 1 ? 'One promise on this' : `${xs.length} promises on this`}: {xs.length === 1 ? tally(xs).replace(/^1 /, '') : tally(xs)}. {runLine}{(s => s?.graded ? `Over their last ${calls} calls they’ve kept ${Math.floor(s.kept)} of ${s.graded} promises that came due.` : `From their last ${calls} calls.`)(wordScore(c))}</p>
         : <p>Nothing{about}{fy} with a number and a date in {name}’s last {c.calls.filter(x => !x.error).length} calls. FINN only grades what management put a number or date on.</p>}
       {shown.map(x => <BeforeAfter key={x.id} p={x} compact={inline} lead />)}
       {!xs.length && <Others c={c} open={pid => openCompany(c.symbol, pid)} />}

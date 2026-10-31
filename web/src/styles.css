@@ -24,7 +24,6 @@ a { color: inherit; }
 :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 4px; }
 h1, h2, h3, h4, p, figure, blockquote { margin: 0; font-weight: inherit; }
 h1, h2, h3 { text-wrap: balance; }
-p { text-wrap: pretty; }
 ul, ol { list-style: none; margin: 0; padding: 0; }
 table { border-collapse: collapse; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
@@ -84,6 +83,7 @@ table { border-collapse: collapse; }
 .st-kept { color: var(--kept); }
 .st-missed { color: var(--missed); }
 .st-partly, .st-quiet { color: var(--ink); }
+.st-pace { color: var(--ink); }
 
 /* rows: one line, a quiet second line, a count, an arrow. Hairlines between, nothing around */
 .rows > li + li { border-top: 1px solid var(--rule); }
@@ -186,7 +186,10 @@ table { border-collapse: collapse; }
 .r-with { margin: 4px 0 2px; }
 .srcs { margin-top: 32px; display: grid; gap: 2px; }
 .srcs li { min-height: 32px; display: flex; align-items: center; }
-.r-done { padding-top: 12vh; }
+.r-done { padding-top: 8vh; }
+.done-qs .row { align-items: flex-start; text-align: left; font-size: 15px; line-height: 1.45; padding: 14px 0; }
+.done-qs .row .arrow { margin-top: 4px; }
+.done-co { display: block; font: 500 17px/1.3 var(--serif); margin-bottom: 4px; }
 .done-t { font-size: 40px; font-weight: 400; letter-spacing: -0.015em; margin-bottom: 14px; animation: land 300ms var(--ease) 100ms both; }
 @keyframes land { from { opacity: 0; transform: translateY(6px); } }
 .r-done .head { margin: 32px 0 6px; }

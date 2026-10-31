@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import { DEFAULT_LINES } from '../src/lib.ts'
 import { buildBrief, act, remaining, notesKey, NO_DONE } from '../src/queue.ts'
-import { aliases, parse, matching, tally, verdictHead } from '../src/question.ts'
+import { aliases, parse, matching, tally, verdictHead, pace, fyOf, runningGuide } from '../src/question.ts'
 
 const push = JSON.parse(fs.readFileSync(new URL('../public/data/push.json', import.meta.url)))
 const names = JSON.parse(fs.readFileSync(new URL('../public/data/companies.json', import.meta.url)))
@@ -66,4 +66,15 @@ test('Ask answers from the ledger: L&T missed its FY26 revenue growth', () => {
   assert.equal(verdictHead(st('kept', 'missed', 'pending')), 'kept 1 of 2')
   assert.equal(verdictHead(st('pending')), 'not due yet')
   assert.ok(xs.every(x => x.metric !== 'working_capital'), 'a working-capital promise is not a revenue answer')
+})
+
+test('this year’s revenue guide reads against the quarter: ahead, on track or behind so far', () => {
+  assert.equal(fyOf('Sep 2026'), 'FY27'); assert.equal(fyOf('Mar 2026'), 'FY26')
+  const lt = co('LT'), q = lt.quarters[lt.quarters.length - 1]
+  const r = runningGuide(lt.ledger, q.q)
+  assert.equal(r.fy, 'FY27'); assert.match(r.g.target, /revenue growth 10% to 12%/)
+  assert.equal(pace(r.g, q.rev_yoy), 'ahead')
+  assert.equal(pace(r.g, 11), 'on track'); assert.equal(pace(r.g, 8), 'behind')
+  // order inflows are not revenue
+  assert.equal(pace(lt.ledger.find(p => /order inflows/.test(p.target)), 20), null)
 })

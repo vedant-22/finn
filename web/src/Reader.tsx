@@ -9,6 +9,7 @@ import { PeopleBlock, ResultsBlock, moveWhy, shortDay, tidySubject, useWord } fr
 import { Chart, Src, StatusLabel } from './ui'
 import { BeforeAfter, said } from './Word'
 import { promiseLine, verdictText } from './Trail'
+import { pace } from './question'
 
 type Page = { kind: 'item'; item: Item } | { kind: 'notes' } | { kind: 'done' }
 
@@ -72,7 +73,8 @@ export function Reader({ push, brief, done, setDone, lines, names, start, close,
   return (
     <div className="reader" role="dialog" aria-modal="true" aria-label="The brief">
       <header className={`r-top${named ? ' r-top-named' : ''}`} style={named ? { '--read': (at + 1) / segs } as React.CSSProperties : undefined}>
-        <button className="icon-btn" onClick={close} aria-label="Close the brief"><svg viewBox="0 0 20 20" aria-hidden><path d="M5 5l10 10M15 5L5 15" /></svg></button>
+        {/* At the end the one way out is the button under the words; a close mark beside it would say the same */}
+        {page.kind !== 'done' && <button className="icon-btn" onClick={close} aria-label="Close the brief"><svg viewBox="0 0 20 20" aria-hidden><path d="M5 5l10 10M15 5L5 15" /></svg></button>}
         {page.kind === 'item' && named ? <span className="r-name" aria-hidden>{names[page.item.symbol]}</span>
           : page.kind !== 'done' && <div className="progress r-progress" aria-hidden>{Array.from({ length: segs }, (_, k) => <span key={k} className={k < at ? 'on' : k === at ? 'now' : ''} />)}</div>}
         <span className="small r-count" aria-live="polite">{page.kind === 'item' ? `${at + 1} of ${segs}` : page.kind === 'notes' ? 'The rest' : ''}</span>
@@ -82,7 +84,7 @@ export function Reader({ push, brief, done, setDone, lines, names, start, close,
           onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp}>
           {page.kind === 'item' && <ItemPage i={page.item} push={push} lines={lines} names={names} openCompany={openCompany} openLines={openLines} />}
           {page.kind === 'notes' && <><p className="small kicker">The rest of the window</p><h1 className="title">Worth a line</h1><p className="lede">{brief.spill.length ? `${brief.spill.length} more crossed your lines; the rest didn’t.` : 'None of it crossed your lines.'} One line each.</p><NotesList brief={brief} names={names} asof={push.asof} /></>}
-          {page.kind === 'done' && <DonePage brief={brief} done={done} names={names} close={close} />}
+          {page.kind === 'done' && <DonePage brief={brief} done={done} names={names} close={close} openCompany={openCompany} />}
         </article>
       </div>
       {page.kind === 'item' && !done.cleared.length && !done.kept.length && <p className="small r-first">Keep it for later, or mark it done. Swiping works too.</p>}
@@ -169,12 +171,13 @@ function Held({ i, name, res, openCompany }: { i: Item; name: string; res?: any;
   const rev = res?.lines.find((l: any) => l.key === 'revenue')
   const now = guide && guide.g.metric === 'revenue_growth' && /revenue/i.test(guide.g.target) && rev?.yoy != null
     ? `This quarter, revenue ${rev.yoy >= 0 ? 'grew' : 'fell'} ${Math.abs(rev.yoy).toFixed(1)}% on a year ago. ` : ''
-  const record = s?.graded ? `${name} has kept ${Math.floor(s.kept)} of ${s.graded} dated promises it has been tested on.` : s?.hard ? `None of ${name}’s dated promises is due yet.` : `No promise from ${name} with a number and a date yet.`
+  const sofar = guide && pace(guide.g, rev?.yoy)
+  const record = s?.graded ? `${name} has kept ${Math.floor(s.kept)} of ${s.graded} promises that came due.` : s?.hard ? `None of ${name}’s dated promises is due yet.` : `No promise from ${name} with a number and a date yet.`
   return (
     <section className="r-sec" aria-label="Against their word">
       <h2 className="head">Against their word</h2>
       {guide && <div className="r-guide">
-        <p className="lede">Guided for {guide.fy}: {rupees(guide.g.target).replace(new RegExp(`\\s+(in|by|for)\\s+${guide.fy}\\b`, 'i'), '')}. <StatusLabel status="pending" /></p>
+        <p className="lede">Guided for {guide.fy}: {rupees(guide.g.target).replace(new RegExp(`\\s+(in|by|for)\\s+${guide.fy}\\b`, 'i'), '')}. {sofar ? <span className="st st-pace">{sofar[0].toUpperCase() + sofar.slice(1)} so far</span> : <StatusLabel status="pending" />}</p>
         <p className="small">{now}Said on the {said(guide.g)} call.</p>
       </div>}
       {p && (p.status !== 'pending' && verdictText(p) ? <>
@@ -205,17 +208,30 @@ export function AskHere({ push, symbol, name, openCompany, cls }: { push: Push; 
   )
 }
 
-function DonePage({ brief, done, names, close }: { brief: Brief; done: Done; names: Record<string, string>; close: () => void }) {
+// The end of the brief: the same tally the brief opened with, what was kept, and a question for each company's next call
+function DonePage({ brief, done, names, close, openCompany }: { brief: Brief; done: Done; names: Record<string, string>; close: () => void; openCompany: (s: string) => void }) {
   const kept = brief.items.filter(i => done.kept.includes(i.key))
-  const cleared = brief.items.filter(i => done.cleared.includes(i.key)).length
-  const aside = brief.notes.length + brief.spill.length + brief.routine
+  const read = brief.items.filter(i => done.cleared.includes(i.key)).length
+  const worth = brief.notes.length + brief.spill.length
+  const [qs, setQs] = useState<{ symbol: string; q: string }[]>([])
+  useEffect(() => {
+    const syms = [...new Set(brief.items.map(i => i.symbol))].slice(0, 3)
+    Promise.all(syms.map(s => getCompany(s).then(c => c?.questions?.[0] ? { symbol: s, q: rupees(c.questions[0]) } : null).catch(() => null)))
+      .then(xs => setQs(xs.filter((x): x is { symbol: string; q: string } => !!x)))
+  }, [brief])
+  const aside = [worth && `${worth} more worth a line`, brief.routine && `${brief.routine} routine ${brief.routine === 1 ? 'filing' : 'filings'} set aside`].filter(Boolean).join('; ')
   return (
     <div className="r-done">
       <h1 className="title done-t">You’re up to date</h1>
-      <p className="lede">{cleared + kept.length} read{kept.length ? `, ${kept.length} kept for later` : ''}. {aside} more {aside === 1 ? 'filing' : 'filings'} set aside, each a tap away on the brief.</p>
+      <p className="lede">{read} of {brief.items.length} read{kept.length ? `, ${kept.length} kept for later` : ''}.{aside && ` ${aside[0].toUpperCase()}${aside.slice(1)}.`}</p>
       {kept.length > 0 && <>
         <h2 className="head">Kept for later</h2>
         <ul className="rows">{kept.map(i => <li key={i.key}><span className="row row-static">{itemTitle(i, names[i.symbol])}</span></li>)}</ul>
+      </>}
+      {qs.length > 0 && <>
+        <h2 className="head">For the next call</h2>
+        <ul className="rows done-qs">{qs.map(x => <li key={x.symbol}><button className="row" onClick={() => openCompany(x.symbol)}>
+          <span><span className="done-co">{names[x.symbol]}</span>{x.q}</span><Arrow /></button></li>)}</ul>
       </>}
       <button className="btn btn-wide" onClick={close}>Back to the brief</button>
     </div>

@@ -24,8 +24,11 @@ export function BeforeAfter({ p, compact, inRow, lead, bare }: { p: Promise_; co
         {inRow ? v && <p className="ba-verdict">{v.replace(/\.?$/, '.')}</p> : <p className="ba-verdict"><StatusLabel status={p.status} />{v && <span> {v}</span>}</p>}
         {!compact && p.evidence && (p.evidence_kind === 'quote'
           ? <p className="small ba-ev">On the latest call: “{p.evidence}” <Src href={p.evidence_url ? `${p.evidence_url}#page=${p.evidence_page}` : undefined}>page {p.evidence_page}</Src></p>
-          : <p className="small ba-ev">Reported: {tidyEvidence(p.evidence)}</p>)}
+          : <p className="small ba-ev">Reported: {numbersOnly(tidyEvidence(p.evidence), v)}</p>)}
       </div>}
     </div>
   )
 }
+
+// The reported figures behind a verdict, without the growth the verdict already gives ('(11.8% growth)')
+const numbersOnly = (ev: string, v: string) => ev.replace(/\s*\((−?-?[\d.]+%)[^)]*\)(\.?)$/, (m, x, dot) => v.includes(x) ? dot || '.' : m)

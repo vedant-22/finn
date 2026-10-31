@@ -135,8 +135,9 @@ function BioText({ b, fold }: { b: Bio; fold: boolean }) {
   const [open, setOpen] = useState(!fold)
   if (!open) return <button className="link-inline bio-more" onClick={() => setOpen(true)}>Background</button>
   return <>
-    <p className="bio">{b.background}</p>
-    {b.previous.length > 0 && <p className="prev">{b.previous.join('; ')}</p>}
+    {/* Where they worked says more than the filing's paragraph about them: the career leads, the paragraph follows */}
+    {b.previous.length > 0 && <p className="bio">Before this: {b.previous.join('; ').replace(/\.?$/, '.')}</p>}
+    <p className={b.previous.length ? 'prev' : 'bio'}>{b.background}</p>
     {b.url && b.at && <p className="prev">From the company’s <a href={b.url} target="_blank" rel="noreferrer">{+b.at.slice(8, 10)} {MON3[+b.at.slice(5, 7) - 1].replace(/^./, c => c.toUpperCase())} filing</a></p>}
   </>
 }

@@ -97,3 +97,24 @@ export function tally(xs: Promise_[]): string {
   const n = (s: Status) => xs.filter(x => x.status === s).length
   return ORDER.filter(s => n(s) > 0 && word[s]).map(s => `${n(s)} ${word[s]}`).join(', ')
 }
+
+// The financial year a quarter's month falls in: 'Sep 2026' is FY27 (April to March)
+export const fyOf = (q: string) => { const m = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'].indexOf(q.slice(0, 3).toLowerCase()), y = +q.slice(-4); return `FY${String((m >= 3 ? y + 1 : y) % 100).padStart(2, '0')}` }
+
+// This year's revenue guide, read against the latest quarter's revenue growth on a year ago. A pace, not a verdict:
+// one quarter says how it's going, the year decides. Revenue in percent only; order books, loan books and CAGRs don't map.
+export function pace(p: Promise_, revYoy: number | null | undefined): 'ahead' | 'on track' | 'behind' | null {
+  if (revYoy == null || p.status !== 'pending' || p.metric !== 'revenue_growth' || !/revenue/i.test(p.target) || /order|loan|book|inflow|cagr/i.test(p.target)) return null
+  const m = p.target.match(/(\d+(?:\.\d+)?)\s*%?\s*(?:to|–|-)\s*(\d+(?:\.\d+)?)\s*%/) || p.target.match(/(\d+(?:\.\d+)?)\s*%/)
+  if (!m) return null
+  const lo = +m[1], hi = m[2] ? +m[2] : lo
+  return revYoy > hi ? 'ahead' : revYoy < lo ? 'behind' : 'on track'
+}
+
+// The running revenue guide for the year of the latest quarter, if management gave one
+export function runningGuide(ledger: Promise_[], quarter: string | undefined) {
+  if (!quarter) return undefined
+  const fy = fyOf(quarter)
+  const g = ledger.find(p => p.hard && p.status === 'pending' && (p.by_when || '').toUpperCase().replace(/\s/g, '').includes(fy) && pace(p, 0) !== null)
+  return g && { g, fy }
+}
