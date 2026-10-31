@@ -134,7 +134,7 @@ function Held({ i, name, res, openCompany }: { i: Item; name: string; res?: any;
       </div>}
       {p && <div className="word-item">
         <StatusLabel status={p.status} />
-        <p className="word-p">{promiseLine(p)}, promised {said(p)}.</p>
+        <p className="word-p">{promiseLine(p)}.</p>
         {p.status !== 'pending' && verdictText(p) && <p className="sub">{verdictText(p).replace(/\.?$/, '.')}</p>}
         <BeforeAfter p={p} compact bare />
       </div>}
