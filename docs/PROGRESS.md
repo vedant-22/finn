@@ -1,4 +1,8 @@
-Next: 31 Oct, stage 4 polish on the live app (the product is submittable; the repo's visibility is the user's call, see NEEDS_FROM_USER). Candidates: a live-researched company page (ASTRAL via Ask, needs Gemini quota; if out, check the quota message at 390), the people item for HDFC Bank's new MD & CEO at 320, and Your lines' filing toggles changing the brief count (flows covers price only).
+Next: 31 Oct, section 8 (push to 10/10). Panel round 1 is running on the live shots (web/test/e2e/compare.py <live> next, shots 1 to 8, blind copies in /tmp/panel). Then act on changes two or more critics agree on, run the panel again, keep only what raises the average.
+
+## Stage 4, section 8: the push to 10/10 (31 Oct)
+- [x] Live health (31 Oct): live and next serve HEAD's bundle; flows.py 33/33 on finn-ledger.vercel.app, no page errors; sweep.py 22 companies at 320 and 390, no sideways scroll, no NaN
+- [x] compare.py takes Book (7) and the up-to-date end (8) for the panel
 
 ## Stage 4 (31 Oct)
 - [x] docs/BRIEF_TRACE.md: both PDFs line by line
