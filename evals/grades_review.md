@@ -2,9 +2,9 @@
 
 `python3 evals/sample_grades.py` prints a fixed sample (seed 3) of 20 graded promises that have a verdict (kept, partly, missed, gone quiet). I checked each one by hand against the quote, the evidence and the quarterly numbers.
 
-**Result: 18 of 20 hold up. 2 are wrong.**
+**Result: 17 of 20 hold up. 3 are wrong.** (The first pass on 28 Oct said 18; #20 was caught on 31 Oct.)
 
-Which model graded which: the flash free tier allows 20 requests a day, which ran out after about 11 companies. CEATLTD, MARUTI, PIDILITIND, POLYCAB, SRF, SYNGENE, TCI and ULTRACEMCO were graded by flash-lite (each page says so). In this sample, #3, #8, #13, #14 are flash-lite and the rest are flash. Of the two wrong grades, #8 came from flash-lite and #19 from flash. `pipeline/regrade.sh` regrades those eight once the quota resets.
+Which model graded which: the flash free tier allows 20 requests a day, which ran out after about 11 companies. CEATLTD, MARUTI, PIDILITIND, POLYCAB, SRF, SYNGENE, TCI and ULTRACEMCO were graded by flash-lite (each page says so). In this sample, #3, #8, #13, #14 are flash-lite and the rest are flash. Of the three wrong grades, #8 came from flash-lite and #19 and #20 from flash. `pipeline/regrade.sh` regrades those eight once the quota resets.
 
 | # | Company | Promise | FINN | Mine | Note |
 |---|---|---|---|---|---|
@@ -27,11 +27,13 @@ Which model graded which: the flash free tier allows 20 requests a day, which ra
 | 17 | DCMSHRIRAM | Commission ECH plant this quarter | kept | kept | Running at ~70% |
 | 18 | HOMEFIRST | 6 new branches in Q2 | quiet | quiet | |
 | 19 | CROMPTON | 1-1.5% price increase in January | kept | **not a promise** | It reported a price rise already taken. The evidence (17-18% cumulative on fans) is about something else |
-| 20 | LT | Nabha Power sale by FY26 | partly | partly | Closed June 2026, one quarter late |
+| 20 | LT | Hyderabad Metro handover by FY26 (I first read it as the Nabha Power sale) | partly | **wrong evidence** | The quote is about the Hyderabad Metro handover to Telangana. The grader matched it to the Nabha Power sale, a different divestment, and I missed that on 28 Oct. Caught on 31 Oct and corrected by hand to can't tell |
 
-## What the two misses say
+## What the three misses say
 
 - **Graded before the deadline (#8).** The grader marked a promise as kept when the work was mostly done and the window was still open. The safer rule is to stay "not due yet" until the deadline passes or the work is fully done.
 - **Statements about the past taken as promises (#19).** Extraction sometimes picks up "we took a price hike in January", which reports something already done. The grader then grounds it in an unrelated quote. A tense check at extraction would drop these.
 
-Slips of about one quarter come out as "partly" and bigger slips as "missed" (#10, #11, #12, #20). That is consistent across the sample.
+- **Evidence about a different event (#20).** The promise said "this transaction", and the grader took the nearest divestment on a later call. A check that the evidence names the promise's topic would catch it.
+
+Slips of about one quarter come out as "partly" and bigger slips as "missed" (#10, #11, #12). That is consistent across the sample.

@@ -20,7 +20,8 @@ export function BeforeAfter({ p, compact, inRow, lead, bare }: { p: Promise_; co
       </figure>
       {!bare && <div className="ba-then">
         {!inRow && <p className="ba-promise">{promiseLine(p)}</p>}
-        <p className="ba-verdict"><StatusLabel status={p.status} />{v && <span> {v}</span>}</p>
+        {/* Opened under its row, the status word is already on the row: say only what happened */}
+        {inRow ? v && <p className="ba-verdict">{v.replace(/\.?$/, '.')}</p> : <p className="ba-verdict"><StatusLabel status={p.status} />{v && <span> {v}</span>}</p>}
         {!compact && p.evidence && (p.evidence_kind === 'quote'
           ? <p className="small ba-ev">On the latest call: “{p.evidence}” <Src href={p.evidence_url ? `${p.evidence_url}#page=${p.evidence_page}` : undefined}>page {p.evidence_page}</Src></p>
           : <p className="small ba-ev">Reported: {tidyEvidence(p.evidence)}</p>)}

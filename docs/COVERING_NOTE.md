@@ -35,7 +35,7 @@ Pull lives inside the same flow. You can ask about any item where you are ("Did 
 
 **What I left out on purpose**
 
-Background push (FINN raises a phone notification when you open it on a newer snapshot, but doesn't wake the phone on its own), a live feed (push data is a snapshot built after market close and labelled as such), annual reports (the ledger reads transcripts and filed numbers), BSE-only companies, and accounts. I checked only 20 grades by hand (18 hold), which is too few to quote an accuracy.
+Background push (FINN raises a phone notification when you open it on a newer snapshot, but doesn't wake the phone on its own), a live feed (push data is a snapshot built after market close and labelled as such), annual reports (the ledger reads transcripts and filed numbers), BSE-only companies, and accounts. I checked only 20 grades by hand (17 hold), which is too few to quote an accuracy.
 
 **Where I'd take it next**
 

@@ -43,6 +43,8 @@ Passed on: a feed with summaries (what MarketPing, Stox AI and Alpha Tribe alrea
 
 ## Grounding and trust
 
+**One grade corrected by hand, and said so (31 Oct).** L&T's Q2 FY26 promise to close the Hyderabad Metro handover by the end of FY26 was graded "partly kept" on evidence about the Nabha Power sale, a different divestment. My own hand review on 28 Oct missed it; a critic's note about a vague promise line led me to the transcript. I set it to "can't tell", named the promise properly, and removed the same mistake from L&T's summary, one question and one point against. The entry carries a `corrected` note, and the grade review now says 17 of 20 hold, not 18. I didn't regrade the company, because a fresh model run would change grades nobody has checked.
+
 **Every quote is checked by code against its page in the PDF.** The model returns a quote and a page; `finn/sources/pdf.py:verify_quote` looks for it. Small copying slips pass. A changed number, an added "not", or two sentences stitched from different pages fail, and the promise is dropped. Evidence quotes used in grading get the same check, and a grade whose evidence fails is downgraded to "can't tell". Results in `evals/quotes_result.txt`.
 
 **Results numbers come from the exchange's XBRL, not from a model.** NSE publishes every results filing as XBRL. FINN parses Revenue, PBT and PAT from it and works out EBITDA as PBT before exceptional items + finance cost + depreciation − other income. A model reading a PDF table can misread a column, and it costs money for no gain. Banks get interest earned and pre-provision profit; NBFCs get net interest income, because EBITDA means nothing for a lender.

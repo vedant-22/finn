@@ -7,7 +7,7 @@ Against the brief's "What to submit", line by line. Pass 1 on 28 Oct, 10:15 IST;
 | Mobile-first prototype, easy to try on a phone | https://finn-ledger.vercel.app (responsive web; `/`, push.json and company files return 200) | ok || ok: redeployed 28 Oct ~13:20 IST; Today, Book, Company, Look up checked live at 390x844 |
 | The GitHub repository | https://github.com/vedant-22/finn (public) | ok || ok: public, pushed |
 | AI build history | export this Claude Code session and attach it to the email (NEEDS_FROM_USER.md) | yours to do || yours to do |
-| Short writeup in the covering email: what was built, decisions and tradeoffs, what was left out, where next | docs/COVERING_NOTE.md | ok, signed || ok: grade eval result added (18/20) |
+| Short writeup in the covering email: what was built, decisions and tradeoffs, what was left out, where next | docs/COVERING_NOTE.md | ok, signed || ok: grade eval result added (17/20 after a second look on 31 Oct) |
 | Email to assessment@enam.com, subject "ENAM - IIT screening - 2027" | NEEDS_FROM_USER.md | yours to do || yours to do |
 
 From the build guidelines (section 10):
