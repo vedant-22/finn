@@ -49,6 +49,8 @@ table { border-collapse: collapse; }
 .st-quiet { color: var(--quiet); }
 .st-partly { color: var(--ink); }
 .st-pending, .st-unclear { color: var(--ink-2); }
+/* a promise row carries its status as a class for layout; only the status word takes the colour */
+.p-item:is(.st-missed, .st-kept, .st-quiet, .st-partly, .st-pending, .st-unclear) { color: var(--ink); }
 
 /* outcome figures: 72 with a 36 unit; 48 with 24; 40, 30 and 24 for tighter places */
 .outcome { display: inline-flex; align-items: flex-end; gap: 2px; font-weight: 500; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -342,6 +344,7 @@ table { border-collapse: collapse; }
 @media (min-width: 360px) { .pgrid { column-gap: var(--s-xs); } }
 .p-item .og-link { font-size: 15px; }
 .p-fig { display: flex; align-items: flex-end; min-height: 48px; max-width: 100%; }
+.p-against { margin: 0 0 4px 10px; font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink-2); white-space: nowrap; }
 .p-item .outcome { max-width: 100%; flex-wrap: wrap; }
 .p-item > .lbl { margin: var(--s-5xs) 0 0; }
 .p-item .og-d1 { overflow-wrap: anywhere; }

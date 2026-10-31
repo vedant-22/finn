@@ -245,17 +245,33 @@ function promised(t: string): [string, string] | null {
 // No figure in the promise: the year it's due, as they named it ('FY26'), else when it was said
 const dueFig = (p: Promise_) => `${p.target} ${deadline(p)}`.match(/\b(Q\d\s)?FY\d\d\b|\b20\d\d\b/)?.[0]
 
+// What was delivered, for a settled promise with one figure: the one other figure of the same unit in the verdict
+// ('grew 11.8% ... against the 15% growth target' -> 11.8%). Left out when there are two, or when the figure follows
+// a guide's words ('expected raw material costs around 25%'), so the big figure is never a guess
+const PCT = /(\d[\d,]*(?:\.\d+)?)(?:\s?(?:[–-]|to)\s?(\d[\d,]*(?:\.\d+)?))?\s?(%|×)/g
+function delivered(p: Promise_): [string, string] | null {
+  if (!['missed', 'kept', 'partly', 'quiet'].includes(p.status)) return null
+  const t = [...p.target.matchAll(PCT)]
+  if (t.length !== 1) return null
+  const key = (m: RegExpMatchArray) => `${m[1]}${m[2] ? '–' + m[2] : ''}`
+  const c = [...(p.verdict || '').matchAll(PCT)].filter(m => m[3] === t[0][3] && key(m) !== key(t[0]))
+  const vals = [...new Set(c.map(key))]
+  if (vals.length !== 1 || /expect|guid|target|promis|plan/i.test(p.verdict.slice(Math.max(0, c[0].index! - 40), c[0].index))) return null
+  return [vals[0], t[0][3]]
+}
+
 // One promise as an outcome, as v4 set it: the figure, what they said, the verdict word. Tap for the quote and what the filings showed
 // said: a settled promise carries what the filings showed under its verdict word, so promised and delivered read together
 function PromiseItem({ p, src, open, toggle, said }: { p: Promise_; src?: string; open: boolean; toggle: () => void; said?: boolean }) {
-  const fig = promised(p.target), due = fig ? undefined : dueFig(p)
+  const got = said ? delivered(p) : null
+  const fig = got ?? promised(p.target), due = fig ? undefined : dueFig(p)
   const len = (fig?.[0] || '').replace(/\u2060/g, '').length + (fig?.[1] || '').trim().length
   const size = !fig ? 'xs' : len <= 5 ? 's' : len <= 6 ? 'm' : len <= 9 ? 'xs' : 'xxs'
   return (
     <li className={`og-item p-item st-${p.status}${open ? ' open' : ''}`} data-pid={p.id}>
       <button className="og-btn" aria-expanded={open} onClick={toggle}>
         {/* Figures sit in one 48 px band, so the sentences under them start level across the row */}
-        <span className="p-fig">{fig ? <Outcome size={size} value={fig[0]} unit={fig[1]} /> : due ? (/^FY\d\d$/.test(due) ? <Outcome size="s" pre="FY" value={due.slice(2)} /> : <Outcome size={due.length > 5 ? 'xs' : 's'} value={due} />) : null}</span>
+        <span className="p-fig">{fig ? <><Outcome size={size} value={fig[0]} unit={fig[1]} />{got && <span className="p-against">against {promised(p.target)?.join('')}</span>}</> : due ? (/^FY\d\d$/.test(due) ? <Outcome size="s" pre="FY" value={due.slice(2)} /> : <Outcome size={due.length > 5 ? 'xs' : 's'} value={due} />) : null}</span>
         <span className="og-d1">{promiseLine(p)}.</span>
         <span className="og-d2">Said {p.period.replace(/ 20/, ' ’')}</span>
       </button>
