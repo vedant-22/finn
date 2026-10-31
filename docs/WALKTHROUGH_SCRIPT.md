@@ -1,59 +1,59 @@
 # Walkthrough script
 
-About 2 minutes 20 seconds. Spoken lines are short. Don't read the screen; say why it matters.
+About 2 minutes 15 seconds. Spoken lines are short. Don't read the screen; say why it matters.
 
 ## Recording setup
 
 - iPhone, or Chrome devtools at 390×844 with device frame off. Light mode, notifications off, battery and clock hidden if you can.
 - Open https://finn-ledger.vercel.app once before recording so fonts and data are cached. Then add it to the home screen and open from there; it runs full screen.
-- Open Menu → Alert lines and tap "Reset to defaults" before you start.
-- Before recording, open the Look up tab once and clear site data if it shows a "Recent" row you don't want.
-- Pick the live ticker in advance (ASTRAL works) and open it once off camera so the server has the transcripts cached. The recorded run then takes about 20 seconds instead of a minute.
+- Start from a clean brief: clear the site's data (Settings → Safari → Advanced → Website Data on an iPhone, or devtools → Application → Clear site data), then open the app again. It should say "2 to read" (the 28 Oct 9:21 pm snapshot; the numbers change with each rebuild).
+- Pick the live ticker in advance (ASTRAL works) and open it once off camera so the server has the transcripts cached. The recorded run then takes about 20 seconds instead of a minute. Clear site data again afterwards so the brief starts fresh.
 - Record the screen with a mic. Speak after each tap, not over it.
 
 ## Beats
 
-**1. Today (0:00–0:25)**
-Open the app. Today is on screen with the 24h count ("2 need you" on the 28 Oct 9:21 pm snapshot, Syngene up 12% on 43× its usual volume the day after results; it changes with each rebuild). On the first open of a session the number falls from the filing count to that.
+**1. The brief (0:00–0:20)**
+Open the app. "2 *to read*": Syngene and Larsen & Toubro.
 > "This is FINN. It's for someone holding fifteen or twenty stocks for years."
-> "Close to three hundred filings came in this month. It shows me the few that matter."
-Tap the "Week" window and stay on it; the five cards below are in the week.
-*(silence, 2 seconds, while the count rolls)*
+> "Every morning it gives me a short brief. Today that's two things, out of everything my companies filed."
+Tap "Week". The count rolls to 6. Tap "24 hours" to go back.
+*(silence, 1 second while it rolls back)*
 
-**2. A results card (0:25–0:50)**
-Scroll to the Larsen & Toubro results card. Tap the round control at its foot ("The detail") for the four numbers.
-> "When results land, I get the four numbers against last quarter and last year. Straight from the exchange's own data file."
-Point at the before-and-after on the card: the quote with 15% and FY26 marked as they sweep in, "Target found" and "Date found", the promise in one line, then Missed.
-> "And then the part I care about. What did they promise, and did this quarter deliver it."
+**2. My lines (0:20–0:35)**
+Point at Syngene: +12.2% on the day, on 43.5× its usual volume, after results. Top right of the row: "2× volume and a ±4% day".
+> "Each alert says which of my lines it crossed."
+Tap that line. The Your lines sheet comes up. Tap − next to "Price move in a day" twice; the count in the sheet goes up.
+> "And the lines are mine. Tighter lines, more alerts."
+Tap "Reset to defaults", then drag the sheet down.
 
-**3. A management change (0:50–1:05)**
-Scroll to the Syngene management change card (its CFO resigns).
-> "A new CEO interrupts me. A new company secretary doesn't."
+**3. Read it (0:35–1:15)**
+Tap "Read the brief". Syngene opens on its results table.
+> "Results come as the four numbers, against last quarter and last year. Straight from the exchange's own data file."
+Scroll to "Against their word": Kept.
+> "Then the part I care about. What did they promise, and did they do it."
+Swipe left (or tap Done). Larsen & Toubro opens. Scroll to "Against their word": FY26 revenue grew 11.8% against a 15% target. Missed.
+> "L&T said fifteen percent. They did under twelve. That's their own words, with the page."
+Tap "Did Larsen & Toubro deliver on margins?" under Ask FINN. The answer appears in place.
+> "I can ask right here. The answer only comes from their calls and filings."
+Tap Done. The rest of the window is four one-liners. Tap "Mark all read". "You're up to date."
 *(silence, 2 seconds)*
+> "And then it ends. I know I've seen everything that matters."
+Tap "Back to the brief".
 
-**4. The ledger (1:05–1:40)**
-Go Book → Larsen & Toubro (or tap the name on its card). "The promise in full" on the card instead opens the ledger already at that promise.
-The page opens on the name and its record: "1 of 3 promises kept, 1 partly."
+**4. Ask and the ledger (1:15–1:45)**
+Tap "Ask", then the "Who missed a promise?" suggestion.
+> "Same question across my whole book."
+Ask "Did L&T deliver on revenue growth?", then tap "Larsen & Toubro's full record". The company page opens on its ledger. Tap the first promise, marked Missed.
 > "This is the ledger. Every promise from their last calls that had a number and a date."
-Tap the first promise, marked Missed. It opens on the before-and-after.
-> "Here's what they said, with the page. Here's what happened."
-Tap the page link under the quote; let the PDF open on that page for a second; go back.
-> "Every quote is checked against the PDF by code. If it's not on the page, it doesn't show."
-Scroll to "Ask on the next call".
-> "And this is what I'd ask them next time."
+Tap "Aug ’25 call, page 9" under the quote; let the PDF open on that page for a second; go back.
+> "Every quote is checked against the PDF by code. If it isn't on the page, FINN doesn't show it."
 
-**5. The book (1:40–1:55)**
-Tap "Book".
-> "My whole portfolio, sorted by whose word is weakest."
-*(silence, 2 seconds on the tally)*
-Scroll once: the weakest holding leads as a card, the rest follow as rows, each with its record and its weakest promise behind a status chip.
-
-**6. Any company (1:55–2:15)**
-Tap "Look up", type ASTRAL, tap the blue arrow.
-> "It works on any NSE company. It reads the last five calls right now."
-Let the steps run; each call shows one promise it found as it finishes. When the ledger opens:
+**5. Any company (1:45–2:10)**
+Tap "Ask", type ASTRAL, press enter, tap "Read ASTRAL".
+> "It works on any NSE company. It's reading their last five calls right now."
+Let the steps run. When the ledger opens:
 > "Same ledger. About nine cents of model time, and nothing from news or brokers."
 
-**7. Close (2:15–2:20)**
-Tap "Today".
-> "Most days, FINN should be quiet. When it isn't, it's for a reason."
+**6. Close (2:10–2:15)**
+Tap "Brief". It still says you're up to date.
+> "Most days FINN should be quiet. When it isn't, there's a reason."
