@@ -17,7 +17,7 @@ async def main():
         fig = lambda: pg.locator('.hero-fig').inner_text()
         check('Today opens on 2 need you', (await fig()).replace('\n', ' ') == '2 need you', await fig())
         check('two cards', await pg.locator('.cards .card').count() == 2)
-        syn = lambda: pg.locator('.card', has_text='Syngene').first.locator('.card-fig .o-val').inner_text()
+        syn = lambda: pg.locator('.card', has_text='Syngene').first.locator('.o-val').inner_text()
         syn24 = await syn()
         for w, want in [('3 days', 6), ('Week', 6), ('Month', 6), ('24h', 2)]:
             await pg.get_by_role('radio', name=w, exact=True).click(); await pg.wait_for_timeout(500)

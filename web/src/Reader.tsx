@@ -54,7 +54,7 @@ function ItemPage({ i, push, lines, name, openCompany, openLines }: { i: Item; p
     ? push.filings.filter(x => x.symbol === i.symbol && x.results && x.at.slice(0, 10) <= m.d).sort((a, b) => b.at.localeCompare(a.at))[0] ?? m.explainedBy
     : undefined)
   const fig = alertFig(i, name, push)
-  const bars = (push.eod[i.symbol] || []).filter(b => b.d <= (fig?.d ?? i.at.slice(0, 10))).slice(-30)
+  const bars = (push.eod[i.symbol] || []).filter(b => b.d <= (fig?.d ?? i.at.slice(0, 10))).slice(-30), line = bars.length > 4
   const others = i.story?.filings.filter(x => x !== f) || []
   const top = !!i.with?.lead.people?.some(p => p.seniority === 'top')
   const withPeople = i.with?.lead.people?.length
@@ -65,10 +65,12 @@ function ItemPage({ i, push, lines, name, openCompany, openLines }: { i: Item; p
   return <>
     {/* The card's own top, grown: the price line, what kind, the name, the day's move */}
     <div className="iv-top">
-      {bars.length > 4 && <PriceLine bars={bars} />}
+      {line && <PriceLine bars={bars} end={fig && <Outcome size="xxs" value={fig.v.replace('%', '')} unit="%" />} />}
       <div className="card-lbl"><span className="lbl">{kindLabel(i, push)}</span>{!fig && <span className="lbl lbl-quiet">{shortDay(i.at)}</span>}</div>
       <h1 className="t-h1 iv-name"><button onClick={() => openCompany(i.symbol)}>{name}</button></h1>
-      {fig && <div className="card-fig"><Outcome size="xs" value={fig.v.replace('%', '')} unit="%" /><span className="card-cap">{figWhen(fig.d, i)}</span></div>}
+      {fig && (line
+        ? m && <p className="card-cap">On {m.volX.toFixed(1)}× its usual volume</p>
+        : <div className="card-fig"><Outcome size="xs" value={fig.v.replace('%', '')} unit="%" /><span className="card-cap">{figWhen(fig.d, i)}</span></div>)}
       {f && !f.results && f.amount_cr != null && f.amount_cr >= 1 && <div className="card-fig"><Outcome size="xs" value={`₹${cr(f.amount_cr)}`} unit="cr" />{f.pct_rev != null && <span className="card-cap">{f.pct_rev < 0.1 ? 'Under 0.1%' : `${f.pct_rev.toFixed(f.pct_rev < 1 ? 1 : 0)}%`} of a year’s revenue</span>}</div>}
       <p className="serif-line">{lede}</p>
       <p className="iv-line"><span>{crossedText(i, lines)}.</span> <button className="see" onClick={openLines}>Change</button></p>

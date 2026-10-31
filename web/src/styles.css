@@ -119,6 +119,8 @@ table { border-collapse: collapse; }
 /* on a card the price line is context, not the point: a third of the card, its first and last session named */
 .price .card-img { aspect-ratio: 390 / 120; }
 .price-d { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; line-height: 116%; color: var(--ink-2); }
+.price-end { display: grid; justify-items: end; gap: 2px; }
+.price-d { align-items: flex-start; }
 .chart { display: block; width: 100%; height: 100%; }
 .chart .line { fill: none; stroke: var(--brand); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
 .chart .wash { fill: var(--wash); }
@@ -523,6 +525,9 @@ table { border-collapse: collapse; }
 .card-title, .iv-name { width: fit-content; }
 ::view-transition-group(item-line), ::view-transition-group(item-name), ::view-transition-group(item-fig) { animation-duration: 340ms; animation-timing-function: var(--std); }
 ::view-transition-old(item-name), ::view-transition-new(item-name) { height: 100%; }
+/* the line is one picture in both places: show only the one arriving, so its figure is never seen twice */
+::view-transition-old(item-line) { animation: none; opacity: 0; }
+::view-transition-new(item-line) { animation: none; height: 100%; }
 @keyframes vt-out { to { opacity: 0; } }
 @keyframes vt-in { from { opacity: 0; } }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 240ms; }

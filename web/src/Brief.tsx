@@ -1,5 +1,5 @@
 // The brief: the few things that crossed the investor's lines, as notifications, and a way through them that ends.
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { buildBrief, newsQuestion, type Brief, type Item } from './queue'
 import { CATEGORY_LABEL, cr, dayMon, getCompany, rupees, sessionWhen, when, type Bar, type Lines, type Push } from './lib'
 import { FoldSummary, NoteRow, Roll, few, moveWhy, reclass, resultLine, shortDay, sizeWords, sortPeople, tidySubject } from './items'
@@ -251,13 +251,17 @@ function ItemCard({ i, fresh, name, push, lines, open }: { i: Item; fresh: boole
   const bars = (push.eod[i.symbol] || []).filter(b => b.d <= (fig?.d ?? i.at.slice(0, 10))).slice(-30)
   const body = cardSentence(i, fig)
   const [v, u] = fig ? [fig.v.replace('%', ''), '%'] : ['', '']
+  const line = bars.length > 4
   return (
     <article className="card" ref={ref} data-key={i.key}>
-      {bars.length > 4 && <PriceLine bars={bars} />}
+      {/* One picture: the month's line, ending on the day's move under its last close */}
+      {line && <PriceLine bars={bars} end={fig && <Outcome size="xxs" value={v} unit={u} />} />}
       <div className="card-info">
         <div className="card-lbl"><span className="lbl">{kindLabel(i, push)}</span>{fresh && <span className="lbl lbl-new" title="New since you last looked">New</span>}</div>
         <h2 className="card-title">{name}</h2>
-        {fig && <div className="card-fig"><Outcome size="xs" value={v} unit={u} /><span className="card-cap">{figWhen(fig.d, i)}</span></div>}
+        {fig && (line
+          ? i.move && <p className="card-cap">On {i.move.volX.toFixed(1)}× its usual volume</p>
+          : <div className="card-fig"><Outcome size="xs" value={v} unit={u} /><span className="card-cap">{figWhen(fig.d, i)}</span></div>)}
         <p className="card-desc">{body}</p>
         <p className="card-line">{rowTag(i, lines)}</p>
         <div className="card-foot">
@@ -269,9 +273,11 @@ function ItemCard({ i, fresh, name, push, lines, open }: { i: Item; fresh: boole
   )
 }
 // The card's picture: the month's closes, short, with the first and last session named so the period is plain
-export function PriceLine({ bars }: { bars: Bar[] }) {
+// end: the day's move, set under the last close it belongs to
+export function PriceLine({ bars, end }: { bars: Bar[]; end?: ReactNode }) {
+  const last = shortDay(bars[bars.length - 1].d)
   return <figure className="price"><div className="card-img"><Chart series={bars} /></div>
-    <figcaption className="price-d"><span>{shortDay(bars[0].d)}</span><span>{shortDay(bars[bars.length - 1].d)}</span></figcaption></figure>
+    <figcaption className="price-d"><span>{shortDay(bars[0].d)}</span>{end ? <span className="price-end">{end}<span>{last} close</span></span> : <span>{last}</span>}</figcaption></figure>
 }
 
 // One date for a figure, the same in every window: the session it closed in, and the volume it closed on
