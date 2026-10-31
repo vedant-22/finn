@@ -63,7 +63,9 @@ export function ResultsBlock({ f }: { f: any }) {
   // EBITDA here leaves out other income, so PBT can sit above it; say why rather than let it look like an error
   const e = r.lines.find((l: any) => l.key === 'ebitda' && l.label === 'EBITDA'), b = r.lines.find((l: any) => l.key === 'pbt')
   const exc = r.one_offs?.some((o: any) => o.q === r.quarter && o.exceptional)
-  const above = e && b && b.value > e.value ? ` PBT is above EBITDA because other income${exc ? ' and exceptional items outweigh' : ' outweighs'} depreciation and interest.` : ''
+  // With no exceptional items the gap is exactly other income less depreciation and interest, so give it in rupees
+  const above = e && b && b.value > e.value ? exc ? ' PBT is above EBITDA because other income and exceptional items outweigh depreciation and interest.'
+    : ` PBT is above EBITDA: other income was ₹${cr(b.value - e.value)} crore more than depreciation and interest.` : ''
   const day = r.source?.filed?.split(' ')[0] || '', filed = day ? effDate(day, day.slice(-4)) : ''
   return (
     <div className="results">

@@ -141,6 +141,9 @@ table { border-collapse: collapse; }
 .brief-end { margin-top: 22px; font: italic 400 19px/1.35 var(--serif); color: var(--ink-2); }
 .notif-spark svg { width: 72px; height: 22px; animation: draw 600ms var(--ease) both; }
 .notif-spark path { fill: none; stroke: var(--blue); stroke-width: 1.4; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.notif-spark svg { overflow: visible; }
+.notif-spark .spark-base { stroke: var(--rule-2); stroke-width: 1; stroke-dasharray: 2 2; vector-effect: non-scaling-stroke; }
+.notif-spark .spark-0 { fill: var(--blue); }
 
 /* ---------- the reader ---------- */
 .reader { position: fixed; inset: 0; z-index: 30; background: var(--paper); display: flex; flex-direction: column; animation: r-up var(--mid) var(--ease); }

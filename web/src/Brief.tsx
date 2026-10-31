@@ -223,9 +223,11 @@ function resultsWords(r: any) {
 function Spark({ bars }: { bars: { close: number }[] }) {
   if (bars.length < 5) return null
   const w = 72, h = 22, cl = bars.map(b => b.close), lo = Math.min(...cl), hi = Math.max(...cl)
-  const d = cl.map((c, k) => `${k ? 'L' : 'M'}${(k / (cl.length - 1) * w).toFixed(1)} ${(h - 2 - (c - lo) / (hi - lo || 1) * (h - 4)).toFixed(1)}`).join('')
+  const y = (c: number) => (h - 2 - (c - lo) / (hi - lo || 1) * (h - 4)).toFixed(1)
+  const d = cl.map((c, k) => `${k ? 'L' : 'M'}${(k / (cl.length - 1) * w).toFixed(1)} ${y(c)}`).join('')
   const chg = (cl[cl.length - 1] / cl[0] - 1) * 100
-  return <span className="notif-spark"><svg viewBox={`0 0 ${w} ${h}`} aria-hidden><path d={d} /></svg>
+  // The month's first close marked and carried across as a hairline, so above or below it reads as up or down
+  return <span className="notif-spark"><svg viewBox={`0 0 ${w} ${h}`} aria-hidden><line className="spark-base" x1="0" x2={w} y1={y(cl[0])} y2={y(cl[0])} /><path d={d} /><circle className="spark-0" cx="0" cy={y(cl[0])} r="1.75" /></svg>
     <span className="notif-c">{chg >= 0 ? '+' : '−'}{Math.abs(chg).toFixed(1)}% {bars.length >= 20 ? 'in a month' : `in ${bars.length} sessions`}</span></span>
 }
 
