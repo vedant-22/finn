@@ -238,14 +238,18 @@ export function kindLabel(i: Item, push: Push): string {
   return CATEGORY_LABEL[i.story!.category] || 'Filing'
 }
 
+// The card's sentence: the news in one or two facts. Volume and the line crossed are under the figure.
+// The full view opens on the same words, so nothing changes under the eye as the card grows
+export const cardSentence = (i: Item, fig: { body: string[] } | null) =>
+  (fig ? fig.body : [itemLine(i)]).filter(l => !/^On [\d.]+× its usual volume/.test(l)).slice(0, 2).join(' ')
+
 // A card, as v4 set them: the month's price line on top, what kind of thing, the company, the day's move with the
 // line it crossed, one grey sentence, and Read more. Everything else is in the full view it opens into.
 function ItemCard({ i, fresh, name, push, lines, open }: { i: Item; fresh: boolean; name: string; push: Push; lines: Lines; open: (el: HTMLElement | null) => void }) {
   const ref = useRef<HTMLElement>(null)
   const fig = alertFig(i, name, push)
   const bars = (push.eod[i.symbol] || []).filter(b => b.d <= (fig?.d ?? i.at.slice(0, 10))).slice(-30)
-  // The sentence: the news in one or two facts. Volume and the line crossed are under the figure
-  const body = (fig ? fig.body : [itemLine(i)]).filter(l => !/^On [\d.]+× its usual volume/.test(l)).slice(0, 2).join(' ')
+  const body = cardSentence(i, fig)
   const [v, u] = fig ? [fig.v.replace('%', ''), '%'] : ['', '']
   return (
     <article className="card" ref={ref} data-key={i.key}>

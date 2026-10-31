@@ -3,8 +3,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { type Brief, type Item } from './queue'
 import { cr, getCompany, rupees, wordScore, type Company, type Lines, type Push } from './lib'
 import { Answer, suggestions, useKnown } from './Ask'
-import { PriceLine, alertFig, crossedText, figWhen, itemLine, kindLabel, withLine } from './Brief'
-import { PeopleBlock, ResultsBlock, moveWhy, shortDay, tidySubject, useWord } from './items'
+import { PriceLine, alertFig, cardSentence, crossedText, figWhen, kindLabel } from './Brief'
+import { PeopleBlock, ResultsBlock, shortDay, tidySubject, useWord } from './items'
 import { Outcome, Src, StatusLabel } from './ui'
 import { BeforeAfter, said } from './Word'
 import { promiseLine, verdictText } from './Trail'
@@ -56,13 +56,9 @@ function ItemPage({ i, push, lines, name, openCompany, openLines }: { i: Item; p
   const fig = alertFig(i, name, push)
   const bars = (push.eod[i.symbol] || []).filter(b => b.d <= (fig?.d ?? i.at.slice(0, 10))).slice(-30)
   const others = i.story?.filings.filter(x => x !== f) || []
-  const top = i.with?.lead.people?.some(p => p.seniority === 'top')
-  // The sentence under the name: what happened, in plain words. The figures it would repeat are in the table
-  const closed = m ? `Closed at ₹${m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.` : ''
-  const lede = m && f?.results ? `${top && i.with ? withLine(i.with) + ' ' : ''}${m.chg >= 0 ? 'Up' : 'Down'} on its ${f.results.quarter} results. ${closed}`
-    : f?.results ? `${top && i.with ? withLine(i.with) + ' ' : ''}${f.results.quarter} results, filed ${shortDay(i.at)}.`
-      : m ? `${closed} ${moveWhy(m)}`
-        : itemLine(i)
+  // The sentence under the name is the card's, then where it closed; the figures it would repeat are in the table
+  const closed = m ? ` Closed at ₹${m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.` : ''
+  const lede = cardSentence(i, fig) + closed
   return <>
     {/* The card's own top, grown: the price line, what kind, the name, the day's move */}
     <div className="iv-top">
