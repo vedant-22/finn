@@ -49,7 +49,7 @@ Tap "Aug ’25 call, page 9" under the quote; let the PDF open on that page for 
 > "Every quote is checked against the PDF by code. If it isn't on the page, FINN doesn't show it."
 
 **5. Any company (1:45–2:10)**
-Tap "Ask", type ASTRAL, press enter, tap "Read ASTRAL".
+Tap "Ask". Under "Outside your book", tap ASTRAL ("Not read yet"), then "Read ASTRAL".
 > "It works on any NSE company. It's reading their last five calls right now."
 Let the steps run. When the ledger opens:
 > "Same ledger. About nine cents of model time, and nothing from news or brokers."

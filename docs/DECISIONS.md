@@ -14,6 +14,10 @@ Each entry: what I chose, what I passed on, and why.
 
 **An alert's figure belongs to the event, not the window.** A move on results day arrives as a move in the 24-hour window and rides with its results in a wider one. It used to lead with the day's move in one and PAT YoY in the other, so the same Syngene day read +12.2% or −52% depending on the window. Now anything that moved the shares leads with the day's change everywhere (it is what crossed the line), the profit goes in the sentence, and results with no move lead with PAT YoY. The reader still opens results on the table.
 
+**The reader covers the tabs.** A critic noted that the reader's bar hides the tab bar. That's on purpose: reading the brief is one task with a clear end, so it gets the whole screen and one way out (close, or finishing). Tabs under it would invite leaving halfway, which is the feed habit the brief is meant to break.
+
+**Ask shows what's ready outside the book.** When an idea comes up, the investor's first question is whether FINN can talk about that company yet. Ask's empty state lists the four companies FINN has read beyond the portfolio, then one it hasn't (ASTRAL, "Not read yet"), so it's clear any symbol works and what that costs (about a minute).
+
 **Passed on:** chat as the home screen (typing is the slowest way to ask a phone anything, and a blank box hands the filtering back to the investor); a dashboard of tiles (aggregation, which the brief says isn't the scarce skill); voice as the main mode (fine on a commute, useless in a meeting). Voice stays as a Listen control that reads the brief aloud with the browser's own speech.
 
 ## Product
