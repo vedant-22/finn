@@ -75,6 +75,7 @@ async def main():
         check('answer is promised against delivered', await pg.locator('.answer .ba .st-missed').count() >= 1)
         await pg.locator('#ask').fill('Who missed a promise?'); await pg.keyboard.press('Enter'); await pg.wait_for_timeout(2500)
         check('book question', 'missed' in await pg.locator('.answer > .head').inner_text())
+        check('book answer is about the holdings', 'of your 18 holdings' in await pg.locator('.answer > .sub').inner_text())
         await pg.locator('#ask').fill('ASTRAL'); await pg.keyboard.press('Enter'); await pg.wait_for_timeout(600)
         check('unknown company offers research', await pg.get_by_role('button', name='Read ASTRAL').count() == 1)
         # All quiet: strict lines, and the brief offers the nearest wider window that has something

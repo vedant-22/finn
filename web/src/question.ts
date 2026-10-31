@@ -24,7 +24,7 @@ const STOP = new Set(`a an and any are as at be by can did do does for from has 
   quiet gone hit meet met achieve achieved book holdings companies company management team teams read research look up open about any anything
   margin margins revenue growth profit capex capacity debt volume volumes launch launches share working capital fy next year quarter`.split(/\s+/))
 
-export interface Known { symbol: string; names: string[] }
+export interface Known { symbol: string; names: string[]; held?: boolean }
 // The names a company goes by in a question: its symbol, its short name, its full name without 'Ltd'
 export function aliases(symbol: string, name: string, short?: string): string[] {
   const full = name.toLowerCase().replace(/\b(ltd|limited|india)\b\.?/g, '').replace(/\s+/g, ' ').trim()

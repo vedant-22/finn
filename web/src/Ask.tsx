@@ -16,7 +16,7 @@ export function useKnown(push: Push) {
   return useMemo(() => {
     const names: Record<string, string> = {}
     const known: Known[] = []
-    for (const p of push.portfolio) { names[p.symbol] = p.short || shortName(p.name); known.push({ symbol: p.symbol, names: aliases(p.symbol, p.name, p.short) }) }
+    for (const p of push.portfolio) { names[p.symbol] = p.short || shortName(p.name); known.push({ symbol: p.symbol, names: aliases(p.symbol, p.name, p.short), held: true }) }
     for (const [s, n] of Object.entries(b)) if (!names[s]) { names[s] = shortName(n); known.push({ symbol: s, names: aliases(s, n) }) }
     return { known, names, ready: Object.keys(b).length > 0 }
   }, [push, b])
@@ -164,17 +164,27 @@ function BookAnswer({ p, known, names, openCompany }: { p: Parsed; known: Known[
     return () => { live = false }
   }, [p, known])
   if (!rows) return <section className="answer"><div className="skel skel-line" /><div className="skel skel-block" /></section>
-  const cos = [...new Set(rows.map(r => r.sym))]
+  // 'Your whole book' means the holdings: they come first and in full; companies read beyond the book follow
+  const held = new Set(known.filter(k => k.held).map(k => k.symbol))
+  const mine = rows.filter(r => held.has(r.sym)), other = rows.filter(r => !held.has(r.sym))
+  const cos = new Set(mine.map(r => r.sym)).size
   const what = p.intent === 'quiet' ? 'gone quiet' : p.intent === 'due' ? 'still due' : p.intent === 'delivered' ? 'settled' : 'missed or partly kept'
+  const on = p.topic ? ` on ${p.topic.label}` : ''
+  const row = ({ sym, x }: { sym: string; x: Promise_ }) => (
+    <li key={sym + x.id}><button className="row row-2" onClick={() => openCompany(sym, x.id)}>
+      <span><b className="row-co">{names[sym] || sym}</b> {promiseLine(x)}</span><StatusLabel status={x.status} />
+    </button></li>
+  )
   return (
     <section className="answer" aria-live="polite">
-      <h2 className="head">{rows.length ? `${rows.length} ${rows.length === 1 ? 'promise' : 'promises'} ${what}${p.topic ? ` on ${p.topic.label}` : ''}` : `Nothing ${what}${p.topic ? ` on ${p.topic.label}` : ''}`}</h2>
-      <p className="sub">{rows.length ? `At ${cos.length} ${cos.length === 1 ? 'company' : 'companies'} FINN has read.` : 'Across every company FINN has read.'}</p>
-      <ul className="rows">{rows.slice(0, 12).map(({ sym, x }) => (
-        <li key={sym + x.id}><button className="row row-2" onClick={() => openCompany(sym, x.id)}>
-          <span><b className="row-co">{names[sym] || sym}</b> {promiseLine(x)}</span><StatusLabel status={x.status} />
-        </button></li>
-      ))}</ul>
+      <h2 className="head">{mine.length ? `${mine.length} ${mine.length === 1 ? 'promise' : 'promises'} ${what}${on}` : `Nothing ${what}${on} in your book`}</h2>
+      <p className="sub">{mine.length ? `At ${cos} of your ${held.size} holdings.` : `Across your ${held.size} holdings.`}</p>
+      {mine.length > 0 && <ul className="rows">{mine.map(row)}</ul>}
+      {other.length > 0 && <>
+        <h3 className="small kicker ask-other">Outside your book</h3>
+        <ul className="rows">{other.slice(0, 6).map(row)}</ul>
+        {other.length > 6 && <p className="small">{other.length - 6} more at companies outside your book.</p>}
+      </>}
     </section>
   )
 }
