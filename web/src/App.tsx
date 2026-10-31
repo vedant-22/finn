@@ -28,6 +28,13 @@ const parse = (): Route => {
 
 // The shared-element morph runs where the browser has view transitions and motion is welcome
 const morph = () => 'startViewTransition' in document && !matchMedia('(prefers-reduced-motion: reduce)').matches
+// The card and the parts of it the full view repeats: the panel grows while the price line, the name and the figure
+// travel to their places in the view, so something you were reading stays in sight the whole way (styles.css names the view's)
+const PARTS: [string, string][] = [['.price', 'item-line'], ['.card-title', 'item-name'], ['.card-fig .outcome', 'item-fig']]
+const share = (card: HTMLElement, on: boolean) => {
+  card.style.viewTransitionName = on ? 'item' : ''
+  for (const [sel, name] of PARTS) { const x = card.querySelector<HTMLElement>(sel); if (x) x.style.viewTransitionName = on ? name : '' }
+}
 
 export function App() {
   const [route, setRoute] = useState<Route>(parse)
@@ -66,8 +73,8 @@ export function App() {
       // Closing an item shrinks its view back into the card it came from
       const card = from.startsWith('#/read/') && !r.item ? document.querySelector<HTMLElement>(`.card[data-key="${CSS.escape(decodeURIComponent(from.slice(7)))}"]`) : null
       if (card && morph()) {
-        document.startViewTransition(() => { flushSync(() => setRoute(r)); window.scrollTo(0, toY.current); card.style.viewTransitionName = 'item' })
-          .finished.finally(() => { card.style.viewTransitionName = '' })
+        document.startViewTransition(() => { flushSync(() => setRoute(r)); window.scrollTo(0, toY.current); share(card, true) })
+          .finished.finally(() => share(card, false))
       } else setRoute(r)
     }
     window.addEventListener('hashchange', on); return () => window.removeEventListener('hashchange', on)
@@ -104,12 +111,12 @@ export function App() {
     const to = `#/read/${encodeURIComponent(key)}`
     if (!el || !morph()) { location.hash = to; return }
     const y = window.scrollY
-    el.style.viewTransitionName = 'item'
+    share(el, true)
     document.startViewTransition(() => {
       scrolls.current.set(location.hash || '#/', y); toY.current = y
       history.pushState(null, '', to)
       flushSync(() => setRoute(parse()))
-      el.style.viewTransitionName = ''
+      share(el, false)
     })
   }
   const closeItem = () => { if (history.length > 1 && route.item) history.back(); else location.hash = '#/' }

@@ -508,11 +508,18 @@ table { border-collapse: collapse; }
 .card-img .chart { animation: fade-in 500ms var(--decel) 120ms both; }
 /* a card grows into its full view, and shrinks back into the card */
 ::view-transition-group(item) { animation-duration: 340ms; animation-timing-function: var(--std); background: var(--panel); }
-::view-transition-old(item), ::view-transition-new(item) { height: 100%; object-fit: cover; object-position: top; mix-blend-mode: normal; }
+::view-transition-old(item), ::view-transition-new(item) { width: 100%; height: 100%; object-fit: none; object-position: left top; mix-blend-mode: normal; }
 /* the warm panel itself grows (the group carries its colour): the face it leaves fades first, the face it arrives at
    fades in once the panel is nearly there, so the text is never seen twice */
 ::view-transition-old(item) { animation: vt-out 100ms linear both; }
 ::view-transition-new(item) { animation: vt-in 200ms var(--decel) 140ms both; }
+/* the parts the view repeats travel on their own, above the panel, on the panel's curve */
+.iv-top .price { view-transition-name: item-line; }
+.iv-top .iv-name { view-transition-name: item-name; }
+.iv-top .card-fig .outcome { view-transition-name: item-fig; }
+.card-title, .iv-name { width: fit-content; }
+::view-transition-group(item-line), ::view-transition-group(item-name), ::view-transition-group(item-fig) { animation-duration: 340ms; animation-timing-function: var(--std); }
+::view-transition-old(item-name), ::view-transition-new(item-name) { height: 100%; }
 @keyframes vt-out { to { opacity: 0; } }
 @keyframes vt-in { from { opacity: 0; } }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 240ms; }
