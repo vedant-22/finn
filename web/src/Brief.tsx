@@ -235,15 +235,17 @@ function Listen({ push, brief, done, lines, names }: { push: Push; brief: Brief;
   const left = brief.items.filter(i => !isDone(done, i.key))
   const say = () => {
     if (on) { speechSynthesis.cancel(); setOn(false); return }
-    const said = (t: string) => t.replace(/₹/g, 'rupees ').replace(/\bcr\b/g, 'crore').replace(/×/g, ' times').replace(/±/g, 'plus or minus ').replace(/−/g, 'minus ').replace(/%/g, ' percent')
-    const text = left.length
-      ? [`${left.length} to read.`, ...left.map(i => `${itemTitle(i, names[i.symbol])}. ${itemLine(i)} ${crossedText(i, lines)}.`), 'That’s the brief.'].join(' ')
-      : 'Nothing left to read. You’re up to date.'
+    const said = (t: string) => t.replace(/₹/g, 'rupees ').replace(/\bcr\b/g, 'crore').replace(/×/g, ' times').replace(/±/g, 'plus or minus ').replace(/−/g, 'minus ').replace(/\+(?=\d)/g, 'plus ').replace(/%/g, ' percent')
+    // Each item as its alert row reads: the name, its figure, the sentence. The lines it crossed are on screen
+    const spoken = (i: Item) => {
+      const n = names[i.symbol], f = alertFig(i, n, push)
+      return f ? `${n}, ${f.v} ${f.c.replace('PAT YoY', 'profit on a year ago')}. ${f.body}` : `${itemTitle(i, n)}. ${itemLine(i)}`
+    }
+    const text = left.length ? [`${left.length} to read.`, ...left.map(spoken), 'That’s the brief.'].join(' ') : 'Nothing left to read. You’re up to date.'
     const u = new SpeechSynthesisUtterance(said(text)); u.lang = 'en-IN'; u.rate = 1.02
     u.onend = () => setOn(false); u.onerror = () => setOn(false)
     utter.current = u; speechSynthesis.cancel(); speechSynthesis.speak(u); setOn(true)
   }
-  void push
   return <button className="top-btn" onClick={say} aria-pressed={on}>
     <svg viewBox="0 0 20 20" aria-hidden><path d="M3.5 7.5h3l4-3.5v12l-4-3.5h-3z" />{on ? <path d="M13.5 7.5v5M16 6v8" /> : <path d="M13.5 7.2a4 4 0 0 1 0 5.6M15.6 5.2a7 7 0 0 1 0 9.6" />}</svg>
     {on ? 'Stop' : 'Listen'}
