@@ -2,7 +2,7 @@
 // It ends on 'You're up to date'.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { act, newsQuestion, notesKey, remaining, type Brief, type Done, type Item } from './queue'
-import { cr, getCompany, rupees, wordScore, when, type Company, type Lines, type Push } from './lib'
+import { cr, getCompany, rupees, sessionWhen, wordScore, when, type Company, type Lines, type Push } from './lib'
 import { Answer, suggestions, useKnown } from './Ask'
 import { Arrow, NotesList, crossedText, itemLine, itemTitle, withLine } from './Brief'
 import { PeopleBlock, ResultsBlock, moveWhy, shortDay, tidySubject, useWord } from './items'
@@ -116,7 +116,7 @@ function ItemPage({ i, push, lines, names, openCompany, openLines }: { i: Item; 
     {/* Results open on the table: the numbers are the news. Their word follows it, the period named before the verdict */}
     {!f?.results && i.kind !== 'move' && i.kind !== 'people' && <p className="lede">{itemLine(i)}</p>}
     {/* A move on results day is here for the move: it opens the item, then the numbers behind it */}
-    {m && f?.results && <p className="r-move-line"><b className={m.chg >= 0 ? 'up' : 'down'}>{m.chg >= 0 ? '+' : '−'}{Math.abs(m.chg).toFixed(1)}%</b> on the day, on {m.volX.toFixed(1)}× its 20‑day volume. Closed at ₹{m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.</p>}
+    {m && f?.results && <p className="r-move-line"><b className={m.chg >= 0 ? 'up' : 'down'}>{m.chg >= 0 ? '+' : '−'}{Math.abs(m.chg).toFixed(1)}%</b> {sessionWhen(m.d, push.asof)}, on {m.volX.toFixed(1)}× its 20‑day volume. Closed at ₹{m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.</p>}
     {/* A CEO, CFO or MD change on results day is said before the numbers; its detail follows them */}
     {f?.results && i.with?.lead.people?.some(p => p.seniority === 'top') && <p className="lede r-with">{withLine(i.with)}</p>}
     {f?.results && <><ResultsBlock f={f} />
@@ -177,14 +177,15 @@ function Held({ i, name, res, openCompany }: { i: Item; name: string; res?: any;
   return (
     <section className="r-sec" aria-label="Against their word">
       <h2 className="head">Against their word</h2>
+      {/* One order everywhere: the status word, the promise, then what the filings showed and the page it was said on */}
       {guide && <div className="r-guide">
-        <p className="lede">Guided for {guide.fy}: {rupees(guide.g.target).replace(new RegExp(`\\s+(in|by|for)\\s+${guide.fy}\\b`, 'i'), '')}. {sofar ? <span className="st st-pace">{sofar[0].toUpperCase() + sofar.slice(1)} so far</span> : <StatusLabel status="pending" />}</p>
-        <p className="small">{now}Said on the {said(guide.g)} call.</p>
+        <p className="lede r-verdict">{sofar ? <span className="st st-pace">{sofar[0].toUpperCase() + sofar.slice(1)} so far</span> : <StatusLabel status="pending" />} {guide.fy} guide: {rupees(guide.g.target).replace(new RegExp(`\\s+(in|by|for)\\s+${guide.fy}\\b`, 'i'), '')}.</p>
+        <p className="small">{now}Said on the <Src href={`${guide.g.url}#page=${guide.g.page}`}>{said(guide.g)} call, page {guide.g.page}</Src>.</p>
       </div>}
-      {p && (p.status !== 'pending' && verdictText(p) ? <>
-        <p className="lede r-verdict">{verdictText(p).replace(/\.?$/, '.')} <StatusLabel status={p.status} /></p>
-        <p className="small r-promised">Their {said(p)} promise: {promiseLine(p).replace(/^./, c => c.toLowerCase())}.</p>
-      </> : <p className="lede r-verdict">Promised {said(p)}: {promiseLine(p).replace(/^./, c => c.toLowerCase())}. <StatusLabel status={p.status} /></p>)}
+      {p && <>
+        <p className="lede r-verdict"><StatusLabel status={p.status} /> {promiseLine(p)}, promised {said(p)}.</p>
+        {p.status !== 'pending' && verdictText(p) && <p className="r-ev">{verdictText(p).replace(/\.?$/, '.')}</p>}
+      </>}
       {p ? <BeforeAfter p={p} compact bare /> : null}
       <p className="r-record">{record}</p>
       <button className="link" onClick={() => openCompany(i.symbol, p?.id)}>Their record<Arrow /></button>
@@ -223,11 +224,13 @@ function DonePage({ brief, push, done, names, close, openCompany }: { brief: Bri
       return q ? { symbol: i.symbol, q } : getCompany(i.symbol).then(c => c?.questions?.[0] ? { symbol: i.symbol, q: rupees(c.questions[0]) } : null).catch(() => null)
     })).then(xs => setQs(xs.filter((x): x is { symbol: string; q: string } => !!x)))
   }, [brief, push])
-  const aside = [worth && `${worth} more worth a line`, brief.routine && `${brief.routine} routine ${brief.routine === 1 ? 'filing' : 'filings'} set aside`].filter(Boolean).join('; ')
+  // The one-liners have their own page before this one: once marked read, they count as read here
+  const seen = worth > 0 && !remaining(brief, done).notesLeft
+  const aside = [!seen && worth && `${worth} more worth a line.`, brief.routine && `${brief.routine} routine ${brief.routine === 1 ? 'filing' : 'filings'} set aside.`].filter(Boolean).join(' ')
   return (
     <div className="r-done">
       <h1 className="title done-t">You’re up to date</h1>
-      <p className="lede">{read} of {brief.items.length} read{kept.length ? `, ${kept.length} kept for later` : ''}.{aside && ` ${aside[0].toUpperCase()}${aside.slice(1)}.`}</p>
+      <p className="lede">{read} of {brief.items.length} read{seen ? `, and the ${worth} worth a line` : ''}.{kept.length ? ` ${kept.length} kept for later.` : ''}{aside && ` ${aside}`}</p>
       {kept.length > 0 && <>
         <h2 className="head">Kept for later</h2>
         <ul className="rows">{kept.map(i => <li key={i.key}><span className="row row-static">{itemTitle(i, names[i.symbol])}</span></li>)}</ul>

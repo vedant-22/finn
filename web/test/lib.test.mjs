@@ -1,7 +1,7 @@
 // What the screen says, checked. Run: npm test (Node 22.6+ reads lib.ts directly)
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { cr, crBig as crBigNb, deadline, pct, rupees as rupeesWj, tidyEvidence as tidyWj, when, numbersOnly, plainBio } from '../src/lib.ts'
+import { cr, crBig as crBigNb, deadline, pct, rupees as rupeesWj, tidyEvidence as tidyWj, when, numbersOnly, plainBio, sessionWhen } from '../src/lib.ts'
 
 // The word joiner that keeps a range on one line is invisible; compare without it
 // and the no-break space that keeps an amount with its unit
@@ -150,4 +150,11 @@ test('a joiner with a listed career gets one plain sentence, not the press relea
   assert.equal(plainBio('A seasoned financial services leader with over three decades of experience across banking, capital markets, wealth management and insurance.'), 'A financial services leader with over three decades of experience.')
   assert.equal(plainBio('Mr. K. C. Jhanwar has been the Managing Director of UltraTech Cement Limited since 1st January, 2020. A Chartered Accountant by profession, he joined the Aditya Birla Group in 1981.'), 'Mr. K. C. Jhanwar has been the Managing Director of UltraTech Cement Limited since 1st January, 2020.')
   assert.equal(plainBio('Founder & CEO of Samara Capital Group, a leading alternative asset manager with USD 2 billion+ invested since 2007 across various industry segments.'), 'Founder & CEO of Samara Capital Group, an alternative asset manager with USD 2 billion+ invested since 2007 across various industry segments.')
+})
+
+test("a price figure names its session as the row's time does: today, yesterday, else the date", () => {
+  const asof = '2026-10-28T21:21:00+05:30'
+  assert.equal(sessionWhen('2026-10-28', asof), 'today')
+  assert.equal(sessionWhen('2026-10-27', asof), 'yesterday')
+  assert.equal(sessionWhen('2026-10-23', asof), 'on 23 Oct')
 })

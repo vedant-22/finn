@@ -1,8 +1,8 @@
 // The brief: the few things that crossed the investor's lines, as notifications, and a way through them that ends.
 import { useEffect, useRef, useState } from 'react'
 import { buildBrief, isDone, remaining, type Brief, type Done, type Item } from './queue'
-import { CATEGORY_LABEL, cr, when, type Lines, type Push } from './lib'
-import { FoldSummary, NoteRow, Roll, few, moveWhy, reclass, resultLine, sizeWords, sortPeople, tidySubject } from './items'
+import { CATEGORY_LABEL, cr, sessionWhen, when, type Lines, type Push } from './lib'
+import { FoldSummary, NoteRow, Roll, moveWhy, reclass, resultLine, sizeWords, sortPeople, tidySubject } from './items'
 import { Masthead, Sheet } from './ui'
 import { alertsBlocked, alertsOn, canAlert, disableAlerts, enableAlerts } from './alerts'
 
@@ -86,7 +86,6 @@ export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines
   const cleared = brief.items.filter(i => done.cleared.includes(i.key)).length
   const asof = new Date(push.asof)
   const stamp = `Filings up to ${asof.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}, ${asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()}`
-  const cos = [...new Set(left.items.map(i => names[i.symbol]))]
   const finished = left.total === 0
   // The figure: items to read. With none crossed, say so in words
   const n = left.items.length
@@ -110,7 +109,7 @@ export function BriefScreen({ push, brief, fresh, done, setDone, lines, setLines
         </div>
         <p className="hero-line">
           {finished ? summary(brief, done, kept.length, cleared)
-            : n ? <>{few(cos)}. {nNotes > 0 && <><button className="link-inline" onClick={() => setSheet('notes')}>{nNotes} more worth a line</button>; </>}{brief.routine} routine {brief.routine === 1 ? 'filing' : 'filings'} set aside.</>
+            : n ? <>{/* The rows below name the companies; the line says what else the window held */}{nNotes > 0 && <><button className="link-inline" onClick={() => setSheet('notes')}>{nNotes} more worth a line</button>. </>}{brief.routine} routine {brief.routine === 1 ? 'filing' : 'filings'} set aside.</>
               : `Nothing crossed your lines ${span(lines.hours)}.${nNotes ? ` ${nNotes} ${nNotes === 1 ? 'filing' : 'filings'} worth a line.` : ''}`}
         </p>
         {wider && <button className="link" onClick={() => setLines({ ...lines, hours: wider.h })}>{`${span(wider.h).replace(/^in the l/, 'L')}: ${wider.n} to read`}<Arrow /></button>}
@@ -181,7 +180,7 @@ export const Arrow = () => <svg className="arrow" viewBox="0 0 16 16" aria-hidde
 function reaction(push: Push, symbol: string, at: string) {
   const d = at.slice(0, 10), after = at.slice(11, 16) >= '15:30'
   const b = (push.eod[symbol] || []).find(x => after ? x.d > d : x.d >= d)
-  return b ? { b, next: b.d !== d } : null
+  return b ? { b } : null
 }
 const signed = (v: number) => `${v >= 0 ? '+' : '−'}${pct1(v)}`
 const pctWords = (v: number) => `${v >= 0 ? 'up' : 'down'} ${String(+Math.abs(v).toFixed(Math.abs(v) < 10 ? 1 : 0))}%`
@@ -196,27 +195,28 @@ function alertFig(i: Item, name: string, push: Push): { v: string; c: string; bo
     // A move on results says what the results were, not just that they came out
     const res = f?.results ?? (m.explainedBy?.category === 'results' ? push.filings.filter(x => x.symbol === i.symbol && x.results && x.at.slice(0, 10) <= m.d).sort((a, b) => b.at.localeCompare(a.at))[0]?.results : undefined)
     const vol = `On ${m.volX.toFixed(1)}× its usual volume.`
-    const body = res ? [resultsWords(res), vol] : [vol, moveWhy(m)]
-    // The caption counts from the time on the row's left: a results row shows its filing time, so a move the session after is the next day
-    return { v: signed(m.chg), c: i.kind === 'results' && m.d !== i.at.slice(0, 10) ? 'next day' : 'on the day', t: name, body: withLines(i, body), d: m.d }
+    const body = res ? [...resultsWords(res), vol] : [vol, moveWhy(m)]
+    // The caption names the session as the row's time does ('today', 'yesterday'), so the 24-hour row and the week's read alike
+    return { v: signed(m.chg), c: sessionWhen(m.d, push.asof), t: name, body: withLines(i, body), d: m.d }
   }
   // Anything else: the session that first traded on the filing; before it has traded, the row keeps its headline
   const r = reaction(push, i.symbol, i.at)
   if (!r) return null
-  const fig = (body: string[]) => ({ v: signed(r.b.chg), c: r.next ? 'next day' : 'on the day', t: name, body, d: r.b.d })
-  if (i.kind === 'results' && f?.results) return fig(withLines(i, [resultsWords(f.results)]))
+  const fig = (body: string[]) => ({ v: signed(r.b.chg), c: sessionWhen(r.b.d, push.asof), t: name, body, d: r.b.d })
+  if (i.kind === 'results' && f?.results) return fig(withLines(i, resultsWords(f.results)))
   if (i.kind === 'filing' && f?.amount_cr != null && f.amount_cr >= 1 && f.pct_rev != null)
     return fig([(f.line || tidySubject(f.subject || '')).replace(/\.?$/, '.'), sizeWords(f)])
   return fig(itemLine(i).split(/(?<=\.) (?=[A-Z0-9])/))
 }
-// A quarter in one line: profit first (the turn from a loss before the year-on-year), the margin when it moved a point or more
-function resultsWords(r: any) {
+// A quarter in a line or two: profit in rupees first (a turn from last quarter's loss said with it), then the margin
+// on its own line when it moved a point or more
+function resultsWords(r: any): string[] {
   const pat = r.lines.find((l: any) => l.key === 'pat'), q = r.quarter.replace(/ FY\d\d$/, '')
   const turn = pat?.prev != null && pat.prev < 0 && pat.value >= 0
-  const yoy = pat?.yoy != null ? `${pctWords(pat.yoy)} on a year ago` : ''
-  const profit = pat?.value == null ? `${q} results out` : turn ? `${q} profit back from a loss${yoy ? `, ${yoy}` : ''}` : `${q} profit ₹${cr(pat.value)} crore${yoy ? `, ${yoy}` : ''}`
+  const yoy = pat?.yoy != null ? `, ${pctWords(pat.yoy)} on a year ago` : ''
+  const profit = pat?.value == null ? `${q} results out.` : `${q} profit ₹${cr(pat.value)} crore${turn ? ' after last quarter’s loss' : ''}${yoy}.`
   const dm = r.ebitda_margin != null && r.yago_margin != null ? r.ebitda_margin - r.yago_margin : 0
-  return `${profit}${Math.abs(dm) >= 1 ? `; EBITDA margin ${dm > 0 ? 'up' : 'down'} ${Math.abs(dm).toFixed(1)} pp` : ''}.`
+  return Math.abs(dm) >= 1 ? [profit, `EBITDA margin ${dm > 0 ? 'up' : 'down'} ${Math.abs(dm).toFixed(1)} pp.`] : [profit]
 }
 
 // A month of closes under an alert's figure: what the price did, in a line that draws itself, its change written out
@@ -244,7 +244,7 @@ function Notif({ i, fresh, name, push, lines, open, openLines }: { i: Item; fres
       <button className="notif-main" onClick={open}>
         <span className="notif-t">{fig?.t ?? itemTitle(i, name)}</span>
         <span className="notif-b">{fig ? fig.body.map((l, k) => <span key={k} className="notif-l">{l}</span>) : itemLine(i)}</span>
-        {fig && <span className="notif-fig"><span className="notif-v">{fig.v}</span><span className="notif-c">{fig.c}</span><Spark bars={bars} /></span>}
+        {fig && <span className="notif-fig"><span className="notif-v">{/^[+−]/.test(fig.v) ? <><span className="sgn">{fig.v[0]}</span>{fig.v.slice(1)}</> : fig.v}</span><span className="notif-c">{fig.c}</span><Spark bars={bars} /></span>}
       </button>
     </article>
   )

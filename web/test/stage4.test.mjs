@@ -90,7 +90,7 @@ test('the next call asks about the news: a CFO leaving, then a margin that fell'
   const b = buildBrief(push, DEFAULT_LINES)
   const q = s => newsQuestion(b.items.find(i => i.symbol === s), push)
   assert.match(q('SYNGENE'), /^Why did the CFO, Deepak Jain, leave/)
-  assert.match(q('LT'), /EBITDA margin fell 1\.3 points/)
+  assert.match(q('LT'), /^Revenue grew 15\.8% on a year ago and EBITDA only 0\.6%: the margin fell 1\.3 pp\./)
 })
 
 test('a year’s guide reads against the year so far: L&T’s H1 revenue is on track for 10 to 12%', () => {

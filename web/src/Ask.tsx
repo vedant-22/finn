@@ -39,11 +39,12 @@ export function suggestions(c: Company | null, name: string): string[] {
 
 export function AskScreen({ push, q0, openCompany }: { push: Push; q0?: string; openCompany: (s: string, pid?: number) => void }) {
   const { known, names } = useKnown(push)
-  const [q, setQ] = useState(q0 || '')
+  const [q, setQ] = useState('')
   const [asked, setAsked] = useState(q0 || '')
   const inRef = useRef<HTMLInputElement>(null)
-  useEffect(() => { if (q0) { setQ(q0); setAsked(q0) } }, [q0])
-  const submit = (text: string) => { const t = text.trim(); if (!t) { inRef.current?.focus(); return } setQ(t); setAsked(t); inRef.current?.blur() }
+  useEffect(() => { if (q0) { setQ(''); setAsked(q0) } }, [q0])
+  // Asked, the question moves out of the field to sit whole above its answer; the field is ready for the next one
+  const submit = (text: string) => { const t = text.trim(); if (!t) { inRef.current?.focus(); return } setQ(''); setAsked(t); inRef.current?.blur() }
   const starters = ['Who missed a promise?', 'Who has gone quiet?', 'Did L&T deliver on revenue growth?', 'What has Syngene promised for FY27?']
   // When an idea comes up: the companies FINN has read beyond the book, then one it hasn't, to show any symbol works
   const outside = Object.keys(names).filter(s => !push.portfolio.some(p => p.symbol === s)).sort((a, b) => names[a].localeCompare(names[b]))

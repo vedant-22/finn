@@ -17,7 +17,7 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
     <Masthead />
     <header className="page-head">
       <h1 className="title">Your book</h1>
-      <p className="sub">{push.portfolio.length} holdings, most promises broken first.</p>
+      <p className="sub">{push.portfolio.length} holdings, most promises missed or gone quiet first.</p>
     </header>
     {tally}
   </>
@@ -78,11 +78,15 @@ function BookTally({ cos, only, setOnly }: { cos: (Company | null | undefined)[]
   if (!all.length) return null
   const n = (st: Status) => all.filter(p => p.status === st).length
   const teams = (st: Status) => cos.filter(c => c?.ledger.some(p => p.hard && p.status === st)).length
-  const items: [Status, string][] = [['kept', 'kept'], ['missed', 'missed'], ['quiet', 'gone quiet'], ['pending', 'not due']]
+  // The promises that came due as one bar, in proportion; the counts under it filter the holdings
+  const items: [Status, string][] = [['kept', 'kept'], ['partly', 'partly kept'], ['missed', 'missed'], ['quiet', 'gone quiet'], ['pending', 'not due']]
+  const due = items.slice(0, 4).filter(([st]) => n(st) > 0)
   return (
     <section className="tally" aria-label="Promises across your book">
+      <p className="small">{due.reduce((t, [st]) => t + n(st), 0)} promises have come due</p>
+      <div className="tally-bar" aria-hidden>{due.map(([st]) => <span key={st} className={`t-${st}`} style={{ flexGrow: n(st) }} />)}</div>
       <ul>
-        {items.map(([st, word]) => (
+        {items.filter(([st]) => n(st) > 0).map(([st, word]) => (
           <li key={st}>
             <button className={`tally-b t-${st}`} aria-pressed={only === st} aria-label={`${n(st)} ${word}, at ${teams(st)} ${teams(st) === 1 ? 'company' : 'companies'}`} onClick={() => setOnly(only === st ? null : st)}>
               <span className="tally-n num"><Roll to={n(st)} /></span>
@@ -91,7 +95,6 @@ function BookTally({ cos, only, setOnly }: { cos: (Company | null | undefined)[]
           </li>
         ))}
       </ul>
-      {n('partly') > 0 && <button className={`text-btn tally-partly${only === 'partly' ? ' on' : ''}`} aria-pressed={only === 'partly'} onClick={() => setOnly(only === 'partly' ? null : 'partly')}>And {n('partly')} partly kept</button>}
     </section>
   )
 }

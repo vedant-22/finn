@@ -66,6 +66,13 @@ export function when(iso: string, asof: string) {
   return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
 }
 
+// The session a price figure belongs to, in the words the row's time uses: 'today', 'yesterday', else 'on 26 Oct'.
+// One event reads the same in every window, whether its row is timed by the filing or by the close
+export function sessionWhen(d: string, asof: string) {
+  const days = Math.round((Date.parse(asof.slice(0, 10)) - Date.parse(d.slice(0, 10))) / 864e5)
+  return days === 0 ? 'today' : days === 1 ? 'yesterday' : `on ${new Date(d.slice(0, 10) + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`
+}
+
 // ---------- settings: the investor decides what "unusual" means ----------
 export interface Lines {
   hours: number

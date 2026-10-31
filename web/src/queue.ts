@@ -105,7 +105,10 @@ export function newsQuestion(i: Item, push: Push): string | null {
   if (!r) return null
   const rev = r.lines.find(l => l.key === 'revenue'), pat = r.lines.find(l => l.key === 'pat')
   const dm = r.ebitda_margin != null && r.yago_margin != null ? r.ebitda_margin - r.yago_margin : 0
-  if (dm <= -1 && rev?.yoy != null) return `Revenue ${rev.yoy >= 0 ? 'grew' : 'fell'} ${Math.abs(rev.yoy).toFixed(1)}% on a year ago while EBITDA margin fell ${Math.abs(dm).toFixed(1)} points. What drove costs, and does it last?`
+  // The margin question names both growths, so the gap is the question: L&T's revenue up 15.8%, EBITDA up 0.6%
+  const eb = r.lines.find(l => l.key === 'ebitda')
+  const grew = (v: number) => `${v >= 0 ? 'grew' : 'fell'} ${Math.abs(v).toFixed(1)}%`
+  if (dm <= -1 && rev?.yoy != null) return `Revenue ${grew(rev.yoy)} on a year ago${eb?.yoy != null ? ` and EBITDA ${eb.yoy >= 0 ? 'only ' : ''}${grew(eb.yoy).replace(/^grew /, '')}` : ''}: the margin fell ${Math.abs(dm).toFixed(1)} pp. Which costs rose faster, and do they ease from here?`
   if (pat?.yoy != null && pat.yoy <= -20) return `Profit fell ${Math.abs(pat.yoy).toFixed(0)}% on a year ago. How much of that is one-off?`
   return null
 }
