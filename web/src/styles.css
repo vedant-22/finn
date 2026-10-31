@@ -146,6 +146,8 @@ table { border-collapse: collapse; }
 .r-progress { flex: 1; margin: 0; }
 .r-progress span.now { background: #C9D9E8; }
 .r-count { min-width: 44px; text-align: right; }
+.r-top-named { box-shadow: 0 1px 0 var(--rule); }
+.r-name { flex: 1; min-width: 0; font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: fade var(--mid) var(--ease); }
 .r-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 .r-page { max-width: 560px; margin: 0 auto; padding: 18px var(--g) 40px; touch-action: pan-y; animation: r-in var(--mid) var(--ease); transition: transform var(--mid) var(--ease), opacity var(--mid) var(--ease); }
 @keyframes r-in { from { transform: translateX(28px); opacity: 0; } }

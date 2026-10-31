@@ -40,7 +40,13 @@ export function Reader({ push, brief, done, setDone, lines, names, start, close,
     setLeaving(dir)
     setTimeout(() => { setLeaving(''); setAt(a => a + 1); scroller.current?.scrollTo(0, 0) }, 180)
   }
-  useEffect(() => { scroller.current?.scrollTo(0, 0) }, [at])
+  // Once the company's name has scrolled up out of view, the bar carries it in place of the progress segments
+  const [named, setNamed] = useState(false)
+  useEffect(() => { scroller.current?.scrollTo(0, 0); setNamed(false) }, [at])
+  const onScroll = () => {
+    const el = scroller.current, t = el?.querySelector('.r-page h1')
+    setNamed(!!el && !!t && t.getBoundingClientRect().bottom < el.getBoundingClientRect().top)
+  }
   useEffect(() => {
     const k = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
     addEventListener('keydown', k); return () => removeEventListener('keydown', k)
@@ -65,12 +71,13 @@ export function Reader({ push, brief, done, setDone, lines, names, start, close,
 
   return (
     <div className="reader" role="dialog" aria-modal="true" aria-label="The brief">
-      <header className="r-top">
+      <header className={`r-top${named ? ' r-top-named' : ''}`}>
         <button className="icon-btn" onClick={close} aria-label="Close the brief"><svg viewBox="0 0 20 20" aria-hidden><path d="M5 5l10 10M15 5L5 15" /></svg></button>
-        {page.kind !== 'done' && <div className="progress r-progress" aria-hidden>{Array.from({ length: segs }, (_, k) => <span key={k} className={k < at ? 'on' : k === at ? 'now' : ''} />)}</div>}
+        {page.kind === 'item' && named ? <span className="r-name" aria-hidden>{names[page.item.symbol]}</span>
+          : page.kind !== 'done' && <div className="progress r-progress" aria-hidden>{Array.from({ length: segs }, (_, k) => <span key={k} className={k < at ? 'on' : k === at ? 'now' : ''} />)}</div>}
         <span className="small r-count" aria-live="polite">{page.kind === 'item' ? `${at + 1} of ${segs}` : page.kind === 'notes' ? 'The rest' : ''}</span>
       </header>
-      <div className="r-scroll" ref={scroller}>
+      <div className="r-scroll" ref={scroller} onScroll={onScroll}>
         <article key={at} className={`r-page${leaving ? ` out-${leaving}` : ''}`} style={dx ? { transform: `translateX(${dx}px) rotate(${dx / 60}deg)`, transition: 'none' } : undefined}
           onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp}>
           {page.kind === 'item' && <ItemPage i={page.item} push={push} lines={lines} names={names} openCompany={openCompany} openLines={openLines} />}
