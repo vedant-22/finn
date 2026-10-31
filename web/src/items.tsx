@@ -60,6 +60,11 @@ function tidyRaw(s: string) {
 
 export function ResultsBlock({ f }: { f: any }) {
   const r = f.results
+  // EBITDA here leaves out other income, so PBT can sit above it; say why rather than let it look like an error
+  const e = r.lines.find((l: any) => l.key === 'ebitda' && l.label === 'EBITDA'), b = r.lines.find((l: any) => l.key === 'pbt')
+  const exc = r.one_offs?.some((o: any) => o.q === r.quarter && o.exceptional)
+  const above = e && b && b.value > e.value ? ` PBT is above EBITDA because other income${exc ? ' and exceptional items outweigh' : ' outweighs'} depreciation and interest.` : ''
+  const day = r.source?.filed?.split(' ')[0] || '', filed = day ? effDate(day, day.slice(-4)) : ''
   return (
     <div className="results">
       <table className="figs">
@@ -86,6 +91,8 @@ export function ResultsBlock({ f }: { f: any }) {
       <p className="small figs-foot">
         Against {r.compare.prev || 'the previous quarter'} and {r.compare.yago || 'a year ago'}.{r.ebitda_margin != null && ' Margin is EBITDA over revenue; its change is in percentage points.'}
         {r.one_offs?.length > 0 && ' ' + r.one_offs.map((o: any) => `${o.q === r.quarter ? "This quarter's" : o.q} profit includes ${[o.tax_credit && `a ₹${cr(o.tax_credit)} cr tax credit`, o.exceptional && `₹${cr(Math.abs(o.exceptional))} cr of exceptional items`].filter(Boolean).join(' and ')}.`).join(' ')}
+        {above}
+        {f.url && <> From the <a className="link-inline" href={f.url} target="_blank" rel="noreferrer">results filed with NSE</a>{filed && `, ${filed}`}.</>}
       </p>
     </div>
   )

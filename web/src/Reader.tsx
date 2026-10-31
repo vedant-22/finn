@@ -2,9 +2,9 @@
 // It ends on 'You're up to date'.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { act, notesKey, remaining, type Brief, type Done, type Item } from './queue'
-import { cr, getCompany, wordScore, when, type Company, type Lines, type Push } from './lib'
+import { cr, getCompany, rupees, wordScore, when, type Company, type Lines, type Push } from './lib'
 import { Answer, suggestions, useKnown } from './Ask'
-import { Arrow, NotesList, crossedText, itemLine, itemTitle } from './Brief'
+import { Arrow, NotesList, crossedText, itemLine, itemTitle, withLine } from './Brief'
 import { PeopleBlock, ResultsBlock, moveWhy, shortDay, tidySubject, useWord } from './items'
 import { Chart, Src, StatusLabel } from './ui'
 import { BeforeAfter, said } from './Word'
@@ -112,9 +112,11 @@ function ItemPage({ i, push, lines, names, openCompany, openLines }: { i: Item; 
     <h1 className="title"><button className="title-link" onClick={() => openCompany(i.symbol)}>{name}</button></h1>
     {/* Results open on the table: the numbers are the news. Their word follows it, the period named before the verdict */}
     {!f?.results && i.kind !== 'move' && i.kind !== 'people' && <p className="lede">{itemLine(i)}</p>}
+    {/* A CEO, CFO or MD change on results day is said before the numbers; its detail follows them */}
+    {f?.results && i.with?.lead.people?.some(p => p.seniority === 'top') && <p className="lede r-with">{withLine(i.with)}</p>}
     {f?.results && <><ResultsBlock f={f} />
       {i.with?.lead.people?.length ? <section className="r-sec" aria-label="Management change"><h2 className="head">Also that day</h2><PeopleBlock f={i.with.lead} all={push.filings} /></section> : null}
-      <Held i={i} name={name} openCompany={openCompany} /></>}
+      <Held i={i} name={name} res={f.results} openCompany={openCompany} /></>}
     {m && (f?.results
       ? <p className="r-move-line"><b className={m.chg >= 0 ? 'up' : 'down'}>{m.chg >= 0 ? '+' : '−'}{Math.abs(m.chg).toFixed(1)}%</b> on the day, on {m.volX.toFixed(1)}× its 20-day volume. Closed at ₹{m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.</p>
       : <div className="r-move">
@@ -143,17 +145,36 @@ function ItemPage({ i, push, lines, names, openCompany, openLines }: { i: Item; 
 }
 
 // Held against their word: for results, the promise this quarter answers to; otherwise their record in one line
-function Held({ i, name, openCompany }: { i: Item; name: string; openCompany: (s: string, pid?: number) => void }) {
+// The guidance this quarter counts toward: a dated promise still running for this financial year, on revenue,
+// margin or profit. Order books, loan books and multi-year plans are left to the company page
+function guidance(c: Company | null, quarter?: string) {
+  const fy = quarter?.match(/FY\d\d/)?.[0], rank = ['revenue_growth', 'margin', 'profit']
+  if (!c || !fy) return undefined
+  const g = (c.ledger || []).filter(p => p.hard && p.status === 'pending' && (p.by_when || '').includes(fy) && rank.includes(p.metric) && !/order|loan|book|inflow|cagr/i.test(p.target))
+    .sort((a, b) => rank.indexOf(a.metric) - rank.indexOf(b.metric))[0]
+  return g && { g, fy }
+}
+
+function Held({ i, name, res, openCompany }: { i: Item; name: string; res?: any; openCompany: (s: string, pid?: number) => void }) {
   const word = useWord(i.symbol)
   const [c, setC] = useState<Company | null>(null)
   useEffect(() => { getCompany(i.symbol).then(setC).catch(() => setC(null)) }, [i.symbol])
   const s = wordScore(c ?? undefined)
   const p = (i.kind === 'results' || i.move?.explainedBy?.category === 'results') ? word[0] : undefined
   if (!c) return null
+  const guide = guidance(c, res?.quarter)
+  // Revenue guidance sits next to this quarter's revenue growth; a segment margin or a return doesn't map onto the table
+  const rev = res?.lines.find((l: any) => l.key === 'revenue')
+  const now = guide && guide.g.metric === 'revenue_growth' && /revenue/i.test(guide.g.target) && rev?.yoy != null
+    ? `This quarter, revenue ${rev.yoy >= 0 ? 'grew' : 'fell'} ${Math.abs(rev.yoy).toFixed(1)}% on a year ago. ` : ''
   const record = s?.graded ? `${name} has kept ${Math.floor(s.kept)} of ${s.graded} dated promises it has been tested on.` : s?.hard ? `None of ${name}’s dated promises is due yet.` : `No promise from ${name} with a number and a date yet.`
   return (
     <section className="r-sec" aria-label="Against their word">
       <h2 className="head">Against their word</h2>
+      {guide && <div className="r-guide">
+        <p className="lede">Guided for {guide.fy}: {rupees(guide.g.target)}. <StatusLabel status="pending" /></p>
+        <p className="small">{now}Said on the {said(guide.g)} call.</p>
+      </div>}
       {p && (p.status !== 'pending' && verdictText(p) ? <>
         <p className="lede r-verdict">{verdictText(p).replace(/\.?$/, '.')} <StatusLabel status={p.status} /></p>
         <p className="small r-promised">Their {said(p)} promise: {promiseLine(p).replace(/^./, c => c.toLowerCase())}.</p>

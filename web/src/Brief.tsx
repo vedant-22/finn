@@ -23,6 +23,11 @@ export function withLine(s: NonNullable<Item['with']>) {
   const v = ({ appointed: 'joins', resigned: 'resigns', retired: 'retires', ceased: 'leaves', redesignated: 'takes a new role', 're-appointed': 'is re-appointed' } as any)[p.action] || p.action
   return p.action === 'appointed' ? `A new ${shortRole(p.role)}, ${strip(p.name)}, joins.` : `Its ${shortRole(p.role)}, ${strip(p.name)}, ${v}.`
 }
+// A management change riding with results: a CEO, CFO or MD change leads the sentence, anyone else follows it
+function withFirst(i: Item, body: string) {
+  if (!i.with) return body
+  return i.with.lead.people?.some(p => p.seniority === 'top') ? `${withLine(i.with)} ${body}` : `${body} ${withLine(i.with)}`
+}
 export function itemTitle(i: Item, name: string): string {
   const m = i.move, f = i.story?.lead
   if (i.kind === 'results' && f?.results) return `${name} reported ${f.results.quarter.replace(/ FY\d\d$/, '')}`
@@ -168,12 +173,12 @@ function alertFig(i: Item, name: string, push: Push): { v: string; c: string; bo
     const res = f?.results ?? (m.explainedBy?.category === 'results' ? push.filings.filter(x => x.symbol === i.symbol && x.results && x.at.slice(0, 10) <= m.d).sort((a, b) => b.at.localeCompare(a.at))[0]?.results : undefined)
     const pat = res?.lines.find((l: any) => l.key === 'pat')
     const body = res && pat?.yoy != null ? `On ${m.volX.toFixed(1)}× its usual volume, after ${res.quarter.replace(/ FY\d\d$/, '')} results: profit ${pat.yoy >= 0 ? 'up' : 'down'} ${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}% on a year ago.` : `On ${m.volX.toFixed(1)}× its usual volume. ${moveWhy(m)}`
-    return { v: `${m.chg >= 0 ? '+' : '−'}${pct1(m.chg)}`, c: 'on the day', t: name, body: body + (i.with ? ` ${withLine(i.with)}` : '') }
+    return { v: `${m.chg >= 0 ? '+' : '−'}${pct1(m.chg)}`, c: 'on the day', t: name, body: withFirst(i, body) }
   }
   const pat = f?.results?.lines.find((l: any) => l.key === 'pat')
   if (i.kind === 'results' && pat?.yoy != null) {
     const r = f!.results!, rest = r.ebitda_margin != null ? `; EBITDA margin ${r.ebitda_margin}%${r.yago_margin != null ? ` against ${r.yago_margin}%` : ''}` : ''
-    return { v: `${pat.yoy >= 0 ? '+' : '−'}${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}%`, c: 'PAT YoY', t: name, body: `${r.quarter.replace(/ FY\d\d$/, '')} profit ₹${cr(pat.value)} crore${rest}.${i.with ? ` ${withLine(i.with)}` : ''}` }
+    return { v: `${pat.yoy >= 0 ? '+' : '−'}${String(+Math.abs(pat.yoy).toFixed(Math.abs(pat.yoy) < 10 ? 1 : 0))}%`, c: 'PAT YoY', t: name, body: withFirst(i, `${r.quarter.replace(/ FY\d\d$/, '')} profit ₹${cr(pat.value)} crore${rest}.`) }
   }
   if (i.kind === 'filing' && f?.amount_cr != null && f.amount_cr >= 1 && f.pct_rev != null)
     return { t: name, v: `₹${cr(f.amount_cr)} cr`, c: `${f.pct_rev < 1 ? f.pct_rev.toFixed(1) : f.pct_rev.toFixed(0)}% of revenue`, body: (f.line || tidySubject(f.subject || '')).replace(/\.?$/, '.') }
