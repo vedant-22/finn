@@ -65,7 +65,7 @@ export function ResultsBlock({ f }: { f: any }) {
   const exc = r.one_offs?.some((o: any) => o.q === r.quarter && o.exceptional)
   // With no exceptional items the gap is exactly other income less depreciation and interest, so give it in rupees
   const above = e && b && b.value > e.value ? exc ? ' PBT is above EBITDA because other income and exceptional items outweigh depreciation and interest.'
-    : ` PBT is above EBITDA: other income was ₹${cr(b.value - e.value)} crore more than depreciation and interest.` : ''
+    : ` PBT is above EBITDA: other income was ₹${cr(Math.round(b.value) - Math.round(e.value))} crore more than depreciation and interest.` : ''
   const day = r.source?.filed?.split(' ')[0] || '', filed = day ? effDate(day, day.slice(-4)) : ''
   return (
     <div className="results">
