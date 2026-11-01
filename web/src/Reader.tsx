@@ -121,16 +121,18 @@ function Held({ i, name, res, openCompany }: { i: Item; name: string; res?: any;
   // Revenue guidance sits next to this quarter's revenue growth; a segment margin or a return doesn't map onto the table
   // A year's guide is read against the year so far (Q1, H1, 9M), not one quarter
   const ytd = yearToDate(c.quarters || [])
-  const now = guide && ytd && ytd.fy === guide.fy && guide.g.metric === 'revenue_growth' && /revenue/i.test(guide.g.target)
-    ? `${ytd.label} revenue ${ytd.growth >= 0 ? 'grew' : 'fell'} ${Math.abs(ytd.growth).toFixed(1)}% on a year ago. ` : ''
   const sofar = guide && ytd && ytd.fy === guide.fy ? pace(guide.g, ytd.growth) : null
+  // The status stays one of the four words (Not due); how the year is pacing is the evidence under it
+  const where = sofar === 'ahead' ? 'above the range so far' : sofar === 'behind' ? 'below the range so far' : sofar ? 'inside the range so far' : ''
+  const now = guide && ytd && ytd.fy === guide.fy && guide.g.metric === 'revenue_growth' && /revenue/i.test(guide.g.target)
+    ? `${ytd.label} revenue ${ytd.growth >= 0 ? 'grew' : 'fell'} ${Math.abs(ytd.growth).toFixed(1)}% on a year ago${where ? `, ${where}` : ''}. ` : ''
   const record = s?.graded ? `${name} has kept ${Math.floor(s.kept)} of ${s.graded} promises that came due.` : s?.hard ? `None of ${name}’s dated promises is due yet.` : `No promise from ${name} with a number and a date yet.`
   return (
     <section className="iv-sec" aria-label="Against their word">
       <h2 className="t-b1">Against their word</h2>
       {/* One order everywhere: the status word, the promise, then what the filings showed and the page it was said on */}
       {guide && <div className="word-item">
-        {sofar ? <span className={`lbl st-pace st-${sofar === 'behind' ? 'missed' : 'kept'}`}>{sofar} so far</span> : <StatusLabel status="pending" />}
+        <StatusLabel status="pending" />
         <p className="word-p">{guide.fy} guide: {rupees(guide.g.target).replace(new RegExp(`\\s+(in|by|for)\\s+${guide.fy}\\b`, 'i'), '')}.</p>
         <p className="sub">{now}Said on the <Src href={`${guide.g.url}#page=${guide.g.page}`}>{said(guide.g)} call, page {guide.g.page}</Src>.</p>
       </div>}

@@ -1,6 +1,6 @@
 import { type ReactNode, useEffect, useState } from 'react'
 import { cachedCompany, dayMon, deadline, getCompany, pct, rupees, shortName, wordScore, type Company, type Promise_, type Push, type Status } from './lib'
-import { Chart, Masthead, Outcome, StatusLabel, useKept } from './ui'
+import { Masthead, Outcome, StatusLabel, useKept } from './ui'
 
 // The whole book, as v4 set it: a warm tally, then a tile for each holding, the most promises broken first
 export function Book({ push, openCompany }: { push: Push; openCompany: (s: string) => void }) {
@@ -63,10 +63,11 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
           return (
             <li key={p.symbol} className={lead ? 'wide' : undefined}>
               {lead
+                // The lead's picture is its record, not its price: '1 of 7 kept' in the big figure, the price a quiet line under
                 ? <button className="book-card lead" onClick={() => openCompany(p.symbol)}>
-                    <div className="card-img"><Chart series={(push.eod[p.symbol] || []).slice(-30)} /></div>
                     <div className="card-lbl"><span className="lbl lbl-quiet">{p.sector}</span>{weak && <StatusLabel status={weak.status} />}</div>
-                    <div className="book-head"><span className="card-title">{p.short || shortName(p.name)}</span><span className="book-rec">{rec}</span></div>
+                    <span className="card-title">{p.short || shortName(p.name)}</span>
+                    {score?.graded ? <span className="book-big"><Outcome size="s" value={kept} unit={`\u00a0of ${score.graded} kept`} /></span> : rec && <span className="book-rec">{rec}</span>}
                     {desc}{px}
                   </button>
                 // In the grid, as the reference's news cards: status, name, record, the weakest promise. The price is on the lead and each company page

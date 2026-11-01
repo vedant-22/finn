@@ -95,7 +95,7 @@ export function AskScreen({ push, q0, openCompany }: { push: Push; q0?: string; 
   )
 }
 
-// A warm tile for each company FINN has read: its symbol, its name, and its word in one figure
+// A hairline row for each company FINN has read: its name over its symbol, and its word in one figure
 function Tiles({ title, syms, open, names }: { title: string; syms: string[]; open: (s: string) => void; names: Record<string, string> }) {
   const [rec, setRec] = useState<Record<string, string>>({})
   useEffect(() => {
@@ -109,7 +109,7 @@ function Tiles({ title, syms, open, names }: { title: string; syms: string[]; op
   }, [syms.join()])  // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <section className="tiles-sec"><h2 className="sec-head">{title}</h2>
-      <ul className="tiles">{syms.map(s => <li key={s}><button className="tile" onClick={() => open(s)}><span className="lbl lbl-quiet">{s}</span><span className="tile-name">{names[s] || s}</span><span className="tile-rec">{rec[s] || '\u00a0'}</span></button></li>)}</ul>
+      <ul className="tiles">{syms.map(s => <li key={s}><button className="tile" onClick={() => open(s)}><span className="tile-txt"><span className="tile-name">{names[s] || s}</span><span className="lbl lbl-quiet">{s}</span></span><span className="tile-rec">{rec[s] || '\u00a0'}</span></button></li>)}</ul>
     </section>
   )
 }

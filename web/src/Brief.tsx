@@ -86,7 +86,8 @@ export function BriefScreen({ push, brief, fresh, lines, setLines, names, openIt
   const n = brief.items.length, nNotes = brief.notes.length + brief.spill.length
   const asof = new Date(push.asof)
   const time = asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()
-  const stamp = asof.toDateString() === new Date().toDateString() ? time : `${time} on ${dayMon(asof)}`
+  // Today the time is what matters ('to 9:21 pm'); an older snapshot is dated by its day alone, so the sentence keeps to two lines
+  const stamp = asof.toDateString() === new Date().toDateString() ? time : dayMon(asof)
   // The sieve plays once a session: the count starts at every filing in the window and falls to what needs you
   const sieve = useRef(!sessionStorage.getItem('finn-sieved'))
   useEffect(() => { sessionStorage.setItem('finn-sieved', '1') }, [])
@@ -106,7 +107,7 @@ export function BriefScreen({ push, brief, fresh, lines, setLines, names, openIt
         </div>
         {/* The sentence carries the time the filings run to, so the screen needs no dateline above the count */}
         <p className="hero-2">{n
-          ? `${few([...new Set(brief.items.map(i => names[i.symbol]))])}, out of ${total} filings and moves across your ${push.portfolio.length} holdings to ${stamp}.`
+          ? `${few([...new Set(brief.items.map(i => names[i.symbol]))])}, of ${total} filings and moves in your ${push.portfolio.length} holdings to ${stamp}.`
           : `Nothing crossed your lines ${span(lines.hours)}, to ${stamp}.${nNotes ? ` ${nNotes} worth a look below.` : ''}`}</p>
         {wider && <button className="see hero-wider" onClick={() => setLines({ ...lines, hours: wider.h })}>{`${span(wider.h).replace(/^in the l/, 'L')}: ${wider.n} ${wider.n === 1 ? 'needs' : 'need'} you`}</button>}
         <div className="window" role="radiogroup" aria-label="Window">
@@ -138,7 +139,7 @@ export function BriefScreen({ push, brief, fresh, lines, setLines, names, openIt
           <EndQuestions brief={brief} push={push} names={names} />
           <div className="end-band-btns">
             <a className="btn-light" href="#/book">Open your book</a>
-            <button className="btn-light-outline" onClick={openLines}>Change your lines</button>
+            <button className="end-copy" onClick={openLines}>Change your lines</button>
           </div>
         </div>
       </section>
@@ -229,12 +230,14 @@ export function kindLabel(i: Item, push: Push): string {
   // A results-day move and the results it rides with read alike in every window
   const res = f?.results ?? (i.move?.explainedBy?.category === 'results' ? push.filings.filter(x => x.symbol === i.symbol && x.results && x.at.slice(0, 10) <= i.move!.d).sort((a, b) => b.at.localeCompare(a.at))[0]?.results : undefined)
   // A move past a line on results says so; results the shares took quietly are just the results
-  if (res && (i.kind === 'results' || i.kind === 'move')) return i.move ? `Price move on ${res.quarter} results` : `${res.quarter} results`
+  // A move names the line it crossed: the price, or only the volume ('Heavy trading on Q2 FY27 results')
+  const moved = i.move && (i.move.why.includes('price') ? 'Price move' : 'Heavy trading')
+  if (res && (i.kind === 'results' || i.kind === 'move')) return moved ? `${moved} on ${res.quarter} results` : `${res.quarter} results`
   if (i.kind === 'people' && f?.people?.length) {
     const p = sortPeople(f.people)[0], r = shortRole(p.role)
     return ['appointed', 're-appointed', 'redesignated'].includes(p.action) ? (r.length > 20 ? 'New director' : `New ${r}`) : 'Management change'
   }
-  if (i.kind === 'move') return 'Unusual day'
+  if (i.kind === 'move') return moved || 'Unusual day'
   return CATEGORY_LABEL[i.story!.category] || 'Filing'
 }
 
@@ -272,12 +275,13 @@ function ItemCard({ i, fresh, name, push, lines, open }: { i: Item; fresh: boole
     </article>
   )
 }
-// The card's picture: the month's closes, short, with the first and last session named so the period is plain
-// end: the day's move, set under the last close it belongs to
+// The card's picture: the month's closes, short. Its start says the period and what the month did ('Since 15 Sep,
+// +4.1%'), so the big figure at its end reads as the one day it is dated to ('on 28 Oct'), not the month's return
 export function PriceLine({ bars, end }: { bars: Bar[]; end?: ReactNode }) {
   const last = shortDay(bars[bars.length - 1].d)
+  const month = `Since ${shortDay(bars[0].d)}, ${signed((bars[bars.length - 1].close / bars[0].close - 1) * 100)}`
   return <figure className="price"><div className="card-img"><Chart series={bars} /></div>
-    <figcaption className="price-d"><span>{shortDay(bars[0].d)}</span>{end ? <span className="price-end">{end}<span>{last} close</span></span> : <span>{last}</span>}</figcaption></figure>
+    <figcaption className="price-d"><span>{month}</span>{end ? <span className="price-end">{end}<span>on {last}</span></span> : <span>{last}</span>}</figcaption></figure>
 }
 
 // One date for a figure, the same in every window: the session it closed in, and the volume it closed on
