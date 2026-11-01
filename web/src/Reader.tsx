@@ -59,9 +59,9 @@ function ItemPage({ i, push, lines, name, openCompany, openLines }: { i: Item; p
   const top = !!i.with?.lead.people?.some(p => p.seniority === 'top')
   const withPeople = i.with?.lead.people?.length
     ? <section className="iv-sec" aria-label="Management change"><h2 className="t-b1">{top ? 'Management change' : 'Also that day'}</h2><PeopleBlock f={i.with.lead} all={push.filings} /></section> : null
-  // The sentence under the name is the card's, then where it closed; the figures it would repeat are in the table
-  const closed = m ? ` Closed at ₹${m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.` : ''
-  const lede = cardSentence(i, fig) + closed
+  // The sentence under the name is the card's, word for word, so it travels as one picture; where it closed goes with the lines
+  const closed = m ? `Closed at ₹${m.close.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}. ` : ''
+  const lede = cardSentence(i, fig)
   return <>
     {/* The card's own top, grown: the price line, what kind, the name, the day's move */}
     <div className="iv-top">
@@ -73,7 +73,7 @@ function ItemPage({ i, push, lines, name, openCompany, openLines }: { i: Item; p
         : <div className="card-fig"><Outcome size="xs" value={fig.v.replace('%', '')} unit="%" /><span className="card-cap">{figWhen(fig.d, i)}</span></div>)}
       {f && !f.results && f.amount_cr != null && f.amount_cr >= 1 && <div className="card-fig"><Outcome size="xs" value={`₹${cr(f.amount_cr)}`} unit="cr" />{f.pct_rev != null && <span className="card-cap">{f.pct_rev < 0.1 ? 'Under 0.1%' : `${f.pct_rev.toFixed(f.pct_rev < 1 ? 1 : 0)}%`} of a year’s revenue</span>}</div>}
       <p className="card-desc iv-lede">{lede}</p>
-      <p className="iv-line"><span>{crossedText(i, lines)}.</span> <button className="see" onClick={openLines}>Change</button></p>
+      <p className="iv-line"><span>{closed}{crossedText(i, lines)}.</span> <button className="see" onClick={openLines}>Change</button></p>
     </div>
 
     {/* A CEO, CFO or MD leaving with the results leads the card, so it leads the view too; anyone else follows the table */}

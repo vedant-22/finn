@@ -148,7 +148,8 @@ table { border-collapse: collapse; }
 .acc.open { grid-template-rows: 1fr; }
 .acc-in { overflow: hidden; min-height: 0; }
 .acc-in > * { opacity: 0; transform: translateY(6px); transition: opacity 120ms, transform 120ms; }
-.acc.open .acc-in > * { opacity: 1; transform: none; transition: opacity 300ms var(--decel) 60ms, transform 300ms var(--decel) 60ms; }
+/* the fold's space opens first (what is below slides down, 240 ms), then its rows settle in, so no row is ever half covered */
+.acc.open .acc-in > * { opacity: 1; transform: none; transition: opacity 180ms var(--decel) 200ms, transform 180ms var(--decel) 200ms; }
 
 /* folds: section rule, title, a plus that turns */
 .fold { border-bottom: 1px solid var(--rule); }
@@ -525,8 +526,8 @@ table { border-collapse: collapse; }
 ::view-transition-old(item), ::view-transition-new(item) { width: 100%; height: 100%; object-fit: none; object-position: left top; mix-blend-mode: normal; }
 /* the warm panel itself grows (the group carries its colour): the face it leaves fades first, the face it arrives at
    fades in once the panel is nearly there, so the text is never seen twice */
-::view-transition-old(item) { animation: vt-out 100ms linear both; }
-::view-transition-new(item) { animation: vt-in 200ms var(--decel) 140ms both; }
+::view-transition-old(item) { animation: vt-out 70ms linear both; }
+::view-transition-new(item) { animation: vt-in 180ms var(--decel) 120ms both; }
 /* the parts the view repeats travel on their own, above the panel, on the panel's curve (App.tsx names them) */
 .card-title, .iv-name { width: fit-content; }
 ::view-transition-group(item-line), ::view-transition-group(item-name), ::view-transition-group(item-fig), ::view-transition-group(item-kind), ::view-transition-group(item-cap), ::view-transition-group(item-desc) { animation-duration: 340ms; animation-timing-function: var(--std); }
@@ -537,8 +538,8 @@ table { border-collapse: collapse; }
 ::view-transition-group(co), ::view-transition-group(co-name) { animation-duration: 340ms; animation-timing-function: var(--std); }
 ::view-transition-group(co) { background: var(--panel); overflow: clip; }
 ::view-transition-old(co), ::view-transition-new(co) { width: 100%; height: 100%; object-fit: none; object-position: left top; }
-::view-transition-old(co) { animation: vt-out 100ms linear both; }
-::view-transition-new(co) { animation: vt-in 200ms var(--decel) 140ms both; }
+::view-transition-old(co) { animation: vt-out 70ms linear both; }
+::view-transition-new(co) { animation: vt-in 180ms var(--decel) 120ms both; }
 ::view-transition-old(co-name), ::view-transition-new(co-name) { height: 100%; }
 /* a name with no partner (it wraps on the card) leaves and arrives with the panel's faces, never hanging in place */
 ::view-transition-old(co-name):only-child { animation: vt-out 100ms linear both; }
@@ -549,9 +550,16 @@ table { border-collapse: collapse; }
 /* a group that exists on one side only is drawn last; keep the page and its scrim under everything that travels */
 ::view-transition-group(*) { z-index: 1; }
 ::view-transition-group(root), ::view-transition-group(iv-scrim) { z-index: 0; }
-/* the line is one picture in both places: show only the one arriving, so its figure is never seen twice */
-::view-transition-old(item-line) { animation: none; opacity: 0; }
-::view-transition-new(item-line) { animation: none; height: 100%; }
+/* each shared part is one picture in both places: only the arriving copy is drawn, carried by its group from the old
+   place and size to the new, so no line is ever seen twice or ghosting over another (round s11-4: all three critics) */
+:root::view-transition-old(item-line), :root::view-transition-old(item-name), :root::view-transition-old(item-kind), :root::view-transition-old(item-cap),
+:root::view-transition-old(item-fig), :root::view-transition-old(item-desc), :root::view-transition-old(co-name) { animation: none; opacity: 0; }
+:root::view-transition-new(item-line), :root::view-transition-new(item-name), :root::view-transition-new(item-kind), :root::view-transition-new(item-cap),
+:root::view-transition-new(item-fig), :root::view-transition-new(item-desc), :root::view-transition-new(co-name) { animation: none; }
+::view-transition-new(item-line) { height: 100%; }
+/* the company morph: the page it leaves is gone before the page it opens comes in, so 'Back' never sits on 'FINN' */
+html.vt-co::view-transition-old(root) { animation: vt-out 90ms linear both; }
+html.vt-co::view-transition-new(root) { animation: vt-in 200ms var(--decel) 140ms both; }
 @keyframes vt-out { to { opacity: 0; } }
 @keyframes vt-in { from { opacity: 0; } }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 240ms; }

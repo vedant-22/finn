@@ -94,13 +94,14 @@ export function App() {
       const fromSym = from.startsWith('#/c/') && !r.sym && (location.hash || '').startsWith('#/book') ? decodeURIComponent(from.slice(4).split('/')[0]) : ''
       if ((toCo || fromSym) && morph()) {
         nameCo(toCo || document.querySelector('.co-top'), true)
+        document.documentElement.classList.add('vt-co')
         document.startViewTransition(() => {
           nameCo(toCo || document.querySelector('.co-top'), false)
           flushSync(() => setRoute(r)); window.scrollTo(0, toY.current)
           // the card it lands in is shown at once; the rest of Book rises in around it as usual
           const land = toCo ? document.querySelector('.co-top') : bookCard(fromSym)
           land?.setAttribute('data-seen', ''); nameCo(land, true)
-        }).finished.finally(() => { nameCo(document.querySelector('.co-top'), false); nameCo(bookCard(fromSym || r.sym || ''), false) })
+        }).finished.finally(() => { nameCo(document.querySelector('.co-top'), false); nameCo(bookCard(fromSym || r.sym || ''), false); document.documentElement.classList.remove('vt-co') })
       } else if (card && morph()) {
         shareView(true)
         document.startViewTransition(() => { flushSync(() => setRoute(r)); window.scrollTo(0, toY.current); share(card, true) })

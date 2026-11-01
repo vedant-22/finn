@@ -128,7 +128,7 @@ function pageColour(el: HTMLElement): string {
   for (let n: HTMLElement | null = el; n; n = n.parentElement) { const c = getComputedStyle(n).backgroundColor; if (c && !/rgba\(.*, 0\)$|transparent/.test(c)) return c }
   return '#fff'
 }
-// FLIP: put each one back where it was with a transform, then let it slide to its new place (transform only, 280 ms)
+// FLIP: put each one back where it was with a transform, then let it slide to its new place (transform only, 240 ms)
 function slideFrom(b: Map<HTMLElement, number>, bg: string) {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
   const moved: HTMLElement[] = []
@@ -141,7 +141,7 @@ function slideFrom(b: Map<HTMLElement, number>, bg: string) {
   if (!moved.length) return
   void document.body.offsetHeight
   requestAnimationFrame(() => moved.forEach(x => {
-    x.style.transition = 'transform 280ms cubic-bezier(.2, 0, 0, 1)'; x.style.transform = ''
+    x.style.transition = 'transform 240ms cubic-bezier(.2, 0, 0, 1)'; x.style.transform = ''
     const done = (e: TransitionEvent) => {
       if (e.target !== x || e.propertyName !== 'transform') return
       x.style.transition = ''; x.style.backgroundColor = ''
