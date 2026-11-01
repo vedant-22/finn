@@ -228,8 +228,8 @@ export function kindLabel(i: Item, push: Push): string {
   const f = i.story?.lead
   // A results-day move and the results it rides with read alike in every window
   const res = f?.results ?? (i.move?.explainedBy?.category === 'results' ? push.filings.filter(x => x.symbol === i.symbol && x.results && x.at.slice(0, 10) <= i.move!.d).sort((a, b) => b.at.localeCompare(a.at))[0]?.results : undefined)
-  // The figure under it is the share price's move once the results have traded, so the label says so
-  if (res && (i.kind === 'results' || i.kind === 'move')) return i.kind === 'move' || reaction(push, i.symbol, i.at) ? `Price move on ${res.quarter} results` : `${res.quarter} results`
+  // A move past a line on results says so; results the shares took quietly are just the results
+  if (res && (i.kind === 'results' || i.kind === 'move')) return i.move ? `Price move on ${res.quarter} results` : `${res.quarter} results`
   if (i.kind === 'people' && f?.people?.length) {
     const p = sortPeople(f.people)[0], r = shortRole(p.role)
     return ['appointed', 're-appointed', 'redesignated'].includes(p.action) ? (r.length > 20 ? 'New director' : `New ${r}`) : 'Management change'
