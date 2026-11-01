@@ -73,6 +73,7 @@ export function rowTag(i: Item, lines: Lines): string {
 
 // ---------- the screen ----------
 const WIN_LABEL: Record<number, string> = { 24: '24h', 72: '3 days', 168: 'Week', 720: 'Month' }
+const WIN_PHRASE: Record<number, string> = { 24: 'The last 24 hours', 72: 'Three days', 168: 'The week', 720: 'The month' }
 const END: Record<number, string> = { 24: 'That’s the last 24 hours.', 72: 'That’s the last 3 days.', 168: 'That’s the week.', 720: 'That’s the month.' }
 
 // Today, as v4 set it: the count of what needs you, one grey sentence, the window, a warm card for each thing,
@@ -84,10 +85,25 @@ export function BriefScreen({ push, brief, fresh, lines, setLines, names, openIt
   const [showNotes, setShowNotes] = useKept('today.notes', false)
   const [showFold, setShowFold] = useKept('today.fold', false)
   const n = brief.items.length, nNotes = brief.notes.length + brief.spill.length
+  // A change of window says what it changed: who came in, or who dropped out, under the knob that did it
+  const seen = useRef({ h: lines.hours, syms: brief.items.map(i => i.symbol) })
+  const [delta, setDelta] = useState('')
+  useEffect(() => {
+    const was = seen.current, syms = brief.items.map(i => i.symbol)
+    seen.current = { h: lines.hours, syms }
+    if (was.h === lines.hours) return
+    const nm = (xs: string[]) => few([...new Set(xs)].map(x => names[x] || x))
+    const inn = syms.filter(x => !was.syms.includes(x)), out = was.syms.filter(x => !syms.includes(x))
+    const w = WIN_PHRASE[lines.hours]
+    // A wider window is read for what it adds, a narrower one for what it leaves out
+    setDelta(lines.hours > was.h
+      ? inn.length ? `${w} adds ${nm(inn)}.` : `${w} adds nothing that needs you.`
+      : out.length ? `${w} leaves out ${nm(out)}.` : `${w} leaves out nothing.`)
+  }, [brief, lines.hours, names])
   const asof = new Date(push.asof)
   const time = asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()
   // Today the time is what matters ('to 9:21 pm'); an older snapshot is dated by its day alone, so the sentence keeps to two lines
-  const stamp = asof.toDateString() === new Date().toDateString() ? time : dayMon(asof)
+  const stamp = (asof.toDateString() === new Date().toDateString() ? time : dayMon(asof)).replace(' ', '\u00a0')
   // The sieve plays once a session: the count starts at every filing in the window and falls to what needs you
   const sieve = useRef(!sessionStorage.getItem('finn-sieved'))
   useEffect(() => { sessionStorage.setItem('finn-sieved', '1') }, [])
@@ -107,12 +123,13 @@ export function BriefScreen({ push, brief, fresh, lines, setLines, names, openIt
         </div>
         {/* The sentence carries the time the filings run to, so the screen needs no dateline above the count */}
         <p className="hero-2">{n
-          ? `${few([...new Set(brief.items.map(i => names[i.symbol]))])}, of ${total} filings and moves in your ${push.portfolio.length} holdings to ${stamp}.`
+          ? `${few([...new Set(brief.items.map(i => names[i.symbol]))])}, out of ${total} filings and moves to ${stamp}.`
           : `Nothing crossed your lines ${span(lines.hours)}, to ${stamp}.${nNotes ? ` ${nNotes} worth a look below.` : ''}`}</p>
         {wider && <button className="see hero-wider" onClick={() => setLines({ ...lines, hours: wider.h })}>{`${span(wider.h).replace(/^in the l/, 'L')}: ${wider.n} ${wider.n === 1 ? 'needs' : 'need'} you`}</button>}
         <div className="window" role="radiogroup" aria-label="Window">
           {WINDOWS.map(w => <button key={w.h} role="radio" aria-checked={lines.hours === w.h} className={lines.hours === w.h ? 'on' : ''} onClick={() => setLines({ ...lines, hours: w.h })}>{WIN_LABEL[w.h]}</button>)}
         </div>
+        <p className="win-delta" aria-live="polite">{delta && <span key={delta}>{delta}</span>}</p>
       </section>
 
       {n > 0 && <ol className="cards">

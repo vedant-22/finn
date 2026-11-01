@@ -20,7 +20,8 @@ async def reader_to(pg, name, kind):
         await pg.get_by_role('button', name='Keep for later').click(); await pg.wait_for_timeout(700)
 
 async def fresh(pg, url):
-    await pg.goto(url); await pg.evaluate('localStorage.clear()'); await pg.reload(); await pg.wait_for_timeout(2500)
+    # A returning investor, as one opens it every morning: last here before the 28 Oct session, so what came after is New
+    await pg.goto(url); await pg.evaluate('localStorage.clear(); localStorage.setItem("finn.seen", "2026-10-28T09:00:00+05:30")'); await pg.reload(); await pg.wait_for_timeout(2500)
 
 async def next_build(pg, shot, base=None):
     base = base or NEXT

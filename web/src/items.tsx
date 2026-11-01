@@ -152,10 +152,13 @@ export function PeopleBlock({ f, all }: { f: any; all?: any[] }) {
       {ppl.map((p: any, i: number) => {
         const joining = ['appointed', 're-appointed', 'redesignated'].includes(p.action)
         const moved = reclass(p)
+        // A CEO, CFO or MD who leaves with no one named to the role in the same filing: say so, it is the next question
+        const open = !joining && !moved && (p.seniority === 'top' || /chief|managing director/i.test(p.role))
+          && !ppl.some((q: any) => ['appointed', 're-appointed', 'redesignated'].includes(q.action) && keyRole(q.role) === keyRole(p.role))
         return (
           <li key={i} className={joining || moved ? 'in' : 'out'}>
             <div className="who"><b>{p.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')}</b>
-              <span className="role">{moved ? `Stays ${p.role}; no longer listed as senior management` : `${verb(p.action)} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${effDate(p.effective, f.at)}` : ''}</span></div>
+              <span className="role">{moved ? `Stays ${p.role}; no longer listed as senior management` : `${verb(p.action)} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${effDate(p.effective, f.at)}` : ''}{open ? '. No successor named' : ''}</span></div>
             {joining && ((b: Bio | null) => b ? <BioText b={b} fold={ppl.length > 3 && p.seniority !== 'top'} /> : <p className="bio bio-none">Background: not in its filings. Worth asking on the next call.</p>)(
               hasBio(p.background) ? { background: p.background, previous: p.previous || [] } : earlierBio(p, f, all))}
             {/* Why they leave, when the filing says: in its own words with its page; the paraphrase only when no quote was checked */}
@@ -168,6 +171,8 @@ export function PeopleBlock({ f, all }: { f: any; all?: any[] }) {
     </ul>
   )
 }
+// The seat a role names, so 'Chief Financial Officer and KMP' and 'CFO' are the same seat
+const keyRole = (r: string) => /chief financial|\bcfo\b/i.test(r) ? 'cfo' : /chief executive|\bceo\b/i.test(r) ? 'ceo' : /managing director|\bmd\b/i.test(r) ? 'md' : r.toLowerCase().replace(/[^a-z]/g, '')
 const ORDER_P = { top: 0, board: 1, senior: 2, other: 3 } as Record<string, number>
 export const sortPeople = (ps: any[]) => [...ps].sort((a: any, b: any) => (+reclass(a) - +reclass(b)) || (ORDER_P[a.seniority] - ORDER_P[b.seniority]) || (a.action === 'appointed' ? -1 : 1))
 // 'Changed from SMP to Non-SMP category': same job, just no longer reported as senior management
