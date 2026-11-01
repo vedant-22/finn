@@ -512,7 +512,7 @@ table { border-collapse: collapse; }
 /* the price line comes up once with its card, by opacity alone */
 .card-img .chart { animation: fade-in 500ms var(--decel) 120ms both; }
 /* a card grows into its full view, and shrinks back into the card */
-::view-transition-group(item) { animation-duration: 340ms; animation-timing-function: var(--std); background: var(--panel); }
+::view-transition-group(item) { animation-duration: 340ms; animation-timing-function: var(--std); background: var(--panel); overflow: clip; }
 ::view-transition-old(item), ::view-transition-new(item) { width: 100%; height: 100%; object-fit: none; object-position: left top; mix-blend-mode: normal; }
 /* the warm panel itself grows (the group carries its colour): the face it leaves fades first, the face it arrives at
    fades in once the panel is nearly there, so the text is never seen twice */
@@ -531,6 +531,13 @@ table { border-collapse: collapse; }
 @keyframes vt-out { to { opacity: 0; } }
 @keyframes vt-in { from { opacity: 0; } }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 240ms; }
+/* the tab bar steps out of the way as a card opens and comes back as it closes, on its own, so the page under the
+   panel is the same picture before and after and is never cross-faded with itself */
+.tabs { view-transition-name: tabs; }
+::view-transition-group(tabs) { animation: none; }
+::view-transition-old(tabs):only-child { animation: tabs-out 200ms var(--std) both; }
+::view-transition-new(tabs):only-child { animation: tabs-out 260ms var(--decel) 80ms reverse both; }
+@keyframes tabs-out { to { transform: translateY(100%); } }
 @media (prefers-reduced-motion: reduce) {
   .rv-on :is(.card, .book-card, .tile, .company > section, .company > .co-pic, .fold, .og-panel, .end-band-in, .ask.lead) { opacity: 1; transform: none; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
