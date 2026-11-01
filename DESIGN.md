@@ -55,6 +55,7 @@ Kept, because each one explains something:
 - **Price lines fade up** with their card, once (opacity only).
 - **Folds open** at once and their rows fade up 6 px; no height is animated, so nothing below is dragged.
 - **Sheets slide up** in 260 ms and can be dragged down.
+- **The tab bar steps down** as a card opens and comes back as it closes, on its own transition, so the page under the growing panel never cross-fades with itself (round s11-3: the tab labels showed over the page for 100 ms).
 
 Removed, because each one got in the investor’s way:
 - The first morph cross-faded the card and the view on top of each other: text read twice in the middle frames (all three critics in round s11-1). Replaced by the growing panel.
