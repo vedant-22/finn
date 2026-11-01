@@ -344,7 +344,7 @@ table { border-collapse: collapse; }
 .company > section { margin-top: var(--s-2xl); }
 .co-pic { margin: var(--s-3xs) calc(-1 * var(--g)) 0; }
 .co-pic .card-img { aspect-ratio: 390 / 300; }
-.co-pic .lbl { display: block; padding: 0 var(--g); margin-top: var(--s-3xs); }
+.co-pic-cap { padding: 0 var(--g); margin-top: 6px; font-size: 12px; line-height: 116%; color: var(--ink-2); }
 .word-intro { margin-top: var(--s-3xs); font-size: 16px; line-height: 140%; }
 .word-intro .see { display: inline; min-height: 0; }
 .company .og-panel { margin-top: var(--s-s); }

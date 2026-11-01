@@ -158,7 +158,7 @@ export function PeopleBlock({ f, all }: { f: any; all?: any[] }) {
         return (
           <li key={i} className={joining || moved ? 'in' : 'out'}>
             <div className="who"><b>{p.name.replace(/^(Mr|Ms|Mrs|Dr)\.?\s+/, '')}</b>
-              <span className="role">{moved ? `Stays ${p.role}; no longer listed as senior management` : `${verb(p.action)} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${effDate(p.effective, f.at)}` : ''}{open ? '. No successor named' : ''}</span></div>
+              <span className="role">{moved ? `Stays ${p.role}; no longer listed as senior management` : `${verb(p.action)} ${p.role}`}{/\d/.test(p.effective || '') ? `, from ${effDate(p.effective, f.at)}` : ''}{open ? '. No successor named.' : ''}</span></div>
             {joining && ((b: Bio | null) => b ? <BioText b={b} fold={ppl.length > 3 && p.seniority !== 'top'} /> : <p className="bio bio-none">Background: not in its filings. Worth asking on the next call.</p>)(
               hasBio(p.background) ? { background: p.background, previous: p.previous || [] } : earlierBio(p, f, all))}
             {/* Why they leave, when the filing says: in its own words with its page; the paraphrase only when no quote was checked */}

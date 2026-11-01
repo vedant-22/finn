@@ -296,9 +296,11 @@ function ItemCard({ i, fresh, name, push, lines, open }: { i: Item; fresh: boole
 }
 // The card's picture: the month's closes, short. Its start says the period and what the month did ('Since 15 Sep,
 // +4.1%'), so the big figure at its end reads as the one day it is dated to ('on 28 Oct'), not the month's return
+// One label for one period, on a card and on its company's page alike
+export const monthLabel = (bars: Bar[]) => `Since ${shortDay(bars[0].d)}, ${signed((bars[bars.length - 1].close / bars[0].close - 1) * 100)}`
 export function PriceLine({ bars, end }: { bars: Bar[]; end?: ReactNode }) {
   const last = shortDay(bars[bars.length - 1].d)
-  const month = `Since ${shortDay(bars[0].d)}, ${signed((bars[bars.length - 1].close / bars[0].close - 1) * 100)}`
+  const month = monthLabel(bars)
   return <figure className="price"><div className="card-img"><Chart series={bars} /></div>
     <figcaption className="price-d"><span>{month}</span>{end ? <span className="price-end">{end}<span>on {last}</span></span> : <span>{last}</span>}</figcaption></figure>
 }

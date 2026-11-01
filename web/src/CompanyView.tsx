@@ -3,6 +3,7 @@ import { cr, crBig, dayMon, deadline, minus, pct, rupees, shortName, tidyEvidenc
 import { Accordion, BackBar, Bars, Chart, Fold, fyLabel, Outcome, Src, STATUS_WORD, StatusLabel } from './ui'
 import { cap, promiseLine, verdictText } from './Trail'
 import { BeforeAfter } from './Word'
+import { monthLabel } from './Brief'
 
 const SHOW: Status[] = ['missed', 'quiet', 'partly', 'kept', 'pending', 'unclear']
 
@@ -81,7 +82,7 @@ export function CompanyView({ c, focus, sector, title, close, bars, back, ask }:
           {s.mcap != null && <>Worth ₹{crBig(s.mcap * k)}{s.pe ? `, ${(s.pe * k).toFixed(1)}× earnings` : ''}.</>}
         </p>
       </div>
-      {bars && bars.length > 1 && <div className="co-pic"><div className="card-img"><Chart series={bars.slice(-30)} /></div><p className="lbl lbl-quiet">Last {Math.min(30, bars.length)} sessions, {pct((bars[bars.length - 1].close / bars[Math.max(0, bars.length - 30)].close - 1) * 100)}</p></div>}
+      {bars && bars.length > 1 && <div className="co-pic"><div className="card-img"><Chart series={bars.slice(-30)} /></div><p className="co-pic-cap">{monthLabel(bars.slice(-30))}</p></div>}
 
       <section className="word">
         <h2 className="sec-head">Their word</h2>
