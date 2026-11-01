@@ -28,34 +28,35 @@ v4's scale, all Inter except where noted:
 - Count 72/100% at 500 with a 36 px unit ("2 need you"). Card figures 30 px with a 16 px unit, well under the count; promise figures 48 to 24 px by length, and a settled one shows what was delivered ('11.8% against 15%'); Book's counts 30 px.
 - Title 30/112% at 450 (Look up's banner, a company's name, an item's name, the end band). Section head 26/116% at 450. Card title and fold title 21/124% at 500 and 450.
 - Body 16/140%; captions 14/140% grey; labels 12 px capitals at 450 with 0.24 px tracking.
-- PT Serif 16 to 17 px roman grey: the sentence under a title, a card's sentence, the next-call questions, quotes. Its ₹ falls through to Inter's, and so do its digits, sign, per cent and ×, through a unicode-range face, so a figure in a sentence matches the figures in the tables.
+- PT Serif 16 to 17 px roman grey: the sentence under a page's title, and quotes. Its ₹ falls through to Inter's, and so do its digits, sign, per cent and ×, through a unicode-range face, so a figure in a sentence matches the figures in the tables. A sentence that is mostly figures (a card's, the next-call questions, a company's record in Look up) is Inter, grey (round s11-3: all three critics read figures in the serif).
 
 ## Space and shape
 Gutter 16 px; the column stops at 560 px. v4's spacing scale (4 to 80). Square panels; pill buttons; sheets 12 px at the top. No shadows. Every tap target is at least 44 px.
 
 ## Components
 - **Masthead.** FINN in blue capitals, tracked. It hides on the way down and comes back on the way up.
-- **Tab bar.** Today, Book, Look up.
-- **Card.** Warm panel: the month's price line, short, with its first and last session; the kind ("Results, Q2"); the company; the day's move with its session and volume ("At the 28 Oct close, on 43.5× its usual volume"); one grey sentence; the line it crossed; Read more.
+- **Tab bar.** Today, Book, Look up. It stays on every screen, the full view of a card included.
+- **Card.** Warm panel: the month's price line, short, its start saying what the month did ('Since 15 Sep, +8.4%') and its end the day's move ('+12.2% on 28 Oct'); the kind ('Price move on Q2 FY27 results', or 'Heavy trading on' when only the volume line was crossed); the company; the volume; one grey sentence; the line it crossed; Read more.
 - **Full view.** The card's warm top, grown: Back, the price line, the name, the figure, the sentence, the lines it crossed with Change. Then the results table, the management change with the person's background, Against their word (verdict word, promise, what the filings showed, the quote and page), Ask FINN chips, sources.
 - **Folds.** A rule, the title with its count in grey, a plus that turns to a minus. The content fades up as it opens.
-- **End band.** ENAM blue to the tab bar: "That's the last 24 hours.", a question for each company's next call (news first) with Copy, then Open your book and Change your lines.
-- **Book.** A warm top with one row of four counts and coloured words (Missed, Gone quiet, Kept, Not due), each a filter; then tiles, most promises broken first.
+- **End band.** ENAM blue to the tab bar: "That's the last 24 hours.", a question for each company's next call (news first) with Copy, then one button, Open your book, with Change your lines as a link beside it.
+- **Book.** A warm top with one row of four counts and coloured words (Missed, Gone quiet, Kept, Not due), each a filter; then tiles, most promises broken first. The lead tile's picture is its record ('1 of 7 kept', 48 px), not a price line.
 - **Company.** A warm top with the name in grey running into its record ("Larsen & Toubro. 1 of 2 promises kept."), the price and size in the serif; a full-width price line; the tally; settled promises one to a row with what was promised as the figure and what the filings showed under the verdict; Still running in a fold; the blue questions block; then folds.
-- **Look up.** "Look up any NSE company", one big underlined field for a symbol, a name or a question (the button turns to Ask), Recent and Ready to open tiles, and a fold of book questions.
+- **Look up.** "Look up any NSE company", one big underlined field for a symbol, a name or a question (the button turns to Ask), Recent and Ready to open as a hairline list (name over symbol, the record at the right), and a fold of book questions.
 - **Your lines.** A sheet: the alerts switch, the two thresholds, the kinds of filing that can interrupt.
 
 ## Motion
 One family of curves: expo out for reveals, decelerate for folds and sheets, standard for the morph. Transform and opacity only. Everything respects `prefers-reduced-motion` (it all appears in place).
 
 Kept, because each one explains something:
-- **A card grows into its full view** (a shared-element view transition, 340 ms). The warm panel grows while the price line, the company's name and the figure travel to their places in the view, so what you were reading stays in sight the whole way; the rest of the card's face fades in the first 100 ms and the view's after 140 ms. Back shrinks it into the same card at the same scroll. It says where the view came from and where it goes back to.
+- **A card grows into its full view** (a shared-element view transition, 340 ms). The warm panel grows while every part the view repeats (the price line, the kind, the name, the volume, the figure, the sentence) travels to its place, so nothing is drawn twice or over another line; the sentence wraps in the view as it did on the card, so it moves as one picture. The rest of the card's face fades in the first 100 ms and the view's after 140 ms, and the page under the panel dims a little. Back shrinks it into the same card at the same scroll. It says where the view came from and where it goes back to.
+- **A Book card grows into its company's warm top**, the name travelling when it sits on one line, and Back shrinks the top into the card (round s11-3: the company page cross-faded).
 - **Blocks rise 12 px and settle** as they scroll into view (700 ms, expo out), the first three in an 80 ms stagger. It tells you the list goes on.
 - **The count falls** from every filing in the window to what needs you, once a session (the sieve), and rolls when the window changes.
 - **Price lines fade up** with their card, once (opacity only).
-- **Folds open** at once and their rows fade up 6 px; no height is animated, so nothing below is dragged.
+- **Folds open** and what sits below slides to its new place (FLIP: measured before, put back with a transform, released over 280 ms), drawn on the page's colour so it covers the rows it passes; the rows fade up 6 px under it. No height is animated (round s11-3: the rows below jumped).
 - **Sheets slide up** in 260 ms and can be dragged down.
-- **The tab bar steps down** as a card opens and comes back as it closes, on its own transition, so the page under the growing panel never cross-fades with itself (round s11-3: the tab labels showed over the page for 100 ms).
+- **The tab bar stays put** above the growing panel, the same picture before and after, so it is never cross-faded (round s11-3 asked for it in the full view).
 
 Removed, because each one got in the investor’s way:
 - The first morph cross-faded the card and the view on top of each other: text read twice in the middle frames (all three critics in round s11-1). Replaced by the growing panel.
@@ -63,6 +64,7 @@ Removed, because each one got in the investor’s way:
 - The price line drawing itself left to right (a clip-path wipe): all three critics in round s11-2 read it as a wipe, and it isn't transform or opacity. It fades up instead.
 - The panel growing with nothing on it for a moment (round s11-2, all three): the shared parts fixed it.
 - Folds growing in height: the last row was clipped mid-way and the content below was dragged.
+- The tab bar stepping down as a card opened (round s11-3): it took Book and Look up away while reading.
 - The step bar and the swipe-to-clear reader: it made the first action a button press and a progress count.
 - The card under the thumb lit and the others dimmed while scrolling: tried as a scroll-driven fade; at two cards a screen it greyed out the text you were about to read, so it went.
 
