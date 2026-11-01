@@ -21,7 +21,9 @@ async def reader_to(pg, name, kind):
 
 async def fresh(pg, url):
     # A returning investor, as one opens it every morning: last here before the 28 Oct session, so what came after is New
-    await pg.goto(url); await pg.evaluate('localStorage.clear(); localStorage.setItem("finn.seen", "2026-10-28T09:00:00+05:30")'); await pg.reload(); await pg.wait_for_timeout(2500)
+    # (the first load stamps its own visit once its data is in, so wait for that before setting the earlier one)
+    await pg.goto(url); await pg.wait_for_timeout(2500)
+    await pg.evaluate('localStorage.clear(); localStorage.setItem("finn.seen", "2026-10-28T09:00:00+05:30")'); await pg.reload(); await pg.wait_for_timeout(2500)
 
 async def next_build(pg, shot, base=None):
     base = base or NEXT
