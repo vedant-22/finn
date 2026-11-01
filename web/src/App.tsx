@@ -9,7 +9,7 @@ import { buildBrief, lastSeen, markSeen } from './queue'
 import { raise } from './alerts'
 import { AlertsRow, crossedText, itemLine, itemTitle } from './Brief'
 import {
-  buildLive, CATEGORY_LABEL, plainError, DEFAULT_LINES, forgetCompanies, getCompany, getPush, loadLines, saveLines, shortName,
+  buildLive, cachedCompany, CATEGORY_LABEL, plainError, DEFAULT_LINES, forgetCompanies, getCompany, getPush, loadLines, saveLines, shortName,
   type Bar, type Company, type Lines, type Push, type Step,
 } from './lib'
 import { BackBar, Mark, Sheet, useEdgeBack } from './ui'
@@ -38,6 +38,17 @@ const share = (card: HTMLElement, on: boolean) => {
   card.style.viewTransitionName = on ? 'item' : ''
   for (const [sel, , name] of PARTS) { const x = card.querySelector<HTMLElement>(sel); if (x) x.style.viewTransitionName = on ? name : '' }
 }
+// A Book card grows into its company's warm top, and Back shrinks the top into the card: the panel and the name travel
+const nameCo = (el: Element | null | undefined, on: boolean) => {
+  if (!(el instanceof HTMLElement)) return
+  el.style.viewTransitionName = on ? 'co' : ''
+  // The name travels only when it sits on one line: two boxes would cancel the transition, and a name that wraps in
+  // a narrow card would be stretched on its way into the one-line title. Otherwise it crosses over with the panel
+  const n = el.querySelector<HTMLElement>('.card-title, .co-name-n')
+  const oneLine = (x: HTMLElement) => x.getClientRects().length === 1 && x.getBoundingClientRect().height < 1.5 * (parseFloat(getComputedStyle(x).lineHeight) || 40)
+  if (n) n.style.viewTransitionName = on && oneLine(n) ? 'co-name' : ''
+}
+const bookCard = (sym: string) => document.querySelector(`.book-card[data-sym="${CSS.escape(sym)}"]`)
 const shareView = (on: boolean) => {
   const v = document.querySelector<HTMLElement>('.item-view'); if (!v) return
   for (const [, sel, name] of PARTS) { const x = v.querySelector<HTMLElement>(sel); if (x) x.style.viewTransitionName = on ? name : '' }
@@ -79,7 +90,18 @@ export function App() {
       setLinesOpen(false)
       // Closing an item shrinks its view back into the card it came from
       const card = from.startsWith('#/read/') && !r.item ? document.querySelector<HTMLElement>(`.card[data-key="${CSS.escape(decodeURIComponent(from.slice(7)))}"]`) : null
-      if (card && morph()) {
+      const toCo = from.startsWith('#/book') && r.sym ? bookCard(r.sym) : null
+      const fromSym = from.startsWith('#/c/') && !r.sym && (location.hash || '').startsWith('#/book') ? decodeURIComponent(from.slice(4).split('/')[0]) : ''
+      if ((toCo || fromSym) && morph()) {
+        nameCo(toCo || document.querySelector('.co-top'), true)
+        document.startViewTransition(() => {
+          nameCo(toCo || document.querySelector('.co-top'), false)
+          flushSync(() => setRoute(r)); window.scrollTo(0, toY.current)
+          // the card it lands in is shown at once; the rest of Book rises in around it as usual
+          const land = toCo ? document.querySelector('.co-top') : bookCard(fromSym)
+          land?.setAttribute('data-seen', ''); nameCo(land, true)
+        }).finished.finally(() => { nameCo(document.querySelector('.co-top'), false); nameCo(bookCard(fromSym || r.sym || ''), false) })
+      } else if (card && morph()) {
         shareView(true)
         document.startViewTransition(() => { flushSync(() => setRoute(r)); window.scrollTo(0, toY.current); share(card, true) })
           .finished.finally(() => share(card, false))
@@ -203,7 +225,8 @@ function Stepper({ label, value, step, min, max, fmt, set }: { label: string; va
 }
 
 function CompanyRoute({ push, openCompany, sym, pid, sector, title, close, bars, back }: { push: Push; openCompany: (s: string, pid?: number) => void; sym: string; pid?: number; sector?: string; title?: string; close?: { d: string; close: number }; bars?: Bar[]; back: () => void }) {
-  const [c, setC] = useState<Company | null | undefined>(undefined)
+  // A company already read (Book reads them all) is there on the first frame, so a card can grow straight into it
+  const [c, setC] = useState<Company | null | undefined>(() => cachedCompany(sym) ?? undefined)
   const [steps, setSteps] = useState<Step[]>([])
   const [failed, setFailed] = useState('')
   const [attempt, setAttempt] = useState(0)
@@ -213,7 +236,7 @@ function CompanyRoute({ push, openCompany, sym, pid, sector, title, close, bars,
   useEffect(() => { setSlow(false); const t = setTimeout(() => setSlow(true), 400); return () => clearTimeout(t) }, [sym, attempt])
   useEffect(() => {
     let live = true
-    setC(undefined); setSteps([]); setFailed('')
+    setC(cachedCompany(sym) ?? undefined); setSteps([]); setFailed('')
     getCompany(sym).then(found => {
       if (!live) return
       if (found) { setC(found); return }

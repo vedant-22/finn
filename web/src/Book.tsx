@@ -64,14 +64,14 @@ export function Book({ push, openCompany }: { push: Push; openCompany: (s: strin
             <li key={p.symbol} className={lead ? 'wide' : undefined}>
               {lead
                 // The lead's picture is its record, not its price: '1 of 7 kept' in the big figure, the price a quiet line under
-                ? <button className="book-card lead" onClick={() => openCompany(p.symbol)}>
+                ? <button className="book-card lead" data-sym={p.symbol} onClick={() => openCompany(p.symbol)}>
                     <div className="card-lbl"><span className="lbl lbl-quiet">{p.sector}</span>{weak && <StatusLabel status={weak.status} />}</div>
                     <span className="card-title">{p.short || shortName(p.name)}</span>
                     {score?.graded ? <span className="book-big"><Outcome size="s" value={kept} unit={`\u00a0of ${score.graded} kept`} /></span> : rec && <span className="book-rec">{rec}</span>}
                     {desc}{px}
                   </button>
                 // In the grid, as the reference's news cards: status, name, record, the weakest promise. The price is on the lead and each company page
-                : <button className="book-card tile-card" onClick={() => openCompany(p.symbol)}>
+                : <button className="book-card tile-card" data-sym={p.symbol} onClick={() => openCompany(p.symbol)}>
                     {weak ? <StatusLabel status={weak.status} /> : <span className="lbl lbl-quiet">Nothing graded</span>}
                     <span className="card-title">{p.short || shortName(p.name)}</span>
                     {rec && <span className="book-rec">{rec}</span>}

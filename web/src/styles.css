@@ -339,7 +339,7 @@ table { border-collapse: collapse; }
 .co-top { background: var(--panel); margin: 0 calc(-1 * var(--g)); padding: var(--s-xl) var(--g) var(--s-l); }
 .co-sector { white-space: normal; }
 .co-name { margin-top: var(--s-3xs); }
-.co-name-n { color: var(--ink-2); }
+.co-name-n { color: var(--ink-2); display: inline-block; }
 .co-meta { margin-top: var(--s-3xs); font-size: 16px; line-height: 140%; }
 .company > section { margin-top: var(--s-2xl); }
 .co-pic { margin: var(--s-3xs) calc(-1 * var(--g)) 0; }
@@ -533,6 +533,16 @@ table { border-collapse: collapse; }
 ::view-transition-old(item-name), ::view-transition-new(item-name) { height: 100%; }
 /* text that keeps its size travels as itself, pinned to its top left, never stretched */
 ::view-transition-old(item-kind), ::view-transition-new(item-kind), ::view-transition-old(item-cap), ::view-transition-new(item-cap), ::view-transition-old(item-desc), ::view-transition-new(item-desc) { width: auto; height: 100%; object-fit: none; object-position: left top; }
+/* a Book card grows into its company's warm top: the panel's colour travels with it, the faces cross over quickly */
+::view-transition-group(co), ::view-transition-group(co-name) { animation-duration: 340ms; animation-timing-function: var(--std); }
+::view-transition-group(co) { background: var(--panel); overflow: clip; }
+::view-transition-old(co), ::view-transition-new(co) { width: 100%; height: 100%; object-fit: none; object-position: left top; }
+::view-transition-old(co) { animation: vt-out 100ms linear both; }
+::view-transition-new(co) { animation: vt-in 200ms var(--decel) 140ms both; }
+::view-transition-old(co-name), ::view-transition-new(co-name) { height: 100%; }
+/* a name with no partner (it wraps on the card) leaves and arrives with the panel's faces, never hanging in place */
+::view-transition-old(co-name):only-child { animation: vt-out 100ms linear both; }
+::view-transition-new(co-name):only-child { animation: vt-in 200ms var(--decel) 140ms both; }
 /* the page under the panel dims as it grows and comes back as it shrinks */
 .iv-scrim { position: fixed; inset: 0; z-index: 29; background: rgba(51, 51, 51, .16); view-transition-name: iv-scrim; }
 ::view-transition-group(iv-scrim) { animation-duration: 340ms; }
