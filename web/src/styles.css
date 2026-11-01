@@ -91,7 +91,7 @@ table { border-collapse: collapse; }
 .boot .wordmark { font-size: 28px; animation: breathe 1.4s ease-in-out infinite alternate; }
 @keyframes breathe { from { opacity: .35; } }
 
-.tabs { position: fixed; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; background: var(--paper); border-top: 1px solid var(--rule); padding-bottom: env(safe-area-inset-bottom); z-index: 5; }
+.tabs { position: fixed; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; background: var(--paper); border-top: 1px solid var(--rule); padding-bottom: env(safe-area-inset-bottom); z-index: 35; }
 .tabs button { flex: 1; max-width: 186px; text-align: center; min-height: 56px; color: var(--ink-2); font-weight: 450; position: relative; }
 .tabs button.on { color: var(--ink); }
 .tabs button.on::after { content: ''; position: absolute; bottom: 10px; left: 50%; width: 24px; margin-left: -12px; height: 2px; background: var(--brand); }
@@ -211,7 +211,9 @@ table { border-collapse: collapse; }
 .iv-bar { position: relative; flex: none; margin: 0; background: var(--panel); }
 .iv-bar.past { background: var(--paper); }
 .iv-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; outline: none; }
-.iv-page { max-width: 560px; margin: 0 auto; padding: 0 var(--g) calc(env(safe-area-inset-bottom) + var(--s-2xl)); }
+.iv-page { max-width: 560px; margin: 0 auto; padding: 0 var(--g) calc(env(safe-area-inset-bottom) + 57px + var(--s-2xl)); }
+/* the sentence wraps as it did on the card, so it travels as one picture and never re-flows mid-way */
+.iv-lede { max-width: calc(100vw - 4 * var(--g)); }
 .iv-top { background: var(--panel); margin: 0 calc(-1 * var(--g)); padding: var(--s-5xs) var(--g) var(--s-l); }
 /* the view's picture is the card's, already drawn: it doesn't draw again on opening */
 .iv-top .card-img .chart { animation: none; }
@@ -525,26 +527,28 @@ table { border-collapse: collapse; }
    fades in once the panel is nearly there, so the text is never seen twice */
 ::view-transition-old(item) { animation: vt-out 100ms linear both; }
 ::view-transition-new(item) { animation: vt-in 200ms var(--decel) 140ms both; }
-/* the parts the view repeats travel on their own, above the panel, on the panel's curve */
-.iv-top .price { view-transition-name: item-line; }
-.iv-top .iv-name { view-transition-name: item-name; }
-.iv-top .card-fig .outcome { view-transition-name: item-fig; }
+/* the parts the view repeats travel on their own, above the panel, on the panel's curve (App.tsx names them) */
 .card-title, .iv-name { width: fit-content; }
-::view-transition-group(item-line), ::view-transition-group(item-name), ::view-transition-group(item-fig) { animation-duration: 340ms; animation-timing-function: var(--std); }
+::view-transition-group(item-line), ::view-transition-group(item-name), ::view-transition-group(item-fig), ::view-transition-group(item-kind), ::view-transition-group(item-cap), ::view-transition-group(item-desc) { animation-duration: 340ms; animation-timing-function: var(--std); }
 ::view-transition-old(item-name), ::view-transition-new(item-name) { height: 100%; }
+/* text that keeps its size travels as itself, pinned to its top left, never stretched */
+::view-transition-old(item-kind), ::view-transition-new(item-kind), ::view-transition-old(item-cap), ::view-transition-new(item-cap), ::view-transition-old(item-desc), ::view-transition-new(item-desc) { width: auto; height: 100%; object-fit: none; object-position: left top; }
+/* the page under the panel dims as it grows and comes back as it shrinks */
+.iv-scrim { position: fixed; inset: 0; z-index: 29; background: rgba(51, 51, 51, .16); view-transition-name: iv-scrim; }
+::view-transition-group(iv-scrim) { animation-duration: 340ms; }
+/* a group that exists on one side only is drawn last; keep the page and its scrim under everything that travels */
+::view-transition-group(*) { z-index: 1; }
+::view-transition-group(root), ::view-transition-group(iv-scrim) { z-index: 0; }
 /* the line is one picture in both places: show only the one arriving, so its figure is never seen twice */
 ::view-transition-old(item-line) { animation: none; opacity: 0; }
 ::view-transition-new(item-line) { animation: none; height: 100%; }
 @keyframes vt-out { to { opacity: 0; } }
 @keyframes vt-in { from { opacity: 0; } }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 240ms; }
-/* the tab bar steps out of the way as a card opens and comes back as it closes, on its own, so the page under the
-   panel is the same picture before and after and is never cross-faded with itself */
+/* the tab bar stays put above the growing panel, the same picture before and after, so it is never cross-faded */
 .tabs { view-transition-name: tabs; }
-::view-transition-group(tabs) { animation: none; }
-::view-transition-old(tabs):only-child { animation: tabs-out 200ms var(--std) both; }
-::view-transition-new(tabs):only-child { animation: tabs-out 260ms var(--decel) 80ms reverse both; }
-@keyframes tabs-out { to { transform: translateY(100%); } }
+::view-transition-group(tabs), ::view-transition-old(tabs), ::view-transition-new(tabs) { animation: none; }
+::view-transition-old(tabs) { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .rv-on :is(.card, .book-card, .tile, .company > section, .company > .co-pic, .fold, .og-panel, .end-band-in, .ask.lead) { opacity: 1; transform: none; }
   *, *::before, *::after { transition: none !important; animation: none !important; }

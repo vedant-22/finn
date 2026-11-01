@@ -72,7 +72,7 @@ function ItemPage({ i, push, lines, name, openCompany, openLines }: { i: Item; p
         ? m && <p className="card-cap">On {m.volX.toFixed(1)}× its usual volume</p>
         : <div className="card-fig"><Outcome size="xs" value={fig.v.replace('%', '')} unit="%" /><span className="card-cap">{figWhen(fig.d, i)}</span></div>)}
       {f && !f.results && f.amount_cr != null && f.amount_cr >= 1 && <div className="card-fig"><Outcome size="xs" value={`₹${cr(f.amount_cr)}`} unit="cr" />{f.pct_rev != null && <span className="card-cap">{f.pct_rev < 0.1 ? 'Under 0.1%' : `${f.pct_rev.toFixed(f.pct_rev < 1 ? 1 : 0)}%`} of a year’s revenue</span>}</div>}
-      <p className="serif-line">{lede}</p>
+      <p className="card-desc iv-lede">{lede}</p>
       <p className="iv-line"><span>{crossedText(i, lines)}.</span> <button className="see" onClick={openLines}>Change</button></p>
     </div>
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { pct, type Bar, type Status } from './lib'
 
@@ -98,15 +98,57 @@ export function IndexRow({ title, line, count, onClick, big }: { title: ReactNod
 export function Accordion({ open, children, id }: { open: boolean; children: ReactNode; id?: string }) {
   const [mounted, setMounted] = useState(open)
   const [shown, setShown] = useState(open)
+  const ref = useRef<HTMLDivElement>(null)
+  const before = useRef<Map<HTMLElement, number> | null>(null)
+  // What sits below is measured before the fold moves, so it can slide from where it was instead of jumping
+  const flip = (to: boolean) => { before.current = ref.current ? measureBelow(ref.current) : null; setShown(to) }
   useEffect(() => {
-    if (open) { setMounted(true); const r = requestAnimationFrame(() => requestAnimationFrame(() => setShown(true))); return () => cancelAnimationFrame(r) }
-    setShown(false); const t = setTimeout(() => setMounted(false), 120); return () => clearTimeout(t)
-  }, [open])
+    if (open) { setMounted(true); const r = requestAnimationFrame(() => requestAnimationFrame(() => flip(true))); return () => cancelAnimationFrame(r) }
+    if (shown) flip(false)
+    const t = setTimeout(() => setMounted(false), 120); return () => clearTimeout(t)
+  }, [open])  // eslint-disable-line react-hooks/exhaustive-deps
+  useLayoutEffect(() => { const b = before.current; before.current = null; if (b && ref.current) slideFrom(b, pageColour(ref.current)) }, [shown])
   return (
-    <div id={id} className={`acc${shown ? ' open' : ''}`}>
+    <div id={id} ref={ref} className={`acc${shown ? ' open' : ''}`}>
       <div className="acc-in">{mounted && children}</div>
     </div>
   )
+}
+
+// Everything after an element on its page (its later siblings, and theirs up to the page), but not fixed bars
+function measureBelow(el: HTMLElement): Map<HTMLElement, number> {
+  const m = new Map<HTMLElement, number>()
+  for (let n: HTMLElement | null = el; n && n.parentElement && !n.matches('main, .iv-page, body'); n = n.parentElement)
+    for (let x = n.nextElementSibling as HTMLElement | null; x; x = x.nextElementSibling as HTMLElement | null)
+      if (getComputedStyle(x).position !== 'fixed') m.set(x, x.getBoundingClientRect().top)
+  return m
+}
+// The colour of the page an element sits on, for what slides over the fold's rows to cover them, not show through
+function pageColour(el: HTMLElement): string {
+  for (let n: HTMLElement | null = el; n; n = n.parentElement) { const c = getComputedStyle(n).backgroundColor; if (c && !/rgba\(.*, 0\)$|transparent/.test(c)) return c }
+  return '#fff'
+}
+// FLIP: put each one back where it was with a transform, then let it slide to its new place (transform only, 280 ms)
+function slideFrom(b: Map<HTMLElement, number>, bg: string) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  const moved: HTMLElement[] = []
+  b.forEach((top, x) => {
+    const d = top - x.getBoundingClientRect().top
+    if (Math.abs(d) < 1) return
+    x.style.transition = 'none'; x.style.transform = `translateY(${d}px)`; moved.push(x)
+    if (/rgba\(.*, 0\)$|transparent/.test(getComputedStyle(x).backgroundColor)) x.style.backgroundColor = bg
+  })
+  if (!moved.length) return
+  void document.body.offsetHeight
+  requestAnimationFrame(() => moved.forEach(x => {
+    x.style.transition = 'transform 280ms cubic-bezier(.2, 0, 0, 1)'; x.style.transform = ''
+    const done = (e: TransitionEvent) => {
+      if (e.target !== x || e.propertyName !== 'transform') return
+      x.style.transition = ''; x.style.backgroundColor = ''
+      x.removeEventListener('transitionend', done); x.removeEventListener('transitioncancel', done)
+    }
+    x.addEventListener('transitionend', done); x.addEventListener('transitioncancel', done)
+  }))
 }
 
 // A section that folds: title and count on the left, a plus that turns into a minus on the right

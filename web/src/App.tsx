@@ -28,12 +28,19 @@ const parse = (): Route => {
 
 // The shared-element morph runs where the browser has view transitions and motion is welcome
 const morph = () => 'startViewTransition' in document && !matchMedia('(prefers-reduced-motion: reduce)').matches
-// The card and the parts of it the full view repeats: the panel grows while the price line, the name and the figure
-// travel to their places in the view, so something you were reading stays in sight the whole way (styles.css names the view's)
-const PARTS: [string, string][] = [['.price', 'item-line'], ['.card-title', 'item-name'], ['.card-fig .outcome', 'item-fig']]
+// The card and every part of it the full view repeats: the panel grows while the price line, the kind, the name, the
+// volume, the figure and the sentence each travel to their place in the view, so nothing you were reading is drawn
+// twice or over another line on the way. Names are set on the first match only, so no name is ever doubled.
+const PARTS: [string, string, string][] = [
+  ['.price', '.iv-top .price', 'item-line'], ['.card-lbl', '.iv-top .card-lbl', 'item-kind'], ['.card-title', '.iv-top .iv-name', 'item-name'],
+  ['.card-info > .card-cap', '.iv-top > .card-cap', 'item-cap'], ['.card-fig .outcome', '.iv-top .card-fig .outcome', 'item-fig'], ['.card-desc', '.iv-top .iv-lede', 'item-desc']]
 const share = (card: HTMLElement, on: boolean) => {
   card.style.viewTransitionName = on ? 'item' : ''
-  for (const [sel, name] of PARTS) { const x = card.querySelector<HTMLElement>(sel); if (x) x.style.viewTransitionName = on ? name : '' }
+  for (const [sel, , name] of PARTS) { const x = card.querySelector<HTMLElement>(sel); if (x) x.style.viewTransitionName = on ? name : '' }
+}
+const shareView = (on: boolean) => {
+  const v = document.querySelector<HTMLElement>('.item-view'); if (!v) return
+  for (const [, sel, name] of PARTS) { const x = v.querySelector<HTMLElement>(sel); if (x) x.style.viewTransitionName = on ? name : '' }
 }
 
 export function App() {
@@ -73,6 +80,7 @@ export function App() {
       // Closing an item shrinks its view back into the card it came from
       const card = from.startsWith('#/read/') && !r.item ? document.querySelector<HTMLElement>(`.card[data-key="${CSS.escape(decodeURIComponent(from.slice(7)))}"]`) : null
       if (card && morph()) {
+        shareView(true)
         document.startViewTransition(() => { flushSync(() => setRoute(r)); window.scrollTo(0, toY.current); share(card, true) })
           .finished.finally(() => share(card, false))
       } else setRoute(r)
@@ -116,8 +124,8 @@ export function App() {
       scrolls.current.set(location.hash || '#/', y); toY.current = y
       history.pushState(null, '', to)
       flushSync(() => setRoute(parse()))
-      share(el, false)
-    })
+      share(el, false); shareView(true)
+    }).finished.finally(() => shareView(false))
   }
   const closeItem = () => { if (history.length > 1 && route.item) history.back(); else location.hash = '#/' }
 
@@ -129,14 +137,17 @@ export function App() {
           : route.tab === 'ask' ? <AskScreen push={push} q0={route.q} openCompany={openCompany} />
             : <BriefScreen push={push} brief={brief} fresh={fresh} lines={lines} setLines={setLines} names={names} openItem={openItem} openLines={() => setLinesOpen(true)} />}
 
+      {/* The page dims a little under the panel as it grows; the view covers it once open */}
+      {route.item && <div className="iv-scrim" aria-hidden="true" />}
       {route.item && <ItemView push={push} brief={brief} k={route.item} lines={lines} names={names}
         close={closeItem} openCompany={openCompany} openLines={() => setLinesOpen(true)} />}
 
-      {!route.item && <nav className="tabs" aria-label="Sections">
+      {/* The tab bar stays in the full view: one tap to Book or Look up from anything you are reading */}
+      <nav className="tabs" aria-label="Sections">
         {([['brief', 'Today'], ['book', 'Book'], ['ask', 'Look up']] as [Tab, string][]).map(([t, label]) => (
           <button key={t} className={tab === t ? 'on' : ''} aria-current={tab === t ? 'page' : undefined} onClick={() => go(t)}>{label}</button>
         ))}
-      </nav>}
+      </nav>
 
       <Sheet open={linesOpen} onClose={() => setLinesOpen(false)} title="Your lines">
         <LinesForm lines={lines} setLines={setLines} count={brief.items.length + brief.spill.length} shown={brief.items.length}
