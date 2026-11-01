@@ -356,8 +356,14 @@ export function AlertsRow({ top, names, lines }: { top?: Item; names: Record<str
     setNote(r === 'denied' ? 'The browser said no. Allow notifications for this site in its settings.' : r === 'on' && top ? 'Sent the top item so you can see one.' : '')
   }
   const sub = note || (on ? 'On. New items arrive as notifications when FINN opens on a newer snapshot' : alertsBlocked() ? 'Blocked in this browser’s settings' : 'Off. Get what crosses your lines as phone notifications')
-  return (
+  return <>
     <li><label className="row row-switch"><span>Alerts on this phone<span className="row-sub" aria-live="polite">{sub}</span></span>
       <input type="checkbox" role="switch" checked={on} onChange={flip} /></label></li>
-  )
+    {/* The words an alert carries, set as the phone would show them, with the line that set it off: it changes as the lines do */}
+    {top && <li className="alert-pre" aria-label="What an alert says">
+      <p className="alert-app"><span>FINN</span><span>{shortDay(top.at)}</span></p>
+      <p className="alert-t">{itemTitle(top, names[top.symbol])}</p>
+      <p className="alert-b">{itemLine(top)} {crossedText(top, lines)}.</p>
+    </li>}
+  </>
 }
