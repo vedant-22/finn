@@ -80,7 +80,7 @@ export function AskScreen({ push, q0, openCompany }: { push: Push; q0?: string; 
             <input id="sym" ref={inRef} value={q} onChange={e => setQ(e.target.value)} placeholder={asked ? 'Ask another' : 'ASTRAL, or a question'} autoComplete="off" autoCorrect="off" spellCheck={false} enterKeyHint="search" className={isQ(q) ? 'is-q' : ''} />
             <Mic onText={t => { setQ(t); submit(t) }} />
           </div>
-          <button type="submit" className="btn-primary">{isQ(q) ? 'Ask' : 'Check their word'}</button>
+          <button type="submit" className="btn-primary">{isQ(q) || (asked && !q) ? 'Ask' : 'Check their word'}</button>
         </div>
       </form>
       {matches.length > 0 && <section className="chips-sec"><h2 className="lbl lbl-quiet">{matches.length === 1 && !all.includes(want) ? 'Did you mean' : 'Matches'}</h2>
@@ -164,8 +164,10 @@ function CompanyAnswer({ p, name, openCompany, inline }: { p: Parsed; name: stri
       <button className="btn-primary" onClick={() => openCompany(p.symbol!)}>Read {name}</button>
     </section>
   )
-  const xs = matching(c.ledger, p)
-  const about = p.topic ? ` on ${p.topic.label}` : ''
+  // A question about something no topic covers is answered only by promises that name it; none, and it says so
+  const restRe = !p.topic && p.rest ? new RegExp(p.rest.split(' ').map(w => w.replace(/s$/, '')).join('|'), 'i') : null
+  const xs = matching(c.ledger, p).filter(x => !restRe || restRe.test(`${x.topic} ${x.target}`))
+  const about = p.topic ? ` on ${p.topic.label}` : p.rest ? ` on ${p.rest}` : ''
   const fy = p.fy ? ` for ${p.fy}` : ''
   const shown = xs.slice(0, inline ? 2 : 4)
   const calls = c.calls.filter(x => !x.error).length
@@ -183,7 +185,7 @@ function CompanyAnswer({ p, name, openCompany, inline }: { p: Parsed; name: stri
       <h2 className="t-b1">{name}{about}{fy}{xs.length ? `: ${verdictHead(xs)}${sofar ? `; ${run!.fy} ${sofar} so far` : ''}` : ''}</h2>
       {xs.length
         ? <p className="sub">{due ? (xs.length === 1 ? 'One promise on this has come due' : `${xs.length} promises on this have come due`) : xs.length === 1 ? 'One promise on this' : `${xs.length} promises on this`}: {xs.length === 1 ? tally(xs).replace(/^1 /, '') : tally(xs)}. {runLine}{(s => s?.graded ? `Over their last ${calls} calls they’ve kept ${Math.floor(s.kept)} of ${s.graded} promises that came due.` : `From their last ${calls} calls.`)(wordScore(c))}</p>
-        : <p>Nothing{about}{fy} with a number and a date in {name}’s last {c.calls.filter(x => !x.error).length} calls. FINN only grades what management put a number or date on.</p>}
+        : <p><b className="not-found">Not found in the filings.</b> Nothing{about}{fy} with a number and a date in {name}’s last {c.calls.filter(x => !x.error).length} calls. FINN answers only from what management put on record.</p>}
       {shown.map(x => <BeforeAfter key={x.id} p={x} compact={inline} lead src={c.source} />)}
       {!xs.length && <Others c={c} open={pid => openCompany(c.symbol, pid)} />}
       <button className="see" onClick={() => openCompany(c.symbol, shown[0]?.id)}>{xs.length > shown.length ? `All ${xs.length}, and the rest of their record` : `${name}’s full record`}</button>

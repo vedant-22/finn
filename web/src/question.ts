@@ -8,7 +8,8 @@ export const TOPICS: Topic[] = [
   { key: 'volume', label: 'volumes', metrics: ['volume'], words: /\bvolumes?\b/ },
   { key: 'margin', label: 'margins', metrics: ['margin'], words: /margin|ebitda|profitab/ },
   { key: 'profit', label: 'profit', metrics: ['profit'], words: /profit|\bpat\b|earnings|bottom ?line/ },
-  { key: 'revenue', label: 'revenue growth', metrics: ['revenue_growth'], words: /revenue|sales|top ?line|growth|\bgrow/ },
+  // 'grow', 'grows', 'growing', not 'lab-grown'
+  { key: 'revenue', label: 'revenue growth', metrics: ['revenue_growth'], words: /revenue|sales|top ?line|growth|\bgrow(?!n)/ },
   { key: 'capacity', label: 'capacity and capex', metrics: ['capacity', 'capex'], words: /capex|capacity|plant|factor(y|ies)|expan|commission|invest|spend/ },
   { key: 'launch', label: 'launches', metrics: ['launch'], words: /launch|new products?/ },
   { key: 'share', label: 'market share', metrics: ['market_share'], words: /market share|\bshare\b/ },
@@ -17,12 +18,16 @@ export const TOPICS: Topic[] = [
 ]
 
 export type Intent = 'delivered' | 'missed' | 'quiet' | 'due' | null
-export interface Parsed { symbol?: string; ticker?: string; topic?: Topic; intent: Intent; fy?: string; book: boolean }
+// rest: what the question is about when no topic covers it ('lab grown diamonds'), so the answer can say it isn't there
+export interface Parsed { symbol?: string; ticker?: string; topic?: Topic; intent: Intent; fy?: string; book: boolean; rest?: string }
 
 const STOP = new Set(`a an and any are as at be by can did do does for from has have how i in is it its me my of on or our show tell the their them they this to was were what when where which who why will with you your
   deliver delivered delivering kept keep keeping miss missed missing promise promised promises said say guide guided guidance plan planned expect
   quiet gone hit meet met achieve achieved book holdings companies company management team teams read research look up open about any anything
-  margin margins revenue growth profit capex capacity debt volume volumes launch launches share working capital fy next year quarter`.split(/\s+/))
+  margin margins revenue growth profit capex capacity debt volume volumes launch launches share working capital fy next year quarter
+  think view outlook update latest recent comment commentary talk talked mention mentioned doing going today now much more last call calls
+  results good well there been should would could into than then also just still over under since target targets number numbers
+  word words record track trust credible credibility honest reliable doing done`.split(/\s+/))
 
 export interface Known { symbol: string; names: string[]; held?: boolean }
 // The names a company goes by in a question: its symbol, its short name, its full name without 'Ltd'
@@ -41,9 +46,9 @@ const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 export function parse(q: string, known: Known[]): Parsed {
   const t = ` ${q.toLowerCase().replace(/[’']s\b/g, '').replace(/[?!.,]/g, ' ').replace(/\s+/g, ' ')} `
   // The longest name that appears as whole words wins: 'hdfc bank' over 'hdfc'
-  let symbol: string | undefined, best = 0
+  let symbol: string | undefined, best = 0, said = ''
   for (const k of known) for (const a of k.names) {
-    if (a.length > best && new RegExp(`[^a-z0-9&]${esc(a)}[^a-z0-9&]`).test(t)) { symbol = k.symbol; best = a.length }
+    if (a.length > best && new RegExp(`[^a-z0-9&]${esc(a)}[^a-z0-9&]`).test(t)) { symbol = k.symbol; best = a.length; said = a }
   }
   const topic = TOPICS.find(x => x.words.test(t))
   const intent: Intent = /\bmiss|fail|fell short|slip/.test(t) ? 'missed'
@@ -59,7 +64,10 @@ export function parse(q: string, known: Known[]): Parsed {
     ticker = (caps || (words.length === 1 ? words[0] : undefined))?.toUpperCase()
   }
   const book = !symbol && !ticker
-  return { symbol, ticker, topic, intent, fy: fy ? `FY${fy}` : undefined, book }
+  // With no topic, the words left once the company and the asking words are gone are what it is about
+  const rest = topic ? undefined : (said ? t.replace(said, ' ') : t).split(/[\s-]+/)
+    .filter(w => w.length >= 3 && /^[a-z]+$/.test(w) && !STOP.has(w) && w !== ticker?.toLowerCase()).join(' ') || undefined
+  return { symbol, ticker, topic, intent, fy: fy ? `FY${fy}` : undefined, book, rest }
 }
 
 const SETTLED: Status[] = ['missed', 'partly', 'quiet', 'kept']

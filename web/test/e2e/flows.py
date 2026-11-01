@@ -23,8 +23,8 @@ async def main():
             await pg.get_by_role('radio', name=w, exact=True).click(); await pg.wait_for_timeout(500)
             check(f'window {w}', await pg.locator('.cards .card').count() == want, await pg.locator('.cards .card').count())
             if w == 'Week': check('one event, one figure in every window', await syn() == syn24, f'{syn24} / {await syn()}')
-        # Your lines from the masthead; a tighter move line lets more through
-        await pg.locator('.tool', has_text='Your lines').click(); await pg.wait_for_timeout(500)
+        # Your lines from the end band; a tighter move line lets more through
+        await pg.get_by_role('button', name='Change your lines').click(); await pg.wait_for_timeout(500)
         sheet = pg.locator('.sheet[aria-label="Your lines"]')
         check('lines open', await sheet.is_visible())
         count = lambda: sheet.locator('.lines > .serif-line').inner_text()
@@ -93,7 +93,7 @@ async def main():
         await pg.get_by_role('radio', name='Week', exact=True).click(); await pg.wait_for_timeout(500)
         ceo = lambda: pg.locator('.card', has_text='MD').count()
         had = await ceo()
-        await pg.locator('.tool', has_text='Your lines').click(); await pg.wait_for_timeout(500)
+        await pg.get_by_role('button', name='Change your lines').click(); await pg.wait_for_timeout(500)
         await pg.get_by_role('switch', name='Management change').click(); await pg.keyboard.press('Escape'); await pg.wait_for_timeout(500)
         check('a filing kind switched off leaves Today', had >= 1 and await ceo() < had, (had, await ceo()))
         # All quiet: strict lines, and Today offers the nearest wider window that has something

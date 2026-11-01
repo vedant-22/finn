@@ -99,3 +99,12 @@ test('a year’s guide reads against the year so far: L&T’s H1 revenue is on t
   assert.ok(Math.abs(y.growth - 11.4) < 0.1, String(y.growth))
   assert.equal(pace(runningGuide(lt.ledger, lt.quarters.at(-1).q).g, y.growth), 'on track')
 })
+
+test('a question no topic covers is kept as what it is about, so the answer can say it is not in the filings', () => {
+  const k = [{ symbol: 'TITAN', names: aliases('TITAN', 'Titan Company Ltd', 'Titan') }]
+  const d = parse('What did Titan say about lab-grown diamonds?', k)
+  assert.equal(d.symbol, 'TITAN'); assert.equal(d.topic, undefined); assert.equal(d.rest, 'lab grown diamonds')
+  // keeping its word is a record question, not a topic FINN can't find
+  assert.equal(parse('Did Titan keep its word?', k).rest, undefined)
+  assert.equal(parse('Is Titan growing?', k).topic.key, 'revenue')
+})

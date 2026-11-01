@@ -102,8 +102,8 @@ export function BriefScreen({ push, brief, fresh, lines, setLines, names, openIt
   }, [brief, lines.hours, names])
   const asof = new Date(push.asof)
   const time = asof.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toLowerCase()
-  // Today the time is what matters ('to 9:21 pm'); an older snapshot is dated by its day alone, so the sentence keeps to two lines
-  const stamp = (asof.toDateString() === new Date().toDateString() ? time : dayMon(asof)).replace(' ', '\u00a0')
+  // The filings run to a time: 'to 9:21 pm' today, 'to 9:21 pm, 28 Oct' on an older snapshot
+  const stamp = asof.toDateString() === new Date().toDateString() ? time : `${time}, ${dayMon(asof).replace(' ', '\u00a0')}`
   // The sieve plays once a session: the count starts at every filing in the window and falls to what needs you
   const sieve = useRef(!sessionStorage.getItem('finn-sieved'))
   useEffect(() => { sessionStorage.setItem('finn-sieved', '1') }, [])
@@ -123,7 +123,7 @@ export function BriefScreen({ push, brief, fresh, lines, setLines, names, openIt
         </div>
         {/* The sentence carries the time the filings run to, so the screen needs no dateline above the count */}
         <p className="hero-2">{n
-          ? `${few([...new Set(brief.items.map(i => names[i.symbol]))])}, out of ${total} filings and moves to ${stamp}.`
+          ? `${few([...new Set(brief.items.map(i => names[i.symbol]))])}, out of ${total} filings and price moves to ${stamp}.`
           : `Nothing crossed your lines ${span(lines.hours)}, to ${stamp}.${nNotes ? ` ${nNotes} worth a look below.` : ''}`}</p>
         {wider && <button className="see hero-wider" onClick={() => setLines({ ...lines, hours: wider.h })}>{`${span(wider.h).replace(/^in the l/, 'L')}: ${wider.n} ${wider.n === 1 ? 'needs' : 'need'} you`}</button>}
         <div className="window" role="radiogroup" aria-label="Window">
@@ -143,20 +143,19 @@ export function BriefScreen({ push, brief, fresh, lines, setLines, names, openIt
         <FoldSummary stories={brief.folded} names={names} />
       </Fold>}
 
-      {/* Below the folds, the two quiet controls: the lines that decide what interrupts, and the brief read aloud */}
-      <ul className="tools">
-        <li><button className="tool" onClick={openLines}><span>Your lines<span className="fold-l">{`±${lines.movePct}% in a day, ${lines.volX}× volume, ${lines.interrupt.length} ${lines.interrupt.length === 1 ? 'kind' : 'kinds'} of filing`}</span></span><Chev /></button></li>
-        <Listen push={push} brief={brief} names={names} />
-      </ul>
 
       {/* The window ends on one blue band: it is done, the questions it leaves for the next calls, and the two next moves */}
       <section className="end-band" aria-label="End of the window">
         <div className="end-band-in">
           <h2 className="t-h1">{END[lines.hours] ?? 'That’s everything.'}</h2>
           <EndQuestions brief={brief} push={push} names={names} />
+          {/* One button, and the two quiet controls as links: the lines that decide what interrupts, and the brief read aloud */}
           <div className="end-band-btns">
             <a className="btn-light" href="#/book">Open your book</a>
+          </div>
+          <div className="end-links">
             <button className="end-copy" onClick={openLines}>Change your lines</button>
+            <Listen push={push} brief={brief} names={names} />
           </div>
         </div>
       </section>
@@ -249,7 +248,11 @@ export function kindLabel(i: Item, push: Push): string {
   // A move past a line on results says so; results the shares took quietly are just the results
   // A move names the line it crossed: the price, or only the volume ('Heavy trading on Q2 FY27 results')
   const moved = i.move && (i.move.why.includes('price') ? 'Price move' : 'Heavy trading')
-  if (res && (i.kind === 'results' || i.kind === 'move')) return moved ? `${moved} on ${res.quarter} results` : `${res.quarter} results`
+  // Results that came with a CEO, CFO or MD change say so in the label ('Q2 FY27 results and a new CFO')
+  const top = i.with?.lead.people && sortPeople(i.with.lead.people).find(p => p.seniority === 'top' && !reclass(p))
+  const seat = top && shortRole(top.role).length <= 12 ? shortRole(top.role) : ''
+  const and = seat ? (['appointed', 're-appointed', 'redesignated'].includes(top!.action) ? ` and a new ${seat}` : `; the ${seat} leaves`) : ''
+  if (res && (i.kind === 'results' || i.kind === 'move')) return moved ? `${moved} on ${res.quarter} results` : `${res.quarter} results${and}`
   if (i.kind === 'people' && f?.people?.length) {
     const p = sortPeople(f.people)[0], r = shortRole(p.role)
     return ['appointed', 're-appointed', 'redesignated'].includes(p.action) ? (r.length > 20 ? 'New director' : `New ${r}`) : 'Management change'
@@ -279,11 +282,10 @@ function ItemCard({ i, fresh, name, push, lines, open }: { i: Item; fresh: boole
       <div className="card-info">
         <div className="card-lbl"><span className="lbl">{kindLabel(i, push)}</span>{fresh && <span className="lbl lbl-new" title="New since you last looked">New</span>}</div>
         <h2 className="card-title">{name}</h2>
-        {fig && (line
-          ? i.move && <p className="card-cap">On {i.move.volX.toFixed(1)}× its usual volume</p>
-          : <div className="card-fig"><Outcome size="xs" value={v} unit={u} /><span className="card-cap">{figWhen(fig.d, i)}</span></div>)}
+        {fig && !line && <div className="card-fig"><Outcome size="xs" value={v} unit={u} /><span className="card-cap">{figWhen(fig.d, i)}</span></div>}
         <p className="card-desc">{body}</p>
-        <p className="card-line">{rowTag(i, lines)}</p>
+        {/* one grey line under the sentence: the line it crossed, with the volume it crossed on */}
+        <p className="card-line">{((t: string) => line && i.move ? /volume line$/.test(t) ? `${t} at ${i.move.volX.toFixed(1)}×` : `${t}, ${i.move.volX.toFixed(1)}× volume` : t)(rowTag(i, lines))}</p>
         <div className="card-foot">
           <button className="read-more" onClick={() => open(ref.current)} aria-label={`Read more about ${name}`}>Read more</button>
           {!fig && <span className="lbl lbl-quiet">{shortDay(i.at)}</span>}
@@ -336,13 +338,11 @@ function Listen({ push, brief, names }: { push: Push; brief: Brief; names: Recor
     u.onend = () => setOn(false); u.onerror = () => setOn(false)
     utter.current = u; speechSynthesis.cancel(); speechSynthesis.speak(u); setOn(true)
   }
-  return <li><button className="tool" onClick={say} aria-pressed={on}>
-    <span>{on ? 'Stop reading' : 'Listen'}<span className="fold-l">{on ? 'Reading the brief aloud' : `The ${left.length ? `${left.length} that need you` : 'brief'}, read aloud`}</span></span>
-    <svg className="tool-i" viewBox="0 0 20 20" aria-hidden><path d="M3.5 7.5h3l4-3.5v12l-4-3.5h-3z" />{on ? <path d="M13.5 7.5v5M16 6v8" /> : <path d="M13.5 7.2a4 4 0 0 1 0 5.6M15.6 5.2a7 7 0 0 1 0 9.6" />}</svg>
-  </button></li>
+  return <button className="end-copy" onClick={say} aria-pressed={on} aria-label={on ? 'Stop reading the brief aloud' : `Listen: the ${left.length ? `${left.length} that need you` : 'brief'}, read aloud`}>
+    {on ? 'Stop reading' : 'Listen'}
+  </button>
 }
 
-const Chev = () => <svg className="tool-i" viewBox="0 0 16 16" aria-hidden><path d="M6 3.5l4.5 4.5L6 12.5" /></svg>
 
 // Alerts on this phone: asks the browser once; when on, the top item arrives as a real notification straight away
 export function AlertsRow({ top, names, lines }: { top?: Item; names: Record<string, string>; lines: Lines }) {

@@ -41,7 +41,10 @@ async def next_build(pg, shot, base=None):
     await pg.locator('.item-view section[aria-label="Management change"]').evaluate('e => e.scrollIntoView({block: "start"})'); await pg.wait_for_timeout(600); await shot(4)
     await fresh(pg, base + '/#/c/LT'); await pg.locator('.p-item .og-btn').first.click(); await pg.wait_for_timeout(700)
     await top(pg, '.p-item.open'); await shot(5)
-    await fresh(pg, base + '/#/look'); await shot(6)
+    # 6: Look up, a question answered from the filings, with its verdict, quote and page
+    await fresh(pg, base + '/#/look'); f = pg.locator('input').first
+    await f.fill('Did L&T deliver on revenue growth?'); await f.press('Enter'); await pg.locator('.answer').first.wait_for(timeout=8000)
+    await pg.wait_for_timeout(900); await pg.locator('.answer').first.evaluate('e => scrollTo(0, e.getBoundingClientRect().top + scrollY - 150)'); await pg.wait_for_timeout(700); await shot(6)
     await fresh(pg, base + '/#/book'); await shot(7)
     await fresh(pg, base + '/#/'); await pg.evaluate('scrollTo(0, document.body.scrollHeight)'); await pg.wait_for_timeout(1500); await shot(8)
 

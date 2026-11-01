@@ -100,7 +100,7 @@ table { border-collapse: collapse; }
 .hero { padding: var(--s-xl) 0 var(--s-xl); }
 .hero-fig { display: flex; flex-wrap: wrap; align-items: flex-end; column-gap: 10px; }
 .hero-unit { font: 500 36px/112% var(--f); letter-spacing: -2.16px; padding-bottom: 2px; }
-.hero-2 { font-size: 17px; line-height: 140%; margin-top: var(--s-2xs); }
+.hero-2 { font-size: 16px; line-height: 145%; margin-top: var(--s-2xs); }
 .hero-wider { margin-top: var(--s-5xs); }
 /* what the window change did, in one grey line that settles in under the knob; empty until the window is moved */
 .win-delta { min-height: 0; font-size: 14px; line-height: 140%; letter-spacing: -0.3px; color: var(--ink-2); }
@@ -123,6 +123,9 @@ table { border-collapse: collapse; }
 .price .card-img { aspect-ratio: 390 / 120; }
 .price-d { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; line-height: 116%; color: var(--ink-2); }
 .price-end { display: grid; justify-items: end; gap: 2px; }
+/* the card's figure is set at the card name's size, so a card has one large size and the count stands alone */
+.price-end .outcome-xxs .o-val { font-size: 21px; letter-spacing: -0.6px; }
+.price-end .outcome-xxs .o-unit { font-size: 14px; letter-spacing: -0.3px; }
 .price-d { align-items: flex-start; }
 .chart { display: block; width: 100%; height: 100%; }
 .chart .line { fill: none; stroke: var(--brand); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
@@ -136,7 +139,7 @@ table { border-collapse: collapse; }
 .card-fig { display: flex; flex-direction: column; align-items: flex-start; margin-top: var(--s-3xs); }
 .card-cap { font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink-2); margin-top: var(--s-nano); }
 /* the card's sentence carries the figures, so it is Inter, grey, like the rest of the card; the serif is kept for the page's sentence and quotes */
-.card-desc { margin-top: var(--s-3xs); font-size: 16px; line-height: 145%; letter-spacing: -0.31px; color: var(--ink-2); }
+.card-desc { margin-top: var(--s-3xs); font-size: 16px; line-height: 145%; letter-spacing: -0.31px; color: var(--ink); }
 .card-line { margin-top: var(--s-5xs); font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink-2); }
 .card-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: var(--s-5xs); }
 .card-foot .read-more { align-self: center; }
@@ -174,13 +177,6 @@ table { border-collapse: collapse; }
 .folded li .sub { grid-column: 2; font-size: 13px; }
 
 /* the quiet controls under the folds: Your lines, Listen */
-.tools { margin-top: var(--s-l); border-top: 1px solid var(--rule); }
-.tools li { border-bottom: 1px solid var(--rule); }
-.tool { display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; min-height: 64px; padding: var(--s-3xs) 0; font: 450 17px/124% var(--f); letter-spacing: -0.3px; }
-.tool .fold-l { font-weight: 400; }
-.tool-i { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.tool[aria-pressed="true"] .tool-i { stroke: var(--brand); }
-.tool:active > * { opacity: .5; }
 
 /* the band a page ends on: ENAM blue, edge to edge down to the tab bar */
 .today { padding-bottom: 0; }
@@ -194,6 +190,7 @@ table { border-collapse: collapse; }
 .end-co { display: block; font: 500 14px/140% var(--f); letter-spacing: -0.39px; color: #fff; }
 .end-copy { color: #fff; min-height: 44px; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(255, 255, 255, .7); }
 .end-band-btns { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-5xs) var(--s-s); margin-top: var(--s-m); }
+.end-links { display: flex; flex-wrap: wrap; gap: 0 var(--s-s); margin-top: var(--s-5xs); }
 .end-band-btns :is(.btn-light, .btn-light-outline) { min-width: 0; }
 .btn-light, .btn-light-outline { display: inline-flex; align-items: center; justify-content: center; min-width: 180px; height: 44px; padding: 0 var(--s-s); border-radius: var(--r-pill); font: 400 16px/116% var(--f); letter-spacing: -0.42px; text-decoration: none; transition: background-color 100ms ease-in-out, color 100ms ease-in-out; }
 .btn-light { background: #fff; color: var(--brand); }
@@ -305,7 +302,7 @@ table { border-collapse: collapse; }
 .book-list > li.wide { grid-column: 1 / -1; }
 .book-card { display: flex; flex-direction: column; width: 100%; background: var(--panel); padding: var(--s-xs) var(--s-2xs) var(--s-2xs); }
 .book-card .card-lbl { width: 100%; }
-.book-card .card-desc { margin-top: var(--s-3xs); font-size: 15px; }
+.book-card .card-desc { margin-top: var(--s-3xs); font-size: 15px; color: var(--ink-2); }
 .tile-card { align-items: flex-start; text-align: left; min-height: 100%; padding-bottom: var(--s-s); }
 .tile-card .card-title { margin-top: var(--s-3xs); font-size: 17px; line-height: 130%; letter-spacing: -0.3px; font-weight: 450; }
 .tile-card .book-rec { margin-top: var(--s-3xs); text-align: left; }
@@ -328,8 +325,10 @@ table { border-collapse: collapse; }
 .og-d2 { margin-top: var(--s-macro); font-size: 14px; line-height: 140%; letter-spacing: -0.39px; color: var(--ink-2); }
 .og-link { margin-top: var(--s-5xs); font-size: 14px; color: var(--brand); text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
 .og-link.on { text-decoration: underline; text-underline-offset: 4px; }
-.tally-row { display: grid; grid-template-columns: repeat(4, auto); justify-content: space-between; gap: var(--s-5xs); }
-.tally-b { gap: var(--s-nano); min-height: 44px; }
+/* four equal columns, each count over its word, on one rhythm whatever the words' lengths */
+.tally-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-5xs); }
+.tally-b { gap: var(--s-nano); min-height: 44px; align-items: flex-start; text-align: left; }
+.tally-b .lbl { white-space: normal; }
 .tally-b[aria-pressed='true'] .outcome { color: var(--brand); }
 .tally-b[aria-pressed='true'] .lbl { text-decoration: underline; text-underline-offset: 3px; }
 .warm-top .tally { margin-top: var(--s-m); padding-bottom: var(--s-s); }
@@ -557,6 +556,9 @@ table { border-collapse: collapse; }
 :root::view-transition-new(item-line), :root::view-transition-new(item-name), :root::view-transition-new(item-kind), :root::view-transition-new(item-cap),
 :root::view-transition-new(item-fig), :root::view-transition-new(item-desc), :root::view-transition-new(co-name) { animation: none; }
 ::view-transition-new(item-line) { height: 100%; }
+/* a part with no partner (the volume line, on the card only in the view) comes and goes with the panel's faces */
+:root::view-transition-old(item-cap):only-child, :root::view-transition-old(item-fig):only-child, :root::view-transition-old(item-kind):only-child, :root::view-transition-old(item-desc):only-child { animation: vt-out 70ms linear both; opacity: 1; }
+:root::view-transition-new(item-cap):only-child, :root::view-transition-new(item-fig):only-child, :root::view-transition-new(item-kind):only-child, :root::view-transition-new(item-desc):only-child { animation: vt-in 180ms var(--decel) 120ms both; }
 /* the company morph: the page it leaves is gone before the page it opens comes in, so 'Back' never sits on 'FINN' */
 html.vt-co::view-transition-old(root) { animation: vt-out 90ms linear both; }
 html.vt-co::view-transition-new(root) { animation: vt-in 200ms var(--decel) 140ms both; }
