@@ -163,7 +163,8 @@ export function PeopleBlock({ f, all }: { f: any; all?: any[] }) {
               hasBio(p.background) ? { background: p.background, previous: p.previous || [] } : earlierBio(p, f, all))}
             {/* Why they leave, when the filing says: in its own words with its page; the paraphrase only when no quote was checked */}
             {!joining && !moved && p.reason && !/not stated|^leaving the company\.?$|no other material reason/i.test(p.reason) && (p.verified && p.quote
-              ? <blockquote className="bio">“{p.quote}” <Src href={`${f.url}#page=${p.page || 1}`}>Filing, page {p.page || 1}</Src></blockquote>
+              // set as a promise's quote is: a warm panel, the words, then where they are
+              ? <figure className="ba-said bio-said"><blockquote className="quote">“{p.quote}”</blockquote><figcaption className="small">From the <Src href={`${f.url}#page=${p.page || 1}`}>filing, page {p.page || 1}</Src></figcaption></figure>
               : <p className="bio">Reason given: {p.reason}</p>)}
           </li>
         )

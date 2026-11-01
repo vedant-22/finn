@@ -263,6 +263,7 @@ table { border-collapse: collapse; }
 .ba-said { background: var(--panel); padding: var(--s-2xs); }
 .ba-said .quote { font-size: 16px; line-height: 145%; }
 .ba-said figcaption { margin-top: var(--s-5xs); font-size: 13px; color: var(--ink-2); }
+.bio-said { margin-top: var(--s-5xs); }
 .ba-then { padding-top: var(--s-3xs); display: grid; gap: 4px; }
 .ba-lead { display: flex; flex-direction: column-reverse; }
 .ba-lead .ba-then { padding: 0 0 var(--s-3xs); }
