@@ -48,7 +48,7 @@ First, a bigger grade eval, and the two fixes it already points to: keep a promi
 
 **How I used AI**
 
-I built FINN with Claude Code, and the full session history is attached. I wrote the specs and design rules it worked to, and I made the product calls. Inside the product, Gemini reads transcripts and grades promises. Code does the fetching and the arithmetic, and it checks every quote.
+I built FINN with Claude Code, and the full session history is attached. I set the specs and design rules it worked to, and I made the product calls. Inside the product, Gemini reads transcripts and grades promises. Code does the fetching and the arithmetic, and it checks every quote.
 
 Thank you for reading.
 
