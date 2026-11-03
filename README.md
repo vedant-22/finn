@@ -1,40 +1,41 @@
 # FINN
 
-FINN is a phone app for an investor who holds 15 to 20 stocks. Each morning it hands you the few things that changed in your book, holds each one against what management promised on its earnings calls, and tells you when you're done.
+FINN is a phone app for an investor who holds 15 to 20 stocks. You open it and it tells you how many things in your book need you today. Each one is held against what management promised on its earnings calls. When you've read them, you're done.
 
 **Try it on a phone:** https://finn-ledger.vercel.app
 
 <p>
-<img src="docs/img/brief.png" width="240" alt="The brief: 2 to read, and the two holdings that crossed your lines">
-<img src="docs/img/results.png" width="240" alt="Results in the reader: the four numbers QoQ and YoY, then this year's guidance and last year's promise">
-<img src="docs/img/ask.png" width="240" alt="Ask: did L&T deliver on revenue growth, answered from the call with its page">
+<img src="docs/img/today.png" width="200" alt="Today: 2 need you, with Syngene's card first">
+<img src="docs/img/item.png" width="200" alt="A card opened into its full view: the move, the CFO who resigned and the filing's own words">
+<img src="docs/img/book.png" width="200" alt="Book: the promise count across 18 holdings, weakest word first">
+<img src="docs/img/lookup.png" width="200" alt="Look up: did L&T deliver on revenue growth, answered with its quote and page">
 </p>
 
 ## The point of view
 
-FINN is a brief you finish. A feed never tells you that you've seen everything, so you keep scrolling. FINN's brief ends. You read the two or three items that matter, mark each one done or keep it for later, and it tells you you're up to date and how many routine filings it set aside. I tried seven ways of using FINN against an investor's day, including chat, voice, a copilot and a dashboard. The brief won because it ends. The scoring is in [design/STAGE4_EXPLORE.md](design/STAGE4_EXPLORE.md) and the investor's day is in [docs/INVESTOR.md](docs/INVESTOR.md).
+An investor should spend a few minutes with FINN and then be done. A feed never tells you that you've seen everything, so you keep scrolling. FINN counts what needs you, shows you that, and puts the rest away in folds where you can still find it. I tried seven ways of using FINN against an investor's day, including chat and a dashboard. A short count you can finish won. Chat lost because an empty box hands the filtering back to you. The scoring is in [design/STAGE4_EXPLORE.md](design/STAGE4_EXPLORE.md) and the investor's day is in [docs/INVESTOR.md](docs/INVESTOR.md). The look is in [DESIGN.md](DESIGN.md).
 
 ## What it does
 
-**Brief (push).** Every NSE filing across an 18-stock portfolio, for a window you pick: 24 hours by default, or 3 days, a week, a month. The top says how many things need you ("2 to read") and names them. Under it, **Crossed your lines** lists anything past a line you set (a ±% day, a volume multiple, a kind of filing), with the line printed on it. Tap the line to move it and the brief recounts behind the sheet. Below that come a few one-line notes, and the routine filings folded into a count.
+**Today (push).** All NSE filings and price moves across an 18-stock portfolio, for a window you pick. It's 24 hours by default and goes up to a month. The first screen is a count ("2 need you"), one sentence naming the companies and how far the filings run ("to 9:21 pm, 28 Oct"), the window, and the top of the first card. Each card is one event: the month's price line, the kind ("Q2 FY27 results and a new CFO"), the company, one sentence, and the line it crossed ("Past your ±4% and 2× lines, 43.5× volume"). Below the cards, two folds hold the rest: Worth a look, and Routine filings. The page ends on a blue band with a question for each company's next call, which you can copy. The band also links to Listen, which reads the day aloud, and to Change your lines.
 
-**The reader.** "Read the brief" opens one item per screen, with Done and Keep for later at the bottom where your thumb is. Each kind of item leads with what you'd want first:
-- *Results*: revenue, EBITDA, PBT and PAT against last quarter and a year ago, parsed from the exchange's XBRL, plus the margin. Then **Against their word**: this year's guidance still running, next to this quarter's growth, and the last promise that fell due, with what was delivered, the verdict, and management's quote and its page. If a compared quarter carries a tax credit or large exceptional items, one line says so, so a −85% PAT isn't read as a collapse.
-- *Management changes*: who joins or leaves, and the incoming person's background from the profile the company files. If that filing has none, FINN takes it from the company's earlier filing on the same person and links it. A new CFO interrupts you. A new company secretary doesn't.
+**Your lines.** A sheet where you set what can interrupt you: a ±% day and a volume multiple. You also pick the kinds of filing that count (a CFO leaving, say). Move a line and Today recounts. With your permission, opening FINN on a newer snapshot raises a system notification for anything past your lines.
+
+**The full view.** Read more grows a card into its page, and Back shrinks it into the same card at the same scroll. What comes first depends on the event:
+- *Results*: revenue, EBITDA, PBT and PAT against last quarter and a year ago, parsed from the exchange's XBRL, plus the margin. If a compared quarter carries a tax credit or exceptional items, one line says so, so a −85% PAT isn't read as a collapse.
+- *Management changes*: who joins or leaves, the person's background from the profile the company files, and a leaver's reason in the filing's own words with its page. A new CFO interrupts you. A new company secretary doesn't.
 - *Unusual days*: the move, the volume against usual, a month of closes, and the filing that explains it if there is one.
 - Deals, penalties and fund raises sized against the company's annual revenue. Under 0.5%, they drop to a one-line note.
 
-After the last item the brief says you're up to date. Tomorrow starts where you left off, and anything new since your last visit is marked.
+Then **Against their word**: each promise that bears on the event, with its status (Missed, Gone quiet, Kept, Partly kept or Not due), what the filings showed, and management's quote with its page. Ask FINN sits under it with questions about this company.
 
-**Ask (pull).** On every item, and as its own tab. Type or say "Did L&T deliver on revenue growth?" and the answer comes back as promised against delivered: the verdict, the numbers, the quote and the page. Questions about the whole book work too ("Who missed a promise?"). Promise questions are answered from the cached ledgers with no model call, so Ask keeps working when Gemini is out of quota. Any other NSE symbol runs live research: FINN reads the company's last five earnings calls and its filed results and builds its ledger in about a minute.
+**Book.** Your holdings under one row of counts across the book (4 missed, 17 gone quiet, 32 kept, 93 not due), each a filter, with the weakest word first. A company's page has its record ("1 of 2 promises kept"), the price line, every settled promise with what was delivered, and the ones still running. Questions for the next call come next. The numbers and a short case for and against sit in folds. Nothing comes from news, broker notes or the model's memory.
 
-**Book.** Your holdings, the most promises missed or gone quiet first, under one bar of every promise that has come due across the book. Each company's page lists every promise that had a number and a date, marked kept, partly kept, missed, gone quiet or not due yet, then the numbers, questions for the next call, and a short case for and against. Nothing comes from news, broker notes or the model's memory.
-
-**Listen** reads the brief aloud with the phone's own speech. With your permission, opening FINN raises a system notification for anything new past your lines.
+**Look up (pull).** One field for an NSE symbol, a company name or a question. Ask "Did L&T deliver on revenue growth?" and the answer comes back as promised against delivered, with its quote and page. A question about something no promise covers says "Not found in the filings". Promise questions are answered from the cached ledgers with no model call, so Look up keeps working when Gemini is out of quota. Any other NSE symbol runs live research: FINN reads the company's last five earnings calls and its filed results and builds its ledger in about a minute.
 
 ## Why it's built this way
 
-I think an investor at a fund like ENAM doesn't need a better feed. They need to know what changed, whether it matters, and whether the people running their companies are still doing what they said. So every item in the brief is held against a ledger of promises, and most of the push side is deciding what to leave out. The decisions and what I rejected are in [docs/DECISIONS.md](docs/DECISIONS.md).
+I think an investor at a fund like ENAM doesn't need a better feed. They need to know what changed, whether it matters, and whether the people running their companies are still doing what they said. So every card on Today is held against a ledger of promises, and most of the push side is deciding what to leave out. The decisions and what I rejected are in [docs/DECISIONS.md](docs/DECISIONS.md).
 
 ## Architecture
 
