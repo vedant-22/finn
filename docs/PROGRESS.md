@@ -1,7 +1,8 @@
-Next: 3 Nov, finalise: covering note, README with live shots, walkthrough, brief trace, needs list.
+Next: 3 Nov, submission is ready. The user makes the repo public, exports the AI build history and sends the email (docs/NEEDS_FROM_USER.md). No more builds.
 
 ## Final (3 Nov)
 - [x] Promoted to finn-ledger.vercel.app (3 Nov ~14:58 IST, 1f844c1's bundle index-o-FI1f7s.js). flows.py 40/40 on next and on live, folds.py clean on live, no sideways scroll at 390 and 320 on Today, Book, a company and Look up. Tagged finn-v8-final (local). Rollback target if needed: finn-ledger-1qditim8s (v7)
+- [x] Covering note rewritten for the live build (slop_scan PASS). README text and four shots retaken from live at 390×844. Walkthrough, brief trace and needs list updated, each through slop_scan (the trace fails only on the brief's own quoted words and the table's rhythm)
 
 ## Stage 4, section 8: the push to 10/10 (31 Oct)
 - [x] Live health (31 Oct): live and next serve HEAD's bundle; flows.py 33/33 on finn-ledger.vercel.app, no page errors; sweep.py 22 companies at 320 and 390, no sideways scroll, no NaN
