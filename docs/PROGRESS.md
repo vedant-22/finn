@@ -1,4 +1,7 @@
-Next: 2 Nov, panel s11-5: compare.py next,v4 (live from shots/r3), motion.py next; three blind critics on design/TEN_RUBRIC.md; record; fix what two agree on.
+Next: 3 Nov, finalise: covering note, README with live shots, walkthrough, brief trace, needs list.
+
+## Final (3 Nov)
+- [x] Promoted to finn-ledger.vercel.app (3 Nov ~14:58 IST, 1f844c1's bundle index-o-FI1f7s.js). flows.py 40/40 on next and on live, folds.py clean on live, no sideways scroll at 390 and 320 on Today, Book, a company and Look up. Tagged finn-v8-final (local). Rollback target if needed: finn-ledger-1qditim8s (v7)
 
 ## Stage 4, section 8: the push to 10/10 (31 Oct)
 - [x] Live health (31 Oct): live and next serve HEAD's bundle; flows.py 33/33 on finn-ledger.vercel.app, no page errors; sweep.py 22 companies at 320 and 390, no sideways scroll, no NaN
