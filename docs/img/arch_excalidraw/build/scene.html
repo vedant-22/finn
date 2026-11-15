@@ -1,0 +1,77 @@
+<!doctype html><html><head><meta charset="utf-8">
+<script>window.EXCALIDRAW_ASSET_PATH="https://esm.sh/@excalidraw/excalidraw@0.18.0/dist/prod/";</script>
+</head><body style="margin:0;background:#FBF8F2"><div id="out" style="display:inline-block"></div>
+<script type="module">
+import * as EX from "https://esm.sh/@excalidraw/excalidraw@0.18.0?bundle";
+import { LAYOUT } from "./layout.js";
+window.EX = EX;
+
+const FF = { hand: 5, mono: 8 };
+const ALL = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~’·—";
+
+async function loadFonts() {
+  const els = EX.convertToExcalidrawElements([
+    { type: "text", x: 0, y: 0, text: ALL, fontSize: 16, fontFamily: FF.hand },
+    { type: "text", x: 0, y: 40, text: ALL, fontSize: 16, fontFamily: FF.mono },
+  ]);
+  const svg = await EX.exportToSvg({ elements: els, appState: {}, files: {} });
+  const st = document.createElement("style");
+  st.textContent = svg.querySelector("style").textContent;
+  document.head.appendChild(st);
+  await document.fonts.load('16px Excalifont');
+  await document.fonts.load('16px "Comic Shanns"');
+  await document.fonts.ready;
+}
+
+const ctx = document.createElement("canvas").getContext("2d");
+function width(text, size, fam) {
+  ctx.font = `${size}px ${fam === FF.mono ? '"Comic Shanns"' : "Excalifont"}`;
+  return ctx.measureText(text).width;
+}
+function wrap(text, size, fam, maxW) {
+  const out = []; let line = "";
+  for (const w of text.split(" ")) {
+    const t = line ? line + " " + w : w;
+    if (line && width(t, size, fam) > maxW) { out.push(line); line = w; } else line = t;
+  }
+  if (line) out.push(line);
+  return out;
+}
+
+window.build = async (opts) => {
+  await loadFonts();
+  const { skeleton, checks } = LAYOUT({ wrap, width, FF, opts });
+  const clean = skeleton.map(({ from, to, ...rest }) => rest);
+  let els = EX.convertToExcalidrawElements(clean, { regenerateIds: false });
+  // deterministic seeds/versions; bindings for arrows
+  let i = 0;
+  const byId = Object.fromEntries(els.map(e => [e.id, e]));
+  for (const e of els) {
+    i += 1; e.seed = 1000 + i * 7919; e.versionNonce = 2000 + i * 104729; e.updated = 1; e.version = 1;
+  }
+  for (const a of skeleton.filter(s => s.type === "arrow")) {
+    const e = byId[a.id];
+    e.x = a.x; e.y = a.y; e.points = a.points; e.width = Math.abs(a.points[1][0]); e.height = Math.abs(a.points[1][1]);
+    e.startBinding = null; e.endBinding = null;
+    for (const [k, ref] of [["startBinding", a.from], ["endBinding", a.to]]) {
+      if (!ref) continue;
+      e[k] = { elementId: ref, focus: 0, gap: 1 };
+      const r = byId[ref];
+      r.boundElements = [...(r.boundElements || []).filter(b => b.id !== e.id), { id: e.id, type: "arrow" }];
+    }
+  }
+  // overflow check: text inside its box
+  const problems = [];
+  for (const [tid, bid] of checks) {
+    const t = byId[tid], b = byId[bid];
+    if (t.x < b.x + 10 || t.x + t.width > b.x + b.width - 10 || t.y < b.y + 10 || t.y + t.height > b.y + b.height - 10)
+      problems.push(`${tid} overflows ${bid}: text ${Math.round(t.x)},${Math.round(t.y)} ${Math.round(t.width)}x${Math.round(t.height)} box ${b.x},${b.y} ${b.width}x${b.height}`);
+  }
+  const appState = { viewBackgroundColor: "#FBF8F2", exportBackground: true, exportWithDarkMode: false, gridSize: 20, gridModeEnabled: true };
+  const svg = await EX.exportToSvg({ elements: els, appState: { ...appState, exportPadding: 40, exportScale: 1 }, files: {}, exportPadding: 40 });
+  const out = document.getElementById("out"); out.innerHTML = ""; out.appendChild(svg);
+  const scene = { type: "excalidraw", version: 2, source: "https://excalidraw.com", elements: els, appState: { viewBackgroundColor: "#FBF8F2", gridSize: 20, gridModeEnabled: true }, files: {} };
+  return { scene, problems, w: svg.getAttribute("width"), h: svg.getAttribute("height") };
+};
+window.ready = true;
+</script></body></html>

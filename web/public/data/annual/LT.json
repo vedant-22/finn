@@ -1,0 +1,87 @@
+{
+ "symbol": "LT",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_29259_LT_2025_2026_A_29793480_14052026183032.pdf",
+ "filed": "2026-05-14",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 756,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the consolidated and standalone reports.",
+   "items": [],
+   "src": [
+    {
+     "label": "Standalone report, page 484",
+     "page": 484
+    },
+    {
+     "label": "Consolidated report, page 605",
+     "page": 605
+    }
+   ],
+   "trail": {
+    "text": "The auditor lists exceptions to the audit trail, the software’s edit log.",
+    "src": [
+     {
+      "label": "Consolidated report, page 613",
+      "page": 613,
+      "quote": "on our examination which included test checks and based on the other auditor’s reports of its subsidiary companies, associate companies, joint venture companies and joint operations incorporated in India whose financial statements have been audited under the Act, except for instance mentioned below, the Holding Company, its subsidiary companies, associate companies, joint venture companies and joint operations incorporated in India have used accounting software systems"
+     }
+    ]
+   }
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 32, consolidated accounts, page 662",
+     "page": 662
+    }
+   ],
+   "text": "Claims not acknowledged as debt: ₹9,218 crore at 31 March 2026, ₹4,553 crore a year earlier. That is 49% of FY26 profit. These are claims made on the company that it has not accepted as owed.",
+   "printed": "Printed as 9218.42 and 4552.83, in ₹ crore."
+  }
+ ],
+ "questions": [
+  "Claims not acknowledged as debt rose from ₹4,553 crore to ₹9,218 crore in the year. What was added?"
+ ],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 484,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": false,
+    "trail_page": 488
+   },
+   "consolidated": {
+    "page": 605,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 613
+   }
+  },
+  "claims": {
+   "page": 662,
+   "unit": "crore",
+   "why": null,
+   "none": false,
+   "rows": [
+    {
+     "fy26": "9218.42",
+     "fy25": "4552.83"
+    }
+   ]
+  },
+  "pat": 18954.0,
+  "ratio": 0.48635749709823783,
+  "calls": []
+ },
+ "verdict": "Opinion not modified",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 14 May 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

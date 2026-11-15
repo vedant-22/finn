@@ -1,0 +1,73 @@
+{
+  "framework": null,
+  "buildCommand": "cd web && npm ci && npm run build",
+  "outputDirectory": "web/dist",
+  "installCommand": "echo skip",
+  "functions": {
+    "api/sources.py": {
+      "maxDuration": 60,
+      "includeFiles": "finn/**",
+      "excludeFiles": "{web/**,data/**,docs/**,brief/**,shots/**,.playwright-mcp/**}"
+    },
+    "api/call.py": {
+      "maxDuration": 120,
+      "includeFiles": "finn/**",
+      "excludeFiles": "{web/**,data/**,docs/**,brief/**,shots/**,.playwright-mcp/**}"
+    },
+    "api/network.py": {
+      "maxDuration": 30,
+      "includeFiles": "{finn/**,data/network/**}",
+      "excludeFiles": "{web/**,docs/**,brief/**,shots/**,.playwright-mcp/**,data/cache/**,data/raw/**,data/out/**}"
+    },
+    "api/grade.py": {
+      "maxDuration": 300,
+      "includeFiles": "finn/**",
+      "excludeFiles": "{web/**,data/**,docs/**,brief/**,shots/**,.playwright-mcp/**}"
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "microphone=(self), camera=(), geolocation=()"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/data/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    }
+  ]
+}

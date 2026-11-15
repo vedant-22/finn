@@ -1,0 +1,38 @@
+/* Inter, Latin only. Prices and amounts need just one more glyph, ₹, which lives in the 85 KB latin-ext
+   file; a 1 KB cut of it (pyftsubset --unicodes=U+20B9) stands in so the first screen doesn't fetch the rest. */
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2) format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(./inter-rupee-wght.woff2) format('woff2-variations');
+  unicode-range: U+20B9;
+}
+/* PT Serif, plain roman only, for the one grey sentence under a title and for quotes. Its own ₹ (latin-ext) is drawn
+   like ₽, so this Latin cut leaves ₹ out and the serif stack falls through to Inter's for that one glyph. */
+@font-face {
+  font-family: 'PT Serif';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(../../node_modules/@fontsource/pt-serif/files/pt-serif-latin-400-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+/* Figures in FINN's sentences match the figures everywhere else: the serif stack takes Inter's digits, sign, per cent
+   and times sign first, so '₹5,949 crore, up 27%' reads in one figure style beside the tables. */
+@font-face {
+  font-family: 'FINN Figures';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2) format('woff2-variations');
+  unicode-range: U+0025,U+002B,U+0030-0039,U+00D7,U+2212;
+}

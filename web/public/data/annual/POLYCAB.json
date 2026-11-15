@@ -1,0 +1,69 @@
+{
+ "symbol": "POLYCAB",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_29368_POLYCAB_2025_2026_A_20879015_09062026002210.pdf",
+ "filed": "2026-06-09",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 527,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the consolidated and standalone reports.",
+   "items": [],
+   "src": [
+    {
+     "label": "Consolidated report, page 308",
+     "page": 308
+    },
+    {
+     "label": "Standalone report, page 410",
+     "page": 410
+    }
+   ]
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 37, consolidated accounts, page 384",
+     "page": 384
+    }
+   ],
+   "text": "FINN’s rules couldn’t read a total from this note, so no figure is shown."
+  }
+ ],
+ "questions": [],
+ "checks": {
+  "reports": {
+   "consolidated": {
+    "page": 308,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": false,
+    "trail_page": 313
+   },
+   "standalone": {
+    "page": 410,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": false,
+    "trail_page": 414
+   }
+  },
+  "claims": {
+   "page": 384,
+   "unit": null,
+   "why": "no claims line",
+   "none": false,
+   "rows": []
+  },
+  "pat": 2708.0,
+  "ratio": null,
+  "calls": []
+ },
+ "verdict": "Opinion not modified",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 9 Jun 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

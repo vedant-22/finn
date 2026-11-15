@@ -1,0 +1,33 @@
+ok   1. two polls of a day store each filing once
+ok   2. a cosmetic change makes no revision; a real one makes revision 2, which runs its steps
+ok   3. two failures then a success end done; five failures end dead; not_pdf is dead at once
+ok   4. an expired lease is reclaimed and done once; the late worker writes nothing
+ok   5. a partial batch leaves the missing filings pending
+ok   6. no key: model steps parked or blocked, none failed, nothing fetched; a key unparks them
+ok   7. a new read prompt re-runs read, people, explain, size and tier, never rules; results only for filings read categorised
+ok   8. results in any order and a not_yet first give one fact per (symbol, quarter)
+ok   9. the archive holds the snapshot's 286 filing ids
+ok   10. explain parked keeps the rule tier, marked unsized, as enrich does on the same failure
+ok   11. a fallback inside explain marks the run degraded
+ok   12. a replay sizes against the four quarters before the filing's, not the latest four; a fallback or a miss isn't stored
+ok   27. a filing sized after a later one of the same quarter doesn't read a result made public between them
+ok   22. sizing reads the four earlier quarters as filed and stores that; one filed after the day falls back to screener, not stored
+ok   13. a degraded read is re-asked fresh an hour later, at most twice; an answer that differs re-runs tier
+ok   14. a quiet drain reads no event, even after a re-ask answered the same; a new step version plans every event again
+ok   15. a run whose workers die five times ends dead, each death counted
+ok   16. two drains at once run each model step once per filing; a racing planner can't reset a leased run
+ok   17. a re-ask that fails keeps the degraded answer and its tier
+ok   18. a re-ask that answers the same re-runs nothing downstream: people read once
+ok   23. a step parked for terms waits with a key alone, and runs once the terms are paid
+ok   19. a claim takes one batch, 20 to read and 4 otherwise, leased for 30 minutes
+ok   24. a tier claimed while its read is being re-asked isn't worked; when the re-ask answers the same, the tier carries the reading
+ok   25. one unreadable filing ends dead alone and the 19 beside it are read; a model that is down is asked once, not 39 times
+ok   26. a filing revised while its read is parked sends only its newest revision to the model; the old run is superseded
+ok   21. a not_yet isn't re-read at the next drain; it waits a quarter of its age, at most 6 hours
+ok   20. a filing on 1 Oct is for 30 Sep; one on 30 Sep is for 30 Jun
+ok   28. a reply the model always garbles costs 3 calls for 20 filings, not 39, and each filing counts one try
+ok   29. a reply item off the schema is unread, the other 17 are read, and the drain runs on to tier
+ok   30. no halving call starts after the lease's last safe moment, and no filing counts more than one try
+ok   31. a filing is sized the same whatever the drain order: with results capped, size waits for them
+ok   32. three polls at once store each filing once, and none fails
+TOTAL 32/32

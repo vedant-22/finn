@@ -1,0 +1,241 @@
+{
+ "authorship": "Written by Claude, the coding agent, on 13 Nov 2026, before the search tool existed. 10 questions reword a promise already in FINN's ledger (from: ledger); 10 were written from passages read on the call pages (from: page). Each is labelled with the call and the PDF page that answers it. The last 6 ask what these calls don't say.",
+ "calls": "the last four earnings calls each company filed, as listed in web/public/data/companies/<symbol>.json",
+ "checked_by": "",
+ "questions": [
+  {
+   "id": "a01",
+   "symbol": "CGPOWER",
+   "q": "What MVA capacity did CG Power expect to reach in the next quarter or so?",
+   "period": "Feb 2026",
+   "page": 11,
+   "from": "ledger",
+   "expect": "65,000 MVA"
+  },
+  {
+   "id": "a02",
+   "symbol": "CGPOWER",
+   "q": "How long was CG Power's large order expected to take to complete?",
+   "period": "May 2026",
+   "page": 5,
+   "from": "ledger",
+   "expect": "18 to 36 months"
+  },
+  {
+   "id": "a03",
+   "symbol": "CGPOWER",
+   "q": "How much have CG Power's exports grown over the last nine months?",
+   "period": "Feb 2026",
+   "page": 9,
+   "from": "page",
+   "expect": "more than 50%"
+  },
+  {
+   "id": "a04",
+   "symbol": "CGPOWER",
+   "q": "What share of revenue from the new plant's added capacity does CG Power plan to get from exports?",
+   "period": "Nov 2025",
+   "page": 15,
+   "from": "page",
+   "expect": "35% to 40%"
+  },
+  {
+   "id": "a05",
+   "symbol": "DIXON",
+   "q": "When will Dixon's new Chennai facility be operational?",
+   "period": "Oct 2025",
+   "page": 7,
+   "from": "ledger",
+   "expect": "Q4 of this fiscal"
+  },
+  {
+   "id": "a06",
+   "symbol": "DIXON",
+   "q": "Over what period would Dixon invest to expand capacities and deepen manufacturing?",
+   "period": "Oct 2025",
+   "page": 4,
+   "from": "ledger",
+   "expect": "6 to 9 months"
+  },
+  {
+   "id": "a07",
+   "symbol": "DIXON",
+   "q": "What capex does Dixon expect for camera modules in Q Tech?",
+   "period": "Feb 2026",
+   "page": 19,
+   "from": "page",
+   "expect": "INR 250-300 crores"
+  },
+  {
+   "id": "a08",
+   "symbol": "DIXON",
+   "q": "How much margin expansion does Dixon expect once the component play is fully deployed?",
+   "period": "May 2026",
+   "page": 15,
+   "from": "page",
+   "expect": "40-50 bps"
+  },
+  {
+   "id": "a09",
+   "symbol": "KFINTECH",
+   "q": "What organic revenue growth did KFin guide for this year?",
+   "period": "May 2026",
+   "page": 7,
+   "from": "ledger",
+   "expect": "a little over 60%"
+  },
+  {
+   "id": "a10",
+   "symbol": "KFINTECH",
+   "q": "What level did KFin say it would cross by the next call?",
+   "period": "Nov 2025",
+   "page": 5,
+   "from": "ledger",
+   "expect": "INR 2 trillion"
+  },
+  {
+   "id": "a11",
+   "symbol": "KFINTECH",
+   "q": "Below what share does KFin want its dependence on domestic mutual funds to fall?",
+   "period": "May 2026",
+   "page": 11,
+   "from": "page",
+   "expect": "below 50%"
+  },
+  {
+   "id": "a12",
+   "symbol": "KFINTECH",
+   "q": "How many new clients had KFin added in the last 12 months, as of the Nov 2025 call?",
+   "period": "Nov 2025",
+   "page": 17,
+   "from": "page",
+   "expect": "close to 10"
+  },
+  {
+   "id": "a13",
+   "symbol": "LT",
+   "q": "What revenue growth does L&T expect for FY27?",
+   "period": "May 2026",
+   "page": 13,
+   "from": "ledger",
+   "expect": "10% to 12%"
+  },
+  {
+   "id": "a14",
+   "symbol": "LT",
+   "q": "What was the Energy - Conventional margin in L&T's Aug 2026 call?",
+   "period": "Aug 2026",
+   "page": 8,
+   "from": "page",
+   "expect": "7.6%"
+  },
+  {
+   "id": "a15",
+   "symbol": "LT",
+   "q": "How large is L&T's order book from the Middle East?",
+   "period": "May 2026",
+   "page": 3,
+   "from": "page",
+   "expect": "almost Rs 3 trillion"
+  },
+  {
+   "id": "a16",
+   "symbol": "LT",
+   "q": "What was the order book of L&T's segment with PES and Heavy Engineering as of December 2025?",
+   "period": "Feb 2026",
+   "page": 7,
+   "from": "page",
+   "expect": "Rs 379 billion"
+  },
+  {
+   "id": "a17",
+   "symbol": "ULTRACEMCO",
+   "q": "What volume growth is UltraTech targeting this year?",
+   "period": "Jul 2026",
+   "page": 16,
+   "from": "ledger",
+   "expect": "double-digit"
+  },
+  {
+   "id": "a18",
+   "symbol": "ULTRACEMCO",
+   "q": "What sustainable annual volume growth does UltraTech expect?",
+   "period": "May 2026",
+   "page": 5,
+   "from": "ledger",
+   "expect": "7% to 8%"
+  },
+  {
+   "id": "a19",
+   "symbol": "ULTRACEMCO",
+   "q": "What leverage does UltraTech say it will keep after its growth capex?",
+   "period": "May 2026",
+   "page": 5,
+   "from": "ledger",
+   "expect": "below 1x"
+  },
+  {
+   "id": "a20",
+   "symbol": "ULTRACEMCO",
+   "q": "What was UltraTech's capacity utilisation in the Jul 2026 call's quarter?",
+   "period": "Jul 2026",
+   "page": 4,
+   "from": "page",
+   "expect": "81%"
+  },
+  {
+   "id": "u1",
+   "symbol": "CGPOWER",
+   "q": "What share price target has CG Power's management set for next year?",
+   "period": null,
+   "page": null,
+   "from": "unanswerable",
+   "expect": null
+  },
+  {
+   "id": "u2",
+   "symbol": "DIXON",
+   "q": "Who will succeed Dixon's chairman, and when?",
+   "period": null,
+   "page": null,
+   "from": "unanswerable",
+   "expect": null
+  },
+  {
+   "id": "u3",
+   "symbol": "KFINTECH",
+   "q": "What dividend per share will KFin pay for FY2031?",
+   "period": null,
+   "page": null,
+   "from": "unanswerable",
+   "expect": null
+  },
+  {
+   "id": "u4",
+   "symbol": "LT",
+   "q": "How many employees did L&T have in 1995?",
+   "period": null,
+   "page": null,
+   "from": "unanswerable",
+   "expect": null
+  },
+  {
+   "id": "u5",
+   "symbol": "ULTRACEMCO",
+   "q": "What is UltraTech's cement price in Kenya?",
+   "period": null,
+   "page": null,
+   "from": "unanswerable",
+   "expect": null
+  },
+  {
+   "id": "u6",
+   "symbol": "DIXON",
+   "q": "What exact PAT does Dixon expect in FY2030?",
+   "period": null,
+   "page": null,
+   "from": "unanswerable",
+   "expect": null
+  }
+ ]
+}

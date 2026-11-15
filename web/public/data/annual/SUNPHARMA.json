@@ -1,0 +1,90 @@
+{
+ "symbol": "SUNPHARMA",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_29590_SUNPHARMA_2025_2026_A_19925421_06072026185825.pdf",
+ "filed": "2026-07-06",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 345,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the consolidated and standalone reports.",
+   "items": [],
+   "src": [
+    {
+     "label": "Standalone report, page 149",
+     "page": 149
+    },
+    {
+     "label": "Consolidated report, page 231",
+     "page": 231
+    }
+   ],
+   "trail": {
+    "text": "The auditor lists exceptions to the audit trail, the software’s edit log.",
+    "src": [
+     {
+      "label": "Standalone report, page 153",
+      "page": 153,
+      "quote": "Additionally, the audit trail of relevant prior years has been preserved by the Company in accordance with statutory record-retention requirements to the extent it was enabled and recorded in those respective years, except that for two applications where the audit trail relating to direct changes made using privileged/administrative access rights has not been preserved for the period May 24 to November 24, as stated in the note 54(10) to the standalone Ind AS financial statements."
+     },
+     {
+      "label": "Consolidated report, page 237",
+      "page": 237,
+      "quote": "Additionally, the audit trail of relevant prior years has been preserved by the Holding Company and the above referred subsidiaries in accordance with statutory record retention requirements to the extent it was enabled and recorded in those respective years, except that for two applications where the audit trail relating to direct changes made using privileged/ administrative access rights has not been preserved for the period May 24 to November 24, as stated in the note 71 to the consolidated Ind AS financial statements."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "The note, consolidated accounts, page 285",
+     "page": 285
+    }
+   ],
+   "text": "Claims not acknowledged as debt: ₹44.6 crore at 31 March 2026, ₹45.4 crore a year earlier. That is under 1% of FY26 profit. These are claims made on the company that it has not accepted as owed.",
+   "printed": "Printed as 445.5 and 454.2, in ₹ million."
+  }
+ ],
+ "questions": [],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 149,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 153
+   },
+   "consolidated": {
+    "page": 231,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 237
+   }
+  },
+  "claims": {
+   "page": 285,
+   "unit": "million",
+   "why": null,
+   "none": false,
+   "rows": [
+    {
+     "fy26": "445.5",
+     "fy25": "454.2"
+    }
+   ]
+  },
+  "pat": 11509.0,
+  "ratio": 0.0038708836562690065,
+  "calls": []
+ },
+ "verdict": "Opinion not modified",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 6 Jul 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

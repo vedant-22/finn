@@ -1,0 +1,7 @@
+population: 17694 vague filings on company-days with no rule-act filing; moved 6.0%; train 11635 (Nov-Jun), choose C 1651 (Jul), test 4408 (Aug-Oct)
+text model: PR-AUC 0.076 (95% CI 0.063-0.095; a coin scores 0.059); recall reading the top 10% a day 14%
+without the text: PR-AUC 0.077 (95% CI 0.060-0.094; a coin scores 0.059); recall reading the top 10% a day 13%
+subject's base rate: PR-AUC 0.077 (95% CI 0.059-0.101; a coin scores 0.059); recall reading the top 10% a day 14%
+text model minus without the text, paired: -0.000 (95% CI -0.016 to +0.018): the interval includes zero: no measurable gain from the text
+calibration by quintile (predicted, inflated by class weighting -> moved): 5%->4%, 12%->4%, 24%->7%, 41%->7%, 59%->8%
+heaviest words (proposed rule terms, for review): patel, meetings, plot, quarter year, regarding tax, v2, disclosure of, the scheme, to approval, enters, and new, advertisement regarding, and fy, rating under, regarding social

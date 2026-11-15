@@ -1,0 +1,94 @@
+{
+ "symbol": "HDFCBANK",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_29735_HDFCBANK_2025_2026_A_12667766_11072026001055.pdf",
+ "filed": "2026-07-11",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 678,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the consolidated and standalone reports.",
+   "items": [],
+   "src": [
+    {
+     "label": "Standalone report, page 369",
+     "page": 369
+    },
+    {
+     "label": "Consolidated report, page 482",
+     "page": 482
+    }
+   ],
+   "trail": {
+    "text": "The auditor lists exceptions to the audit trail, the software’s edit log.",
+    "src": [
+     {
+      "label": "Standalone report, page 375",
+      "page": 375,
+      "quote": "has used accounting softwares for maintaining its books of account which, along with access management tools, as applicable, have a feature of recording audit trail (edit log) facility and the same has operated throughout the year for all relevant transactions recorded in the respective softwares, except that in respect of the accounting software used for maintaining the core banking system, the feature of recording audit trail (edit log) facility was enabled at the database level to log any direct data changes from 4 March 2026 (also, refer Schedule 18 note 36 to the Standalone Financial Statements of the Bank)."
+     },
+     {
+      "label": "Consolidated report, page 492",
+      "page": 492,
+      "quote": "have used accounting softwares for maintaining its books of account which, along with access management tools, as applicable, have a feature of recording audit trail (edit log) facility and the same has operated throughout the year for all relevant transactions recorded in the respective softwares, except that in respect of the accounting software used for maintaining the core banking system by the Bank, the feature of recording audit trail (edit log) facility was enabled at the database level to log any direct data changes from 4 March 2026 and in case of a subsidiary the audit trail was not enabled at the database level for the software used for maintaining certain health premium records."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Schedule 12, consolidated accounts, page 508",
+     "page": 508
+    }
+   ],
+   "text": "Claims not acknowledged as debts, at 31 March 2026: taxation ₹8,265 crore (₹6,738 crore a year earlier); others ₹253 crore (₹266 crore a year earlier). These are claims made on the company that it has not accepted as owed. A lender’s other contingent lines, such as guarantees given for customers, are its business, so they aren’t shown.",
+   "printed": "Printed as 8,265.49 and 6,737.94; 252.86 and 265.67, in ₹ crore."
+  }
+ ],
+ "questions": [],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 369,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 375
+   },
+   "consolidated": {
+    "page": 482,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 492
+   }
+  },
+  "claims": {
+   "page": 508,
+   "unit": "crore",
+   "why": null,
+   "none": false,
+   "rows": [
+    {
+     "fy26": "8,265.49",
+     "fy25": "6,737.94"
+    },
+    {
+     "fy26": "252.86",
+     "fy25": "265.67"
+    }
+   ]
+  },
+  "pat": 79219.0,
+  "ratio": null,
+  "calls": []
+ },
+ "verdict": "Opinion not modified",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 11 Jul 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

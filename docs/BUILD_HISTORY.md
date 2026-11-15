@@ -1,0 +1,41 @@
+# How FINN was built
+
+I built FINN with Claude Code, from written specs. I set the goal, the hard rules and the spec for each stage. Claude drafted each plan and wrote the code, and I redirected the work when a build read wrong.
+
+FINN went to ENAM twice. The first submission, for the October challenge, is the sessions numbered `001` to `038` (27 Oct to 3 Nov); its guide is `HOW_I_WORKED.md`, beside this page in the build-history export. This submission, for the Founding AI Engineer brief, is everything after: motion (`039` to `043`, 9 Nov) and the network (`044` onward, 10 Nov to 15 Nov). This page guides you through the whole journey. `SESSIONS.md` lists every session in time order, and the files in `sessions/` carry the same numbers.
+
+The hashes in brackets are commits on the build branch. GitHub has the one-commit snapshot (below) and October's `main`, not this branch, so search the export's `sessions/` for a hash to find the session that made it. Sessions before the evening of 15 Nov plan to send the full git history with the email; I dropped that, and the email carries the snapshot link, the diagram and this history.
+
+## How the work ran
+
+- **Specs, not chat.** Each stage began as a written spec with hard rules, such as never touching the October submission and labelling everything synthetic. Each session read the spec and the state files first, so the next could resume one cut off by the usage limit.
+- **Plan, review, build, verify.** Since 11 Nov each task is planned before any code. Claude drafts the plan. It's critiqued by three model reviewers, each a subagent with a role (ENAM's grader, an investor and product designer, a staff engineer and security architect), and revised until nothing substantial is left. The first architecture and writeup plans each took three rounds; the architecture for the role took more, with a critic acting as ENAM's CTO added. Only the FINAL plan is built, in a fresh session.
+- **Review at both ends.** From 13 Nov reviewers in the same roles also read the built result before a task closes. The build in between carries out decisions already argued over. Rounds were spent by weight: several on what the Network notices, one on polish. A task's plan and its build mostly ran at the same effort setting, `xhigh` on Opus. On the afternoon of 15 Nov each task began from a finished spec, so its Opus builds ran one setting lower, at `high`.
+- **Sessions that run unattended.** A shell script reads `docs/STAGE`, one line naming the step (plan or execute), the task and the model. It starts a headless session, waits out a usage limit, then starts the next session where the last one stopped. The model is chosen per task: Fable 5.2 for product moments and copy, Opus 5.5 for engineering and fact-based writing. Each line of work has its own git worktree, and a hard rule keeps a session inside it.
+- **Blind panels.** In October, model critics scored screenshots of new builds against old ones with the labels hidden. A change that lowered any score was reverted.
+- **Copy checked for machine voice.** The app's copy and these documents went through a scanner for the patterns of AI writing (`slop_scan.py`, in the export) and humaniser passes. Then a reviewer read them as an investor who doesn't work in finance.
+- **Evals as gates.** Quotes checked against their pages, results against screener, identity checks against invented namesakes, a security suite on the API, and `evals/claims.py`, which ties every number here to the data. Before the email goes, `live.py --presend` must print no FAIL.
+
+## Sessions by date
+
+- **27 Oct to 3 Nov, sessions `001` to `038`.** The first submission, for the October challenge: Push and Pull on the promise ledger. Each spec was a correction after I used the build on my phone. Guide: `HOW_I_WORKED.md` in the export.
+- **9 Nov to 10 Nov, sessions `039` to `043`.** From here on, the second submission. Motion first, each effect kept only if it helped (`2797c89` to `fae9d47`).
+- **10 Nov.** The Network core: registry, synthetic network, engine and evals (`ad92cbe` to `09bd9d1`), then the network moments (`cb67aca` to `7a23908`). That evening's review found the writeup stale.
+- **11 Nov.** The roadmap and the first architecture plan, by Fable 5.2 (dropped for using the limit in minutes) (`87921b5`). Opus 5.5 ran the review rounds and the build, then checked the link (`5571aad` to `554b6d9`). This writeup followed (`735c27c` onward).
+- **12 Nov to 13 Nov.** The writeup's first version (`de03359`); then the architecture for the role, planned over rounds of critics (`548b98e` to `f296c91`) and built: a year's NSE archive, the ledger as a queue, a checked answering workflow and the gate (`ddd75bb` to `e060689`).
+- **13 Nov to 14 Nov.** Overnight, one task after another; each was planned before it was built, and went live only on green tests: what the Network notices (`a9642e6` to `c0e9f4a`); its loop on Today (`7a4f0e9` to `461ccc6`); the Your data sheet (`d0e5467` to `9eac88d`); a shippable checkpoint (`fdba735` to `cf9e8a3`); the annual report read by rules (`9df0bae` to `1434d4c`).
+- **15 Nov.** The status words in plain language and the Sample data label, copy only (`b951d49`); then the writeup made current (`96a472a` onward). In the morning, plain wording across the app's cards and its numbers, again copy only (`f935171`). Then a script opened every screen and typed questions into Look up, and reading what the phone showed found screens that counted a company's promises differently; every screen now counts them one way (`61bbe29`, `469b855`). In the afternoon, a last plain-language pass over the app's copy (`aed1eb8` to `94e1cac`). Then the architecture diagram was rebuilt and its words rewritten, each pass reviewed by two subagents looking at the rendered image (`376cac3` to `0626789`); every version is kept in `docs/img/arch_iterations/`. In the evening, the diagram the email attaches was redrawn in Excalidraw, one iteration at a time (`3644a91` to `85707ad`), the covering note was rewritten in my own voice (`7fca076` to `ebd7d89`), the pill came to read "Sample data, as of 28 Oct" (`3edb84d`), and a last audit of this history tightened what the export hides.
+
+## Corrections
+
+Each of these changed the direction of the work. The brackets say who caught it.
+
+1. **v4 became the benchmark** (me, 1 Nov). A polished later version threw everything at you at once, so I made the calmer v4 the bar: progressive disclosure, one type system, the second display face and the italics cut (`0e7a3d3`).
+2. **The Network was bolted on** (me, 10 Nov). My next spec said it read as plain blocks bolted onto the app and "its value to the investor isn't obvious." The engine stayed. Where it shows was rebuilt after scoring it as a reviewer would (`cb67aca`): a line on the card and Who to ask in the full view, then the end band (`d189b69`).
+3. **Invented facts about real people** (critics, 11 Nov). The architecture plan's grader found invented years on profiles attached to real executives (hidden in `825bcda`). The writeup plan's security critic found more, and a field-by-field diff found invented roles and degrees. Every field a filing doesn't state was hidden, with an eval on each (`220d293`). Hiding was not enough. The invented profiles were still in the data, so I deleted them (`8575da7`, 14 Nov): a real person now carries only what their company filed, and checks assert no earlier job carries a year.
+4. **A key that wasn't secret** (a critic, 11 Nov). The first architecture plan sealed graded calls with a key derived from the model key, a public constant on a link with no key. I rewrote it. Grading keeps only calls the server listed, and the key is checked before any fetch (`d20334f`, `19e5282`).
+5. **Numbers that didn't hold** (an eval, 11 Nov). `claims.py` found that rules settle 74% of filings, less than a code comment said, and that the cost per company had drifted, as had the counts of security checks and of profiles. Each was fixed everywhere (`15bcd12`).
+
+## This repository
+
+The repo's default branch, submission, is one commit, so earlier invented facts about real people stay out of public history; `main` keeps the October submission.

@@ -1,0 +1,69 @@
+{
+ "symbol": "BLUEDART",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_32187_BLUEDART_2025_2026_A_10851833_07102026102549.pdf",
+ "filed": "2026-10-07",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 397,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the consolidated and standalone reports.",
+   "items": [],
+   "src": [
+    {
+     "label": "Standalone report, page 170",
+     "page": 170
+    },
+    {
+     "label": "Consolidated report, page 324",
+     "page": 324
+    }
+   ]
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 43, consolidated accounts, page 371",
+     "page": 371
+    }
+   ],
+   "text": "The note lists claims by head without printing their total, so no figure is shown."
+  }
+ ],
+ "questions": [],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 170,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": false,
+    "trail_page": 173
+   },
+   "consolidated": {
+    "page": 324,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": false,
+    "trail_page": 327
+   }
+  },
+  "claims": {
+   "page": 371,
+   "unit": "lakh",
+   "why": "claims listed by head, no total printed",
+   "none": false,
+   "rows": []
+  },
+  "pat": 247.0,
+  "ratio": null,
+  "calls": []
+ },
+ "verdict": "Opinion not modified",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 7 Oct 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

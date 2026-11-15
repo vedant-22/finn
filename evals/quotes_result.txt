@@ -1,0 +1,13 @@
+WRONG [synonym swap] expected pass: In branches the company opened 40 new branches the company intend to open 50 new branches this year.
+WRONG [synonym swap] expected pass: The segment delivered a healthy performance for the quarter under review, and the company anticipate 3x expans
+WRONG [synonym swap] expected pass: 11 to 11.5 still remains our guidance on which the company are trying to work on.
+WRONG [synonym swap] expected pass: EBITDA, the company anticipate it to be about 16% to 17% and a PAT little about 10% expansion is what the comp
+WRONG [synonym swap] expected pass: So hopefully, in coming few months, the company shall get the approval and that shall start the supplies piece
+WRONG [synonym swap] expected pass: As things stand right now, we're pretty much on track for that. the company believe the registration for one o
+real            15/15
+slip            15/15
+synonym swap    7/13
+number changed  10/10
+stitched        15/15
+negation added  12/12
+overall 74/80 = 92%

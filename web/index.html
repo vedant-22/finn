@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#FFFFFF" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="preload" href="/data/push.json" as="fetch" crossorigin="anonymous" />
+    <title>FINN</title>
+    <meta name="description" content="FINN shows the few things in your book that need you today, and then it ends. Each comes held against what management promised, with the person you know who can explain it." />
+    <meta property="og:title" content="FINN" />
+    <meta property="og:description" content="FINN shows the few things in your book that need you today, and then it ends. Each comes held against what management promised, with the person you know who can explain it." />
+    <meta property="og:url" content="https://finn-network.vercel.app/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://finn-network.vercel.app/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <!-- The first paint, from the HTML alone: the shape BootSkeleton (App.tsx) draws, so a slow phone sees Today's outline
+         when the stylesheet lands, not after the script. React replaces it on mount. -->
+    <div id="root"><main class="screen today" aria-busy="true" aria-label="Loading"><header class="mast"><span class="wordmark" role="img" aria-label="FINN, loading"><span aria-hidden="true">FINN</span></span></header><section class="hero"><div class="skel skel-line short"></div><div class="skel skel-fig"></div><div class="skel skel-line"></div><div class="skel skel-line short"></div></section><div class="card skel-card"><div class="card-img"></div><div class="skel skel-line short"></div><div class="skel skel-name"></div><div class="skel skel-line"></div></div></main></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

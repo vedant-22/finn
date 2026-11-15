@@ -1,0 +1,680 @@
+{
+ "_about": "Hand-read labels for the FY26 annual reports' three notes (docs/plans/annual-report.md). Read from the full PDF text, pages located by full-text search and read by eye, not from the cutter's output. 'dev' is the half the readers were written on; 'held_out' was labelled after the readers were frozen on dev and before they first ran on it (git order). Figures are as printed; units as the note's table or the page states them. 'claims.kind': 'rows' = the head row prints the figures; 'by_head' = claims listed by head with no total printed; 'none' = the note says there are none; 'no_head' = no 'claims not acknowledged as debt' line. 'total' = claims listed by head and a printed Total row closes them.",
+ "split": {
+  "dev": [
+   "SYNGENE",
+   "MARUTI",
+   "ULTRACEMCO",
+   "DIXON",
+   "HOMEFIRST",
+   "BLUEDART",
+   "HDFCBANK",
+   "KFINTECH",
+   "LT",
+   "CGPOWER",
+   "TITAN"
+  ],
+  "held_out": [
+   "CEATLTD",
+   "CROMPTON",
+   "CYIENT",
+   "DCMSHRIRAM",
+   "ERIS",
+   "HAVELLS",
+   "PIDILITIND",
+   "POLYCAB",
+   "SRF",
+   "SUNPHARMA",
+   "TCI"
+  ]
+ },
+ "companies": {
+  "SYNGENE": {
+   "half": "dev",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 204,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    },
+    "consolidated": {
+     "page": 294,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 366,
+    "kind": "rows",
+    "rows": [
+     [
+      "5,311",
+      "6,285"
+     ]
+    ],
+    "unit": "million"
+   }
+  },
+  "MARUTI": {
+   "half": "dev",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 187,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [
+      "38(B)",
+      "35"
+     ],
+     "trail_exception": true
+    },
+    "consolidated": {
+     "page": 230,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [
+      "38(B)"
+     ],
+     "trail_exception": true
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 265,
+    "kind": "by_head",
+    "note": "a Total per head (excise, GST, ...), no total of claims"
+   },
+   "calls": {
+    "38(B)": {
+     "readable": 1,
+     "other_words": false,
+     "why": "The one readable call (May 2026) never mentions end-of-life vehicles, scrappage, recycling or producer responsibility; a case-blind probe for EPR found only 'represents' and 'repricing'."
+    }
+   }
+  },
+  "ULTRACEMCO": {
+   "half": "dev",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 190,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [
+      "33(b)"
+     ],
+     "trail_exception": false
+    },
+    "consolidated": {
+     "page": 253,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [
+      "37(b)"
+     ],
+     "trail_exception": true
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 290,
+    "kind": "by_head",
+    "note": "items (a) to (h) with a description each, no total printed"
+   },
+   "calls": {
+    "37(b)": {
+     "readable": 5,
+     "other_words": false,
+     "why": "No call of the five mentions a penalty, the competition case, cartel, the Supreme Court, NCLAT, a tribunal, litigation or contingent liabilities."
+    }
+   }
+  },
+  "DIXON": {
+   "half": "dev",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 299,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": false
+    },
+    "consolidated": {
+     "page": 409,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [
+      "59(a)"
+     ],
+     "trail_exception": true,
+     "note": "corrected while labelling the held-out half: the preservation sentence reads 'except in one subsidiary audit trail (edit log) feature was enabled ... with effect from 24 February 2025'"
+    }
+   },
+   "out_of_scope": [
+    {
+     "page": 298,
+     "heading": "emphasis",
+     "where": "sustainability assurance"
+    }
+   ],
+   "claims": {
+    "set": "consolidated",
+    "page": 474,
+    "kind": "by_head",
+    "note": "disputed tax heads a. to g., no total printed"
+   },
+   "calls": {
+    "59(a)": {
+     "readable": 5,
+     "shown_on_topic": false,
+     "why": "The sentence shown (Aug 2026, page 3) is about Mobile PLI 1 expiring, not the incentive income awaiting the agency's determination."
+    }
+   }
+  },
+  "HOMEFIRST": {
+   "half": "dev",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 343,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    }
+   },
+   "claims": {
+    "set": "standalone",
+    "page": 417,
+    "kind": "none"
+   }
+  },
+  "BLUEDART": {
+   "half": "dev",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 170,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": false
+    },
+    "consolidated": {
+     "page": 324,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": false
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 371,
+    "kind": "by_head",
+    "note": "direct, indirect and legal heads, no total printed"
+   }
+  },
+  "HDFCBANK": {
+   "half": "dev",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 369,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    },
+    "consolidated": {
+     "page": 482,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 508,
+    "kind": "rows",
+    "rows": [
+     [
+      "8,265.49",
+      "6,737.94"
+     ],
+     [
+      "252.86",
+      "265.67"
+     ]
+    ],
+    "unit": "crore"
+   }
+  },
+  "KFINTECH": {
+   "half": "dev",
+   "read": false,
+   "why": "The NSE copy and the BSE copy are both the one-page cover letter."
+  },
+  "LT": {
+   "half": "dev",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 484,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": false
+    },
+    "consolidated": {
+     "page": 605,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 662,
+    "kind": "rows",
+    "rows": [
+     [
+      "9218.42",
+      "4552.83"
+     ]
+    ],
+    "unit": "crore"
+   }
+  },
+  "CGPOWER": {
+   "half": "dev",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 113,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    },
+    "consolidated": {
+     "page": 158,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 188,
+    "kind": "rows",
+    "rows": [
+     [
+      "3.74",
+      "3.74"
+     ]
+    ],
+    "unit": "crore"
+   }
+  },
+  "TITAN": {
+   "half": "dev",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 270,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    },
+    "consolidated": {
+     "page": 364,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 437,
+    "kind": "no_head",
+    "note": "prose: 'Contingent liabilities not provided for - 179 crore', all heads together"
+   }
+  },
+  "CEATLTD": {
+   "half": "held_out",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 88,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    },
+    "consolidated": {
+     "page": 133,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 170,
+    "kind": "by_head",
+    "note": "labour matters and vendor disputes under the head, no total; in lakh"
+   }
+  },
+  "CROMPTON": {
+   "half": "held_out",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 237,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": false
+    },
+    "consolidated": {
+     "page": 284,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": false
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 317,
+    "kind": "rows",
+    "rows": [
+     [
+      "35.76",
+      "32.14"
+     ]
+    ],
+    "unit": "crore"
+   }
+  },
+  "CYIENT": {
+   "half": "held_out",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 209,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": false
+    },
+    "consolidated": {
+     "page": 306,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": false
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 428,
+    "kind": "rows",
+    "rows": [
+     [
+      "824",
+      "782"
+     ]
+    ],
+    "unit": null,
+    "note": "no unit stated on the page"
+   }
+  },
+  "DCMSHRIRAM": {
+   "half": "held_out",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 120,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": false
+    },
+    "consolidated": {
+     "page": 175,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": false
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 201,
+    "kind": "total",
+    "rows": [
+     [
+      "78.08",
+      "19.49"
+     ]
+    ],
+    "unit": "crore",
+    "note": "'Claims (excluding claims by employees where amount not ascertainable) not acknowledged as debts', seven heads, then a printed Total"
+   }
+  },
+  "ERIS": {
+   "half": "held_out",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 200,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    },
+    "consolidated": {
+     "page": 286,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 365,
+    "kind": "by_head",
+    "note": "DPCO, tax and others, no total"
+   }
+  },
+  "HAVELLS": {
+   "half": "held_out",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 253,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    },
+    "consolidated": {
+     "page": 340,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 396,
+    "kind": "rows",
+    "rows": [
+     [
+      "7.96",
+      "10.56"
+     ]
+    ],
+    "unit": "crore",
+    "note": "worded 'Claims/Suits filed against the Group not acknowledged as debts'"
+   }
+  },
+  "PIDILITIND": {
+   "half": "held_out",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 166,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    },
+    "consolidated": {
+     "page": 255,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 307,
+    "kind": "by_head",
+    "note": "a) to d) under the head, no total"
+   }
+  },
+  "POLYCAB": {
+   "half": "held_out",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 410,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": false
+    },
+    "consolidated": {
+     "page": 308,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": false,
+     "note": "Polycab prints the consolidated report first"
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 384,
+    "kind": "no_head",
+    "note": "disputed liabilities by tax, no 'claims not acknowledged as debt' head"
+   }
+  },
+  "SRF": {
+   "half": "held_out",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 123,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    },
+    "consolidated": {
+     "page": 183,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 219,
+    "kind": "by_head",
+    "note": "four heads, no total"
+   }
+  },
+  "SUNPHARMA": {
+   "half": "held_out",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 149,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true,
+     "note": "the exception is in the preservation sentence: two applications' audit trail not preserved, May to November 2024"
+    },
+    "consolidated": {
+     "page": 231,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true,
+     "note": "the same exception, in the preservation sentence"
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 285,
+    "kind": "rows",
+    "rows": [
+     [
+      "445.5",
+      "454.2"
+     ]
+    ],
+    "unit": "million"
+   }
+  },
+  "TCI": {
+   "half": "held_out",
+   "read": true,
+   "reports": {
+    "standalone": {
+     "page": 144,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    },
+    "consolidated": {
+     "page": 212,
+     "modified": false,
+     "going_concern": false,
+     "emphasis": [],
+     "trail_exception": true
+    }
+   },
+   "claims": {
+    "set": "consolidated",
+    "page": 273,
+    "kind": "by_head",
+    "note": "three heads for the group, no total; the joint venture's listed apart"
+   }
+  }
+ }
+}

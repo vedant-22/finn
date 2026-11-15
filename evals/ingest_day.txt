@@ -1,0 +1,8 @@
+Whole-market day 2026-11-12, no model key. python3 pipeline/ingest.py day 2026-11-12 --cap-results 50
+filings 987, companies 574
+settled by rules 759 of 987
+model steps parked 340, blocked behind them 949, PDFs fetched 0
+results cuts done 49, not_yet 1, dead {}, left by the cap 126
+wall time 30 s
+statuses {'blocked': 949, 'done': 5493, 'parked': 340, 'not_yet': 1, 'pending': 126}: they sum to 6909, and the ledger holds 6909 runs
+cost had a key been there (estimate): 157-246 model calls x $0.0015 (the 28 Oct snapshot's mean per call) = $0.24-0.38, about Rs 21-33 at Rs 88 to the dollar (assumed); flash-lite list price as of Aug 2026 (finn/config.py) (recomputed 13 Nov by `pipeline/ingest.py cost 2026-11-12`: explain's share is a range)

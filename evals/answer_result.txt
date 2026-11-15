@@ -1,0 +1,74 @@
+ok   guard: an unknown tool
+ok   guard: a URL in an argument
+ok   guard: a question naming a website is answered, not refused or crashed
+ok   guard: an unknown company is refused before any model call
+ok   guard: a period not in the company's list
+ok   guard: a page out of range
+ok   guard: a private tool
+ok   guard: results cut to 4,000 characters and marked as filing text
+ok   guard: no tool takes a URL
+ok   doctor: control: a true quote passes, shown as the page's own text
+ok   doctor: control: a true number passes, its sentence written by code
+ok   doctor: a quote cited to another page
+ok   doctor: a number changed inside a quote
+ok   doctor: two words swapped
+ok   doctor: no percentage is worked off a loss
+ok   doctor: the wrong direction on a number
+ok   doctor: an unknown metric
+ok   doctor: one bad item among good ones rejects the answer
+ok   doctor: a quote cut inside a number (its first digit dropped)
+ok   doctor: a quote cut inside its last word
+ok   doctor: control: a quote that starts and ends on whole numbers passes
+ok   doctor: a quote starting inside a decimal (15.6% as 6%)
+ok   doctor: a quote starting inside a number with a comma (14,859 as 859)
+ok   doctor: a quote ending inside a decimal (15.6 as 15)
+ok   doctor: a quote that drops a minus sign (-3.2% as 3.2%)
+ok   doctor: a quote that drops a Unicode minus (−3.2% as 3.2%)
+ok   doctor: a quote cut inside a word at an apostrophe (don’t as t)
+ok   doctor: a quote that drops an accounting minus ((45.2) as 45.2)
+ok   doctor: a quote that leaves out 'not' is shown with it
+ok   doctor: a quote that stops at 'lakh' is shown with 'crore'
+ok   doctor: a quote that stops before 'bps' is shown with it
+ok   doctor: control: 'Mr.' doesn't end a sentence
+ok   doctor: dotted initials don't end a sentence (the U.S. and Europe)
+ok   doctor: nor before a capital (the U.S. Share)
+ok   doctor: no sentence starts in lower case (a quoted question mid-sentence)
+ok   doctor: an analyst's question, true to its page, isn't shown as the company's words
+ok   doctor: control: the company's reply to it, on the same page, is shown
+ok   doctor: a questioner's turn is refused on its page and where it runs over the page; the company's turns pass
+ok   doctor: it can't accuse: with no introduction by the moderator, nothing is refused
+ok   doctor: the tail of a sentence cut by a page break isn't shown as whole (it loses its 'do not')
+ok   doctor: nor a lower-case start with nothing before it to judge by
+ok   doctor: nor a tail that starts with a capital, after a page footer and header
+ok   doctor: nor the head of a cut sentence, which has no full stop
+ok   doctor: control: the same sentence after a finished page is shown, the header and footer stepped over
+ok   doctor: control: a sentence after a lead-in ending in a colon is shown
+ok   doctor: a sentence over 1,000 characters isn't shown
+ok   doctor: a fragment under 4 words
+ok   doctor: the heading over a quote is the call and page, written by code
+ok   doctor: a stitched quote from two pages
+recall at 5: 17/20 exact page, 18/20 within a page
+     missed a10 KFINTECH Nov 2025 p5 (ledger)
+     missed a15 LT May 2026 p3 (page)
+     missed a20 ULTRACEMCO Jul 2026 p4 (page)
+ok   e2e: a true quote end to end is answered with the page's text
+ok   e2e: nothing found reads 'Not in the calls I read.'
+ok   e2e: the trace holds no part of the question
+ok   e2e: a private question on free terms is refused before any request, and says the model wasn't reached
+ok   e2e: a model error never reads as 'Not in the calls I read.'
+ok   e2e: an answer from a fallback model is marked degraded
+ok   cost: an answered call is priced at its model's list rate
+ok   cost: a call that failed after paying keeps what it paid
+ok   cost: a page that can't be fetched says the model wasn't reached, never a crash
+ok   cost: a model with no list price is an error, not $0
+ok   cost: a model FINN can call with no list price stops FINN at import
+ok   keep: the keep rule passes at 2.9x the workflow's dollars
+ok   keep: the keep rule fails at 3.1x, though under $1
+ok   keep: the keep rule fails on a workflow priced at $0
+ok   keep: the keep rule asks for half the misses under 8, and never fewer than 2: a workflow at 18 of 20 isn't beaten by +1
+ok   keep: the keep rule fails on too small a gain, or two unanswerables answered
+ok   verify: an analyst's unpunctuated question isn't shown as the answer's start, and no span on the 28 calls holds two turns
+ok   live grade: an answer counts only if the shown text holds the labelled answer: one true sentence a page doesn't
+ok   live grade: every label is found on its own labelled page, so a right answer can score
+tokens per question: mean 3,961 in (4 characters a token, estimated), about 400 out; $0.0022 a question at flash-lite list price (finn/config.py)
+TOTAL 68/68

@@ -1,0 +1,92 @@
+{
+ "symbol": "SYNGENE",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_29540_SYNGENE_2025_2026_A_4857021_02072026190242.pdf",
+ "filed": "2026-07-02",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 404,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the consolidated and standalone reports.",
+   "items": [],
+   "src": [
+    {
+     "label": "Standalone report, page 204",
+     "page": 204
+    },
+    {
+     "label": "Consolidated report, page 294",
+     "page": 294
+    }
+   ],
+   "trail": {
+    "text": "The auditor lists exceptions to the audit trail, the software’s edit log.",
+    "src": [
+     {
+      "label": "Standalone report, page 208",
+      "page": 208,
+      "quote": "on our examination which included test checks, except for the instances mentioned below, the Company has used accounting software for maintaining its books of account, which has a feature of recording audit trail (edit log) facility and the same has operated throughout the year for all relevant transactions recorded in the software: i. For data changes performed by users having privileged access (debug) ii. At the application level for certain fields / tables relating to all the significant financial processes Further, where audit trail (edit log) facility was enabled, we did not come across any instance of audit trail feature being tampered"
+     },
+     {
+      "label": "Consolidated report, page 298",
+      "page": 298,
+      "quote": "on our examination which included test checks, except for the instances mentioned below, the Group has used accounting software for maintaining its books of account, which has a feature of recording audit trail (edit log) facility and the same has operated throughout the year for all relevant transactions recorded in the software: i. For data changes performed by users having privileged access (debug) ii. At the application level for certain fields / tables relating to all the significant financial processes Further, where audit trail (edit log) facility was enabled, we did not come across any instance of audit trail feature being tampered"
+     }
+    ]
+   }
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 31, consolidated accounts, page 366",
+     "page": 366
+    }
+   ],
+   "text": "Claims not acknowledged as debt: ₹531 crore at 31 March 2026, ₹629 crore a year earlier. That is 1.7 years of FY26 profit. These are claims made on the company that it has not accepted as owed.",
+   "printed": "Printed as 5,311 and 6,285, in ₹ million."
+  }
+ ],
+ "questions": [
+  "Claims not acknowledged as debt are ₹531 crore, about 1.7 years of profit. Which of them is closest to a ruling?"
+ ],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 204,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 208
+   },
+   "consolidated": {
+    "page": 294,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 298
+   }
+  },
+  "claims": {
+   "page": 366,
+   "unit": "million",
+   "why": null,
+   "none": false,
+   "rows": [
+    {
+     "fy26": "5,311",
+     "fy25": "6,285"
+    }
+   ]
+  },
+  "pat": 317.0,
+  "ratio": 1.6753943217665617,
+  "calls": []
+ },
+ "verdict": "Claims ₹531 crore, 1.7 years of profit",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 2 Jul 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

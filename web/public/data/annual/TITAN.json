@@ -1,0 +1,84 @@
+{
+ "symbol": "TITAN",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_29549_TITAN_2025_2026_A_11906853_03072026125809.pdf",
+ "filed": "2026-07-03",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 473,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the consolidated and standalone reports.",
+   "items": [],
+   "src": [
+    {
+     "label": "Standalone report, page 270",
+     "page": 270
+    },
+    {
+     "label": "Consolidated report, page 364",
+     "page": 364
+    }
+   ],
+   "trail": {
+    "text": "The auditor lists exceptions to the audit trail, the software’s edit log.",
+    "src": [
+     {
+      "label": "Standalone report, page 275",
+      "page": 275,
+      "quote": "on our examination which included test checks, except for the instances mentioned below, the Company has used accounting softwares for maintaining its books of account which have a feature of audit trail (edit log) facility, and the same has operated throughout the year for all relevant transactions recorded in the respective softwares: i. The feature of audit trail at the application as well as the database layer of the accounting software relating to general ledger, account receivable and account payable was enabled, however, the preservation of such audit trail is available only for the preceding eleven months."
+     },
+     {
+      "label": "Consolidated report, page 370",
+      "page": 370,
+      "quote": "on our examination which included test checks, except for the instances mentioned below, the Holding Company and its subsidiary companies have used accounting softwares for maintaining its books of account which have a feature of audit trail (edit log) facility, and the same has operated throughout the year for all relevant transactions recorded in the respective softwares: i. In respect of the Holding Company, the feature of audit trail at the application as well as the database layer of the accounting software relating to general ledger, account receivable and account payable was enabled, however, the preservation of such audit trail is"
+     }
+    ]
+   }
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 30, consolidated accounts, page 437",
+     "page": 437
+    }
+   ],
+   "text": "FINN’s rules couldn’t read a total from this note, so no figure is shown."
+  }
+ ],
+ "questions": [],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 270,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 275
+   },
+   "consolidated": {
+    "page": 364,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 370
+   }
+  },
+  "claims": {
+   "page": 437,
+   "unit": null,
+   "why": "no claims line",
+   "none": false,
+   "rows": []
+  },
+  "pat": 5073.0,
+  "ratio": null,
+  "calls": []
+ },
+ "verdict": "Opinion not modified",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 3 Jul 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

@@ -1,0 +1,84 @@
+{
+ "symbol": "CEATLTD",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_29958_CEATLTD_2025_2026_A_20312897_23072026115614.pdf",
+ "filed": "2026-07-23",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 203,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the consolidated and standalone reports.",
+   "items": [],
+   "src": [
+    {
+     "label": "Standalone report, page 88",
+     "page": 88
+    },
+    {
+     "label": "Consolidated report, page 133",
+     "page": 133
+    }
+   ],
+   "trail": {
+    "text": "The auditor lists exceptions to the audit trail, the software’s edit log.",
+    "src": [
+     {
+      "label": "Standalone report, page 90",
+      "page": 90,
+      "quote": "our opinion, proper books of account as required by law have been kept by the Company so far as it appears from our examination of those books except for the matters in respect of audit trail stated in the paragraph 2B(f) below on reporting under Rule 11(g) of the Companies (Audit and Auditors) Rules, 2014."
+     },
+     {
+      "label": "Consolidated report, page 136",
+      "page": 136,
+      "quote": "the Holding Company and its subsidiary Companies has used an accounting software for maintaining its books of account, which has a feature of recording audit trail (edit log) facility and the same has operated throughout the year for all relevant transactions recorded in the respective software except that the audit trail (edit log) facility was not enabled for the Holding Company at the database level to log any direct data changes up to 20th May 2025."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 42, consolidated accounts, page 170",
+     "page": 170
+    }
+   ],
+   "text": "The note lists claims by head without printing their total, so no figure is shown."
+  }
+ ],
+ "questions": [],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 88,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 90
+   },
+   "consolidated": {
+    "page": 133,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 136
+   }
+  },
+  "claims": {
+   "page": 170,
+   "unit": "lakh",
+   "why": "claims listed by head, no total printed",
+   "none": false,
+   "rows": []
+  },
+  "pat": 697.0,
+  "ratio": null,
+  "calls": []
+ },
+ "verdict": "Opinion not modified",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 23 Jul 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

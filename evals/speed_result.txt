@@ -1,0 +1,6 @@
+profile: 390x844, 150 ms RTT, 1.6 Mbps down, 750 kbps up, CPU 4x; 3 cold loads of http://localhost:4273, medians
+runs (fcp, lcp, count) ms: [(1088, 2024, 2502), (1100, 2032, 2514), (1096, 2064, 2527)]
+FCP 1096 ms
+LCP 2032 ms
+count settled 2514 ms
+gzip KB: JS 123, CSS 11, push.json 40, network.json 22

@@ -1,0 +1,75 @@
+{
+ "symbol": "CROMPTON",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_29652_CROMPTON_2025_2026_A_19853481_08072026154232.pdf",
+ "filed": "2026-07-08",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 341,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the consolidated and standalone reports.",
+   "items": [],
+   "src": [
+    {
+     "label": "Standalone report, page 237",
+     "page": 237
+    },
+    {
+     "label": "Consolidated report, page 284",
+     "page": 284
+    }
+   ]
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 29, consolidated accounts, page 317",
+     "page": 317
+    }
+   ],
+   "text": "Claims not acknowledged as debt: ₹35.8 crore at 31 March 2026, ₹32.1 crore a year earlier. These are claims made on the company that it has not accepted as owed.",
+   "printed": "Printed as 35.76 and 32.14, in ₹ crore."
+  }
+ ],
+ "questions": [],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 237,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": false,
+    "trail_page": 239
+   },
+   "consolidated": {
+    "page": 284,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": false,
+    "trail_page": 287
+   }
+  },
+  "claims": {
+   "page": 317,
+   "unit": "crore",
+   "why": null,
+   "none": false,
+   "rows": [
+    {
+     "fy26": "35.76",
+     "fy25": "32.14"
+    }
+   ]
+  },
+  "pat": null,
+  "ratio": null,
+  "calls": []
+ },
+ "verdict": "Opinion not modified",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 8 Jul 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

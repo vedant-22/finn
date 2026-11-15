@@ -1,0 +1,109 @@
+{
+ "offline": {
+  "security": {
+   "script": "run_security.py",
+   "total": "TOTAL (\\d+)/(\\d+)",
+   "floor": "all"
+  },
+  "network": {
+   "script": "run_network.py",
+   "total": "TOTAL (\\d+)/(\\d+)",
+   "floor": "all"
+  },
+  "annual": {
+   "script": "run_annual.py",
+   "total": "TOTAL (\\d+)/(\\d+)",
+   "floor": "all"
+  },
+  "ingest": {
+   "script": "run_ingest.py",
+   "total": "TOTAL (\\d+)/(\\d+)",
+   "floor": "all"
+  },
+  "quotes": {
+   "script": "run_quotes.py",
+   "total": "overall (\\d+)/(\\d+)",
+   "floor": 74,
+   "skip_if": "FetchError|unreachable|ConnectionError",
+   "skip_reason": "its PDFs aren't cached and NSE can't be reached"
+  },
+  "reaction": {
+   "script": "run_reaction.py",
+   "lead": [
+    4.7,
+    5.7
+   ]
+  },
+  "answer": {
+   "script": "run_answer.py",
+   "total": "TOTAL (\\d+)/(\\d+)",
+   "floor": "all",
+   "floors": [
+    [
+     "recall at 5",
+     "recall at 5: (\\d+)/20 exact",
+     15
+    ]
+   ],
+   "skip_if": "FetchError|unreachable|ConnectionError",
+   "skip_reason": "its PDFs aren't cached and NSE can't be reached"
+  },
+  "agent": {
+   "script": "run_agent.py",
+   "total": "TOTAL (\\d+)/(\\d+)",
+   "floor": "all",
+   "skip_if": "FetchError|unreachable|ConnectionError",
+   "skip_reason": "its PDFs aren't cached and NSE can't be reached"
+  }
+ },
+ "live": {
+  "classify": {
+   "category": 21,
+   "tier": 20,
+   "agree": 22,
+   "of": 24
+  },
+  "answer": {
+   "grounded": 14,
+   "not_in_calls_min": 5,
+   "set": "13 Nov, before any live run: 14 of the 17 questions whose labelled page search puts in the top 5; 5 of the 6 unanswerable said so"
+  }
+ },
+ "fingerprints": {
+  "classify": {
+   "fp": "30bf904904053c09",
+   "state": "validated",
+   "by": "4718a06, evals/classify_result.txt (category 22/24, tier 21/24)"
+  },
+  "people": {
+   "fp": "0d4c63f72926b44e",
+   "state": "first_seen",
+   "by": ""
+  },
+  "explain": {
+   "fp": "684f61593fabf308",
+   "state": "first_seen",
+   "by": ""
+  },
+  "promise_extract": {
+   "fp": "b233516474c7f20d",
+   "state": "first_seen",
+   "by": ""
+  },
+  "promise_grade": {
+   "fp": "07edaae1398d2ef6",
+   "state": "first_seen",
+   "by": ""
+  },
+  "answer": {
+   "fp": "85435e3e5d42c7fc",
+   "state": "first_seen",
+   "by": ""
+  },
+  "agent": {
+   "fp": "01881a7b739edea7",
+   "state": "first_seen",
+   "by": ""
+  }
+ }
+}

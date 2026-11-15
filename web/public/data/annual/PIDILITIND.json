@@ -1,0 +1,84 @@
+{
+ "symbol": "PIDILITIND",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_29585_PIDILITIND_2025_2026_A_11820106_06072026174206.pdf",
+ "filed": "2026-07-06",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 338,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the consolidated and standalone reports.",
+   "items": [],
+   "src": [
+    {
+     "label": "Standalone report, page 166",
+     "page": 166
+    },
+    {
+     "label": "Consolidated report, page 255",
+     "page": 255
+    }
+   ],
+   "trail": {
+    "text": "The auditor lists exceptions to the audit trail, the software’s edit log.",
+    "src": [
+     {
+      "label": "Standalone report, page 169",
+      "page": 169,
+      "quote": "on our examination which included test checks, the Company has used an accounting software for maintaining its books of account which has a feature of recording audit trail (edit log) facility except that audit trail was not enabled at the database level for accounting software relating to scheme master to log any direct data changes."
+     },
+     {
+      "label": "Consolidated report, page 260",
+      "page": 260,
+      "quote": "on our examination which included test checks, and as communicated by the respective auditors of the subsidiary companies and associate companies which are companies incorporated in India whose financial statements have been audited under the Act, except for instances mentioned below, the Holding Company, its subsidiary companies and associate companies, have used accounting softwares for maintaining its books of account, which have a feature of recording audit trail (edit log) facility and the same has operated throughout the year for all relevant transactions recorded in the respective softwares: (i) In respect of Holding Company, audit trail was not enabled at the database level for accounting software relating to scheme master to log any direct data changes."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 42, consolidated accounts, page 307",
+     "page": 307
+    }
+   ],
+   "text": "The note lists claims by head without printing their total, so no figure is shown."
+  }
+ ],
+ "questions": [],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 166,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 169
+   },
+   "consolidated": {
+    "page": 255,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 260
+   }
+  },
+  "claims": {
+   "page": 307,
+   "unit": "crore",
+   "why": "claims listed by head, no total printed",
+   "none": false,
+   "rows": []
+  },
+  "pat": 2471.0,
+  "ratio": null,
+  "calls": []
+ },
+ "verdict": "Opinion not modified",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 6 Jul 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

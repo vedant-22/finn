@@ -1,0 +1,26 @@
+{
+  "name": "finn",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "node --test test/lib.test.mjs test/stage4.test.mjs test/storage.test.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource/pt-serif": "^5.3.0",
+    "gsap": "^3.15.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "axe-core": "^4.14.0",
+    "typescript": "^5.9.3",
+    "vite": "^5.4.21"
+  }
+}

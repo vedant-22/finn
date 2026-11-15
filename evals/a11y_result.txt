@@ -1,0 +1,6 @@
+http://localhost:4273, 390x844, axe-core tags wcag2a wcag2aa wcag21a wcag21aa wcag22aa
+views 10: Today, An opened card, Book, A company, The annual report, a paragraph open, Look up, Look up, an answer, A network path, Your lines, Your data
+0 serious or critical on 10 of 10 views
+controls under 24 px: 0
+rules left off: 0
+checks failed: 0

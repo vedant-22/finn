@@ -1,0 +1,90 @@
+{
+ "symbol": "CGPOWER",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_29493_CGPOWER_2025_2026_A_11109518_30062026162136.pdf",
+ "filed": "2026-06-30",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 214,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the consolidated and standalone reports.",
+   "items": [],
+   "src": [
+    {
+     "label": "Standalone report, page 113",
+     "page": 113
+    },
+    {
+     "label": "Consolidated report, page 158",
+     "page": 158
+    }
+   ],
+   "trail": {
+    "text": "The auditor lists exceptions to the audit trail, the software’s edit log.",
+    "src": [
+     {
+      "label": "Standalone report, page 115",
+      "page": 115,
+      "quote": "on our examination which included test checks, the Company has used accounting software for maintaining its books of account which has a feature of recording audit trail (edit log) facility and the same has operated throughout the year for all relevant transactions recorded in such software, except that audit trail feature is not enabled for direct changes to database when using certain access rights, in respect of SAP application from April 1, 2025 to September 15, 2025 and for other accounting software used for payroll processing from April 1, 2025 to September 02, 2025, respectively as described in Note 55 to the standalone financial statements."
+     },
+     {
+      "label": "Consolidated report, page 161",
+      "page": 161,
+      "quote": "Based on our evaluation of SOC report, we are unable to comment on whether the audit trail feature of the said software was enabled and operated throughout the year for all relevant transactions recorded in the software."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 36, consolidated accounts, page 188",
+     "page": 188
+    }
+   ],
+   "text": "Claims not acknowledged as debt: ₹3.7 crore at 31 March 2026, ₹3.7 crore a year earlier. That is under 1% of FY26 profit. These are claims made on the company that it has not accepted as owed.",
+   "printed": "Printed as 3.74 and 3.74, in ₹ crore."
+  }
+ ],
+ "questions": [],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 113,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 115
+   },
+   "consolidated": {
+    "page": 158,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 161
+   }
+  },
+  "claims": {
+   "page": 188,
+   "unit": "crore",
+   "why": null,
+   "none": false,
+   "rows": [
+    {
+     "fy26": "3.74",
+     "fy25": "3.74"
+    }
+   ]
+  },
+  "pat": 1199.0,
+  "ratio": 0.003119266055045872,
+  "calls": []
+ },
+ "verdict": "Opinion not modified",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 30 Jun 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

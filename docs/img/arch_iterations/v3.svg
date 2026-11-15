@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="1317" viewBox="0 0 680 1317" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+  <title id="t">FINN: public filings read once for everyone; your data below a line, seen by code only; your phone outside both, getting public facts and your own rows only</title>
+  <desc id="d">Solid parts run in this repo today; dashed parts are designed, not built. Above the line, every NSE filing and daily price, fetched by hand today, with a full year kept, flows into events (each filing stored once, a new revision only when a key detail changes), then is read and checked (rules settle most filings; a model reads the rest only once an API key is set, and code checks every reading), then into facts. A price-reaction study checks whether the filings FINN interrupts you for moved the stock; it audits the rules and never changes what the app shows you. Answering takes your question, on no-training terms, without your name or holdings, never kept, and finds quotes on a company's own earnings-call pages; no screen shows its answers yet. The app's snapshot, built by hand on 28 Oct from NSE and screener.in, is what the app serves; the app reading the ledger's facts instead is designed. Below a line, your side, code only: your book and the people you know, invented for the demo, matched to public facts by code with no model, inside a private project that is designed; the one read-only export of public facts into it is designed. Your phone sits outside both: public facts from the snapshot and, as designed, only what's yours. Planned for production, not deployed: events and facts in Cloud SQL, reading and answering on Cloud Run with Vertex AI, and the private side a locked project that can't call out, read only by your signed-in phone.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" fill="#333333"/></marker>
+    <style>
+      .b{fill:#FFFFFF;stroke:#333333;stroke-width:1.2}
+      .bd{fill:none;stroke:#6A6970;stroke-width:1.4;stroke-dasharray:6 4}
+      .t{font-size:18px;font-weight:600;fill:#333333}
+      .z{font-size:15px;font-weight:600;fill:#333333}
+      .h{font-size:15px;font-weight:600;fill:#333333}
+      .s{font-size:13.5px;fill:#333333}
+      .p{font-size:13px;fill:#5E5D63}
+      .c{font-size:13px;fill:#5E5D63}
+      .k{font-size:13.5px;font-weight:600;fill:#005DA3}
+      .l{stroke:#333333;stroke-width:1.2}
+      .ld{stroke:#6A6970;stroke-width:1.4;stroke-dasharray:5 4}
+    </style>
+  </defs>
+  <rect width="680" height="1317" fill="#FBF8F2"/>
+    <text x="24" y="40" class="t">How data moves through FINN, and what stays private</text>
+  <text x="24" y="64" class="c">Solid lines run today. Dashed lines I've designed but not built yet.</text>
+  <rect class="b" x="24" y="78" width="26" height="15" rx="3"/>
+  <text x="58" y="90" class="c">runs in this repo today</text>
+  <rect class="bd" x="234" y="78" width="26" height="15" rx="3"/>
+  <text x="268" y="90" class="c">designed, not built yet</text>
+  <text x="24" y="132" class="z">Public: what companies file, read once and shared by everyone</text>
+  <g id="archive" data-box="archive"><rect class="b" x="24" y="148" width="300" height="117" rx="6"/>
+    <text x="38" y="172" class="h">Filings and share prices</text>
+    <text x="38" y="191" class="s">Everything companies file with the stock</text>
+    <text x="38" y="210" class="s">exchange (NSE), plus each day's prices.</text>
+    <text x="38" y="229" class="s">Fetched by hand for now. A year is kept.</text>
+    <text x="38" y="251" class="p">pipeline/archive.py, pipeline/ingest.py</text>
+    </g>
+  <g id="reaction" data-box="reaction"><rect class="b" x="388" y="148" width="268" height="136" rx="6"/>
+    <text x="402" y="172" class="h">The price study</text>
+    <text x="402" y="191" class="s">Looks back over a year: after a filing</text>
+    <text x="402" y="210" class="s">FINN would alert you to, did the stock</text>
+    <text x="402" y="229" class="s">move? It tests the rules. It never</text>
+    <text x="402" y="248" class="s">changes what the app shows you.</text>
+    <text x="402" y="270" class="p">evals/run_reaction.py</text>
+    </g>
+  <line class="l" x1="324" y1="188" x2="386" y2="188" marker-end="url(#a)"/>
+  <line class="l" x1="174" y1="265" x2="174" y2="293" marker-end="url(#a)"/>
+  <g id="events" data-box="events"><rect class="b" x="24" y="295" width="300" height="98" rx="6"/>
+    <text x="38" y="319" class="h">Events</text>
+    <text x="38" y="338" class="s">Each filing is saved once. A new version</text>
+    <text x="38" y="357" class="s">is added only if a key detail changes.</text>
+    <text x="38" y="379" class="p">pipeline/ingest.py · SQLite</text>
+    </g>
+  <line class="l" x1="174" y1="393" x2="174" y2="421" marker-end="url(#a)"/>
+  <g id="steps" data-box="steps"><rect class="b" x="24" y="423" width="300" height="117" rx="6"/>
+    <text x="38" y="447" class="h">Read and checked</text>
+    <text x="38" y="466" class="s">Rules sort most filings on their own. The</text>
+    <text x="38" y="485" class="s">rest wait for a model, which needs an API</text>
+    <text x="38" y="504" class="s">key. Code then checks the model's reading.</text>
+    <text x="38" y="526" class="p">finn/ingest/steps.py</text>
+    </g>
+  <line class="l" x1="174" y1="540" x2="174" y2="568" marker-end="url(#a)"/>
+  <g id="facts" data-box="facts"><rect class="b" x="24" y="570" width="300" height="136" rx="6"/>
+    <text x="38" y="594" class="h">Facts</text>
+    <text x="38" y="613" class="s">What FINN keeps from each filing: how</text>
+    <text x="38" y="632" class="s">urgent it is, how big it is next to the</text>
+    <text x="38" y="651" class="s">company's revenue, what results it</text>
+    <text x="38" y="670" class="s">reports, and who it names.</text>
+    <text x="38" y="692" class="p">finn/ingest/store.py</text>
+    </g>
+  <text x="522" y="332" class="s" text-anchor="middle">your question</text>
+  <line class="l" x1="522" y1="338" x2="522" y2="366" marker-end="url(#a)"/>
+  <g id="answering" data-box="answering"><rect class="b" x="388" y="368" width="268" height="174" rx="6"/>
+    <text x="402" y="392" class="h">Answering a question</text>
+    <text x="402" y="411" class="s">Looks for the answer in a company's</text>
+    <text x="402" y="430" class="s">own earnings calls and quotes it. Your</text>
+    <text x="402" y="449" class="s">question reaches a model without</text>
+    <text x="402" y="468" class="s">your name or holdings, on terms that</text>
+    <text x="402" y="487" class="s">forbid training on it, and it isn't kept.</text>
+    <text x="402" y="506" class="s">The app has no screen for this yet.</text>
+    <text x="402" y="528" class="p">finn/answer</text>
+    </g>
+  <g id="snapshot" data-box="snapshot"><rect class="b" x="388" y="570" width="268" height="155" rx="6"/>
+    <text x="402" y="594" class="h">The app's snapshot, 28 Oct</text>
+    <text x="402" y="613" class="s">A copy of prices and filings I built by</text>
+    <text x="402" y="632" class="s">hand from NSE and screener.in. The</text>
+    <text x="402" y="651" class="s">app shows it, and can fetch one</text>
+    <text x="402" y="670" class="s">company live when you ask. The plan</text>
+    <text x="402" y="689" class="s">is to build it from the Facts instead.</text>
+    <text x="402" y="711" class="p">pipeline/, api/</text>
+    </g>
+  <line class="ld" x1="324" y1="610" x2="386" y2="610" marker-end="url(#a)"/>
+  <text x="356" y="630" class="c" text-anchor="middle">designed</text>
+  <line x1="24" y1="761" x2="600" y2="761" stroke="#005DA3" stroke-width="1.6"/>
+  <text x="24" y="783" class="k">Below this line is your side.</text>
+  <text x="24" y="802" class="k">Only code touches it, never a model.</text>
+  <line class="ld" x1="294" y1="706" x2="294" y2="923" marker-end="url(#a)"/>
+  <rect class="bd" x="24" y="821" width="576" height="218" rx="8"/>
+  <text x="304" y="851" class="s">one read-only copy</text>
+  <text x="304" y="870" class="s">of public facts</text>
+  <text x="40" y="849" class="z">Your private side</text>
+  <text x="40" y="871" class="c">Its own locked cloud project, not built</text>
+  <text x="40" y="889" class="c">yet. The matching code inside already</text>
+  <text x="40" y="907" class="c">runs today, on made-up demo data.</text>
+  <g id="overlay" data-box="overlay"><rect class="b" x="40" y="925" width="544" height="98" rx="6"/>
+    <text x="54" y="949" class="h">What you hold and who you know</text>
+    <text x="54" y="968" class="s">Code matches your shares and contacts to the public</text>
+    <text x="54" y="987" class="s">facts, with no model. In this demo, all of it is invented.</text>
+    <text x="54" y="1009" class="p">finn/network</text>
+    </g>
+  <g id="phone" data-box="phone"><rect class="b" x="24" y="1123" width="632" height="98" rx="6"/>
+    <text x="38" y="1147" class="h">Your phone</text>
+    <text x="38" y="1166" class="s">Shows what changed in what you hold, and any company's page. You get the</text>
+    <text x="38" y="1185" class="s">public facts everyone gets, plus your own data, never anyone else's.</text>
+    <text x="38" y="1207" class="p">web/ on Vercel</text>
+    </g>
+  <line class="l" x1="630" y1="725" x2="630" y2="1121" marker-end="url(#a)"/>
+  <line class="ld" x1="184" y1="1023" x2="184" y2="1121" marker-end="url(#a)"/>
+  <text x="194" y="1069" class="s">only what's yours</text>
+  <text x="24" y="1109" class="z">Outside both</text>
+  <text x="648" y="924" class="s" text-anchor="middle" transform="rotate(-90 648 924)">public facts</text>
+  <text x="24" y="1257" class="c">For production I'd use Google Cloud (ADR 5, not deployed). Events and facts go in</text>
+  <text x="24" y="1276" class="c">Cloud SQL. Reading and answering run on Cloud Run with Vertex AI. Your private side</text>
+  <text x="24" y="1295" class="c">is a locked project that can't call out. Only your signed-in phone reads your data.</text>
+</svg>

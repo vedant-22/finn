@@ -1,0 +1,84 @@
+{
+ "symbol": "SRF",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_29359_SRF_2025_2026_A_20352537_06062026134821.pdf",
+ "filed": "2026-06-06",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 242,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the consolidated and standalone reports.",
+   "items": [],
+   "src": [
+    {
+     "label": "Standalone report, page 123",
+     "page": 123
+    },
+    {
+     "label": "Consolidated report, page 183",
+     "page": 183
+    }
+   ],
+   "trail": {
+    "text": "The auditor lists exceptions to the audit trail, the software’s edit log.",
+    "src": [
+     {
+      "label": "Standalone report, page 125",
+      "page": 125,
+      "quote": "on our examination which included test checks, the Company has used accounting softwares for maintaining its books of account, which have a feature of recording audit trail (edit log) facility and, except for the instances mentioned below in respect of accounting softwares used for maintaining general ledger and related records, the same has operated throughout the year for all relevant transactions recorded in the respective softwares: (a) for certain tables of (i) goods and service tax (GST) rate master for the period from 1 April 2025 to 16 March 2026, and (ii) approval records for change to vendors and inventory masters, for the period from 1 April 2025 to 22 March 2026, the feature of recording audit trail (edit log) facility was not enabled."
+     },
+     {
+      "label": "Consolidated report, page 186",
+      "page": 186,
+      "quote": "incorporated in India whose financial statements have been audited under the Act by other auditor, the Holding Company and its Indian subsidiary companies have used accounting softwares for maintaining its books of account, which have a feature of recording audit trail (edit log) facility and, except for the instances mentioned below in respect of accounting softwares used for maintaining general ledger and related records, the same has operated throughout the year for all relevant transactions recorded in the respective softwares: (a) for certain tables of (i) goods and service tax (GST) rate master for the period from 01 April 2025 to 16 March 2026, and (ii) approval records for change to vendors and inventory masters, for the period from 01 April 2025 to 22 March 2026, the feature of recording audit trail (edit log) facility was not enabled."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 32, consolidated accounts, page 219",
+     "page": 219
+    }
+   ],
+   "text": "The note lists claims by head without printing their total, so no figure is shown."
+  }
+ ],
+ "questions": [],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 123,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 125
+   },
+   "consolidated": {
+    "page": 183,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 186
+   }
+  },
+  "claims": {
+   "page": 219,
+   "unit": "crore",
+   "why": "claims listed by head, no total printed",
+   "none": false,
+   "rows": []
+  },
+  "pat": 1835.0,
+  "ratio": null,
+  "calls": []
+ },
+ "verdict": "Opinion not modified",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 6 Jun 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

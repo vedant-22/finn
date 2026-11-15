@@ -1,0 +1,52 @@
+coverage: 287510 company-days (113008 with filings), 236286 with a z, 244 event days from 2025-11-03 to 2026-10-29 (11.8 months); 2333 adjustment days left out
+matching: 179,180 of 181,790 filings matched a price (98.6%); the rest from 88 symbols with no EQ or BE price all year; a top-500 stock's results filings a year: median 4.1: passes
+archive floor (3 months and 200 act company-days): met
+lead: act moved 5.2x as often as fold (95% CI 4.7-5.7); act 4545, fold 28994 company-days
+lead without results: 1.0x (95% CI 0.3-1.7); act without results 202 company-days
+lead strength: WEAK: lead with the live market day
+rate act: 18.9% (95% CI 17.5-20.3), n 4545
+rate act without results: 3.5% (95% CI 1.1-6.1), n 202
+rate note: 4.7% (95% CI 4.1-5.3), n 5065
+rate fold: 3.6% (95% CI 3.4-3.9), n 28994
+rate no filing: 2.9% (95% CI 2.7-3.1), n 174502
+rate needs the reading: 5.0% (95% CI 4.7-5.4), n 19850
+rate reverse-causal: 5.5% (95% CI 4.8-6.3), n 3330
+context: act against no-filing days 6.6x (95% CI 6.0-7.2)
+second label, volume 3x its 20-session median: act 63%, fold 16%, no filing 12%
+category agm_egm: lift 1.1 (95% CI 0.9-1.3), n 3280
+category capex: lift 1.4 (95% CI 0.5-2.4), n 170 (too few)
+category credit_rating: lift 0.9 (95% CI 0.6-1.2), n 1218
+category dividend: lift 2.7 (95% CI 1.6-4.1), n 267
+category earnings_call: lift 1.4 (95% CI 1.1-1.6), n 3625
+category fund_raise: lift 2.0 (95% CI 1.3-2.9), n 414
+category investor_meetings: lift 1.3 (95% CI 1.2-1.5), n 10054
+category litigation: lift 2.6 (95% CI 0.6-5.4), n 53 (too few)
+category press_release: lift 2.4 (95% CI 1.9-2.9), n 1007
+category results: lift 6.8 (95% CI 6.2-7.5), n 4344
+category unclassified: lift 1.2 (95% CI 1.1-1.4), n 14145
+subject [act] Outcome of Board Meeting: lift 6.6 (95% CI 5.5-7.8), n 416, p 1.0000 against 1.5
+subject [note] Investor Presentation: lift 2.9 (95% CI 1.9-4.0), n 365, p 1.0000 against the median act subject
+subject [fold] Monitoring Agency Report: lift 2.5 (95% CI 1.6-3.6), n 247, p 1.0000 against the median act subject
+subject [note] Bagging/Receiving of orders/contracts: lift 2.3 (95% CI 1.6-3.2), n 464, p 1.0000 against the median act subject
+subject [fold] Copy of Newspaper Publication: lift 1.4 (95% CI 1.1-1.6), n 4080, p 1.0000 against the median act subject
+subject [fold] Trading Window: lift 1.3 (95% CI 1.0-1.6), n 3779, p 1.0000 against the median act subject
+subject [fold] Analysts/Institutional Investor Meet/Con. Call Updates: lift 1.3 (95% CI 1.1-1.4), n 9056, p 1.0000 against the median act subject
+subject [fold] Shareholders meeting: lift 1.2 (95% CI 1.0-1.5), n 2584, p 1.0000 against the median act subject
+subject [fold] Certificate under SEBI (Depositories and Participants) Regulations, 2018: lift 1.1 (95% CI 0.9-1.3), n 3692, p 1.0000 against the median act subject
+subject [fold] Allotment of Securities: lift 1.0 (95% CI 0.6-1.5), n 544, p 1.0000 against the median act subject
+subject [note] Analysts/Institutional Investor Meet/Con. Call Updates: lift 0.9 (95% CI 0.7-1.2), n 2785, p 1.0000 against the median act subject
+subject [fold] Credit Rating: lift 0.9 (95% CI 0.5-1.3), n 723, p 1.0000 against the median act subject
+subject [fold] ESOP/ESOS/ESPS: lift 0.7 (95% CI 0.4-1.0), n 808, p 1.0000 against the median act subject
+named misses: 0 of 13 subjects survive Benjamini-Hochberg at q 0.1; expected false finds at most 0.0
+pre-registered bar for a quiet subject: the median act subject, 6.6x, from 1 act subject(s)
+exploratory, post hoc: 0 of 12 fold or note subjects move more than 2x a no-filing day, surviving Benjamini-Hochberg at q 0.1
+exploratory [note] Investor Presentation: lift 2.9 (95% CI 1.9-4.0), n 365, p 0.0438 against 2.0
+exploratory [fold] Monitoring Agency Report: lift 2.5 (95% CI 1.6-3.6), n 247, p 0.1453 against 2.0
+exploratory [note] Bagging/Receiving of orders/contracts: lift 2.3 (95% CI 1.6-3.2), n 464, p 0.2171 against 2.0
+alignment: results days' mean |z| peaks on day +0 (2.01 against 0.92 elsewhere): passes
+alignment before open: n 16, day 0 1.79, day +1 1.27, other days at most 1.19
+alignment in session: n 1297, day 0 1.87, day +1 1.47, other days at most 1.02
+alignment after close: n 2970, day 0 2.08, day +1 1.13, other days at most 0.88
+interrupts a week, 20-stock book: median 1.5 (90th percentile 1.7) from rule-settled filings, up to 12.6 (15.1) if every filing that needs a model were act; 20% of the rule-settled ones moved the price
+snapshot cross-check (shipped tiers, small n): act 19% of 21, fold 4% of 53, note 11% of 35
+bootstrap B 20000, seed 7; family of 13 subjects fixed before rates

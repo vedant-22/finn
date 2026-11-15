@@ -1,0 +1,68 @@
+{
+ "symbol": "HOMEFIRST",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_29294_HOMEFIRST_2025_2026_A_17529634_29052026185800.pdf",
+ "filed": "2026-05-29",
+ "source": "nse",
+ "set": "standalone",
+ "pages_total": 470,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the standalone report.",
+   "items": [],
+   "src": [
+    {
+     "label": "Standalone report, page 343",
+     "page": 343
+    }
+   ],
+   "trail": {
+    "text": "The auditor lists exceptions to the audit trail, the software’s edit log.",
+    "src": [
+     {
+      "label": "Standalone report, page 348",
+      "page": 348,
+      "quote": "our opinion, proper books of account as required by law have been kept by the Company so far as it appears from our examination of those books, except for the matter stated in the paragraph 2(B)(f) below on reporting under Rule 11(g) of the Companies (Audit and Auditors) Rules, 2014 and that the back-up of the audit trail records at the application level for the books of accounts relating to loan origination and loan management system has not been kept on servers physically located in India on a daily basis for the period from 1 April 2025 to 9 March 2026."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 44, standalone accounts, page 417",
+     "page": 417
+    }
+   ],
+   "text": "The note says there are none.",
+   "quote": "There are no Contingent Liabilities as on 31 March 2026 (31 March 2025: Nil)."
+  }
+ ],
+ "questions": [],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 343,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 348
+   }
+  },
+  "claims": {
+   "page": 417,
+   "unit": null,
+   "why": null,
+   "none": true,
+   "rows": []
+  },
+  "pat": 540.0,
+  "ratio": null,
+  "calls": []
+ },
+ "verdict": "Opinion not modified",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 29 May 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

@@ -1,0 +1,125 @@
+{
+ "symbol": "MARUTI",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_30271_MARUTI_2025_2026_A_19335803_08082026213212.pdf",
+ "filed": "2026-08-08",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 270,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion). The auditor drew attention to two matters:",
+   "items": [
+    {
+     "text": "Note 38(B) of the consolidated accounts: Extended Producer Responsibility (EPR). The standalone report has it too, as note 38(B).",
+     "quote": "We draw attention to Note 38(B) to the consolidated financial statements, which describes the inability of the Holding Company to reliably estimate and account for in the books its obligations under Extended Producer Responsibility (‘EPR’) as per the Environment Protection (End-of-Life Vehicles) Rules, 2025, notified with effect from April 1, 2025, by the Ministry of Environment, Forest and Climate Change.",
+     "src": {
+      "label": "Consolidated report, page 230",
+      "page": 230
+     },
+     "calls": {
+      "text": "Neither ‘EPR’ nor ‘Extended Producer Responsibility’ appears in the one call FINN could read (May 2026); the other four files couldn’t be read.",
+      "negative": true
+     }
+    },
+    {
+     "text": "Note 35 of the standalone accounts. Only in the standalone report.",
+     "quote": "(ii) Note 35 to the standalone financial statements, which describes the Scheme of Amalgamation (the “Scheme”) of Suzuki Motor Gujarat Private Limited (the “Transferor Company”) with the Company, which has been approved by the National Company Law Tribunal (“NCLT”) vide its order dated November 6, 2025. Accordingly, these standalone financial statements have been prepared after giving effect to the Scheme and the comparative financial information has been restated in accordance with Appendix C \"Business combinations of entities under common control\" of Ind AS 103 “Business Combinations” as per the NCLT approved order.",
+     "src": {
+      "label": "Standalone report, page 187",
+      "page": 187
+     }
+    }
+   ],
+   "src": [
+    {
+     "label": "Standalone report, page 187",
+     "page": 187
+    },
+    {
+     "label": "Consolidated report, page 230",
+     "page": 230
+    }
+   ],
+   "trail": {
+    "text": "The auditor lists exceptions to the audit trail, the software’s edit log.",
+    "src": [
+     {
+      "label": "Standalone report, page 189",
+      "page": 189,
+      "quote": "on our examination, which included test checks, the Company has used multiple accounting software for maintaining its books of account, which have a feature of recording audit trail (edit log) facility and that has operated throughout the year for all relevant transactions recorded in the software, except for the following: (i) in respect of the one of the core accounting software used until December 31, 2025, the audit trail feature was not enabled both at application and database level."
+     },
+     {
+      "label": "Consolidated report, page 233",
+      "page": 233,
+      "quote": "which included test checks, the Holding Company has used multiple accounting software for maintaining its books of account, which have a feature of recording audit trail (edit log) facility and that has operated throughout the year for all relevant transactions recorded in the software, except for the following: (i) in respect of the one of the core accounting software used until December 31, 2025, the audit trail feature was not enabled both at application and database level."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 38, consolidated accounts, page 265",
+     "page": 265
+    }
+   ],
+   "text": "The note lists claims by head without printing their total, so no figure is shown."
+  }
+ ],
+ "questions": [
+  "The auditor drew attention to note 38(B) of the consolidated accounts (Extended Producer Responsibility, EPR). What would settle it, and by when?"
+ ],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 187,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [
+     "38(B)",
+     "35"
+    ],
+    "trail": true,
+    "trail_page": 189
+   },
+   "consolidated": {
+    "page": 230,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [
+     "38(B)"
+    ],
+    "trail": true,
+    "trail_page": 233
+   }
+  },
+  "claims": {
+   "page": 265,
+   "unit": "million",
+   "why": "claims listed by head, no total printed",
+   "none": false,
+   "rows": []
+  },
+  "pat": 14680.0,
+  "ratio": null,
+  "calls": [
+   {
+    "note": "38(B)",
+    "names": [
+     "EPR",
+     "Extended Producer Responsibility"
+    ],
+    "read": [
+     "May 2026"
+    ],
+    "hits": [],
+    "negative": true
+   }
+  ]
+ },
+ "verdict": "The auditor drew attention to note 38(B)",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 8 Aug 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

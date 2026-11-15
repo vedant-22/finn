@@ -1,0 +1,137 @@
+{
+ "symbol": "DIXON",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_31329_DIXON_2025_2026_A_15487496_03092026220551.pdf",
+ "filed": "2026-09-03",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 520,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion). The auditor drew attention to one matter:",
+   "items": [
+    {
+     "text": "Note 59(a) of the consolidated accounts: Production Linked Incentive (PLI). Only in the consolidated report.",
+     "quote": "We draw attention to Note 59 (a) to the accompanying consolidated financial statements, which describes the recognition of incentive income by one of the subsidiaries under the Production Linked Incentive (PLI) Scheme amounting to Rs. 1,11,006 lakhs and a corresponding passthrough liability of Rs. 72,634 lakhs outstanding as at 31 March 2026. As formal determination and disbursement of the incentive by the Project Management Agency are pending as at 31 March 2026, the management of the subsidiary has assessed the recoverability of the related incentive receivable based on, inter alia, an independent legal opinion confirming the Subsidiary’s eligibility and compliance with the conditions of the Scheme.",
+     "src": {
+      "label": "Consolidated report, page 409",
+      "page": 409
+     },
+     "calls": {
+      "text": "‘PLI’ or ‘Production Linked Incentive’ appears in all 5 calls FINN read. The latest is Aug 2026, page 3.",
+      "quote": "Operating margin for the quarter reflected temporary compression on account of expiry of Mobile PLI 1 in March '26 and from increased selling prices driven by elevated input costs and broader supply chain inflationary factors.",
+      "url": "https://nsearchives.nseindia.com/corporate/DIXON_05082026183904_EarningCallTranscriptQ1Intimation05082026F.pdf",
+      "page": 3,
+      "negative": false
+     }
+    }
+   ],
+   "src": [
+    {
+     "label": "Standalone report, page 299",
+     "page": 299
+    },
+    {
+     "label": "Consolidated report, page 409",
+     "page": 409
+    }
+   ],
+   "trail": {
+    "text": "The auditor lists exceptions to the audit trail, the software’s edit log.",
+    "src": [
+     {
+      "label": "Consolidated report, page 415",
+      "page": 415,
+      "quote": "Additionally, the audit trail has been preserved by the Holding Company and above referred subsidiaries, and joint ventures as per the statutory requirements for record retention except in one subsidiary audit trail (edit log) feature was enabled and has operated in the accounting software with effect from 24 February 2025."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 46, consolidated accounts, page 474",
+     "page": 474
+    }
+   ],
+   "text": "The note lists claims by head without printing their total, so no figure is shown."
+  }
+ ],
+ "questions": [
+  "The auditor drew attention to note 59(a) of the consolidated accounts (Production Linked Incentive, PLI). What would settle it, and by when?"
+ ],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 299,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": false,
+    "trail_page": 303
+   },
+   "consolidated": {
+    "page": 409,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [
+     "59(a)"
+    ],
+    "trail": true,
+    "trail_page": 415
+   }
+  },
+  "claims": {
+   "page": 474,
+   "unit": "lakh",
+   "why": "claims listed by head, no total printed",
+   "none": false,
+   "rows": []
+  },
+  "pat": 1644.0,
+  "ratio": null,
+  "calls": [
+   {
+    "note": "59(a)",
+    "names": [
+     "PLI",
+     "Production Linked Incentive"
+    ],
+    "read": [
+     "Jul 2025",
+     "Oct 2025",
+     "Feb 2026",
+     "May 2026",
+     "Aug 2026"
+    ],
+    "hits": [
+     [
+      "Jul 2025",
+      7
+     ],
+     [
+      "Oct 2025",
+      7
+     ],
+     [
+      "Feb 2026",
+      7
+     ],
+     [
+      "May 2026",
+      4
+     ],
+     [
+      "Aug 2026",
+      3
+     ]
+    ],
+    "negative": false
+   }
+  ]
+ },
+ "verdict": "The auditor drew attention to note 59(a)",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 3 Sep 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

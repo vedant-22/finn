@@ -1,0 +1,54 @@
+The second pass, after the fixes the first held-out pass called for (docs/plans/annual-report.md), 2026-11-14, kept as it came out.
+
+ok   every one of the 22 companies has a label (22)
+ok   every company was cut, or is listed as unread with its reason
+ok   the served files are what the readers make from the fixture
+ok   every report used was filed on or before 2026-10-28
+ok   the whole-PDF sweep: 6 modifying headings, each in a cut audit report or out of scope by a named rule
+ok   each sweep hit's place re-derives from its stored page
+ok   the out-of-scope hits are the labelled ones: [('DIXON', 298, 'sustainability assurance')]
+ok   every quote shown is exact on its cited page: 34/34
+ok   every figure shown is printed on its note's page: 18/18
+ok   no claims figure shown that differs from its label
+ok   no emphasis of matter shown that the auditor didn't write
+ok   no opinion shown as modified that isn't
+ok   a ratio to profit only where the note's set is the company file's basis and FY26 profit is positive
+ok   a 'neither appears' line only with a defined term and at least one readable call searched
+ok   the question says the term isn't in the transcripts only when three or more readable calls were searched
+ok   every 'neither appears' line has a hand label
+ok   no hand label found the calls discussing the matter in other words (if one did, the negative form is withdrawn for every company)
+ok   Maruti: one readable call of five, so its question takes the plain form
+ok   at most two questions a company
+ok   KFin: not read, and the page says the filing is a cover letter
+skip firing lists not pinned yet: {'emphasis': ['DIXON', 'MARUTI', 'ULTRACEMCO'], 'size': ['SYNGENE'], 'rise': ['LT']}
+ok   no question rule fires on more than half the companies (base rate)
+ok   the fixture's pages are keyed by the PDF's own page number
+ok   the fixture's sha256 matches the cached PDF: 21/21
+
+scores: right / labelled, and how many of those labels are positives (a field with no positives tests false alarms only)
+  dev      report found           19/19   positives 19
+  dev      opinion modified       19/19   positives 0
+  dev      emphasis               19/19   positives 5
+  dev      audit-trail exception  19/19   positives 14
+  dev      claims note page       10/10   positives 10
+  dev      claims figures         10/10   positives 4
+  dev      claims figures shown   4 of 10 reports read, 4 right
+  held_out report found           22/22   positives 22
+  held_out opinion modified       22/22   positives 0
+  held_out emphasis               22/22   positives 0
+  held_out audit-trail exception  22/22   positives 14
+  held_out claims note page       11/11   positives 11
+  held_out claims figures         10/11   positives 5
+  held_out claims figures shown   4 of 11 reports read, 4 right
+
+thresholds, fixed in the plan before the readers ran on the held-out half
+  met    auditor: opinion and every emphasis of matter right on every report read (41/41 emphasis, 41/41 opinion)
+  met    claims: zero wrong figures shown over all 22 (0 wrong)
+  MISSED claims: figures shown for at least 8 of the 11 held out (4)
+  met    quotes: every one exact on its cited page (34/34)
+
+auditor recall rests on the dev half's three emphasis companies and the whole-PDF sweep: the planning probe had
+already swept all 22 reports, so the held-out half was known to hold no emphasis and tests false alarms only.
+firing: {'emphasis': ['DIXON', 'MARUTI', 'ULTRACEMCO'], 'size': ['SYNGENE'], 'rise': ['LT']}
+
+TOTAL 23/23

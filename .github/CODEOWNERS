@@ -1,0 +1,6 @@
+# The gate can't guard its own code: a change here can weaken it, so a code owner reads it (docs/adr/0004).
+# Takes effect once "Require review from Code Owners" is set on main; until then it names who reads, nothing more.
+/evals/          @vedant-22
+/.github/        @vedant-22
+/finn/llm.py     @vedant-22
+/finn/config.py  @vedant-22

@@ -1,0 +1,21 @@
+ok   deadline: 'FY27' said in May 2026 ends (2027, 3)
+ok   deadline: 'this year' said in May 2026 ends (2027, 3)
+ok   deadline: 'Q3 FY27' said in Aug 2026 ends (2026, 12)
+ok   deadline: 'next 3 to 4 quarters' said in Oct 2025 ends (2026, 12)
+ok   deadline: 'end of FY26' said in Aug 2025 ends (2026, 3)
+ok   deadline: 'September 2026' said in May 2026 ends (2026, 9)
+ok   deadline: 'medium term' said in May 2026 ends None
+ok   deadline: 'unspecified' said in May 2026 ends None
+ok   a growth target for a year not ended, graded kept, is not due
+ok   ... and its line says when it is due and that the period hasn't ended
+ok   a margin target for a year not ended, kept on the call's word, is not due
+ok   a launch due later but done early stays kept
+ok   a growth target whose year has ended stays kept
+ok   a growth target management itself deferred stays missed
+ok   a pending promise past its date with nothing said is unclear, past due
+ok   ... unless a later call said it again (its date may have moved)
+ok   a grade settled by numbers the results don't report is unclear, unmeasured
+ok   no check ever adds a kept, missed or partly
+ok   the 22 committed ledgers are rechecked: a second pass moves nothing
+ok   no committed ledger counts a growth or margin target kept before its period ends
+TOTAL 20/20

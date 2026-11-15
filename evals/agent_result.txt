@@ -1,0 +1,28 @@
+ok   1. search, read, quote the page read: answered, shown as the page's own text
+ok   2. a true quote from a page it never read is rejected
+ok   2b. a quote whose page isn't a number is rejected, not a crash
+ok   3. a doctored quote on a page it read is rejected by the workflow's verifier
+ok   4. a planner that repeats one search stops at 6 steps; the repeats aren't run
+ok   5. 25 calls asked at once: 10 run, then it stops
+ok   6. a step whose prompt would pass the token budget isn't sent, so its answer never arrives
+ok   6b. the API's own token count is used: a reply that passes 60,000 isn't taken, and it is priced at flash's rate
+ok   7. the limits are ADR 3's: 6 steps, 10 tool calls, 60,000 tokens
+ok   8. a private tool, a URL, an unknown tool and a bad period are refused, go back as codes, and it recovers
+ok   9. every tool result reaches the planner marked as filing text
+ok   10. a lead into another company's calls is answered, headed with that company
+ok   11. a number item's sentence is written by code
+ok   12. no key: unavailable, never 'Not in the calls I read'
+ok   13. answerable false is 'Not in the calls I read'
+ok   14. an answer from a fallback planner is marked degraded
+ok   15. off unless FINN_AGENT=1; on, it runs only after the workflow finds nothing, and its answer is shown
+ok   16. the trace holds codes and counts, nothing of the question
+ok   17. a quote found on a page it never read, cited to the page between, is rejected
+ok   18. when the agent can't reach its model, the investor is told so, not 'Not in the calls I read'
+ok   19. a step that failed after paying counts what it paid
+ok   20. a retry refused by the budget stops at the token limit, counted, and isn't 'unavailable'
+ok   21. a cut-off reply is retried with more room, and both tries are counted and priced
+ok   22. a retry that could pass the budget isn't sent, and the error carries what was paid
+ok   23. a 200 with no candidates, or one that isn't JSON, is a coded error carrying what was paid, never a crash
+ok   24. when every try is cut off, the error carries all four tries' tokens and dollars
+ok   25. the agent's own call asks for no more reply than its budget has left, and a retry past the budget isn't sent
+TOTAL 27/27

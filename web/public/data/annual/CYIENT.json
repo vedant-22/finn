@@ -1,0 +1,69 @@
+{
+ "symbol": "CYIENT",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_29375_CYIENT_2025_2026_A_10062585_09062026231701.pdf",
+ "filed": "2026-06-09",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 465,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the consolidated and standalone reports.",
+   "items": [],
+   "src": [
+    {
+     "label": "Standalone report, page 209",
+     "page": 209
+    },
+    {
+     "label": "Consolidated report, page 306",
+     "page": 306
+    }
+   ]
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 36, consolidated accounts, page 428",
+     "page": 428
+    }
+   ],
+   "text": "FINN’s rules couldn’t read a total from this note, so no figure is shown."
+  }
+ ],
+ "questions": [],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 209,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": false,
+    "trail_page": 215
+   },
+   "consolidated": {
+    "page": 306,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": false,
+    "trail_page": 314
+   }
+  },
+  "claims": {
+   "page": 428,
+   "unit": null,
+   "why": "no unit on the page",
+   "none": false,
+   "rows": []
+  },
+  "pat": 463.0,
+  "ratio": null,
+  "calls": []
+ },
+ "verdict": "Opinion not modified",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 9 Jun 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

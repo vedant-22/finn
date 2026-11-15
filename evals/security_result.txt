@@ -1,0 +1,109 @@
+ok   imports: finn/network imports no model, HTTP or research module
+ok   imports: finn/llm.py does not import the network
+ok   imports: finn/ledger.py does not import the network
+ok   imports: finn/research.py does not import the network
+ok   imports: finn/classify.py does not import the network
+ok   imports: finn/explain.py does not import the network
+ok   imports: finn/triage.py does not import the network
+ok   imports: api/network.py imports no model module
+ok   filed fields: no profile data exists: no profile file, and no code that reads or attaches one
+ok   filed fields: no earlier job of a filing person shows a year in the API's brief (41 people)
+ok   filed fields: no school of a filing person shows a year (41 people)
+ok   key: sent as the x-goog-api-key header
+ok   key: not in the URL or query
+ok   key: an unreachable model is a fixed code
+ok   key: no part of the key is in the error
+ok   no key: sources answers live: false
+ok   no key: call answers no_key
+ok   no key: grade answers no_key
+ok   no key: nothing was fetched
+ok   status: with no key, status answers only {live: false}
+ok   status: with a key, status answers only {live: true}
+ok   status: status fetches nothing and calls no model
+ok   status: status spends none of the live-reading budget
+ok   no key: the client says reading is off, with the count of companies that still open
+ok   errors: an unreachable source is a fixed code
+ok   errors: the answer carries no upstream text
+ok   errors: every server code has a sentence in the client
+ok   limits: bad JSON is 400
+ok   limits: a body that is not an object is 400
+ok   limits: an unknown op is 400
+ok   limits: sources refuses a body over 2 KB unread
+ok   limits: network refuses a body over 64 KB unread
+ok   limits: decisions that are not an object are 400
+ok   limits: 500 made-up answers build nothing: no question the engine asked, no second network
+ok   limits: at most 200 answers are read: a real one past the 200th is dropped
+ok   limits: a real answer among made-up ones builds one network, with that answer only, once
+ok   limits: answers that are not an object are 400
+ok   identity answers: op views with an answer: the file's build, the answer applied, rebuilt once and then kept
+ok   identity answers: the views the API rebuilds from are network.json, byte for byte, with the build the pipeline wrote
+ok   identity answers: op views with no answer to apply is the build alone, with nothing rebuilt
+ok   identity answers: an answer is neither written nor logged while it is applied
+ok   limits: a question is cut to 300 characters
+ok   limits: grade allows 6 per IP in ten minutes, then 429
+ok   limits: the limiter forgets after its window
+ok   limits: an address is forgotten once its window closes, on the next request from anyone (Your data)
+ok   logs: a failed question is a 500 with a code
+ok   logs: the log names the failure but not the question
+ok   search: robots.txt keeps crawlers off /data/ and /api/
+ok   search: /data/ is served with X-Robots-Tag: noindex
+ok   headers: every page gets a policy that loads code and connects only to FINN's own origin
+ok   headers: nosniff, a referrer policy, and only the microphone allowed
+ok   guard: urllib3 looks create_connection up through the module FINN patches
+ok   guard: a public address is reached by its checked IP
+ok   guard: refuses loopback
+ok   guard: refuses a private address
+ok   guard: refuses a home network
+ok   guard: refuses link-local metadata
+ok   guard: refuses a loopback literal
+ok   guard: refuses an IPv6 loopback
+ok   guard: refuses an IPv4-mapped IPv6 loopback
+ok   guard: a name that rebinds to a private address is refused the second time
+ok   pdf: a redirect hop to 127.0.0.1 is refused
+ok   pdf: a redirect hop with a user name is refused
+ok   pdf: redirects stop after 3
+ok   pdf: refuses a user name before any request
+ok   pdf: refuses an odd port before any request
+ok   pdf: refuses file: before any request
+ok   pdf: refuses ftp: before any request
+ok   pdf: none of those was requested
+ok   pdf: a stream over the cap stops at the cap
+ok   pdf: a zip bomb is refused before it is unpacked
+ok   pdf: an honest PDF still downloads
+ok   grade: the symbol is cleaned, and the server reads every listed call itself
+ok   grade: an unlisted URL and another company's call are dropped
+ok   grade: periods come from the server's list, not the phone
+ok   grade: the company name and numbers are the server's
+ok   grade: a promise carries the server's URL and period
+ok   grade: at most 40 promises a call, 600 characters a field
+ok   grade: more than 6 calls is refused
+ok   grade: when NSE fails, the server asks once more and keeps the honest call
+ok   grade: no calls listed by the server answers unavailable
+ok   grade: nothing was fetched or connected to
+ok   terms: public text reaches the model
+ok   terms: private text is refused on free terms, before any request
+ok   terms: private text on paid terms is answered and writes nothing to the cache
+ok   terms: a cached fallback answer is reported with the model that answered
+ok   terms: a fresh run skips the cache read, asks the model and rewrites the entry
+ok   planes: finn/answer and finn/ingest import nothing from finn/network
+ok   planes: no answering tool takes a URL
+ok   planes: a private tool is refused
+ok   planes: a trace holds neither the question's words nor a hash of it
+ok   inject: a classify index read twice is left unread, the other kept
+ok   gate: a hand-edited gate.json can't pass a changed validated step in a pull request
+ok   gate: a step marked validated by hand in a pull request fails
+ok   gate: an unvalidated step changed in a pull request fails unless --accept recorded who and why; recorded, it is a skip
+ok   gate: a floor lowered in a pull request fails; one raised passes
+ok   gate: CI releases the key to the run a live-eval labelling starts, not to a later push while the label stays on
+ok   gate: a model can't be changed by an environment variable, only in code, where the fingerprints see it
+ok   gate: a person off people's schema (no seniority, a seniority of "CEO") makes the reply unread, not a fold
+ok   gate: classify's requests are fingerprinted as built: sending 40 characters of a filing instead of 400 changes them
+ok   gate: an eval that prints its totals and then crashes fails the gate
+ok   gate: a fallback that answers inside enrich's threads is seen by the live gate's check
+ok   gate: the fingerprint is the call's: a step calling another model, or asking with another temperature, changes it; public= doesn't; a model call no step owns fails
+ok   gate: the model client refuses a task the gate doesn't fingerprint, and its list is the gate's
+ok   gate: an eval, a floor, a reading pattern or a step dropped from gate.json in a pull request fails; an eval added or a floor raised passes
+ok   gate: --accept needs a reason, refuses a validated step, and records who, the day and why
+ok   gate: a model step with no entry in gate.json fails
+ok   gate: with the page fixture checked in, an eval that tries to fetch fails, not skips; in a pull request it fails without the fixture too
+TOTAL 108/108

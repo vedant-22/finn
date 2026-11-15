@@ -1,0 +1,90 @@
+{
+ "symbol": "HAVELLS",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_29260_HAVELLS_2025_2026_A_55276022_15052026140712.pdf",
+ "filed": "2026-05-15",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 442,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the consolidated and standalone reports.",
+   "items": [],
+   "src": [
+    {
+     "label": "Standalone report, page 253",
+     "page": 253
+    },
+    {
+     "label": "Consolidated report, page 340",
+     "page": 340
+    }
+   ],
+   "trail": {
+    "text": "The auditor lists exceptions to the audit trail, the software’s edit log.",
+    "src": [
+     {
+      "label": "Standalone report, page 256",
+      "page": 256,
+      "quote": "on our examination, which included test checks, the Company has used an accounting software for maintaining its books of account which has a feature of recording audit trail (edit log) facility and that has operated throughout the year for all relevant transactions recorded in the software except that the audit trail at database level contains only the modified values."
+     },
+     {
+      "label": "Consolidated report, page 344",
+      "page": 344,
+      "quote": "on our examination, which included test checks, the Holding Company have used accounting software for maintaining their books of account which have a feature of recording audit trail (edit log) facility and that has operated throughout the year for all relevant transactions recorded in the software except that the audit trail at database level contains only the modified values."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 32, consolidated accounts, page 396",
+     "page": 396
+    }
+   ],
+   "text": "Claims not acknowledged as debt: ₹8 crore at 31 March 2026, ₹10.6 crore a year earlier. That is under 1% of FY26 profit. These are claims made on the company that it has not accepted as owed.",
+   "printed": "Printed as 7.96 and 10.56, in ₹ crore."
+  }
+ ],
+ "questions": [],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 253,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 256
+   },
+   "consolidated": {
+    "page": 340,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 344
+   }
+  },
+  "claims": {
+   "page": 396,
+   "unit": "crore",
+   "why": null,
+   "none": false,
+   "rows": [
+    {
+     "fy26": "7.96",
+     "fy25": "10.56"
+    }
+   ]
+  },
+  "pat": 1689.0,
+  "ratio": 0.004712847838957963,
+  "calls": []
+ },
+ "verdict": "Opinion not modified",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 15 May 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

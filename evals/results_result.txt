@@ -1,0 +1,20 @@
+HDFCBANK    Q2 FY27 revenue 95132/95132  pbt 27826/28663 X  pat 20700/21537 X
+LT          Q2 FY27 revenue 78750/78750  ebitda 6845/8814 X  pbt 7641/7641  pat 5949/5949
+MARUTI      Q2 FY27 revenue 53356/53356  ebitda 4764/4764  pbt 3150/3219 X  pat 2466/2466
+SUNPHARMA   Q1 FY27 revenue 15300/15300  ebitda 4418/4418  pbt 4099/4099  pat 2901/2901
+ULTRACEMCO  Q2 FY27 revenue 23295/23295  ebitda 3721/3719  pbt 2061/2059  pat 1501/1501
+HAVELLS     Q2 FY27 revenue 6432/6432  ebitda 573/573  pbt 473/473  pat 349/349
+CGPOWER     Q2 FY27 revenue 3802/3802  ebitda 540/540  pbt 559/559  pat 409/409
+SRF         Q2 FY27 revenue 4904/4904  ebitda 946/946  pbt 671/671  pat 509/509
+CROMPTON    Q2 FY27 revenue 2263/2263  ebitda 205/205  pbt 167/167  pat 124/124
+CEATLTD     Q2 FY27 revenue 4762/4762  ebitda 457/457  pbt 169/169  pat 112/112
+SYNGENE     Q2 FY27 revenue 833/833  ebitda 147/147  pbt 47/47  pat 32/32
+CYIENT      Q2 FY27 revenue 2235/2235  ebitda 312/309 X  pbt 200/197 X  pat 132/132
+KFINTECH    Q2 FY27 revenue 402/402  ebitda 161/161  pbt 139/139  pat 100/100
+BLUEDART    Q1 FY27 revenue 1658/1658  ebitda 261/261  pbt 119/119  pat 88/88
+DCMSHRIRAM  Q2 FY27 revenue 4151/3977 X  ebitda 291/291  pbt 152/152  pat 106/106
+ERIS        Q2 FY27 revenue 892/892  ebitda 309/308  pbt 157/156  pat 187/187
+HOMEFIRST   Q2 FY27 revenue 567/567  pbt 222/222  pat 170/170
+TCI         Q2 FY27 revenue 1388/1388  ebitda 144/144  pbt 108/130 X  pat 117/117
+
+agree within 1%: 62/70 = 89%

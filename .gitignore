@@ -1,0 +1,24 @@
+.env
+.env.*
+!.env.example
+brief/
+data/cache/
+data/raw/
+data/*.log
+node_modules/
+web/dist/
+.playwright-mcp/
+shots/
+.vercel
+__pycache__/
+*.pyc
+.DS_Store
+data/out/
+*.tsbuildinfo
+.env*
+design/references/
+design-reference/
+design/UX_RESEARCH.md
+
+# ship.py --kit: the email body, the history export and the bundle (never committed)
+send/

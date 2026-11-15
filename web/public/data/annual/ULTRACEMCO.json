@@ -1,0 +1,115 @@
+{
+ "symbol": "ULTRACEMCO",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_29978_ULTRACEMCO_2025_2026_A_20670730_24072026120407.pdf",
+ "filed": "2026-07-24",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 327,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion). The auditor drew attention to one matter:",
+   "items": [
+    {
+     "text": "Note 37(b) of the consolidated accounts: Competition Commission of India (CCI). The standalone report has it too, as note 33(b).",
+     "quote": "We draw attention to Note 37(b) of the consolidated financial statements, which refers to the orders dated 31 August 2016 (Penalty of Rs. 1,804.31 crores) and 19 January 2017 (Penalty of Rs. 68.30 crores) of the Competition Commission of India (‘CCI’) against which the Company (including the erstwhile UltraTech Nathdwara Cement Limited and the India Cements Limited) had filed appeals. Upon the National Company Law Appellate Tribunal (“NCLAT”) disallowing its appeals against the CCI order dated 31 August 2016, the Company has filed appeals before the Hon’ble Supreme Court of India, which has by its order dated 5 October 2018, granted a stay against the NCLAT order. Consequently, the Company has deposited an amount of Rs. 180.43 crores equivalent to 10% of the penalty of Rs. 1,804.31 crores recorded as an asset. The Company, backed by legal opinions, believes that it has a good case in both the matters basis which no provision has been recognised in the books of account.",
+     "src": {
+      "label": "Consolidated report, page 253",
+      "page": 253
+     },
+     "calls": {
+      "text": "Neither ‘CCI’ nor ‘Competition Commission’ appears in the 5 calls FINN read (Oct 2025 to Oct 2026).",
+      "negative": true
+     }
+    }
+   ],
+   "src": [
+    {
+     "label": "Standalone report, page 190",
+     "page": 190
+    },
+    {
+     "label": "Consolidated report, page 253",
+     "page": 253
+    }
+   ],
+   "trail": {
+    "text": "The auditor lists exceptions to the audit trail, the software’s edit log.",
+    "src": [
+     {
+      "label": "Consolidated report, page 257",
+      "page": 257,
+      "quote": "and its subsidiaries, associate companies and joint venture have used an accounting software for maintaining its books of account which has a feature of recording audit trail (edit log) facility and the same has operated throughout the year for all relevant transactions recorded in the software, except for the instances mentioned below: i) In respect of a subsidiary acquired on 29 May 2025, for one of the accounting softwares, the feature of audit trail (edit log facility) was not enabled at the application level and at the database level to log any direct data changes up to 31 May 2025."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 37, consolidated accounts, page 290",
+     "page": 290
+    }
+   ],
+   "text": "FINN’s rules couldn’t read a total from this note, so no figure is shown."
+  }
+ ],
+ "questions": [
+  "The auditor drew attention to note 37(b) of the consolidated accounts (Competition Commission of India, CCI). Neither term is in the transcripts of the last five calls. What would settle it, and by when?"
+ ],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 190,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [
+     "33(b)"
+    ],
+    "trail": false,
+    "trail_page": 193
+   },
+   "consolidated": {
+    "page": 253,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [
+     "37(b)"
+    ],
+    "trail": true,
+    "trail_page": 257
+   }
+  },
+  "claims": {
+   "page": 290,
+   "unit": null,
+   "why": "no unit on the page",
+   "none": false,
+   "rows": []
+  },
+  "pat": 8188.0,
+  "ratio": null,
+  "calls": [
+   {
+    "note": "37(b)",
+    "names": [
+     "CCI",
+     "Competition Commission"
+    ],
+    "read": [
+     "Oct 2025",
+     "Jan 2026",
+     "May 2026",
+     "Jul 2026",
+     "Oct 2026"
+    ],
+    "hits": [],
+    "negative": true
+   }
+  ]
+ },
+ "verdict": "The auditor drew attention to note 37(b)",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 24 Jul 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

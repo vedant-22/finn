@@ -1,0 +1,110 @@
+[
+ {
+  "symbol": "HDFCBANK",
+  "sector": "Private bank",
+  "size": "large",
+  "short": "HDFC Bank"
+ },
+ {
+  "symbol": "LT",
+  "sector": "Engineering & construction",
+  "size": "large",
+  "short": "Larsen & Toubro"
+ },
+ {
+  "symbol": "MARUTI",
+  "sector": "Passenger vehicles",
+  "size": "large",
+  "short": "Maruti Suzuki"
+ },
+ {
+  "symbol": "SUNPHARMA",
+  "sector": "Pharma",
+  "size": "large",
+  "short": "Sun Pharma"
+ },
+ {
+  "symbol": "ULTRACEMCO",
+  "sector": "Cement",
+  "size": "large",
+  "short": "UltraTech Cement"
+ },
+ {
+  "symbol": "HAVELLS",
+  "sector": "Electricals",
+  "size": "large",
+  "short": "Havells"
+ },
+ {
+  "symbol": "CGPOWER",
+  "sector": "Power equipment",
+  "size": "large",
+  "short": "CG Power"
+ },
+ {
+  "symbol": "SRF",
+  "sector": "Chemicals",
+  "size": "large",
+  "short": "SRF"
+ },
+ {
+  "symbol": "CROMPTON",
+  "sector": "Consumer electricals",
+  "size": "mid",
+  "short": "Crompton"
+ },
+ {
+  "symbol": "CEATLTD",
+  "sector": "Tyres",
+  "size": "mid",
+  "short": "CEAT"
+ },
+ {
+  "symbol": "SYNGENE",
+  "sector": "Contract research",
+  "size": "mid",
+  "short": "Syngene"
+ },
+ {
+  "symbol": "CYIENT",
+  "sector": "Engineering services",
+  "size": "mid",
+  "short": "Cyient"
+ },
+ {
+  "symbol": "KFINTECH",
+  "sector": "Market infrastructure",
+  "size": "mid",
+  "short": "KFin Technologies"
+ },
+ {
+  "symbol": "BLUEDART",
+  "sector": "Express logistics",
+  "size": "mid",
+  "short": "Blue Dart"
+ },
+ {
+  "symbol": "DCMSHRIRAM",
+  "sector": "Chemicals & sugar",
+  "size": "mid",
+  "short": "DCM Shriram"
+ },
+ {
+  "symbol": "ERIS",
+  "sector": "Pharma",
+  "size": "mid",
+  "short": "Eris Lifesciences"
+ },
+ {
+  "symbol": "HOMEFIRST",
+  "sector": "Housing finance",
+  "size": "small",
+  "short": "Home First Finance"
+ },
+ {
+  "symbol": "TCI",
+  "sector": "Logistics",
+  "size": "small",
+  "short": "Transport Corp of India"
+ }
+]

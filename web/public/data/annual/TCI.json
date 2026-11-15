@@ -1,0 +1,84 @@
+{
+ "symbol": "TCI",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_29848_TCI_2025_2026_U_9742506_17072026131440.pdf",
+ "filed": "2026-07-17",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 290,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the consolidated and standalone reports.",
+   "items": [],
+   "src": [
+    {
+     "label": "Standalone report, page 144",
+     "page": 144
+    },
+    {
+     "label": "Consolidated report, page 212",
+     "page": 212
+    }
+   ],
+   "trail": {
+    "text": "The auditor lists exceptions to the audit trail, the software’s edit log.",
+    "src": [
+     {
+      "label": "Standalone report, page 147",
+      "page": 147,
+      "quote": "on our examination which included test checks, the Company has used accounting software for maintaining its books of account which has a feature of recording audit trail (edit log) facility and the same has operated throughout the year for all relevant transactions recorded in the software except that, the feature of recording audit trail was not enabled at the database layer to log any direct data changes for the accounting software used for maintaining the books of accounts from 1st April 2025 to 17th September 2025."
+     },
+     {
+      "label": "Consolidated report, page 217",
+      "page": 217,
+      "quote": "by us on the Holding Company and one subsidiary, the companies have used accounting software for maintaining its books of account which has a feature of recording audit trail (edit log) facility and the same has operated throughout the year for all relevant transactions recorded in the software except that, the feature of recording audit trail was not enabled at the database layer to log any direct data changes for the accounting software used for maintaining the books of accounts from 1st April 2025 to 17th September 2025 and 1st April 2025 and 23rd November 2025 respectively."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 44, consolidated accounts, page 273",
+     "page": 273
+    }
+   ],
+   "text": "FINN’s rules couldn’t read a total from this note, so no figure is shown."
+  }
+ ],
+ "questions": [],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 144,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 147
+   },
+   "consolidated": {
+    "page": 212,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 217
+   }
+  },
+  "claims": {
+   "page": 273,
+   "unit": null,
+   "why": "no unit on the page",
+   "none": false,
+   "rows": []
+  },
+  "pat": 460.0,
+  "ratio": null,
+  "calls": []
+ },
+ "verdict": "Opinion not modified",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 17 Jul 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}

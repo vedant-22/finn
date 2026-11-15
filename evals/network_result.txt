@@ -1,0 +1,12 @@
+names: 31/31
+organisations: 24/24
+schools: 5/5
+identity: demo traps: 9/9
+identity: invented namesakes are never matched: 1/1
+identity: invented true records matched: 9/9 (0 left as 'possible', none refused wrongly: True)
+links: overlap in years: 7/7
+links: every dated link rests on overlapping years: 14/14
+who to call, events, silence: 28/28
+questions: 59/59
+path, patterns and one call: 155/155
+TOTAL 334/334

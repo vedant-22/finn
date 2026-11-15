@@ -1,0 +1,84 @@
+{
+ "symbol": "ERIS",
+ "read": true,
+ "url": "https://nsearchives.nseindia.com/annual_reports/AR_31142_ERIS_2025_2026_A_18207532_02092026185621.pdf",
+ "filed": "2026-09-02",
+ "source": "nse",
+ "set": "consolidated",
+ "pages_total": 394,
+ "blocks": [
+  {
+   "title": "The auditor",
+   "text": "Opinion not modified (a clean opinion), in the consolidated and standalone reports.",
+   "items": [],
+   "src": [
+    {
+     "label": "Standalone report, page 200",
+     "page": 200
+    },
+    {
+     "label": "Consolidated report, page 286",
+     "page": 286
+    }
+   ],
+   "trail": {
+    "text": "The auditor lists exceptions to the audit trail, the software’s edit log.",
+    "src": [
+     {
+      "label": "Standalone report, page 204",
+      "page": 204,
+      "quote": "on our examination which included test checks, except for instances mentioned below, the Company, in respect of financial year commencing on or after 1 April 2025, has used accounting software for maintaining its books of account which have a feature of recording audit trail (edit log) facility and the same have been operated throughout the year for all relevant transactions recorded in the software."
+     },
+     {
+      "label": "Consolidated report, page 292",
+      "page": 292,
+      "quote": "on our examination which included test checks and that performed by the respective auditors of the subsidiaries and joint venture of the Holding Company which are companies incorporated in India and audited under the Act except for instances mentioned below, the Holding Company and its subsidiaries and joint venture, in respect of financial year commencing on or after 1 April 2025, have used an accounting software for maintaining their books of account which has a feature of recording audit trail (edit log) facility and the same has been operated throughout the year for all relevant transactions recorded in the software."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Contingent liabilities",
+   "src": [
+    {
+     "label": "Note 31, consolidated accounts, page 365",
+     "page": 365
+    }
+   ],
+   "text": "The note lists claims by head without printing their total, so no figure is shown."
+  }
+ ],
+ "questions": [],
+ "checks": {
+  "reports": {
+   "standalone": {
+    "page": 200,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 204
+   },
+   "consolidated": {
+    "page": 286,
+    "modified": false,
+    "going_concern": null,
+    "emphasis": [],
+    "trail": true,
+    "trail_page": 292
+   }
+  },
+  "claims": {
+   "page": 365,
+   "unit": "crore",
+   "why": "claims listed by head, no total printed",
+   "none": false,
+   "rows": []
+  },
+  "pat": 648.0,
+  "ratio": null,
+  "calls": []
+ },
+ "verdict": "Opinion not modified",
+ "foot": "Read by FINN’s rules from the FY26 annual report filed on NSE on 2 Sep 2026. Each line is quoted from its page; no model read it. The related-party note isn’t read yet."
+}
